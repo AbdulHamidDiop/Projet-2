@@ -1,4 +1,5 @@
 import { HttpException } from '@app/classes/http.exception';
+import { AdminController } from '@app/controllers/admin.controller';
 import { DateController } from '@app/controllers/date.controller';
 import { ExampleController } from '@app/controllers/example.controller';
 import * as cookieParser from 'cookie-parser';
@@ -18,6 +19,7 @@ export class Application {
     constructor(
         private readonly exampleController: ExampleController,
         private readonly dateController: DateController,
+        private readonly adminController: AdminController,
     ) {
         this.app = express();
 
@@ -41,6 +43,7 @@ export class Application {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/example', this.exampleController.router);
         this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/admin', this.adminController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });
