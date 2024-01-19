@@ -10,13 +10,14 @@
         </div>
     </section>
 
-    <button class="button" routerLink="/game">Jouer!</button>
+    <button class="button" routerLink="/createGame">Créer une partie.</button>
+
+    <button class="button" [disabled]="true" routerLink="/game">Rejoindre une partie.</button>
+
+    <button class="button" routerLink="/admin">Administrer les jeux.</button>
 
     <footer class="footer-item">
-        <h4 class="team-name">Équipe Poly</h4>
-        <p>
-            <span>Coéquipier #1</span>, <span>Coéquipier #2</span>, <span>Coéquipier #3</span>, 
-            <span>Coéquipier #4</span>, <span>Coéquipier #5</span>, <span>Coéquipier #6</span>
-        </p>
+        <h4 class="team-name">Équipe 312</h4>
+        <p><span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>, <span>Youva</span></p>
     </footer>
 </div>
