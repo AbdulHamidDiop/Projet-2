@@ -1,0 +1,23 @@
+<h2>Création d'une partie</h2>
+
+<div *ngFor="let game of games" (click)="selectGame(game)">
+
+    <h3>
+        <a [title]="game.name + ' details'">
+            {{ game.name }}
+        </a>
+    </h3>
+
+    <p *ngIf="game.description">
+        Description: {{ game.description }}
+    </p>
+
+    <button type="button" (click)="testGame()">
+        Tester le jeu
+    </button>
+
+    <button type="button" (click)="startGame()">
+        Lancer une partie
+    </button>
+
+</div>

@@ -4,7 +4,6 @@ export interface Question {
     options: string[];
     correctOption: number;
 }
-  
 export interface GameProps {
     description: string;
     timeLimitInSeconds: number;
