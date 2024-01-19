@@ -11,8 +11,10 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { GameListComponent } from './components/game-list/game-list.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
+import { GameService } from './services/game.service';
 
 /**
  * Main module that is used in main.ts.
@@ -30,9 +32,10 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
         AdminPageComponent,
         PlayAreaComponent,
         SidebarComponent,
+        GameListComponent,
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
-    providers: [],
+    providers: [GameService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,11 +1,22 @@
-export interface Question {
-    id: number;
+export interface Choices {
     text: string;
-    options: string[];
-    correctOption: number;
+    isCorrect: boolean;
 }
-export interface GameProps {
-    description: string;
-    timeLimitInSeconds: number;
-    questions: Question[];
+enum Type {
+    QCM = 'QCM',
+    QRL = 'QRL',
+}
+export interface Question {
+    type: Type;
+    text: string;
+    points: number;
+    choices: Choices[];
+}
+export interface Game {
+    id?: string;
+    title: string;
+    description?: string;
+    duration?: number;
+    lastModification?: Date;
+    questions?: Question[];
 }
