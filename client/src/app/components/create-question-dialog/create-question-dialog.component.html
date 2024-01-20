@@ -1,0 +1,30 @@
+<form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
+    <label for="questionType">Type de question:</label>
+    <select id="questionType" formControlName="questionType">
+        <option value="QCM">QCM</option>
+        <option value="QRL">QRL</option>
+    </select>
+
+    <label for="question">Question:</label>
+    <input type="text" id="question" name="question" />
+
+    <div>
+        <label for="points">Nombre de points:</label>
+        <input type="number" id="points" />
+    </div>
+
+    <div *ngIf="questionForm.get('questionType')?.value === 'QCM'">
+        <div *ngFor="let answer of answers.controls; let i = index" [formGroupName]="i">
+            <input type="text" formControlName="answer" />
+            <input type="checkbox" formControlName="isCorrect" [value]="true" />
+            <label>Bonne réponse</label>
+            <button type="button" (click)="removeAnswer(i)">Remove</button>
+        </div>
+
+        <button type="button" (click)="addAnswer()" [disabled]="answers.length >= 4">Add Answer</button>
+    </div>
+
+    <div>
+        <button type="submit">Save Question</button>
+    </div>
+</form>

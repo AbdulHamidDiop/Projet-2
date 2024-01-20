@@ -1,0 +1,27 @@
+<div class="container">
+    <div><h1>Page de création de quiz</h1></div>
+    <div name="quiz-name-description">
+        <label for="title">Nom du jeu:</label>
+        <input type="text" id="title" name="title" />
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" />
+    </div>
+
+    <div name="qcm-duration">
+        <label for="numberInput">Durée des QCM:</label>
+        <input type="number" id="timeInput" name="timeInput" list="timeChoices" />
+        <datalist id="timeChoices">
+            <option value="10"></option>
+            <option value="20"></option>
+            <option value="30"></option>
+            <option value="40"></option>
+            <option value="50"></option>
+            <option value="60"></option>
+        </datalist>
+    </div>
+    <h1>Questions</h1>
+    <div>
+        <button (click)="openDialog()" name="add-question">Ajouter une question</button>
+    </div>
+</div>

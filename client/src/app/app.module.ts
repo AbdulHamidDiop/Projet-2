@@ -7,10 +7,13 @@ import { PlayAreaComponent } from '@app/components/play-area/play-area.component
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
+import { AppReactiveFormsModule } from '@app/modules/reactive-forms.module';
 import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
+import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
 
@@ -28,10 +31,21 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
         MainPageComponent,
         MaterialPageComponent,
         AdminPageComponent,
+        AdminCreateGamePageComponent,
+        CreateQuestionDialogComponent,
         PlayAreaComponent,
         SidebarComponent,
     ],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    // eslint-disable-next-line prettier/prettier
+    imports: [
+        AppMaterialModule,
+        AppRoutingModule, 
+        AppReactiveFormsModule,
+        BrowserAnimationsModule, 
+        BrowserModule, 
+        FormsModule, 
+        HttpClientModule,
+    ],
     providers: [],
     bootstrap: [AppComponent],
 })

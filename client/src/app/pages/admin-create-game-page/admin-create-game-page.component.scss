@@ -1,0 +1,13 @@
+.container {
+    height: 100%;
+}
+
+.play-area-container {
+    overflow: auto;
+    flex: 1 1 auto;
+}
+
+#sidebar {
+    flex-basis: 350px;
+    min-width: 200px;
+}
