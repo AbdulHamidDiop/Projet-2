@@ -21,6 +21,22 @@
         </datalist>
     </div>
     <h1>Questions</h1>
+
+    <div *ngFor="let question of questions">
+        <p>Type: {{ question.type }}</p>
+        <p>Text: {{ question.text }}</p>
+        <p>Points: {{ question.points }}</p>
+        <div *ngIf="question.type === 'QCM'">
+            <p>Choices:</p>
+            <ul>
+                <li *ngFor="let choice of question.choices">{{ choice.text }} - Correct: {{ choice.isCorrect }}</li>
+            </ul>
+        </div>
+        <div *ngIf="question.type === 'QRL'">
+            <p>Answer: {{ question.answer }}</p>
+        </div>
+    </div>
+    
     <div>
         <button (click)="openDialog()" name="add-question">Ajouter une question</button>
     </div>

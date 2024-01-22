@@ -1,5 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialogRef } from '@angular/material/dialog';
+import { Question } from '@app/interfaces/game-elements';
+
+const MIN_CHOICES = 2;
+const MAX_CHOICES = 4;
 
 @Component({
     selector: 'app-create-question-dialog',
@@ -8,34 +13,60 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 })
 export class CreateQuestionDialogComponent {
     questionForm: FormGroup;
+    question: Question;
 
-    constructor(private fb: FormBuilder) {
+    constructor(
+        private fb: FormBuilder,
+        @Inject(MatDialogRef) private dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
+    ) {
         this.questionForm = this.fb.group({
-            questionType: ['QCM', Validators.required],
-            question: ['', Validators.required],
-            points: ['', Validators.required],
-            answers: this.fb.array([], Validators.minLength(2)),
+            type: ['', Validators.required],
+            text: ['', Validators.required],
+            points: ['', [Validators.required, Validators.min(1)]],
+            choices: this.fb.array([], Validators.minLength(MIN_CHOICES)),
+            answer: [''],
+        });
+
+        this.handleQuestionTypeChanges();
+    }
+
+    get choices(): FormArray {
+        return this.questionForm.get('choices') as FormArray;
+    }
+    handleQuestionTypeChanges(): void {
+        this.questionForm.get('type')?.valueChanges.subscribe((value) => {
+            if (value === 'QCM') {
+                this.questionForm.get('answer')?.reset();
+                this.questionForm.get('answer')?.clearValidators();
+                this.questionForm.setControl('choices', this.fb.array([], Validators.minLength(MIN_CHOICES)));
+            } else {
+                this.choices.clear();
+                this.questionForm.get('answer')?.setValidators(Validators.required);
+                this.questionForm.removeControl('choices');
+            }
+            this.questionForm.get('answer')?.updateValueAndValidity();
         });
     }
 
-    get answers() {
-        return this.questionForm.get('answers') as FormArray;
-    }
-
-    addAnswer() {
-        if (this.answers.length < 4) {
-            this.answers.push(
+    addChoice(): void {
+        if (this.choices.length < MAX_CHOICES) {
+            this.choices.push(
                 this.fb.group({
-                    answer: ['', Validators.required],
+                    text: ['', Validators.required],
                     isCorrect: [false],
                 }),
             );
         }
     }
 
-    removeAnswer(index: number) {
-        this.answers.removeAt(index);
+    removeChoice(index: number): void {
+        this.choices.removeAt(index);
     }
 
-    onSubmit() {}
+    onSubmit(): void {
+        if (this.questionForm.valid) {
+            this.question = this.questionForm.value;
+            this.dialogRef.close(this.question);
+        }
+    }
 }

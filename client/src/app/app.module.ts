@@ -38,13 +38,13 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [
-        AppMaterialModule,
+        AppMaterialModule, 
         AppRoutingModule, 
-        AppReactiveFormsModule,
+        AppReactiveFormsModule, 
         BrowserAnimationsModule, 
         BrowserModule, 
         FormsModule, 
-        HttpClientModule,
+        HttpClientModule
     ],
     providers: [],
     bootstrap: [AppComponent],

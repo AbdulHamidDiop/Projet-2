@@ -1,30 +1,24 @@
 <form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
-    <label for="questionType">Type de question:</label>
-    <select id="questionType" formControlName="questionType">
+    <select formControlName="type">
         <option value="QCM">QCM</option>
         <option value="QRL">QRL</option>
     </select>
 
-    <label for="question">Question:</label>
-    <input type="text" id="question" name="question" />
+    <input type="text" formControlName="text" placeholder="Question" />
+    <input type="number" formControlName="points" placeholder="Points" />
 
-    <div>
-        <label for="points">Nombre de points:</label>
-        <input type="number" id="points" />
-    </div>
-
-    <div *ngIf="questionForm.get('questionType')?.value === 'QCM'">
-        <div *ngFor="let answer of answers.controls; let i = index" [formGroupName]="i">
-            <input type="text" formControlName="answer" />
-            <input type="checkbox" formControlName="isCorrect" [value]="true" />
-            <label>Bonne réponse</label>
-            <button type="button" (click)="removeAnswer(i)">Remove</button>
+    <div *ngIf="questionForm.get('type')?.value === 'QCM'" formGroupName="choices">
+        <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i">
+            <input type="text" formControlName="text" placeholder="Choice Text" />
+            <input type="checkbox" formControlName="isCorrect" />
+            <button type="button" (click)="removeChoice(i)">Remove</button>
         </div>
-
-        <button type="button" (click)="addAnswer()" [disabled]="answers.length >= 4">Add Answer</button>
+        <button type="button" (click)="addChoice()" [disabled]="choices.length >= 4">Ajouter un choix</button>
     </div>
 
-    <div>
-        <button type="submit">Save Question</button>
+    <div *ngIf="questionForm.get('type')?.value === 'QRL'">
+        <input type="text" formControlName="answer" placeholder="Answer" />
     </div>
+
+    <button type="submit" [disabled]="!questionForm.valid || (questionForm.get('type')?.value === 'QCM' && choices.length <= 0)">Confirmer</button>
 </form>
