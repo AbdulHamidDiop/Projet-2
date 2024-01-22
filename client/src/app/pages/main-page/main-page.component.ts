@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@common/message';
 import { BehaviorSubject } from 'rxjs';
@@ -14,7 +15,18 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private readonly communicationService: CommunicationService) {}
+    constructor(private readonly communicationService: CommunicationService, private router: Router) {}
+
+    userInput:string = "";
+    password = "LOG2990-312";
+
+    onButtonClick() {
+        if (this.userInput === this.password) {
+          this.router.navigate(['/admin']);
+        } else {
+          console.log('Incorrect password');
+        }
+      }
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
