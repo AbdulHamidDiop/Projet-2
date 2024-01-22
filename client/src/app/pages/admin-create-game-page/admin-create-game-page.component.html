@@ -1,43 +1,48 @@
 <div class="container">
     <div><h1>Page de création de quiz</h1></div>
-    <div name="quiz-name-description">
-        <label for="title">Nom du jeu:</label>
-        <input type="text" id="title" name="title" />
+    <form [formGroup]="gameForm">
+        <div name="quiz-name-description">
+            <label for="title">Nom du jeu:</label>
+            <input type="text" id="title" formControlName="title" />
 
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" />
-    </div>
-
-    <div name="qcm-duration">
-        <label for="numberInput">Durée des QCM:</label>
-        <input type="number" id="timeInput" name="timeInput" list="timeChoices" />
-        <datalist id="timeChoices">
-            <option value="10"></option>
-            <option value="20"></option>
-            <option value="30"></option>
-            <option value="40"></option>
-            <option value="50"></option>
-            <option value="60"></option>
-        </datalist>
-    </div>
-    <h1>Questions</h1>
-
-    <div *ngFor="let question of questions">
-        <p>Type: {{ question.type }}</p>
-        <p>Text: {{ question.text }}</p>
-        <p>Points: {{ question.points }}</p>
-        <div *ngIf="question.type === 'QCM'">
-            <p>Choices:</p>
-            <ul>
-                <li *ngFor="let choice of question.choices">{{ choice.text }} - Correct: {{ choice.isCorrect }}</li>
-            </ul>
+            <label for="description">Description:</label>
+            <input type="text" id="description" formControlName="description" />
         </div>
-        <div *ngIf="question.type === 'QRL'">
-            <p>Answer: {{ question.answer }}</p>
+
+        <div name="qcm-duration">
+            <label for="durationInput">Durée des QCM:</label>
+            <input type="number" id="durationInput" formControlName="duration" list="timeChoices" />
+            <datalist id="timeChoices">
+                <option value="10"></option>
+                <option value="20"></option>
+                <option value="30"></option>
+                <option value="40"></option>
+                <option value="50"></option>
+                <option value="60"></option>
+            </datalist>
         </div>
-    </div>
-    
-    <div>
-        <button (click)="openDialog()" name="add-question">Ajouter une question</button>
-    </div>
+        <h1>Questions</h1>
+
+        <div *ngFor="let question of questions">
+            <p>Type: {{ question.type }}</p>
+            <p>Text: {{ question.text }}</p>
+            <p>Points: {{ question.points }}</p>
+            <div *ngIf="question.type === 'QCM'">
+                <p>Choices:</p>
+                <ul>
+                    <li *ngFor="let choice of question.choices">{{ choice.text }} - Correct: {{ choice.isCorrect }}</li>
+                </ul>
+            </div>
+            <div *ngIf="question.type === 'QRL'">
+                <p>Answer: {{ question.answer }}</p>
+            </div>
+        </div>
+
+        <div>
+            <button (click)="openDialog()" name="add-question">Ajouter une question</button>
+        </div>
+        <div>
+            <button (click)="saveQuiz()" name="save-game" [disabled]="!gameForm.valid">Enregistrer le quiz</button>
+        </div>
+    </form>
 </div>

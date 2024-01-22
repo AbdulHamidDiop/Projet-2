@@ -10,6 +10,7 @@
     <div *ngIf="questionForm.get('type')?.value === 'QCM'" formGroupName="choices">
         <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i">
             <input type="text" formControlName="text" placeholder="Choice Text" />
+            <label for="isCorrect">Bonne réponse</label>
             <input type="checkbox" formControlName="isCorrect" />
             <button type="button" (click)="removeChoice(i)">Remove</button>
         </div>
