@@ -5,10 +5,21 @@
         <label for="hiddenCheckBox">Le jeu est caché:</label>
         <input type="checkBox" id="hiddenCheckBox" (change)="onCheck(game)" [(ngModel)]="game.isHidden">
         <p>Dernière modification: {{game.lastModification}}</p>
-        <button type="button" id="modifyGameButton" (click)="onModifyButtonClick()">Modifier le jeu</button>
-        <button type="button" id="deleteGameButton" (click)="onDeleteButtonClick()">Supprimer le jeu</button>
+        <input type="button" id="modifyGameButton" (click)="onModifyButtonClick()" value="Modifier le jeu">
+        <input type="button" id="exportGameButton" (click)="onExportButtonClick(game)" value="Exporter le jeu">
+        <input type="button" id="deleteGameButton" (click)="onDeleteButtonClick()" value="Supprimer le jeu">
     </div>
-    <h2>Importer un jeu</h2>
-    <input type="file" accept=".json" (change)="onFileSelected($event)">
-    <button type="button" id="importGameButton" (click)="onImportButtonClick()">Importer le jeu</button>
+    <div>
+        <h2>Importer un jeu</h2>
+        <input type="file" accept=".json" (change)="onFileSelected($event)">
+        <input type="button" id="importGameButton" (click)="onImportButtonClick()" value="Importer le jeu">
+    </div>
+    <div>
+        <h2>Créer un jeu</h2>
+        <input type="button" id="createGameButton" (click)="onCreateButtonClick()" value="Créer un jeu">
+    </div>
+    <div>
+        <h2>Banque de questions</h2>
+        <input type="button" id="questionsData" (click)="onQuestionsButtonClick()" value="Voir les questions">
+    </div>
 </div>

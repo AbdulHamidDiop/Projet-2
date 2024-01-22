@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-admin-page',
@@ -9,7 +10,7 @@ import { Component } from '@angular/core';
 export class AdminPageComponent {
     password: string = '';
     
-    constructor(private http: HttpClient) {}
+    constructor(private http: HttpClient, private router: Router) {}
 
     verifyPassword() {
         this.http.post('http://localhost:3000/verify-password', { password: this.password })
@@ -88,6 +89,18 @@ export class AdminPageComponent {
 
     onModifyButtonClick() {
         
+    }
+
+    onExportButtonClick(game: any) {
+        //get game as json
+    }
+
+    onCreateButtonClick() {
+        //link to create new game
+    }
+
+    onQuestionsButtonClick() {
+        this.router.navigate(["/admin/questions"])
     }
 
     onFileSelected(event: any) {
