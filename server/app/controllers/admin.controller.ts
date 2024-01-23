@@ -90,10 +90,10 @@ export class AdminController {
          *       201:
          *         description: Created
          */
-               this.router.post('/importgame', (req: Request, res: Response) => {
-                res.json(this.adminService.addGame(req.body.game));
-                res.status(HTTP_STATUS_OK);
-            });
+        this.router.post('/importgame', (req: Request, res: Response) => {
+            res.json(this.adminService.addGame(req.body.game));
+            res.status(HTTP_STATUS_OK);
+        });
 
 /**
          * @swagger

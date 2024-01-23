@@ -17,8 +17,16 @@ export class AdminService {
         };
     }
 
-    async addGame(game: Game) {
-        //add game
+    async addGame(game: Game): Promise<Boolean> {
+        try{ 
+            const games: Game[] = await this.getAllGames();
+            games.push(game);
+            await fs.writeFile(QUIZ_PATH, JSON.stringify(games, null, 2), 'utf8');
+            return true;
+        }
+        catch (error) {
+            throw error;
+        }
     }
 
     async getAllGames(): Promise<Game[]> {
@@ -61,8 +69,5 @@ export class AdminService {
             throw error;
         }
     }
-
-    
-
 }
     
