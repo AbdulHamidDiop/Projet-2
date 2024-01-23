@@ -36,15 +36,11 @@ export class CreateQuestionDialogComponent {
     handleQuestionTypeChanges(): void {
         this.questionForm.get('type')?.valueChanges.subscribe((value) => {
             if (value === 'QCM') {
-                this.questionForm.get('answer')?.reset();
-                this.questionForm.get('answer')?.clearValidators();
                 this.questionForm.setControl('choices', this.fb.array([], Validators.minLength(MIN_CHOICES)));
             } else {
                 this.choices.clear();
-                this.questionForm.get('answer')?.setValidators(Validators.required);
                 this.questionForm.removeControl('choices');
             }
-            this.questionForm.get('answer')?.updateValueAndValidity();
         });
     }
 

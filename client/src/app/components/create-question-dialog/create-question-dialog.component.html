@@ -1,25 +1,52 @@
-<form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
-    <select formControlName="type">
-        <option value="QCM">QCM</option>
-        <option value="QRL">QRL</option>
-    </select>
+<div class="container center-container">
+    <form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
+        <div class="center-container"><h1>Créer une question</h1></div>
+        <div name="question-content" class="column-container center-container">
+            <div name="question-info" class="row-container">
+                <mat-form-field class="select">
+                    <mat-label>Type de question</mat-label>
+                    <mat-select formControlName="type">
+                        <mat-option value="QCM">QCM</mat-option>
+                        <mat-option value="QRL">QRL</mat-option>
+                    </mat-select>
+                </mat-form-field>
 
-    <input type="text" formControlName="text" placeholder="Question" />
-    <input type="number" formControlName="points" placeholder="Points" />
+                <mat-form-field>
+                    <mat-label>Question</mat-label>
+                    <input matInput type="text" formControlName="text" />
+                </mat-form-field>
+                <mat-form-field>
+                    <mat-label>Points</mat-label>
+                    <input matInput type="number" formControlName="points" placeholder="Points" />
+                </mat-form-field>
+            </div>
+            <div *ngIf="questionForm.get('type')?.value === 'QCM'" formGroupName="choices" class="choices-container">
+                <h2>Choix de réponse</h2>
 
-    <div *ngIf="questionForm.get('type')?.value === 'QCM'" formGroupName="choices">
-        <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i">
-            <input type="text" formControlName="text" placeholder="Choice Text" />
-            <label for="isCorrect">Bonne réponse</label>
-            <input type="checkbox" formControlName="isCorrect" />
-            <button type="button" (click)="removeChoice(i)">Remove</button>
+                <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i" class="column-container">
+                    <mat-form-field>
+                        <mat-label>texte du choix</mat-label>
+                        <input matInput type="text" formControlName="text" placeholder="Choice Text" />
+                    </mat-form-field>
+                    <mat-checkbox type="checkbox" formControlName="isCorrect">Bonne réponse</mat-checkbox>
+                    <button mat-icon-button (click)="removeChoice(i)">
+                        <mat-icon class="delete-icon">delete</mat-icon>
+                    </button>
+                </div>
+                <div>
+                    <button type="button" (click)="addChoice()" [disabled]="choices.length >= 4">Ajouter un choix</button>
+                </div>
+            </div>
         </div>
-        <button type="button" (click)="addChoice()" [disabled]="choices.length >= 4">Ajouter un choix</button>
-    </div>
 
-    <div *ngIf="questionForm.get('type')?.value === 'QRL'">
-        <input type="text" formControlName="answer" placeholder="Answer" />
-    </div>
-
-    <button type="submit" [disabled]="!questionForm.valid || (questionForm.get('type')?.value === 'QCM' && choices.length <= 0)">Confirmer</button>
-</form>
+        <div class="center-container">
+            <button
+                type="submit"
+                [disabled]="!questionForm.valid || (questionForm.get('type')?.value === 'QCM' && choices.length <= 0)"
+                class="save-button"
+            >
+                Confirmer
+            </button>
+        </div>
+    </form>
+</div>

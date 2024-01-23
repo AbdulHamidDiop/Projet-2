@@ -16,6 +16,7 @@ import { CreateQuestionDialogComponent } from './components/create-question-dial
 import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
+import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
 
 /**
  * Main module that is used in main.ts.
@@ -35,6 +36,7 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
         CreateQuestionDialogComponent,
         PlayAreaComponent,
         SidebarComponent,
+        AdminQuestionComponent,
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [

@@ -1,10 +1,54 @@
 .container {
     height: 100%;
+    padding-left: 15px;
 }
 
-.play-area-container {
-    overflow: auto;
-    flex: 1 1 auto;
+.row-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.column-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+mat-grid-tile {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.questions-display{
+    width: 700px;
+}
+
+.base-input {
+    border-radius: 40px;
+}
+.short-input {
+    width: 500px;
+}
+
+.text-area {
+    width: 500px;
+    max-height: 300px;
+}
+
+.add-button {
+    background-color: rgb(105, 104, 104);
+    margin-left: 5px;
+}
+.add-icon {
+    color: rgb(84, 183, 84);
+}
+
+.save-button {
+    background-color: rgb(84, 183, 84);
+    height: 30px;
+    border-radius: 5px;
+    margin-top: 15px;
 }
 
 #sidebar {
