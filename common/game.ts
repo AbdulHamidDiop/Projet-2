@@ -3,7 +3,9 @@ export interface Choices {
   isCorrect: boolean;
 }
 export interface Question {
+  id: string;
   type?: 'QCM' | 'QRL';
+  lastModification: Date;
   text: string;
   points: number;
   choices: Choices[];

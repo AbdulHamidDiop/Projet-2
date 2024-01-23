@@ -34,8 +34,37 @@ export class QuestionsController {
          *             $ref: '#/definitions/Message'
          */
     this.router.get('/', async (req: Request, res: Response) => {
-        res.json(await this.questionsService.getAllQuestions());
+        res.json(await this.questionsService.sortAllQuestions());
         res.status(HTTP_STATUS_OK);
     });
+
+        /**
+         * @swagger
+         *
+         * /api/admin/questions:
+         *   post:
+         *     description: Delete question from database
+         *     tags:
+         *       - Admin
+         *     requestBody:
+         *         description: Game ID
+         *         required: true
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: string
+         *             example:
+         *               id: 1a2b4c
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       200:
+         *         description: OK
+         *      
+         */
+        this.router.delete('/deletequestion/:id', (req: Request, res: Response) => {
+            res.json(this.questionsService.deleteGameByID(req.params.id));
+            res.status(HTTP_STATUS_OK);
+        });
     }
 }

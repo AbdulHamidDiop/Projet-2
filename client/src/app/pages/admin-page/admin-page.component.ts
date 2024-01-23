@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { Game } from '@common/game';
 
 @Component({
     selector: 'app-admin-page',
@@ -10,8 +11,8 @@ import { Router } from '@angular/router';
 export class AdminPageComponent {    
     constructor(private http: HttpClient, private router: Router) {}
 
-    games: any[];
-    selectedFile: any;
+    games: Game[];
+    selectedFile: File;
 
     getGames() {
         this.http.get("http://localhost:3000/api/admin")
@@ -24,12 +25,12 @@ export class AdminPageComponent {
         this.getGames();
     }
     
-    onCheck(game: any) {
+    onCheck(game: Game) {
         this.http.patch('http://localhost:3000/api/admin/toggleHidden', { id: game.id })
             .subscribe((response: any) => {});
     }
 
-    onDeleteButtonClick(game: any) {
+    onDeleteButtonClick(game: Game) {
         this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`)
             .subscribe((response: any) => {});
     }
@@ -38,7 +39,7 @@ export class AdminPageComponent {
         //link to create new game but with arguments
     }
 
-    onExportButtonClick(game: any) {
+    onExportButtonClick(game: Game) {
         //get game as json
     }
 
