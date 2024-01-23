@@ -1,13 +1,13 @@
 <div class="container">
+    <h1>Page d'admin</h1>
     <div *ngFor="let game of games">
-        <h1>Page d'admin</h1>
         <h2>{{game.title}}</h2>
         <label for="hiddenCheckBox">Le jeu est caché:</label>
         <input type="checkBox" id="hiddenCheckBox" (change)="onCheck(game)" [(ngModel)]="game.isHidden">
         <p>Dernière modification: {{game.lastModification}}</p>
         <input type="button" id="modifyGameButton" (click)="onModifyButtonClick()" value="Modifier le jeu">
         <input type="button" id="exportGameButton" (click)="onExportButtonClick(game)" value="Exporter le jeu">
-        <input type="button" id="deleteGameButton" (click)="onDeleteButtonClick()" value="Supprimer le jeu">
+        <input type="button" id="deleteGameButton" (click)="onDeleteButtonClick(game)" value="Supprimer le jeu">
     </div>
     <div>
         <h2>Importer un jeu</h2>

@@ -9,6 +9,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as swaggerJSDoc from 'swagger-jsdoc';
 import * as swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
+import { QuestionsController } from './controllers/questions.controller';
 
 @Service()
 export class Application {
@@ -20,6 +21,7 @@ export class Application {
         private readonly exampleController: ExampleController,
         private readonly dateController: DateController,
         private readonly adminController: AdminController,
+        private readonly questionsController: QuestionsController
     ) {
         this.app = express();
 
@@ -44,6 +46,7 @@ export class Application {
         this.app.use('/api/example', this.exampleController.router);
         this.app.use('/api/date', this.dateController.router);
         this.app.use('/api/admin', this.adminController.router);
+        this.app.use('/api/admin/questions', this.questionsController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

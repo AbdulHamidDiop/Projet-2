@@ -12,7 +12,9 @@ import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
+
 
 /**
  * Main module that is used in main.ts.
@@ -30,6 +32,7 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
         AdminPageComponent,
         PlayAreaComponent,
         SidebarComponent,
+        QuestionsPageComponent
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [],

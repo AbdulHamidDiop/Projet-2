@@ -120,8 +120,8 @@ export class AdminController {
          *         description: OK
          *      
          */
-    this.router.post('/deletegame', (req: Request, res: Response) => {
-        res.json(this.adminService.deleteGameByID(req.body.id));
+    this.router.delete('/deletegame/:id', (req: Request, res: Response) => {
+        res.json(this.adminService.deleteGameByID(req.params.id));
         res.status(HTTP_STATUS_OK);
     });
     }
