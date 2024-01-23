@@ -67,6 +67,34 @@ export class AdminController {
             res.status(HTTP_STATUS_OK);
         });
 
+               /**
+         * @swagger
+         *
+         * /api/admin/importgame:
+         *   post:
+         *     description: Import new game
+         *     tags:
+         *       - Admin
+         *     requestBody:
+         *         description: password object
+         *         required: true
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: string
+         *             example:
+         *               password: LOF2990-312
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       201:
+         *         description: Created
+         */
+               this.router.post('/importgame', (req: Request, res: Response) => {
+                res.json(this.adminService.addGame(req.body.game));
+                res.status(HTTP_STATUS_OK);
+            });
+
 /**
          * @swagger
          *

@@ -17,6 +17,10 @@ export class AdminService {
         };
     }
 
+    async addGame(game: Game) {
+        //add game
+    }
+
     async getAllGames(): Promise<Game[]> {
         try {
             const data: string = await fs.readFile(QUIZ_PATH, 'utf8');
