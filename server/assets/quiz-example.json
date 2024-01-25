@@ -5,7 +5,6 @@
     "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "lastModification": "2024-01-19T20:55:10.186Z",
-    "isHidden": false,
     "questions": [
       {
         "type": "QCM",
@@ -30,11 +29,6 @@
         ]
       },
       {
-        "type": "QRL",
-        "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
-        "points": 60
-      },
-      {
         "type": "QCM",
         "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
@@ -45,7 +39,7 @@
           },
           {
             "text": "Oui",
-            "isCorrect": null
+            "isCorrect": false
           }
         ]
       }

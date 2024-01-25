@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { Game, Question } from '@common/game';
+import { Choices, Game, Question } from '@common/game';
 
 @Component({
     selector: 'app-admin-page',
@@ -39,13 +39,13 @@ export class AdminPageComponent {
     }
 
     onModifyButtonClick() {
-        //link to create new game but with arguments
+        // link to create new game but with arguments
     }
 
     onExportButtonClick(game: Game) {
-        const {isHidden, ...gameWithoutHidden}: Game = game;
+        const { isHidden, ...gameWithoutHidden }: Game = game;
         const jsonData = JSON.stringify(gameWithoutHidden);
-        const blob = new Blob([jsonData], {type: 'application/json'});
+        const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
@@ -57,75 +57,92 @@ export class AdminPageComponent {
     }
 
     onCreateButtonClick() {
-        //link to create new game
+        // link to create new game
     }
 
     onQuestionsButtonClick() {
         this.router.navigate(['/admin/questions']);
     }
 
-    onFileSelected(event: any) {
-        this.selectedFile = event.target.files[0];
+    onFileSelected(event: Event) {
+        const inputElement = event.target as HTMLInputElement;
+        const selectedFiles = inputElement.files;
+
+        if (selectedFiles && selectedFiles.length > 0) {
+            this.selectedFile = selectedFiles[0];
+        }
     }
 
     verifyIfJSON(): boolean {
         return this.selectedFile && this.selectedFile.type === 'application/json';
     }
 
-    handleFile(jsonArray: any[]) {
-        if (jsonArray.length > 1) {
-            console.log("Veuillez importer qu'un seul jeu à la fois");
-        }
-        else {
-            const attributes: string[] = ["title", "description", "duration", "questions"];
-            const title: string = jsonArray[0]["title"];
-            const description: string = jsonArray[0]["description"];
-            const duration = jsonArray[0]["duration"];
-            const questions: Question[] = jsonArray[0]["questions"];
-            for (const attribute of attributes) {
-                if (!jsonArray[0].hasOwnProperty(attribute)) {
-                    console.log(`The game is missing a ${attribute}`);
-                }
-            }
-            if (title && description && duration && questions) {
-                const game: Game = {id: "1", title: title, description: description, duration: duration, lastModification: new Date(), isHidden: true, questions: questions};
-                this.http.post('http://localhost:3000/api/admin/importgame', { game: game })
-                    .subscribe((response: any) => {
-                    });
-            }
-        }
+    handleFile(jsonArray: unknown) {
+        if (this.isGame(jsonArray)) {
+            const game: Game = jsonArray;
+            this.http.post('http://localhost:3000/api/admin/importgame', { game }).subscribe((response: any) => {});
+        } else console.log(this.isGame(jsonArray));
+    }
+
+    isArrayOfQuestions(questions: Question[]): questions is Question[] {
+        return (
+            Array.isArray(questions) &&
+            questions.every(
+                (question: Question) =>
+                    typeof question.type === 'string' && // Adjusted to handle type as string
+                    (question.type === 'QCM' || question.type === 'QRL') &&
+                    typeof question.text === 'string' &&
+                    typeof question.points === 'number' &&
+                    Array.isArray(question.choices) &&
+                    question.choices.every(
+                        (choice: Choices) => typeof choice.text === 'string',
+                        // (typeof choice.isCorrect === 'boolean' || choice.isCorrect === null )
+                    ),
+            )
+        );
+    }
+
+    isGame(obj: any): obj is Game {
+        return (
+            obj &&
+            typeof obj.id === 'string' &&
+            typeof obj.title === 'string' &&
+            typeof obj.description === 'string' &&
+            typeof obj.duration === 'number' &&
+            typeof obj.lastModification === 'string' &&
+            // typeof obj.isHidden === 'boolean' &&
+            this.isArrayOfQuestions(obj.questions)
+        );
     }
 
     onImportButtonClick() {
         if (this.verifyIfJSON()) {
-            this.readFile(this.selectedFile).then((jsonArray: any[]) => {
+            this.readFile(this.selectedFile).then((jsonArray: unknown) => {
                 this.handleFile(jsonArray);
             });
         } else {
-          console.log('Type de fichier invalide. Veuillez sélectionner un fichier de type JSON.');
-        } 
+            console.log('Type de fichier invalide. Veuillez sélectionner un fichier de type JSON.');
+        }
     }
 
-    private readFile(file: File): Promise<any[]> {
+    private async readFile(file: File): Promise<unknown[]> {
         return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-    
-          reader.onload = () => {
-            try {
-              const jsonContent = JSON.parse(reader.result as string);
-              resolve(jsonContent);
-            } catch (error) {
-              reject(error);
-            }
-          };
-    
-          reader.onerror = (error) => {
-            reject(error);
-          };
-    
-          reader.readAsText(file);
+            const reader = new FileReader();
+
+            reader.onload = () => {
+                try {
+                    const jsonContent = JSON.parse(reader.result as string);
+                    resolve(jsonContent);
+                } catch (error) {
+                    reject(error);
+                }
+            };
+
+            reader.onerror = (error) => {
+                reject(error);
+            };
+
+            reader.readAsText(file);
         });
-      }
-
-
+    }
 }
