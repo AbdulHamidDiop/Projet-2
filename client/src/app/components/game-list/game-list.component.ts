@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { Game, GameService } from '../../services/game.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-game-list',
@@ -11,4 +12,9 @@ export class GameListComponent {
     selectGame(game: Game): void {
         this.gameService.selectGame(game);
     }
+
+    getSelectedGame(): Game {
+        return this.gameService.getSelectedGame();
+    } 
+
 }

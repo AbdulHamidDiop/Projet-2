@@ -7,7 +7,8 @@ import { Game } from '../interfaces/game-props';
 })
 export class GameService {
     games: Game[];
-    private selectedGame: BehaviorSubject<Game | null> = new BehaviorSubject<Game | null>(null);
+    // Modification : Déclaration de selectedGame comme Game directement
+    private selectedGame: Game = {} as Game;
 
     constructor() {
         this.games = [
@@ -20,12 +21,14 @@ export class GameService {
         ];
     }
 
-    getSelectedGame(): BehaviorSubject<Game | null> {
+    // Modification : Modification du type de retour de getSelectedGame à Game
+    getSelectedGame(): Game {
         return this.selectedGame;
     }
 
     selectGame(game: Game): void {
-        this.selectedGame.next(game);
+        this.selectedGame = game;
     }
 }
+
 export { Game };

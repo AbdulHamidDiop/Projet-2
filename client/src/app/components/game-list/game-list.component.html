@@ -1,23 +1,37 @@
 <h2>Création d'une partie</h2>
 
-<div *ngFor="let game of gameService.games" (click)="selectGame(game)">
+<div *ngFor="let game of gameService.games" >
 
     <h3>
-        <a [title]="game.title + ' details'">
+        <a [title]="game.title + ' details'" onclick="selectGame(game)">
             {{ game.title }}
         </a>
     </h3>
 
-    <p *ngIf="game.description">
-        Description: {{ game.description }}
-    </p>
+    <div *ngIf="getSelectedGame() === game">
+        <p *ngIf="game.description">
+            Description: {{ game.description }}
+        </p>
 
-    <button type="button">
-        Tester le jeu
-    </button>
+        <button type="button" (click)="testGame(game)">
+            Tester le jeu
+        </button>
 
-    <button type="button">
-        Lancer une partie
-    </button>
+        <button type="button" (click)="startGame(game)">
+            Lancer une partie
+        </button>
+
+        <h2>Détails du jeu</h2>
+
+        <p>Description du jeu: {{ getSelectedGame().description }}</p>
+        <p>Temps alloué pour répondre aux questions: {{ getSelectedGame().duration }} secondes</p>
+
+        <h3>Liste des questions du questionnaire</h3>
+        <ul>
+            <li *ngFor="let question of getSelectedGame().questions">
+                {{ question }}
+            </li>
+        </ul>
+    </div>
 
 </div>
