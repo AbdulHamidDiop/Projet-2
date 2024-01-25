@@ -8,8 +8,11 @@ import { Game, Question } from '@common/game';
     templateUrl: './admin-page.component.html',
     styleUrls: ['./admin-page.component.scss'],
 })
-export class AdminPageComponent {    
-    constructor(private http: HttpClient, private router: Router) {}
+export class AdminPageComponent {
+    constructor(
+        private http: HttpClient,
+        private router: Router,
+    ) {}
 
     games: Game[];
     selectedFile: File;
@@ -26,13 +29,13 @@ export class AdminPageComponent {
     }
     
     onCheck(game: Game) {
-        this.http.patch('http://localhost:3000/api/admin/toggleHidden', { id: game.id })
-            .subscribe((response: any) => {});
+        this.http.patch('http://localhost:3000/api/admin/toggleHidden', { id: game.id }).subscribe((response: any) => {});
     }
 
     onDeleteButtonClick(game: Game) {
-        this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`)
-            .subscribe((response: any) => {});
+        this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`).subscribe((response: any) => { 
+            window.location.reload();
+        });
     }
 
     onModifyButtonClick() {
@@ -58,36 +61,15 @@ export class AdminPageComponent {
     }
 
     onQuestionsButtonClick() {
-        this.router.navigate(["/admin/questions"]);
+        this.router.navigate(['/admin/questions']);
     }
-
-    private readFile(file: File): Promise<any[]> {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-    
-          reader.onload = () => {
-            try {
-              const jsonContent = JSON.parse(reader.result as string);
-              resolve(jsonContent);
-            } catch (error) {
-              reject(error);
-            }
-          };
-    
-          reader.onerror = (error) => {
-            reject(error);
-          };
-    
-          reader.readAsText(file);
-        });
-      }
 
     onFileSelected(event: any) {
         this.selectedFile = event.target.files[0];
     }
 
     verifyIfJSON(): boolean {
-        return (this.selectedFile && this.selectedFile.type === 'application/json');
+        return this.selectedFile && this.selectedFile.type === 'application/json';
     }
 
     handleFile(jsonArray: any[]) {
@@ -123,4 +105,27 @@ export class AdminPageComponent {
           console.log('Type de fichier invalide. Veuillez sélectionner un fichier de type JSON.');
         } 
     }
+
+    private readFile(file: File): Promise<any[]> {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+    
+          reader.onload = () => {
+            try {
+              const jsonContent = JSON.parse(reader.result as string);
+              resolve(jsonContent);
+            } catch (error) {
+              reject(error);
+            }
+          };
+    
+          reader.onerror = (error) => {
+            reject(error);
+          };
+    
+          reader.readAsText(file);
+        });
+      }
+
+
 }
