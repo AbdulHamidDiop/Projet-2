@@ -17,6 +17,8 @@ import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/adm
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
 import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
+import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
+import { QuestionsBankService } from './services/questions-bank.service';
 
 /**
  * Main module that is used in main.ts.
@@ -37,6 +39,7 @@ import { AdminQuestionComponent } from './components/admin-question/admin-questi
         PlayAreaComponent,
         SidebarComponent,
         AdminQuestionComponent,
+        AdminQuestionsBankComponent,
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [
@@ -48,7 +51,7 @@ import { AdminQuestionComponent } from './components/admin-question/admin-questi
         FormsModule, 
         HttpClientModule
     ],
-    providers: [],
+    providers: [QuestionsBankService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

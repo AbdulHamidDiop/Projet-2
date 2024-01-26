@@ -4,6 +4,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { Game, Question } from '@app/interfaces/game-elements';
 
+const MIN_DURATION = 10;
+const MAX_DURATION = 60;
 @Component({
     selector: 'app-admin-create-game-page',
     templateUrl: './admin-create-game-page.component.html',
@@ -24,7 +26,7 @@ export class AdminCreateGamePageComponent {
         this.gameForm = this.fb.group({
             title: ['', Validators.required],
             description: [''],
-            duration: [null, Validators.required],
+            duration: [null, Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)],
         });
     }
 

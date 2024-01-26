@@ -1,26 +1,42 @@
 .container {
     height: 100%;
-    padding-left: 15px;
+    padding: 15px;
 }
 
+.create-quiz-container {
+    height: 100%;
+}
+.questions-bank-container {
+    max-height: 100%;
+    overflow-y: auto;
+    border-left-color: rgba(128, 128, 128, 0.347);
+    border-left-width: 1px;
+    border-left-style: solid;
+    right: 20px;
+    top: 15px;
+    position: absolute; 
+}
+
+.quiz-questions-container {
+    max-height: 400px;
+    width:90%;
+    overflow-y: auto;
+}
 .row-container {
     display: flex;
     flex-direction: column;
 }
-
 .column-container {
     display: flex;
     flex-direction: row;
     align-items: center;
 }
 
-mat-grid-tile {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.question-container {
+    padding-top: 10px;
 }
 
-.questions-display{
+.questions-display {
     width: 700px;
 }
 
