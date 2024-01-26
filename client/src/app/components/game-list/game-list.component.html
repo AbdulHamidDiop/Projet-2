@@ -1,36 +1,36 @@
-
-<div *ngFor="let game of gameService.games" >
+<div *ngFor="let game of gameService.games">
     <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(game)">
         <mat-expansion-panel-header>
             <mat-panel-title>
-                <h3>
-                    <a [title]="game.title + ' details'" >
-                        {{ game.title }}
-                    </a>
-                </h3>
+                <a [title]="game.title + ' details'">
+                    {{ game.title }}
+                </a>
             </mat-panel-title>
         </mat-expansion-panel-header>
-        <p>
-            <button type="button" [routerLink]="['/playArea', getSelectedGame().id]" (click)="check(game)">
+        <h2>Détails du jeu</h2>
+
+        <p>Description du jeu: {{ getSelectedGame().description }}</p>
+        <p>Temps alloué pour répondre : {{ getSelectedGame().duration }} secondes</p>
+
+        <p>Liste des questions du questionnaire </p>
+        <ul>
+            <li *ngFor="let question of getSelectedGame().questions">
+                {{ question }}
+            </li>
+        </ul>
+
+        <div class="button-row">
+            <button mat-fab extended color="primary" [routerLink]="['/playArea', getSelectedGame().id]"
+                (click)="check(game)">
                 Tester le jeu
             </button>
 
-            <button type="button" routerLink="/waiting" (click)="check(game)">
+            <button mat-fab extended color="primary" routerLink="/waiting" (click)="check(game)">
                 Lancer une partie
             </button>
+        </div>
 
-            <h2>Détails du jeu</h2>
 
-            <p>Description du jeu: {{ getSelectedGame().description }}</p>
-            <p>Temps alloué pour répondre aux questions: {{ getSelectedGame().duration }} secondes</p>
-
-            <h3>Liste des questions du questionnaire</h3>
-            <ul>
-                <li *ngFor="let question of getSelectedGame().questions">
-                    {{ question }}
-                </li>
-            </ul>
-        
     </mat-expansion-panel>
 
 </div>

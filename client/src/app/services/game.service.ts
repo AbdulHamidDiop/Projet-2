@@ -12,10 +12,13 @@ export class GameService {
     constructor() {
         this.games = [
             {
-                title: 'dshjgfhjdfghjdbf',
+                title: 'Mode Aléatoire',
             },
             {
-                title: 'Kamelildort',
+                title: 'QCM',
+            },
+            {
+                title: 'QRL',
             },
         ];
     }
