@@ -57,7 +57,7 @@ export class PlayAreaComponent {
 
     private isCorrect: boolean;
     private answer: string;
-    private readonly timer = 15;
+    private readonly timer = 5;
     private points = 0;
     private score = 0;
     constructor(private readonly timeService: TimeService) {
@@ -66,7 +66,9 @@ export class PlayAreaComponent {
         this.answer = '';
     }
 
+    // Devra être changé plus tard.
     get time(): number {
+        if (this.timeService.time === 0) this.updateScore();
         return this.timeService.time;
     }
 
@@ -139,6 +141,14 @@ export class PlayAreaComponent {
         if (event.button === MouseButton.Left) {
             this.timeService.stopTimer();
             this.timeService.startTimer(this.timer);
+        }
+    }
+
+    getStyle(choice: string) {
+        if (choice === this.answer) {
+            return 'selected';
+        } else {
+            return '';
         }
     }
 }
