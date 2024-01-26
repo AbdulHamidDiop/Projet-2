@@ -4,6 +4,7 @@ import { Game, GameService } from '../../services/game.service';
 @Component({
     selector: 'app-game-list',
     templateUrl: './game-list.component.html',
+    styleUrls: ['game-list.component.scss'],
 })
 export class GameListComponent {
     constructor(public gameService: GameService) {}
@@ -14,11 +15,7 @@ export class GameListComponent {
 
     getSelectedGame(): Game {
         return this.gameService.getSelectedGame();
-    } 
-
-    check(game : Game): void{
-        
     }
 
-
+    check(game: Game): void {}
 }
