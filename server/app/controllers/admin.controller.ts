@@ -209,7 +209,6 @@ export class AdminController {
          *     responses:
          *       200:
          *         description: OK
-         *      
          */
         this.router.delete('/deletegame/:id', (req: Request, res: Response) => {
             res.json(this.adminService.deleteGameByID(req.params.id));

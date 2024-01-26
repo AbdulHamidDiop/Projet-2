@@ -15,11 +15,10 @@ export class AdminService {
         };
     }
 
-    async addGame(game: Game): Promise<boolean> {
+    async addGame(game: Game): Promise<void> {
         const games: Game[] = await this.getAllGames();
         games.push(game);
         await fs.writeFile(QUIZ_PATH, JSON.stringify(games, null, 2), 'utf8');
-        return true;
     }
 
     async getAllGames(): Promise<Game[]> {
@@ -49,4 +48,3 @@ export class AdminService {
         return true;
     }
 }
-    
