@@ -1,0 +1,68 @@
+<div class="container column-container">
+    <div name="create-quiz" class="create-quiz-container">
+        <div><h1>Créer un quiz</h1></div>
+        <form [formGroup]="gameForm">
+            <div name="quiz-header-section">
+                <div name="quiz-name-description" class="row-container">
+                    <mat-form-field class="base-input short-input">
+                        <mat-label>Titre du quiz</mat-label>
+                        <input matInput type="text" id="title" formControlName="title" />
+                    </mat-form-field>
+
+                    <mat-form-field class="base-input text-area">
+                        <mat-label>Description:</mat-label>
+                        <textarea matInput id="description" formControlName="description"></textarea>
+                    </mat-form-field>
+                </div>
+
+                <div name="qcm-duration">
+                    <mat-form-field class="base-input number-input">
+                        <mat-label>Durée des QCM:</mat-label>
+                        <input matInput type="number" id="durationInput" formControlName="duration" list="timeChoices" />
+                    </mat-form-field>
+                    <datalist id="timeChoices">
+                        <option value="10"></option>
+                        <option value="20"></option>
+                        <option value="30"></option>
+                        <option value="40"></option>
+                        <option value="50"></option>
+                        <option value="60"></option>
+                    </datalist>
+                </div>
+            </div>
+
+            <mat-divider></mat-divider>
+            <div name="quiz-questions-section" class="questions-display">
+                <div class="column-container">
+                    <h1>Questions</h1>
+                    <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
+                        <mat-icon class="add-icon">add</mat-icon>
+                    </button>
+                </div>
+
+                <div name="quiz-questions-container" class="quiz-questions-container">
+                    <mat-accordion 
+                    cdkDropList 
+                    [cdkDropListData]="questions"
+                    #questionsList="cdkDropList" 
+                    [cdkDropListConnectedTo]="[questionsBankList]"
+                    (cdkDropListDropped)="drop($event)">
+                        <div *ngFor="let question of questions" cdkDrag class="question-container">
+                            <app-admin-question [question]="question"></app-admin-question>
+                        </div>
+                    </mat-accordion>
+                </div>
+            </div>
+
+            <div>
+                <button (click)="saveQuiz()" name="save-game" [disabled]="!gameForm.valid || questions.length <= 0" class="save-button">
+                    Enregistrer le quiz
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div name="questions-bank" class="questions-bank-container">
+        <app-admin-questions-bank [questionsList]="questionsList"></app-admin-questions-bank>
+    </div>
+</div>

@@ -7,14 +7,20 @@ import { PlayAreaComponent } from '@app/components/play-area/play-area.component
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
+import { AppReactiveFormsModule } from '@app/modules/reactive-forms.module';
 import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
+import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { GameListComponent } from './components/game-list/game-list.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
+import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
+import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
+import { QuestionsBankService } from './services/questions-bank.service';
 import { GameService } from './services/game.service';
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
 
@@ -32,14 +38,27 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
         MainPageComponent,
         MaterialPageComponent,
         AdminPageComponent,
+        AdminCreateGamePageComponent,
+        CreateQuestionDialogComponent,
         PlayAreaComponent,
         SidebarComponent,
         GameListComponent,
         WaitingPageComponent,
         QuestionsPageComponent
+        AdminQuestionComponent,
+        AdminQuestionsBankComponent,
     ],
-    imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
-    providers: [GameService],
+    // eslint-disable-next-line prettier/prettier
+    imports: [
+        AppMaterialModule, 
+        AppRoutingModule, 
+        AppReactiveFormsModule, 
+        BrowserAnimationsModule, 
+        BrowserModule, 
+        FormsModule, 
+        HttpClientModule
+    ],
+    providers: [GameServiceQuestionsBankService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

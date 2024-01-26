@@ -1,0 +1,18 @@
+<div class="container">
+    <h3>Banque de questions</h3>
+
+    <mat-button-toggle-group multiple>
+        <mat-button-toggle value="QCM" (change)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
+        <mat-button-toggle value="QRL" (change)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <mat-accordion
+        cdkDropList 
+        [cdkDropListData]="displayQuestions"
+        #questionsBankList="cdkDropList" 
+        [cdkDropListConnectedTo]="[questionsList]">
+        <div *ngFor="let question of displayQuestions" class="question-container">
+            <app-admin-question [question]="question" cdkDrag></app-admin-question>
+        </div>
+    </mat-accordion>
+</div>
