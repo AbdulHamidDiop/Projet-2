@@ -1,4 +1,5 @@
 import { AdminService } from '@app/services/admin.service';
+import { QuestionsService } from '@app/services/questions.service';
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';
 
@@ -8,7 +9,10 @@ const HTTP_STATUS_OK = 200;
 export class AdminController {
     router: Router;
 
-    constructor(private readonly adminService: AdminService) {
+    constructor(
+        private readonly adminService: AdminService,
+        private readonly questionsService: QuestionsService,
+    ) {
         this.configureRouter();
     }
 
@@ -34,7 +38,7 @@ export class AdminController {
          *             $ref: '#/definitions/Message'
          */
         this.router.get('/', async (req: Request, res: Response) => {
-            res.json(await this.adminService.getAllGames());
+            res.json(await this.questionsService.getAllGames());
             res.status(HTTP_STATUS_OK);
         });
 
@@ -155,7 +159,7 @@ export class AdminController {
          */
 
         this.router.post('/importgame', (req: Request, res: Response) => {
-            res.json(this.adminService.addGame(req.body.game));
+            res.json(this.questionsService.addGame(req.body.game));
             res.status(HTTP_STATUS_OK);
         });
 
@@ -183,11 +187,11 @@ export class AdminController {
          *         description: OK
          */
         this.router.patch('/togglehidden', (req: Request, res: Response) => {
-            res.json(this.adminService.toggleHidden(req.body.id));
+            res.json(this.questionsService.toggleGameHidden(req.body.id));
             res.status(HTTP_STATUS_OK);
         });
 
-    /**
+        /**
          * @swagger
          *
          * /api/admin/deletegame:
@@ -211,7 +215,7 @@ export class AdminController {
          *         description: OK
          */
         this.router.delete('/deletegame/:id', (req: Request, res: Response) => {
-            res.json(this.adminService.deleteGameByID(req.params.id));
+            res.json(this.questionsService.deleteGameByID(req.params.id));
             res.status(HTTP_STATUS_OK);
         });
     }
