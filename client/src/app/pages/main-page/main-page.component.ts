@@ -24,6 +24,7 @@ export class MainPageComponent {
             .subscribe((response: any) => {
                 if (response.body === "true") {
                     this.router.navigate(['/admin']);
+                    this.communicationService.updateSharedVariable(true);
                 } else {
                     alert('Incorrect password');
                 }
