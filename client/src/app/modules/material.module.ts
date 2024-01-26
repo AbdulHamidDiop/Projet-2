@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 // import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
-// import { MatButtonToggleModule } from '@angular/material/button-toggle';
 import { MatCardModule } from '@angular/material/card';
 // import { MatCheckboxModule } from '@angular/material/checkbox';
 // import { MatChipsModule } from '@angular/material/chips';
@@ -27,6 +26,7 @@ import { MatRadioModule } from '@angular/material/radio';
 // import { MatStepperModule } from '@angular/material/stepper';
 // import { MatTableModule } from '@angular/material/table';
 // import { MatTabsModule } from '@angular/material/tabs';
+import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -45,7 +45,7 @@ const modules = [
     // MatGridListModule,
     MatIconModule,
     // MatInputModule,
-    // MatListModule,
+    MatListModule,
     // MatMenuModule,
     // MatPaginatorModule,
     // MatProgressBarModule,

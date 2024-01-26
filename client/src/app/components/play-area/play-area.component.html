@@ -1,13 +1,29 @@
 <div id="grid-container">
-    <p>Section de jeu!</p>
     <section id="timer-container">
         <h2>Débutez une minuterie de 5 secondes</h2>
-        <button (click)="mouseHitDetect($event)">Commencer</button>
-        <p *ngIf="time">Temps restant : {{ time }}</p>
+        <button mat-button (click)="mouseHitDetect($event)">Commencer</button>
     </section>
 
-    <div id="position-display">
-        <p>Appuyez sur une touche du clavier pour la détecter</p>
-        <p *ngIf="buttonPressed !== ''"> Touche : {{ buttonPressed }}</p>
-    </div>
+    <section id="question-container">
+        <h2>Question : {{ this.question.text }}</h2>
+        <p>Vaut {{ this.question.points }} points.</p>
+        <p>Score du joueur : {{ this.playerScore }}</p>
+        <button mat-button routerLink="/createGame">Abandonner</button>
+        <button mat-button (click)="updateScore()">Confirmer</button>
+        <p>Temps restant : {{ time }}</p>
+        <mat-selection-list #choices>
+            <mat-list-item (click)="handleQCMChoice(choice.text, choice.isCorrect)" *ngFor="let choice of question.choices; let index = index">
+                <mat-list-option
+                    #option
+                    [selected]="isChoice(choice.text)"
+                    (keydown)="$event.stopPropagation(); buttonDetect($event)"
+                    (keyup)="$event.stopPropagation()"
+                >
+                    <span>
+                        Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>
+                    </span>
+                </mat-list-option>
+            </mat-list-item>
+        </mat-selection-list>
+    </section>
 </div>
