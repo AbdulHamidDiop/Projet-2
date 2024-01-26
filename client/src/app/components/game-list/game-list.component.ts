@@ -17,5 +17,11 @@ export class GameListComponent {
         return this.gameService.getSelectedGame();
     }
 
-    check(game: Game): void {}
+    check(game : Game): void{
+        this.gameService.checkGame(game.id).subscribe(game => {
+            if (game.isHidden || game === null) {
+              this.getSelectedGame().unavailable = true;
+            } 
+          });
+    }
 }

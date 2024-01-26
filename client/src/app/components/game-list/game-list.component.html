@@ -1,5 +1,5 @@
 <div *ngFor="let game of gameService.games">
-    <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(game)">
+    <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(getSelectedGame())">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 <a [title]="game.title + ' details'">
@@ -21,11 +21,11 @@
 
         <div class="button-row">
             <button mat-fab extended color="primary" [routerLink]="['/playArea', getSelectedGame().id]"
-                (click)="check(game)">
+            (click)="check(getSelectedGame())">
                 Tester le jeu
             </button>
 
-            <button mat-fab extended color="primary" routerLink="/waiting" (click)="check(game)">
+            <button mat-fab extended color="primary" routerLink="/waiting" (click)="check(getSelectedGame())">
                 Lancer une partie
             </button>
         </div>

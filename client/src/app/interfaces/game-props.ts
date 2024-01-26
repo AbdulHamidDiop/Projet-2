@@ -20,4 +20,6 @@ export interface Game {
     duration?: number;
     lastModification?: Date;
     questions?: Question[];
+    isHidden?: boolean;
+    unavailable?: boolean;
 }

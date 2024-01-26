@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Game } from '../interfaces/game-props';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -9,7 +11,7 @@ export class GameService {
     // Modification : Déclaration de selectedGame comme Game directement
     private selectedGame: Game = {} as Game;
 
-    constructor() {
+    constructor(private http: HttpClient) {
         this.games = [
             {
                 title: 'Mode Aléatoire',
@@ -31,6 +33,10 @@ export class GameService {
     selectGame(game: Game): void {
         this.selectedGame = game;
     }
+
+    checkGame(id: string | undefined): Observable<Game> {
+        return this.http.get<Game>(`/api/games/${id}`);
+      }
 }
 
 export { Game };
