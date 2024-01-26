@@ -17,4 +17,11 @@ export class GameListComponent {
         return this.gameService.getSelectedGame();
     } 
 
+    testGame(game : Game): void{
+    }
+
+    startGame(game : Game){
+
+    }
+
 }

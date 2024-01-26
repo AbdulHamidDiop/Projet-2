@@ -9,9 +9,6 @@
     </h3>
 
     <div *ngIf="getSelectedGame() === game">
-        <p *ngIf="game.description">
-            Description: {{ game.description }}
-        </p>
 
         <button type="button" (click)="testGame(game)">
             Tester le jeu
