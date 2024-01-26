@@ -13,9 +13,11 @@ import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { GameListComponent } from './components/game-list/game-list.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
+import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
 import { GameService } from './services/game.service';
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
+
 /**
  * Main module that is used in main.ts.
  * All automatically generated components will appear in this module.
@@ -34,6 +36,7 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
         SidebarComponent,
         GameListComponent,
         WaitingPageComponent,
+        QuestionsPageComponent
     ],
     imports: [AppMaterialModule, AppRoutingModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [GameService],

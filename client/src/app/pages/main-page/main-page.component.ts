@@ -1,5 +1,6 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@common/message';
 import { BehaviorSubject } from 'rxjs';
@@ -14,7 +15,24 @@ export class MainPageComponent {
     readonly title: string = 'LOG2990';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private readonly communicationService: CommunicationService) {}
+    constructor(private readonly communicationService: CommunicationService, private router: Router, private http: HttpClient) {}
+
+    userInput:string = "";
+
+    verifyPassword() {
+        this.http.post('http://localhost:3000/api/admin/password', { password: this.userInput })
+            .subscribe((response: any) => {
+                if (response.body === "true") {
+                    this.router.navigate(['/admin']);
+                } else {
+                    alert('Incorrect password');
+                }
+            });
+    }
+
+    onButtonClick() {
+        this.verifyPassword();
+      }
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {

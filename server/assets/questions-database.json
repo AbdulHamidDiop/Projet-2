@@ -1,0 +1,50 @@
+[
+    {
+      "id": "1",
+      "type": "QCM",
+      "lastModification": "2024-01-18T20:55:10.186Z",
+      "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+      "points": 40,
+      "choices": [
+        {
+          "text": "var",
+          "isCorrect": true
+        },
+        {
+          "text": "self",
+          "isCorrect": false
+        },
+        {
+          "text": "this",
+          "isCorrect": true
+        },
+        {
+          "text": "int"
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "type": "QRL",
+      "lastModification": "2024-01-19T20:55:10.186Z",
+      "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
+      "points": 60
+    },
+    {
+      "id": "3",
+      "type": "QCM",
+      "lastModification": "2024-01-17T20:55:10.186Z",
+      "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+      "points": 20,
+      "choices": [
+        {
+          "text": "Non",
+          "isCorrect": true
+        },
+        {
+          "text": "Oui",
+          "isCorrect": null
+        }
+      ]
+    }
+  ]
