@@ -41,8 +41,13 @@
                 </div>
 
                 <div name="quiz-questions-container" class="quiz-questions-container">
-                    <mat-accordion cdkDropList>
-                        <div *ngFor="let question of questions" cdkDrag class="question-container" >
+                    <mat-accordion 
+                    cdkDropList 
+                    [cdkDropListData]="questions"
+                    #questionsList="cdkDropList" 
+                    [cdkDropListConnectedTo]="[questionsBankList]"
+                    (cdkDropListDropped)="drop($event)">
+                        <div *ngFor="let question of questions" cdkDrag class="question-container">
                             <app-admin-question [question]="question"></app-admin-question>
                         </div>
                     </mat-accordion>
@@ -58,6 +63,6 @@
     </div>
 
     <div name="questions-bank" class="questions-bank-container">
-        <app-admin-questions-bank></app-admin-questions-bank>
+        <app-admin-questions-bank [questionsList]="questionsList"></app-admin-questions-bank>
     </div>
 </div>

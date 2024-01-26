@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
+import { Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { Game, Question } from '@app/interfaces/game-elements';
 
@@ -12,6 +14,9 @@ const MAX_DURATION = 60;
     styleUrls: ['./admin-create-game-page.component.scss'],
 })
 export class AdminCreateGamePageComponent {
+    @ViewChild(AdminQuestionsBankComponent) questionsBankComponent!: AdminQuestionsBankComponent;
+    questionsBankList!: CdkDropList;
+
     gameForm: FormGroup;
     game: Game;
     questions: Question[] = [];
@@ -20,6 +25,12 @@ export class AdminCreateGamePageComponent {
         public dialog: MatDialog,
         private fb: FormBuilder,
     ) {}
+
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+    ngAfterViewInit() {
+        // Access the cdkDropList from the child component after view initialization
+        this.questionsBankList = this.questionsBankComponent.questionsBankList;
+    }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit(): void {
@@ -38,6 +49,15 @@ export class AdminCreateGamePageComponent {
                 this.questions.push(result);
             }
         });
+    }
+
+    drop(event: CdkDragDrop<Question[]>) {
+        if (event.previousContainer === event.container) {
+            moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+        } else {
+            transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+            console.log(this.questions);
+        }
     }
 
     saveQuiz(): void {
