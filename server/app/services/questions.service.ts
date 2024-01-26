@@ -36,6 +36,8 @@ export class QuestionsService {
         return games.find((game) => game.id === id);
     }
 
+    // TODO ajouter delte, modify, get et add question
+
     async toggleGameHidden(id: string): Promise<boolean> {
         const games: Game[] = await this.getAllGames();
         const updatedGames: Game[] = games.map((game) =>
