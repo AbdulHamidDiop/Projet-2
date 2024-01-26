@@ -7,12 +7,15 @@
     </mat-button-toggle-group>
 
     <mat-accordion
-        cdkDropList 
+        cdkDropList
         [cdkDropListData]="displayQuestions"
-        #questionsBankList="cdkDropList" 
-        [cdkDropListConnectedTo]="[questionsList]">
-        <div *ngFor="let question of displayQuestions" class="question-container">
-            <app-admin-question [question]="question" cdkDrag></app-admin-question>
+        #questionsBankList="cdkDropList"
+        [cdkDropListConnectedTo]="[questionsList]"
+        (cdkDropListDropped)="dropQuestion($event)"
+    >
+        <div *ngIf="displayQuestions.length === 0" class="placeholder">Déplacer les questions à ne pas rajouter au quiz ici</div>
+        <div *ngFor="let question of displayQuestions; index as order" cdkDrag class="question-container">
+            <app-admin-question [question]="question" [index]="order + 1"></app-admin-question>
         </div>
     </mat-accordion>
 </div>

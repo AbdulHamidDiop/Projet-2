@@ -2,9 +2,12 @@ import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Question } from '@app/interfaces/game-elements';
+import { multipleOfTenValidator } from './validator-multiple10';
 
 const MIN_CHOICES = 2;
 const MAX_CHOICES = 4;
+const MIN_POINTS = 10;
+const MAX_POINTS = 100;
 
 @Component({
     selector: 'app-create-question-dialog',
@@ -22,7 +25,7 @@ export class CreateQuestionDialogComponent {
         this.questionForm = this.fb.group({
             type: ['', Validators.required],
             text: ['', Validators.required],
-            points: ['', [Validators.required, Validators.min(1)]],
+            points: ['', [Validators.required, Validators.min(MIN_POINTS), Validators.max(MAX_POINTS), multipleOfTenValidator]],
             choices: this.fb.array([], Validators.minLength(MIN_CHOICES)),
             answer: [''],
         });

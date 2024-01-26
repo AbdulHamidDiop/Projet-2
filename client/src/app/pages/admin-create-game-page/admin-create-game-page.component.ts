@@ -1,5 +1,5 @@
 import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
-import { Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
@@ -24,12 +24,14 @@ export class AdminCreateGamePageComponent {
     constructor(
         public dialog: MatDialog,
         private fb: FormBuilder,
+        private cd: ChangeDetectorRef, // to avoid ExpressionChangedAfterItHasBeenCheckedError
     ) {}
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         // Access the cdkDropList from the child component after view initialization
         this.questionsBankList = this.questionsBankComponent.questionsBankList;
+        this.cd.detectChanges();
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
@@ -37,7 +39,7 @@ export class AdminCreateGamePageComponent {
         this.gameForm = this.fb.group({
             title: ['', Validators.required],
             description: [''],
-            duration: [null, Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)],
+            duration: [null, [Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)]],
         });
     }
 
@@ -51,12 +53,11 @@ export class AdminCreateGamePageComponent {
         });
     }
 
-    drop(event: CdkDragDrop<Question[]>) {
+    dropQuestion(event: CdkDragDrop<Question[]>) {
         if (event.previousContainer === event.container) {
             moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
         } else {
             transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
-            console.log(this.questions);
         }
     }
 

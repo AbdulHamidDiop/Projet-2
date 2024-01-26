@@ -3,7 +3,7 @@
     [ngClass]="{'container': true, 'question-type-qcm': question.type === 'QCM', 'question-type-qrl': question.type === 'QRL'}"
 >
     <mat-expansion-panel-header>
-        <mat-panel-title> {{ question.text }} </mat-panel-title>
+        <mat-panel-title> {{index}} — {{ question.text }} </mat-panel-title>
         <mat-panel-description> {{question.type}}‎ ‎ {{question.points}} pts </mat-panel-description>
     </mat-expansion-panel-header>
     

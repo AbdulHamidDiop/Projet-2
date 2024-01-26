@@ -8,4 +8,5 @@ import { Question } from './../../interfaces/game-elements';
 })
 export class AdminQuestionComponent {
     @Input() question: Question;
+    @Input() index?: number;
 }
