@@ -1,23 +1,21 @@
 
 <div *ngFor="let game of gameService.games" >
-    <mat-expansion-panel hideToggle>
+    <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(game)">
         <mat-expansion-panel-header>
             <mat-panel-title>
                 <h3>
-                    <a [title]="game.title + ' details'" (click)="selectGame(game)">
+                    <a [title]="game.title + ' details'" >
                         {{ game.title }}
                     </a>
                 </h3>
             </mat-panel-title>
-            <mat-panel-description>
-            </mat-panel-description>
         </mat-expansion-panel-header>
         <p>
-            <button type="button" (click)="testGame(game)">
+            <button type="button" [routerLink]="['/playArea', getSelectedGame().id]" (click)="check(game)">
                 Tester le jeu
             </button>
 
-            <button type="button" routerLink="/waiting">
+            <button type="button" routerLink="/waiting" (click)="check(game)">
                 Lancer une partie
             </button>
 

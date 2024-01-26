@@ -13,8 +13,9 @@ export interface Question {
     choices: Choices[];
 }
 export interface Game {
-    id?: string;
+    id?: string; 
     title: string;
+    pin?: string;
     description?: string;
     duration?: number;
     lastModification?: Date;
