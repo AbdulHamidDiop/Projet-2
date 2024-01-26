@@ -44,7 +44,7 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
         SidebarComponent,
         GameListComponent,
         WaitingPageComponent,
-        QuestionsPageComponent
+        QuestionsPageComponent,
         AdminQuestionComponent,
         AdminQuestionsBankComponent,
     ],
@@ -58,7 +58,7 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
         FormsModule, 
         HttpClientModule
     ],
-    providers: [GameServiceQuestionsBankService],
+    providers: [GameService, QuestionsBankService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
