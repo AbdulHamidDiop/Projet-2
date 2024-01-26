@@ -1,34 +1,38 @@
-<h2>Création d'une partie</h2>
 
 <div *ngFor="let game of gameService.games" >
+    <mat-expansion-panel hideToggle>
+        <mat-expansion-panel-header>
+            <mat-panel-title>
+                <h3>
+                    <a [title]="game.title + ' details'" (click)="selectGame(game)">
+                        {{ game.title }}
+                    </a>
+                </h3>
+            </mat-panel-title>
+            <mat-panel-description>
+            </mat-panel-description>
+        </mat-expansion-panel-header>
+        <p>
+            <button type="button" (click)="testGame(game)">
+                Tester le jeu
+            </button>
 
-    <h3>
-        <a [title]="game.title + ' details'" onclick="selectGame(game)">
-            {{ game.title }}
-        </a>
-    </h3>
+            <button type="button" routerLink="/waiting">
+                Lancer une partie
+            </button>
 
-    <div *ngIf="getSelectedGame() === game">
+            <h2>Détails du jeu</h2>
 
-        <button type="button" (click)="testGame(game)">
-            Tester le jeu
-        </button>
+            <p>Description du jeu: {{ getSelectedGame().description }}</p>
+            <p>Temps alloué pour répondre aux questions: {{ getSelectedGame().duration }} secondes</p>
 
-        <button type="button" (click)="startGame(game)">
-            Lancer une partie
-        </button>
-
-        <h2>Détails du jeu</h2>
-
-        <p>Description du jeu: {{ getSelectedGame().description }}</p>
-        <p>Temps alloué pour répondre aux questions: {{ getSelectedGame().duration }} secondes</p>
-
-        <h3>Liste des questions du questionnaire</h3>
-        <ul>
-            <li *ngFor="let question of getSelectedGame().questions">
-                {{ question }}
-            </li>
-        </ul>
-    </div>
+            <h3>Liste des questions du questionnaire</h3>
+            <ul>
+                <li *ngFor="let question of getSelectedGame().questions">
+                    {{ question }}
+                </li>
+            </ul>
+        
+    </mat-expansion-panel>
 
 </div>

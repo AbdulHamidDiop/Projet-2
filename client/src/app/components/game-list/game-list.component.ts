@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { Game, GameService } from '../../services/game.service';
-import { BehaviorSubject } from 'rxjs';
 
 @Component({
     selector: 'app-game-list',
