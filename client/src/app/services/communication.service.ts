@@ -1,7 +1,7 @@
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Message } from '@common/message';
-import { Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 
@@ -24,4 +24,12 @@ export class CommunicationService {
     private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
         return () => of(result as T);
     }
+
+    private sharedVariableSubject = new BehaviorSubject<boolean>(false);
+    sharedVariable$ = this.sharedVariableSubject.asObservable();
+
+    updateSharedVariable(newData: boolean) {
+        this.sharedVariableSubject.next(newData);
+    }
+
 }

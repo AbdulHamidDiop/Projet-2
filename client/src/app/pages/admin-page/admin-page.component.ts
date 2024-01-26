@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommunicationService } from '@app/services/communication.service';
 import { Choices, Game, Question } from '@common/game';
 
 @Component({
@@ -12,10 +13,12 @@ export class AdminPageComponent {
     constructor(
         private http: HttpClient,
         private router: Router,
+        private communicationService: CommunicationService
     ) {}
 
     games: Game[];
     selectedFile: File;
+    isAuthentificated: boolean;
 
     getGames() {
         this.http.get("http://localhost:3000/api/admin")
@@ -26,6 +29,12 @@ export class AdminPageComponent {
 
     ngOnInit() {
         this.getGames();
+        this.communicationService.sharedVariable$.subscribe((data) => {
+            this.isAuthentificated = data;
+        });
+        if (!this.isAuthentificated) {
+            this.router.navigate(["/home"])
+        }
     }
     
     onCheck(game: Game) {
