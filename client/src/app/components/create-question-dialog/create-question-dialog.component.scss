@@ -40,6 +40,19 @@
     margin-top: 10px;
 }
 
-#position-display {
-    border: 1px dashed blue;
+.choices-container {
+    padding-top: 10px;
 }
+
+.is-correct-instruction{
+    color: grey;
+    font-style: italic;
+}
+
+.drag-icon {
+    color: rgb(62, 62, 62);
+}
+.drag-icon:hover {
+    cursor: grab;
+}
+

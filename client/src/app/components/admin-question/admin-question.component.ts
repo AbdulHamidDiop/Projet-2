@@ -1,5 +1,7 @@
-import { Component, Input } from '@angular/core';
-import { Question } from './../../interfaces/game-elements';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
+import { Question } from '@app/interfaces/game-elements';
 
 @Component({
     selector: 'app-admin-question',
@@ -9,4 +11,30 @@ import { Question } from './../../interfaces/game-elements';
 export class AdminQuestionComponent {
     @Input() question: Question;
     @Input() index?: number;
+    @Input() editable?: boolean = false;
+    @Output() deleteRequest = new EventEmitter<number>();
+    @Output() saveRequest = new EventEmitter<Question>();
+
+    constructor(public dialog: MatDialog) {}
+
+    openDialog(): void {
+        const questionData: Question = this.question ? this.question : ({} as Question);
+
+        const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {
+            data: { question: questionData },
+        });
+
+        dialogRef.afterClosed().subscribe((result: Question) => {
+            if (result) {
+                this.question = result;
+                this.saveRequest.emit(this.question);
+            }
+        });
+    }
+
+    deleteQuestion(): void {
+        if (this.index !== undefined) {
+            this.deleteRequest.emit(this.index);
+        }
+    }
 }

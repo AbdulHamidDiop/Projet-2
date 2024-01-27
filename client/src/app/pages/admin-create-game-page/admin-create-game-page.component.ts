@@ -61,6 +61,16 @@ export class AdminCreateGamePageComponent {
         }
     }
 
+    handleDeleteQuestion(index: number): void {
+        this.questions.splice(index);
+    }
+
+    handleSaveQuestion(updatedQuestion: Question, index: number): void {
+        if (index >= 0 && index < this.questions.length) {
+            this.questions[index] = updatedQuestion;
+        }
+    }
+
     saveQuiz(): void {
         this.game = {
             id: '0',

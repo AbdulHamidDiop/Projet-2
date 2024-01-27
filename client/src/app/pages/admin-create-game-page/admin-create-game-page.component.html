@@ -50,7 +50,13 @@
                     >
                         <div *ngIf="questions.length === 0" class="placeholder">Rajouter les questions de la banque ici</div>
                         <div *ngFor="let question of questions; index as order" cdkDrag class="question-container">
-                            <app-admin-question [question]="question" [index]="order + 1"></app-admin-question>
+                            <app-admin-question
+                                [question]="question"
+                                [index]="order + 1"
+                                [editable]="true"
+                                (deleteRequest)="handleDeleteQuestion(order)"
+                                (saveRequest)="handleSaveQuestion($event, order)"
+                            ></app-admin-question>
                         </div>
                     </mat-accordion>
                 </div>

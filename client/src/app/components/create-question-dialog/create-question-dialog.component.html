@@ -21,17 +21,22 @@
                 </mat-form-field>
             </div>
             <div *ngIf="questionForm.get('type')?.value === 'QCM'" formGroupName="choices" class="choices-container">
-                <h2>Choix de réponse</h2>
-
-                <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i" class="column-container">
-                    <mat-form-field>
-                        <mat-label>texte du choix</mat-label>
-                        <input matInput type="text" formControlName="text" placeholder="Choice Text" />
-                    </mat-form-field>
-                    <mat-checkbox type="checkbox" formControlName="isCorrect">Bonne réponse</mat-checkbox>
-                    <button mat-icon-button (click)="removeChoice(i)">
-                        <mat-icon class="delete-icon">delete</mat-icon>
-                    </button>
+                <h3>Choix de réponse</h3>
+                <p class="is-correct-instruction">cochez pour indiquer une bonne réponse</p>
+                <mat-divider></mat-divider>
+                <div name="choices-list" class="choices-container" cdkDropList (cdkDropListDropped)="dropChoice($event)">
+                    <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i" class="column-container" cdkDrag>
+                        <mat-icon class="drag-icon">drag_indicator</mat-icon>
+                        {{ i + 1 }}
+                        <mat-form-field>
+                            <mat-label>texte du choix</mat-label>
+                            <input matInput type="text" formControlName="text" placeholder="texte du choix" />
+                        </mat-form-field>
+                        <mat-checkbox type="checkbox" formControlName="isCorrect"></mat-checkbox>
+                        <button mat-icon-button (click)="removeChoice(i)">
+                            <mat-icon class="delete-icon">delete</mat-icon>
+                        </button>
+                    </div>
                 </div>
                 <div>
                     <button type="button" (click)="addChoice()" [disabled]="choices.length >= 4">Ajouter un choix</button>
