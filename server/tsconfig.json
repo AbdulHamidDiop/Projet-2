@@ -2,8 +2,10 @@
     "compilerOptions": {
         "baseUrl": "./",
         "target": "es6",
-        "types": ["reflect-metadata", "@types/mocha", "mocha"],
-        "module": "commonjs",
+        "types": ["reflect-metadata", "@types/mocha", "mocha", "node"],
+        "module": "CommonJS",
+        "lib": ["ESNext"],
+        "esModuleInterop": true,
         "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "out",

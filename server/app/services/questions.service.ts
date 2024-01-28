@@ -21,6 +21,12 @@ export class QuestionsService {
 
     async addGame(game: Game): Promise<void> {
         const games: Game[] = await this.getAllGames();
+        if (games.find((g) => g.id === game.id)) {
+            games.splice(
+                games.findIndex((g) => g.id === game.id),
+                1,
+            );
+        }
         games.push(game);
         await fs.writeFile(QUIZ_PATH, JSON.stringify(games, null, 2), 'utf8');
     }
@@ -37,6 +43,17 @@ export class QuestionsService {
     }
 
     // TODO ajouter delte, modify, get et add question
+    async addQuestion(question: Question): Promise<void> {
+        const questions: Question[] = await this.getAllQuestions();
+        if (questions.find((q) => q.id === question.id)) {
+            questions.splice(
+                questions.findIndex((q) => q.id === question.id),
+                1,
+            );
+        }
+        questions.push(question);
+        await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
+    }
 
     async toggleGameHidden(id: string): Promise<boolean> {
         const games: Game[] = await this.getAllGames();

@@ -1,7 +1,7 @@
 import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, ViewChild } from '@angular/core';
-import { Question } from '@app/interfaces/game-elements';
-import { QuestionsBankService } from '@app/services/questions-bank.service';
+import { Question } from '@common/game';
+import { QuestionsService } from './../../../../../server/app/services/questions.service';
 
 @Component({
     selector: 'app-admin-questions-bank',
@@ -16,8 +16,8 @@ export class AdminQuestionsBankComponent {
     displayQuestions: Question[] = [];
     selectedTypes: Set<string> = new Set(['QCM', 'QRL']);
 
-    constructor(public questionsBankService: QuestionsBankService) {
-        this.questionsBankService.getQuestions().subscribe((questions) => {
+    constructor(public questionsBankService: QuestionsService) {
+        this.questionsBankService.getAllQuestions().then((questions) => {
             this.questions = questions;
             this.updateDisplayQuestions();
         });
@@ -57,7 +57,7 @@ export class AdminQuestionsBankComponent {
     }
 
     reloadQuestions(): void {
-        this.questionsBankService.getQuestions().subscribe((questions) => {
+        this.questionsBankService.getAllQuestions().then((questions) => {
             this.questions = questions;
             this.updateDisplayQuestions();
         });

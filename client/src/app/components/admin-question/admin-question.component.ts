@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
-import { Question } from '@app/interfaces/game-elements';
+import { Question } from '@common/game';
 
 @Component({
     selector: 'app-admin-question',
