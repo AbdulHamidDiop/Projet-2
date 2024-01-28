@@ -4,10 +4,12 @@ export interface Choices {
 }
 
 export interface Question {
+    id?: string;
     type: 'QCM' | 'QRL';
     text: string;
     points: number;
     choices?: Choices[] | null | undefined;
+    lastModification?: Date;
     answer?: string | null | undefined;
 }
 
@@ -18,4 +20,5 @@ export interface Game {
     duration: number;
     lastModification: Date;
     questions: Question[];
+    visible: boolean;
 }

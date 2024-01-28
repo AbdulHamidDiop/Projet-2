@@ -17,7 +17,7 @@
 
                 <div name="qcm-duration">
                     <mat-form-field class="base-input number-input">
-                        <mat-label>Durée des QCM:</mat-label>
+                        <mat-label>Durée des QCM en secondes:</mat-label>
                         <input matInput type="number" id="durationInput" formControlName="duration" list="timeChoices" />
                     </mat-form-field>
                     <datalist id="timeChoices">
@@ -29,6 +29,9 @@
                         <option value="60"></option>
                     </datalist>
                 </div>
+                <div *ngIf="gameForm.get('duration')?.errors && gameForm.get('duration')?.touched">
+                    <small>Veuillez choisir un temps entre 10 à 60 secondes</small>
+                </div>
             </div>
 
             <mat-divider></mat-divider>
@@ -39,7 +42,9 @@
                         <mat-icon class="add-icon">add</mat-icon>
                     </button>
                 </div>
-
+                <div *ngIf="questions.length < 1">
+                    <small>Veuillez rajouter au moins une question</small>
+                </div>
                 <div name="quiz-questions-container" class="quiz-questions-container">
                     <mat-accordion
                         cdkDropList
@@ -67,6 +72,7 @@
                     Enregistrer le quiz
                 </button>
             </div>
+            <small>*Champs obligatoires</small>
         </form>
     </div>
 

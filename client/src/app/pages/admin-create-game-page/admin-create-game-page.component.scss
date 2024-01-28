@@ -18,6 +18,15 @@
     position: absolute;
 }
 
+.quiz-questions-container {
+    min-height: 100px;
+    max-height: 400px;
+    overflow-y: auto;
+    min-width: 400px;
+    width: 90%;
+    overflow-y: auto;
+}
+
 mat-accordion {
     min-height: 100%;
     min-width: 100%;
@@ -31,12 +40,6 @@ mat-accordion {
     border: 1px dashed #ccc;
 }
 
-.quiz-questions-container {
-    min-height: 100px;
-    min-width: 400px;
-    width: 90%;
-    overflow-y: auto;
-}
 .row-container {
     display: flex;
     flex-direction: column;
@@ -80,9 +83,9 @@ mat-accordion {
     height: 30px;
     border-radius: 5px;
     margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-#sidebar {
-    flex-basis: 350px;
-    min-width: 200px;
+small {
+    color: red;
 }

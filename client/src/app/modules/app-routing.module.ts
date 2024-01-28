@@ -14,6 +14,7 @@ const routes: Routes = [
     { path: 'createGame', component: CreateGamePageComponent },
     { path: 'admin', component: AdminPageComponent },
     { path: 'admin/createGame', component: AdminCreateGamePageComponent },
+    { path: 'admin/createGame/:id', component: AdminCreateGamePageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: '**', redirectTo: '/home' },
 ];

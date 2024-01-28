@@ -1,10 +1,14 @@
 <div class="container">
     <h3>Banque de questions</h3>
-
-    <mat-button-toggle-group multiple>
-        <mat-button-toggle value="QCM" (change)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
-        <mat-button-toggle value="QRL" (change)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
-    </mat-button-toggle-group>
+    <div class="control-options">
+        <mat-button-toggle-group multiple>
+            <mat-button-toggle value="QCM" (change)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
+            <mat-button-toggle value="QRL" (change)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
+        </mat-button-toggle-group>
+        <button mat-icon-button (click)="reloadQuestions()" name="refresh-button" class="refresh-button" title="rafraîchir la banque">
+            <mat-icon class="reload-icon">refresh</mat-icon>
+        </button>
+    </div>
 
     <mat-accordion
         cdkDropList

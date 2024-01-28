@@ -3,6 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Choices, Question } from '@app/interfaces/game-elements';
+import { v4 } from 'uuid';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
 
 const MIN_CHOICES = 2;
@@ -18,6 +19,7 @@ const MAX_POINTS = 100;
 export class CreateQuestionDialogComponent {
     questionForm: FormGroup;
     question: Question;
+    id: string;
 
     constructor(
         private fb: FormBuilder,
@@ -34,8 +36,11 @@ export class CreateQuestionDialogComponent {
     }
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit(): void {
-        if (this.data.question) {
+        if (this.data && this.data.question) {
             this.populateForm(this.data.question);
+            this.id = this.data.question.id;
+        } else {
+            this.id = v4(); // nouveau id
         }
     }
 
@@ -74,15 +79,24 @@ export class CreateQuestionDialogComponent {
     onSubmit(): void {
         if (this.questionForm.valid) {
             this.question = this.questionForm.value;
+            this.question.id = this.id;
+            this.question.lastModification = new Date();
             this.dialogRef.close(this.question);
+
+            if (this.questionForm.get('addToBank')?.value) {
+                // TODO: add question to bank
+                console.log('add question to bank');
+            }
         }
     }
+
     private initializeForm(): void {
         this.questionForm = this.fb.group({
             type: ['', Validators.required],
             text: ['', Validators.required],
             points: ['', [Validators.required, Validators.min(MIN_POINTS), Validators.max(MAX_POINTS), multipleOfTenValidator]],
             choices: this.fb.array([], [Validators.minLength(MIN_CHOICES), hasIncorrectAndCorrectAnswer]),
+            addToBank: [false],
         });
     }
 

@@ -20,6 +20,11 @@
     justify-content: center;
 }
 
+.submit-options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
 .choices-container {
     padding-left: 20px;
 }
@@ -38,6 +43,7 @@
     height: 30px;
     border-radius: 5px;
     margin-top: 10px;
+    margin-right: 10px;
 }
 
 .choices-container {
@@ -56,3 +62,6 @@
     cursor: grab;
 }
 
+small {
+    color: red;
+}

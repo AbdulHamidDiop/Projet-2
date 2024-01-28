@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Question } from '@app/interfaces/game-elements';
+import { Observable, of } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -102,7 +103,7 @@ export class QuestionsBankService {
         },
     ];
 
-    getQuestions() {
-        return this.dummyQuestions;
+    getQuestions(): Observable<Question[]> {
+        return of([...this.dummyQuestions]);
     }
 }
