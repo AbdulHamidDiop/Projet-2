@@ -21,7 +21,31 @@ export enum MouseButton {
 })
 export class PlayAreaComponent {
     buttonPressed = '';
+    answer = '';
+    question = {
+        type: 'QCM',
+        text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+        points: 40,
+        choices: [
+            {
+                text: 'var',
+                isCorrect: true,
+            },
+            {
+                text: 'self',
+                isCorrect: false,
+            },
+            {
+                text: 'this',
+                isCorrect: true,
+            },
+            {
+                text: 'int',
+            },
+        ],
+    };
     private readonly timer = 5;
+
     constructor(private readonly timeService: TimeService) {}
 
     get time(): number {
@@ -31,7 +55,16 @@ export class PlayAreaComponent {
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
+        if (this.buttonPressed >= '0' && this.buttonPressed <= '9' && this.question.type === 'QCM') {
+            this.handleQCMChoice(this.buttonPressed);
+        }
     }
+
+    handleQCMChoice(choice: string) {}
+
+    handleQRLAnswer(answer: string) {}
+
+    
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {

@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@angular/cli": "^17.1.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.8"
+  }
+}
