@@ -1,48 +1,69 @@
 import { Injectable } from '@angular/core';
-import { Game } from '@app/interfaces/game-elements';
-import { Observable, of } from 'rxjs';
+import { API_URL } from '@common/consts';
+import { Game } from '@common/game';
 
 @Injectable({
     providedIn: 'root',
 })
 export class GameService {
-    getGameById(id: string): Observable<Game> {
-        const dummyGame: Game = {
-            // eslint-disable-next-line object-shorthand
-            id: id,
-            title: 'Game title',
-            description: 'Game description',
-            duration: 10,
-            lastModification: new Date(),
-            questions: [
-                {
-                    type: 'QCM',
-                    text: 'Question 1',
-                    points: 10,
-                    choices: [
-                        {
-                            text: 'Choice 1',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'Choice 2',
-                            isCorrect: false,
-                        },
-                        {
-                            text: 'Choice 3',
-                            isCorrect: false,
-                        },
-                    ],
-                },
-                {
-                    type: 'QRL',
-                    text: 'Question 2',
-                    points: 20,
-                    answer: 'Answer',
-                },
-            ],
-            visible: true,
-        };
-        return of(dummyGame);
+    async getAllGames(): Promise<Game[]> {
+        const response = await fetch(API_URL + 'admin');
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const games: Game[] = await response.json();
+        return games;
+    }
+
+    async addGame(game: Game): Promise<void> {
+        const response = await fetch(API_URL + 'admin/games', {
+            method: 'POST',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(game),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+    }
+
+    async getGameByID(id: string): Promise<Game> {
+        const games: Game[] = await this.getAllGames();
+        const game = games.find((g) => g.id === id);
+        if (!game) {
+            throw new Error('Game not found');
+        }
+        return game;
+    }
+
+    async toggleGameHidden(id: string): Promise<boolean> {
+        const response = await fetch(API_URL + 'admin/togglehidden', {
+            method: 'PATCH',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        return true;
+    }
+
+    async deleteGameByID(id: string): Promise<boolean> {
+        const response = await fetch(API_URL + 'admin/deletegame/' + id, {
+            method: 'DELETE',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        return true;
     }
 }

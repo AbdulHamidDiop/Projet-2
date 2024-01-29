@@ -15,7 +15,7 @@ export class QuestionsController {
     private configureRouter(): void {
         this.router = Router();
 
-    /**
+        /**
          * @swagger
          *
          * /api/admin/questions:
@@ -33,10 +33,10 @@ export class QuestionsController {
          *           items:
          *             $ref: '#/definitions/Message'
          */
-    this.router.get('/', async (req: Request, res: Response) => {
-        res.json(await this.questionsService.sortAllQuestions());
-        res.status(HTTP_STATUS_OK);
-    });
+        this.router.get('/', async (req: Request, res: Response) => {
+            res.json(await this.questionsService.sortAllQuestions());
+            res.status(HTTP_STATUS_OK);
+        });
 
         /**
          * @swagger
@@ -60,7 +60,7 @@ export class QuestionsController {
          *     responses:
          *       200:
          *         description: OK
-         *      
+         *
          */
         this.router.delete('/deletequestion/:id', (req: Request, res: Response) => {
             res.json(this.questionsService.deleteGameByID(req.params.id));

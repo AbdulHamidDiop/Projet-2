@@ -1,6 +1,6 @@
 import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, ViewChild } from '@angular/core';
-import { QuestionsService } from '@app/services/questions.services';
+import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
 
 @Component({
@@ -28,7 +28,9 @@ export class AdminQuestionsBankComponent {
             if (!a.lastModification || !b.lastModification) {
                 return 1;
             }
-            return b.lastModification.getTime() - a.lastModification.getTime();
+            const dateA = new Date(a.lastModification);
+            const dateB = new Date(b.lastModification);
+            return dateB.getTime() - dateA.getTime();
         });
 
         if (this.selectedTypes.size === 0 || this.selectedTypes.size === 2) {

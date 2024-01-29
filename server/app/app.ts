@@ -2,12 +2,12 @@ import { HttpException } from '@app/classes/http.exception';
 import { AdminController } from '@app/controllers/admin.controller';
 import { DateController } from '@app/controllers/date.controller';
 import { ExampleController } from '@app/controllers/example.controller';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
-import * as express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import * as swaggerJSDoc from 'swagger-jsdoc';
-import * as swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
 import { QuestionsController } from './controllers/questions.controller';
 

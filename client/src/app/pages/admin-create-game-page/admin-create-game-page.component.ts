@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
-import { QuestionsService } from '@app/services/questions.services';
+import { GameService } from '@app/services/game.service';
 import { Game, Question } from '@common/game';
 import { v4 } from 'uuid';
 
@@ -30,7 +30,7 @@ export class AdminCreateGamePageComponent {
         public dialog: MatDialog,
         private fb: FormBuilder,
         private cd: ChangeDetectorRef, // to avoid ExpressionChangedAfterItHasBeenCheckedError
-        private questionsService: QuestionsService,
+        private gameService: GameService,
         private route: ActivatedRoute,
     ) {}
 
@@ -61,7 +61,7 @@ export class AdminCreateGamePageComponent {
     }
 
     loadGameData(gameId: string): void {
-        this.questionsService.getGameByID(gameId).then((game: Game) => {
+        this.gameService.getGameByID(gameId).then((game: Game) => {
             this.populateForm(game);
         });
     }
@@ -115,6 +115,6 @@ export class AdminCreateGamePageComponent {
             isHidden: true,
         };
 
-        this.questionsService.addGame(this.game);
+        this.gameService.addGame(this.game);
     }
 }

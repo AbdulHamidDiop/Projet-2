@@ -20,7 +20,7 @@ import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/adm
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
-import { QuestionsService } from './services/questions.services';
+import { QuestionsService } from './services/questions.service';
 
 /**
  * Main module that is used in main.ts.
