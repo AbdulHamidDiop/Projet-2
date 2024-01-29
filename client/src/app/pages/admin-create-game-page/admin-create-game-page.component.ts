@@ -7,7 +7,8 @@ import { AdminQuestionsBankComponent } from '@app/components/admin-questions-ban
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { Game, Question } from '@common/game';
 import { v4 } from 'uuid';
-import { QuestionsService } from './../../../../../server/app/services/questions.service';
+// eslint-disable-next-line no-restricted-imports
+import { QuestionsService } from '../../../../../server/app/services/questions.service';
 
 const MIN_DURATION = 10;
 const MAX_DURATION = 60;

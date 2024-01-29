@@ -21,7 +21,7 @@ export class Application {
         private readonly exampleController: ExampleController,
         private readonly dateController: DateController,
         private readonly adminController: AdminController,
-        private readonly questionsController: QuestionsController
+        private readonly questionsController: QuestionsController,
     ) {
         this.app = express();
 

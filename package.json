@@ -1,12 +1,16 @@
 {
-  "dependencies": {
-    "@angular/cli": "^17.1.1",
-    "fs": "^0.0.1-security",
-    "fs.promises": "^0.1.2",
-    "uuid": "^9.0.1"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.10",
-    "@types/uuid": "^9.0.8"
-  }
+    "dependencies": {
+        "@angular/cli": "^17.1.1",
+        "fs": "^0.0.1-security",
+        "fs-promise": "^2.0.3",
+        "fs.promises": "^0.1.2",
+        "mz": "^2.7.0",
+        "typedi": "^0.10.0",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.10",
+        "@types/uuid": "^9.0.8",
+        "typescript": "^5.3.3"
+    }
 }

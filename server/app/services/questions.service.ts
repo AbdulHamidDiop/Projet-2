@@ -39,7 +39,11 @@ export class QuestionsService {
 
     async getGameByID(id: string): Promise<Game> {
         const games: Game[] = await this.getAllGames();
-        return games.find((game) => game.id === id);
+        const game = games.find((g) => g.id === id);
+        if (!game) {
+            throw new Error('Game not found');
+        }
+        return game;
     }
 
     // TODO ajouter delte, modify, get et add question
