@@ -20,7 +20,7 @@ import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/adm
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
-import { QuestionsBankService } from './services/questions-bank.service';
+import { QuestionsService } from './services/questions.services';
 
 /**
  * Main module that is used in main.ts.
@@ -46,16 +46,8 @@ import { QuestionsBankService } from './services/questions-bank.service';
         AdminQuestionsBankComponent,
     ],
     // eslint-disable-next-line prettier/prettier
-    imports: [
-        AppMaterialModule, 
-        AppRoutingModule, 
-        AppReactiveFormsModule, 
-        BrowserAnimationsModule, 
-        BrowserModule, 
-        FormsModule, 
-        HttpClientModule
-    ],
-    providers: [QuestionsBankService],
+    imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    providers: [QuestionsService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

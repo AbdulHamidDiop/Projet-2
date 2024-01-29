@@ -5,10 +5,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
+import { QuestionsService } from '@app/services/questions.services';
 import { Game, Question } from '@common/game';
 import { v4 } from 'uuid';
-// eslint-disable-next-line no-restricted-imports
-import { QuestionsService } from '../../../../../server/app/services/questions.service';
 
 const MIN_DURATION = 10;
 const MAX_DURATION = 60;

@@ -4,8 +4,8 @@ import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Choices, Question } from '@common/game';
 import { v4 } from 'uuid';
-import { QuestionsService } from '../../../../../server/app/services/questions.service';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
+import { QuestionsService } from '@app/services/questions.services';
 
 const MIN_CHOICES = 2;
 const MAX_CHOICES = 4;

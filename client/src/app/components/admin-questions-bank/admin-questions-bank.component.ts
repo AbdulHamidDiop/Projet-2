@@ -1,7 +1,7 @@
 import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, ViewChild } from '@angular/core';
+import { QuestionsService } from '@app/services/questions.services';
 import { Question } from '@common/game';
-import { QuestionsService } from '../../../../../server/app/services/questions.service';
 
 @Component({
     selector: 'app-admin-questions-bank',
