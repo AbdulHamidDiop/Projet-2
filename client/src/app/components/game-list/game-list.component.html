@@ -1,3 +1,14 @@
+<header class="header">
+    <nav id="nav-bar">
+        <ul>
+            <li><img src="https://bit.ly/3QofL1J" alt="Logo Projet" /></li>
+            <li>Créer une partie</li>
+            <li>Rejoindre une partie</li>
+        </ul>
+    </nav>
+</header>
+
+<body>
 <div *ngFor="let game of gameService.games">
     <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(getSelectedGame())">
         <mat-expansion-panel-header>
@@ -34,3 +45,11 @@
     </mat-expansion-panel>
 
 </div>
+</body>
+
+<footer class="footer-item">
+    <h4 class="team-name">Équipe 312</h4>
+    <p><span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
+        <span>Youva</span>
+    </p>
+</footer>
