@@ -11,12 +11,14 @@ import { Game } from '@common/game';
 export class GameCardComponent {
     @Input() game!: Game;
     @Output() deleteEvent = new EventEmitter<Game>();
+    @Output() checkEvent = new EventEmitter<Game>();
     constructor(
         private http: HttpClient,
         private router: Router,
     ) {}
     onCheck(game: Game) {
         this.http.patch('http://localhost:3000/api/game/toggleHidden', { id: game.id }).subscribe((response: unknown) => {});
+        this.checkEvent.emit(this.game);
     }
 
     onExportButtonClick(game: Game) {

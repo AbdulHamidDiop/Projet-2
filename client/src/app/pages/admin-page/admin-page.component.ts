@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { Choices, Game, Question } from '@common/game';
@@ -15,11 +15,13 @@ export class AdminPageComponent {
         private http: HttpClient,
         private router: Router,
         private communicationService: CommunicationService,
+        private el: ElementRef
     ) {}
 
     games: Game[];
     selectedFile: File;
     isAuthentificated: boolean;
+    errors: string;
 
     getGames() {
         // - cdl
@@ -56,6 +58,10 @@ export class AdminPageComponent {
         }
     }
 
+    onCheckGame(game: Game) {
+        game.lastModification = new Date();
+    }
+
     onDeleteGame(game: Game) {
         this.games = this.games.filter((g) => g !== game);
     }
@@ -65,6 +71,7 @@ export class AdminPageComponent {
     }
 
     handleFile(jsonArray: unknown) {
+        const handleErrorsGrid = this.el.nativeElement.querySelector('#handleErrorsGrid');
         if (this.isGame(jsonArray)) {
             const game: Game = {
                 id: v4(),
@@ -76,18 +83,23 @@ export class AdminPageComponent {
                 questions: jsonArray.questions,
             };
             this.http.post('http://localhost:3000/api/game/importgame', { game }).subscribe((response: unknown) => {});
+            this.games.push(game);
+            handleErrorsGrid.innerText = "Le jeu a été importé correctement."
+        }
+        else {
+            handleErrorsGrid.innerText = this.errors;
         }
     }
 
-    isArrayOfQuestions(questions: Question[]): questions is Question[] {
+    questionErrorsHandling(questions: Question[]) {
         if (questions.length === 0) {
-            console.log('Le jeu doit contenir au moins une question.');
+            this.errors += 'Le jeu doit contenir au moins une question. ';
         }
         if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
-            console.log('Les questions du jeu doivent être de type QCM ou QRL.');
+            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
         }
         if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
-            console.log('Les questions doivent avoir un texte de type string.');
+            this.errors += 'Les questions doivent avoir un texte de type string. ';
         }
         if (
             !questions.every(
@@ -99,15 +111,17 @@ export class AdminPageComponent {
                     question.points % 10 === 0,
             )
         ) {
-            console.log('Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10.');
+            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
         }
         if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
-            console.log('Les questions doivent contenir un nombre de choix compris entre 2 et 4.');
+            this.errors +=' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
         }
         if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
-            console.log('Les choix de réponse des questions doivent avoir un texte de type string.');
+            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
         }
+    }
 
+    isArrayOfQuestions(questions: Question[]): questions is Question[] {
         return (
             Array.isArray(questions) &&
             questions.every(
@@ -130,22 +144,23 @@ export class AdminPageComponent {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     isGame(obj: any): obj is Game {
         if (!obj.title || typeof obj.title !== 'string') {
-            console.log('Le jeu importé doit avoir un titre de type string.');
+            this.errors += 'Le jeu importé doit avoir un titre de type string. ';
         } else {
             if (this.games.some((game) => game.title === obj.title)) {
-                console.log('Le titre choisi existe déjà. Veuillez en choisir un nouveau.');
+                this.errors += 'Le titre choisi existe déjà. Veuillez en choisir un nouveau. ';
             }
         }
         if (!obj.description || typeof obj.description !== 'string') {
-            console.log('Le jeu importé doit avoir une description de type string.');
+            this.errors += 'Le jeu importé doit avoir une description de type string. ';
         }
         if (!obj.duration || typeof obj.duration !== 'number') {
-            console.log('Le jeu importé doit avoir un temps alloué de type int.');
+            this.errors += 'Le jeu importé doit avoir un temps alloué de type int. ';
         } else {
             if (obj.duration < 10 || obj.duration > 60) {
-                console.log('Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes.');
+                this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes. ';
             }
         }
+        this.questionErrorsHandling(obj.questions);
 
         return (
             obj &&
@@ -160,12 +175,14 @@ export class AdminPageComponent {
     }
 
     onImportButtonClick() {
+        this.errors = "Erreurs rencontrées: ";
         if (this.verifyIfJSON()) {
             this.readFile(this.selectedFile).then((jsonArray: unknown) => {
                 this.handleFile(jsonArray);
             });
         } else {
-            console.log('Type de fichier invalide. Veuillez sélectionner un fichier de type JSON.');
+            const handleErrorsGrid = this.el.nativeElement.querySelector('#handleErrorsGrid');
+            handleErrorsGrid.innerText = "Le type de fichier est invalide. Veuillez sélectionner un fichier de type JSON."
         }
     }
 
