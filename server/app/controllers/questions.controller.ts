@@ -110,7 +110,7 @@ export class QuestionsController {
         /**
          * @swagger
          *
-         * /api/questions/deletequestion/{id}:
+         * /api/questions/delete/{id}:
          *   delete:
          *     description: Delete question from database
          *     tags:
@@ -128,7 +128,7 @@ export class QuestionsController {
          *         description: OK
          *
          */
-        this.router.delete('/deletequestion/:id', (req: Request, res: Response) => {
+        this.router.delete('/delete/:id', (req: Request, res: Response) => {
             res.json(this.questionsService.deleteQuestionByID(req.params.id));
             res.status(HTTP_STATUS_OK);
         });
