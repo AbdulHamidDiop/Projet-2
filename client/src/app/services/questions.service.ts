@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 
@@ -6,6 +6,8 @@ import { Question } from '@common/game';
     providedIn: 'root',
 })
 export class QuestionsService {
+    deleteRequest = new EventEmitter<Question>();
+
     async getAllQuestions(): Promise<Question[]> {
         const response = await fetch(API_URL + 'questions');
         if (!response.ok) {
@@ -21,7 +23,6 @@ export class QuestionsService {
         return sortedQuestions;
     }
 
-    // TODO ajouter delte, modify, get et add question
     async addQuestion(question: Question): Promise<void> {
         const response = await fetch(API_URL + 'questions/add', {
             method: 'POST',
@@ -57,5 +58,6 @@ export class QuestionsService {
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
+        this.deleteRequest.emit(question);
     }
 }

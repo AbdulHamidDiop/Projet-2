@@ -11,6 +11,7 @@ import { Question } from '@common/game';
 export class AdminQuestionsBankComponent {
     @ViewChild(CdkDropList) questionsBankList!: CdkDropList;
     @Input() questionsList!: CdkDropList;
+    @Input() editable?: boolean = false;
 
     questions: Question[];
     displayQuestions: Question[] = [];

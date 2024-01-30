@@ -55,7 +55,6 @@ export class GameController {
          *           schema:
          *             $ref: '#/components/schemas/Game'
          *           example:
-         *                 game:
          *                   id: "test"
          *                   title: "Questionnaire sur le JS"
          *                   description: "Questions de pratique sur le langage JavaScript"
@@ -90,7 +89,7 @@ export class GameController {
          */
 
         this.router.post('/importgame', (req: Request, res: Response) => {
-            res.json(this.gamesService.addGame(req.body.game));
+            res.json(this.gamesService.addGame(req.body));
             res.status(HTTP_STATUS_CREATED);
         });
 

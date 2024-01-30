@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
+import { GameService } from '@app/services/game.service';
 import { Choices, Game, Question } from '@common/game';
 import { v4 } from 'uuid';
 
@@ -15,28 +16,27 @@ export class AdminPageComponent {
         private http: HttpClient,
         private router: Router,
         private communicationService: CommunicationService,
+        private gameService: GameService,
     ) {}
 
     games: Game[];
     selectedFile: File;
     isAuthentificated: boolean;
 
-    getGames() {
+    async getGames() {
         // - cdl
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.http.get('http://localhost:3000/api/game').subscribe((response: any) => {
-            this.games = response;
-        });
+        this.games = await this.gameService.getAllGames();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });
         if (!this.isAuthentificated) {
             this.router.navigate(['/home']);
         }
-        this.getGames();
+        await this.getGames();
     }
 
     onCreateButtonClick() {

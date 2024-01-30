@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
+import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
 
 @Component({
@@ -10,28 +10,29 @@ import { Question } from '@common/game';
     styleUrls: ['./questions-page.component.scss'],
 })
 export class QuestionsPageComponent {
-    constructor(
-        private http: HttpClient,
-        private communicationService: CommunicationService,
-        private router: Router,
-    ) {}
     questions: Question[];
     isAuthentificated: boolean;
 
-    getQuestions() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.http.get('http://localhost:3000/api/questions').subscribe((response: any) => {
-            this.questions = response;
-        });
+    constructor(
+        private communicationService: CommunicationService,
+        private router: Router,
+        private questionsService: QuestionsService,
+    ) {}
+
+    async getQuestions() {
+        this.questions = await this.questionsService.getAllQuestions();
     }
 
-    ngOnInit() {
+    async ngOnInit() {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });
         if (!this.isAuthentificated) {
             this.router.navigate(['/home']);
         }
-        this.getQuestions();
+        await this.getQuestions();
+        this.questionsService.deleteRequest.subscribe(() => {
+            this.getQuestions();
+        });
     }
 }

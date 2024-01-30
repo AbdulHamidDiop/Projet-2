@@ -13,7 +13,6 @@ export class AdminQuestionComponent {
     @Input() question: Question;
     @Input() index?: number;
     @Input() editable?: boolean = false;
-    @Output() deleteRequest = new EventEmitter<Question>();
     @Output() saveRequest = new EventEmitter<Question>();
 
     constructor(
@@ -39,6 +38,5 @@ export class AdminQuestionComponent {
 
     deleteQuestion(question: Question): void {
         this.questionsService.deleteQuestion(question);
-        this.deleteRequest.emit(question);
     }
 }
