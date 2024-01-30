@@ -515,5 +515,23 @@
       }
     ],
     "isHidden": true
+  },
+  {
+    "id": "a2da8433-4819-4f3e-83a9-a21d8fd256f1",
+    "lastModification": "2024-01-30T22:30:19.277Z",
+    "title": "quiz test",
+    "description": "test",
+    "duration": 10,
+    "questions": [
+      {
+        "type": "QRL",
+        "text": "Question test",
+        "points": 20,
+        "addToBank": true,
+        "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+        "lastModification": "2024-01-30T22:29:59.715Z"
+      }
+    ],
+    "isHidden": true
   }
 ]

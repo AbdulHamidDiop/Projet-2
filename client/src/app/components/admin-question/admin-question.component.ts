@@ -14,6 +14,7 @@ export class AdminQuestionComponent {
     @Input() index?: number;
     @Input() editable?: boolean = false;
     @Output() saveRequest = new EventEmitter<Question>();
+    @Output() deleteRequest = new EventEmitter<number>();
 
     constructor(
         public dialog: MatDialog,
@@ -38,5 +39,6 @@ export class AdminQuestionComponent {
 
     deleteQuestion(question: Question): void {
         this.questionsService.deleteQuestion(question);
+        this.deleteRequest.emit(this.index);
     }
 }

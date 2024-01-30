@@ -1,49 +1,5 @@
 [
   {
-    "type": "QCM",
-    "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
-    "points": 30,
-    "addToBank": false,
-    "choices": [
-      {
-        "text": "Non",
-        "isCorrect": true
-      },
-      {
-        "text": "Oui",
-        "isCorrect": null
-      }
-    ],
-    "id": "3",
-    "lastModification": "2024-01-30T18:02:49.632Z"
-  },
-  {
-    "type": "QCM",
-    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-    "points": 100,
-    "addToBank": false,
-    "choices": [
-      {
-        "text": "var",
-        "isCorrect": true
-      },
-      {
-        "text": "self",
-        "isCorrect": false
-      },
-      {
-        "text": "this",
-        "isCorrect": true
-      },
-      {
-        "text": "int",
-        "isCorrect": null
-      }
-    ],
-    "id": "1",
-    "lastModification": "2024-01-30T18:09:04.674Z"
-  },
-  {
     "type": "QRL",
     "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
     "points": 50,
@@ -52,28 +8,18 @@
     "lastModification": "2024-01-30T20:15:04.920Z"
   },
   {
-    "type": "QCM",
+    "type": "QRL",
     "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
     "points": 30,
     "addToBank": false,
-    "choices": [
-      {
-        "text": "var",
-        "isCorrect": true
-      },
-      {
-        "text": "self",
-        "isCorrect": false
-      },
-      {
-        "text": "this",
-        "isCorrect": true
-      },
-      {
-        "text": "int",
-        "isCorrect": null
-      }
-    ],
-    "lastModification": "2024-01-30T20:55:15.718Z"
+    "lastModification": "2024-01-30T22:18:47.365Z"
+  },
+  {
+    "type": "QRL",
+    "text": "Question test test",
+    "points": 20,
+    "addToBank": false,
+    "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+    "lastModification": "2024-01-30T22:30:51.159Z"
   }
 ]
