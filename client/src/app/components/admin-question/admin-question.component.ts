@@ -1,7 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
+import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
 
 @Component({
@@ -18,7 +18,7 @@ export class AdminQuestionComponent {
 
     constructor(
         public dialog: MatDialog,
-        private http: HttpClient,
+        private questionsService: QuestionsService,
     ) {}
 
     openDialog(): void {
@@ -31,14 +31,14 @@ export class AdminQuestionComponent {
         dialogRef.afterClosed().subscribe((result: Question) => {
             if (result) {
                 this.question = result;
+                this.questionsService.editQuestion(this.question);
                 this.saveRequest.emit(this.question);
             }
         });
     }
 
     deleteQuestion(question: Question): void {
-        this.http.delete(`http://localhost:3000/api/questions/deletequestion/${question.id}`).subscribe(() => {
-            this.deleteRequest.emit(question);
-        });
+        this.questionsService.deleteQuestion(question);
+        this.deleteRequest.emit(question);
     }
 }

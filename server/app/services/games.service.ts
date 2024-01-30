@@ -28,8 +28,8 @@ export class GamesService {
         const games: Game[] = await this.getAllGames();
         const game = games.find((g) => g.id === id);
         if (!game) {
-            throw new Error('Game not found');
-            // return null;
+            // throw new Error('Game not found');
+            return null;
         }
         return game;
     }

@@ -39,7 +39,7 @@ export class GameService {
     }
 
     async toggleGameHidden(id: string): Promise<boolean> {
-        const response = await fetch(API_URL + 'game/togglehidden' + id, {
+        const response = await fetch(API_URL + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -56,10 +56,6 @@ export class GameService {
     async deleteGameByID(id: string): Promise<boolean> {
         const response = await fetch(API_URL + 'game/deletegame/' + id, {
             method: 'DELETE',
-            headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
-            },
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);

@@ -30,17 +30,6 @@ export class QuestionsService {
         await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
     }
 
-    async modifyQuestion(modifiedQuestion: Question): Promise<void> {
-        const questions: Question[] = await this.getAllQuestions();
-        const foundQuestion: Question = questions.find((question) => question.id === modifiedQuestion.id);
-
-        if (foundQuestion) {
-            Object.assign(foundQuestion, modifiedQuestion);
-            foundQuestion.lastModification = new Date();
-            await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
-        } else this.addQuestion(modifiedQuestion);
-    }
-
     async deleteQuestionByID(id: string): Promise<boolean> {
         const questions: Question[] = await this.getAllQuestions();
         const updatedQuestions: Question[] = questions.filter((question) => question.id !== id);
