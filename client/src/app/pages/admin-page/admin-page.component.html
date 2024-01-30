@@ -1,6 +1,6 @@
 <div class="container">
     <div class="scroll-box">
-        <app-game-card *ngFor="let game of games" [game]="game"></app-game-card>
+        <app-game-card *ngFor="let game of games" [game]="game" (deleteEvent)="onDeleteGame($event)"></app-game-card>
     </div>
     <div id="menu-choix-admin">
         <button mat-button [matMenuTriggerFor]="menu">Menu</button>

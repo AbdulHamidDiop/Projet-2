@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { Choices, Game, Question } from '@common/game';
+import { v4 } from 'uuid';
 
 @Component({
     selector: 'app-admin-page',
@@ -29,17 +30,17 @@ export class AdminPageComponent {
     }
 
     ngOnInit() {
-        this.getGames();
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });
         if (!this.isAuthentificated) {
             this.router.navigate(['/home']);
         }
+        this.getGames();
     }
 
     onCreateButtonClick() {
-        // link to create new game
+        this.router.navigate(["/admin/createGame"]);
     }
 
     onQuestionsButtonClick() {
@@ -55,6 +56,10 @@ export class AdminPageComponent {
         }
     }
 
+    onDeleteGame(game: Game) {
+        this.games = this.games.filter((g) => g !== game);
+    }
+
     verifyIfJSON(): boolean {
         return this.selectedFile && this.selectedFile.type === 'application/json';
     }
@@ -62,7 +67,7 @@ export class AdminPageComponent {
     handleFile(jsonArray: unknown) {
         if (this.isGame(jsonArray)) {
             const game: Game = {
-                id: this.getRandomID(),
+                id: v4(),
                 title: jsonArray.title,
                 description: jsonArray.description,
                 duration: jsonArray.duration,
@@ -72,14 +77,6 @@ export class AdminPageComponent {
             };
             this.http.post('http://localhost:3000/api/admin/importgame', { game }).subscribe((response: unknown) => {});
         }
-    }
-
-    getRandomID(): string {
-        let randomID = '';
-        for (let i = 0; i < 12; i++) {
-            randomID += Math.floor(Math.random() * 10);
-        }
-        return randomID;
     }
 
     isArrayOfQuestions(questions: Question[]): questions is Question[] {

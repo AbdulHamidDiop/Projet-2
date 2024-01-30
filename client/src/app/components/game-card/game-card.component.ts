@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Router } from '@angular/router';
 import { Game } from '@common/game';
 
 @Component({
@@ -9,7 +10,8 @@ import { Game } from '@common/game';
 })
 export class GameCardComponent {
     @Input() game!: Game;
-    constructor(private http: HttpClient) {}
+    @Output() deleteEvent = new EventEmitter<Game>();
+    constructor(private http: HttpClient, private router: Router) {}
     onCheck(game: Game) {
         this.http.patch('http://localhost:3000/api/admin/toggleHidden', { id: game.id }).subscribe((response: unknown) => {});
     }
@@ -29,12 +31,11 @@ export class GameCardComponent {
     }
 
     onDeleteButtonClick(game: Game) {
-        this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`).subscribe((response: unknown) => {
-            window.location.reload();
-        });
+        this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`).subscribe((response: unknown) => {});
+        this.deleteEvent.emit(this.game);
     }
 
-    onModifyButtonClick() {
-        // link to create new game but with arguments
+    onModifyButtonClick(game: Game) {
+        this.router.navigate([`/admin/createGame/${game.id}`]);
     }
 }

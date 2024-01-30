@@ -74,4 +74,11 @@ export class QuestionsService {
         await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
         return true;
     }
+
+    async deleteQuestionByID(id: string): Promise<boolean> {
+        const questions: Question[] = await this.getAllQuestions();
+        const updatedQuestions: Question[] = questions.filter((question) => question.id !== id);
+        await fs.writeFile(QUESTIONS_PATH, JSON.stringify(updatedQuestions, null, 2), 'utf8');
+        return true;
+    }
 }

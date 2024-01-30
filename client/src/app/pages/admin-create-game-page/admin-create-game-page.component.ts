@@ -2,9 +2,10 @@ import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@a
 import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
+import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
 import { Game, Question } from '@common/game';
 import { v4 } from 'uuid';
@@ -24,6 +25,7 @@ export class AdminCreateGamePageComponent {
     game: Game;
     id: string;
     questions: Question[] = [];
+    isAuthentificated: boolean;
 
     // eslint-disable-next-line max-params
     constructor(
@@ -32,6 +34,8 @@ export class AdminCreateGamePageComponent {
         private cd: ChangeDetectorRef, // to avoid ExpressionChangedAfterItHasBeenCheckedError
         private gameService: GameService,
         private route: ActivatedRoute,
+        private communicationService: CommunicationService,
+        private router: Router
     ) {}
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
@@ -43,6 +47,12 @@ export class AdminCreateGamePageComponent {
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit(): void {
+        this.communicationService.sharedVariable$.subscribe((data) => {
+            this.isAuthentificated = data;
+        });
+        if (!this.isAuthentificated) {
+            this.router.navigate(['/home']);
+        }
         this.gameForm = this.fb.group({
             title: ['', Validators.required],
             description: [''],

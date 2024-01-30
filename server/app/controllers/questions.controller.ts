@@ -63,7 +63,7 @@ export class QuestionsController {
          *
          */
         this.router.delete('/deletequestion/:id', (req: Request, res: Response) => {
-            res.json(this.questionsService.deleteGameByID(req.params.id));
+            res.json(this.questionsService.deleteQuestionByID(req.params.id));
             res.status(HTTP_STATUS_OK);
         });
     }
