@@ -1,10 +1,6 @@
 <div class="container">
     <h1>Banque de questions</h1>
     <div *ngFor="let question of questions; index as i">
-        <h2>Question {{i+1}}</h2>
-        <p>{{question.text}}</p>
-        <p>Dernière Modification: {{question.lastModification}}</p>
-        <input type="button" id="modifyButton" value="Modifier la question" (click)="onModifyButtonClick()">
-        <input type="button" id="deleteButton" value="Supprimer la question" (click)="onDeleteButtonClick(question)">
+        <app-admin-question [question]="question" [index]="i" [editable]="true"></app-admin-question>
     </div>
 </div>

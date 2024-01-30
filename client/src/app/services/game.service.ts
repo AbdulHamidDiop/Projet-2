@@ -7,7 +7,7 @@ import { Game } from '@common/game';
 })
 export class GameService {
     async getAllGames(): Promise<Game[]> {
-        const response = await fetch(API_URL + 'admin');
+        const response = await fetch(API_URL + 'game');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -16,7 +16,7 @@ export class GameService {
     }
 
     async addGame(game: Game): Promise<void> {
-        const response = await fetch(API_URL + 'admin/games', {
+        const response = await fetch(API_URL + 'game/importgame', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -39,7 +39,7 @@ export class GameService {
     }
 
     async toggleGameHidden(id: string): Promise<boolean> {
-        const response = await fetch(API_URL + 'admin/togglehidden', {
+        const response = await fetch(API_URL + 'game/togglehidden' + id, {
             method: 'PATCH',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -54,7 +54,7 @@ export class GameService {
     }
 
     async deleteGameByID(id: string): Promise<boolean> {
-        const response = await fetch(API_URL + 'admin/deletegame/' + id, {
+        const response = await fetch(API_URL + 'game/deletegame/' + id, {
             method: 'DELETE',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention

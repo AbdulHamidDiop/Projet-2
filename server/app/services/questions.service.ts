@@ -1,9 +1,8 @@
-import { Game, Question } from '@common/game';
+import { Question } from '@common/game';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
 
 const QUESTIONS_PATH = './assets/questions-database.json';
-const QUIZ_PATH = './assets/quiz-example.json';
 
 @Service()
 export class QuestionsService {
@@ -19,34 +18,6 @@ export class QuestionsService {
         return sortedQuestions;
     }
 
-    async addGame(game: Game): Promise<void> {
-        const games: Game[] = await this.getAllGames();
-        if (games.find((g) => g.id === game.id)) {
-            games.splice(
-                games.findIndex((g) => g.id === game.id),
-                1,
-            );
-        }
-        games.push(game);
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(games, null, 2), 'utf8');
-    }
-
-    async getAllGames(): Promise<Game[]> {
-        const data: string = await fs.readFile(QUIZ_PATH, 'utf8');
-        const games: Game[] = JSON.parse(data);
-        return games;
-    }
-
-    async getGameByID(id: string): Promise<Game> {
-        const games: Game[] = await this.getAllGames();
-        const game = games.find((g) => g.id === id);
-        if (!game) {
-            throw new Error('Game not found');
-        }
-        return game;
-    }
-
-    // TODO ajouter delte, modify, get et add question
     async addQuestion(question: Question): Promise<void> {
         const questions: Question[] = await this.getAllQuestions();
         if (questions.find((q) => q.id === question.id)) {
@@ -59,20 +30,15 @@ export class QuestionsService {
         await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
     }
 
-    async toggleGameHidden(id: string): Promise<boolean> {
-        const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.map((game) =>
-            game.id === id ? { ...game, lastModification: new Date(), isHidden: !game.isHidden } : game,
-        );
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-        return true;
-    }
+    async modifyQuestion(modifiedQuestion: Question): Promise<void> {
+        const questions: Question[] = await this.getAllQuestions();
+        const foundQuestion: Question = questions.find((question) => question.id === modifiedQuestion.id);
 
-    async deleteGameByID(id: string): Promise<boolean> {
-        const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.filter((game) => game.id !== id);
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-        return true;
+        if (foundQuestion) {
+            Object.assign(foundQuestion, modifiedQuestion);
+            foundQuestion.lastModification = new Date();
+            await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
+        } else this.addQuestion(modifiedQuestion);
     }
 
     async deleteQuestionByID(id: string): Promise<boolean> {

@@ -24,7 +24,7 @@ export class AdminPageComponent {
     getGames() {
         // - cdl
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.http.get('http://localhost:3000/api/admin').subscribe((response: any) => {
+        this.http.get('http://localhost:3000/api/game').subscribe((response: any) => {
             this.games = response;
         });
     }
@@ -40,7 +40,7 @@ export class AdminPageComponent {
     }
 
     onCreateButtonClick() {
-        this.router.navigate(["/admin/createGame"]);
+        this.router.navigate(['/admin/createGame']);
     }
 
     onQuestionsButtonClick() {
@@ -75,7 +75,7 @@ export class AdminPageComponent {
                 isHidden: true,
                 questions: jsonArray.questions,
             };
-            this.http.post('http://localhost:3000/api/admin/importgame', { game }).subscribe((response: unknown) => {});
+            this.http.post('http://localhost:3000/api/game/importgame', { game }).subscribe((response: unknown) => {});
         }
     }
 

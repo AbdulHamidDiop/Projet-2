@@ -11,9 +11,12 @@ import { Game } from '@common/game';
 export class GameCardComponent {
     @Input() game!: Game;
     @Output() deleteEvent = new EventEmitter<Game>();
-    constructor(private http: HttpClient, private router: Router) {}
+    constructor(
+        private http: HttpClient,
+        private router: Router,
+    ) {}
     onCheck(game: Game) {
-        this.http.patch('http://localhost:3000/api/admin/toggleHidden', { id: game.id }).subscribe((response: unknown) => {});
+        this.http.patch('http://localhost:3000/api/game/toggleHidden', { id: game.id }).subscribe((response: unknown) => {});
     }
 
     onExportButtonClick(game: Game) {
@@ -31,7 +34,7 @@ export class GameCardComponent {
     }
 
     onDeleteButtonClick(game: Game) {
-        this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`).subscribe((response: unknown) => {});
+        this.http.delete(`http://localhost:3000/api/game/deletegame/${game.id}`).subscribe((response: unknown) => {});
         this.deleteEvent.emit(this.game);
     }
 

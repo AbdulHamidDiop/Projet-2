@@ -18,16 +18,16 @@ export class QuestionsController {
         /**
          * @swagger
          *
-         * /api/admin/questions:
+         * /api/questions:
          *   get:
          *     description: Return questions
          *     tags:
-         *       - Admin
+         *       - Question
          *     produces:
          *      - application/json
          *     responses:
          *       200:
-         *         description: All quizzes
+         *         description: All questions
          *         schema:
          *           type: array
          *           items:
@@ -41,11 +41,11 @@ export class QuestionsController {
         /**
          * @swagger
          *
-         * /api/admin/questions:
+         * /api/questions/deletequestion/:id:
          *   post:
          *     description: Delete question from database
          *     tags:
-         *       - Admin
+         *       - Question
          *     requestBody:
          *         description: Game ID
          *         required: true

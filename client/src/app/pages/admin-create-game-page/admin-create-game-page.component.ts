@@ -35,7 +35,7 @@ export class AdminCreateGamePageComponent {
         private gameService: GameService,
         private route: ActivatedRoute,
         private communicationService: CommunicationService,
-        private router: Router
+        private router: Router,
     ) {}
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface

@@ -10,15 +10,19 @@ import { Question } from '@common/game';
     styleUrls: ['./questions-page.component.scss'],
 })
 export class QuestionsPageComponent {
-    constructor(private http: HttpClient, private communicationService: CommunicationService, private router: Router) {}
+    constructor(
+        private http: HttpClient,
+        private communicationService: CommunicationService,
+        private router: Router,
+    ) {}
     questions: Question[];
     isAuthentificated: boolean;
 
     getQuestions() {
-        this.http.get("http://localhost:3000/api/admin/questions")
-            .subscribe((response: any) => {
-              this.questions = response;
-            });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.http.get('http://localhost:3000/api/questions').subscribe((response: any) => {
+            this.questions = response;
+        });
     }
 
     ngOnInit() {
@@ -29,15 +33,5 @@ export class QuestionsPageComponent {
             this.router.navigate(['/home']);
         }
         this.getQuestions();
-    }
-
-    onModifyButtonClick() {
-        //link to create question but with arguments
-    }
-
-    onDeleteButtonClick(question: Question) {
-        this.http.delete(`http://localhost:3000/api/admin/questions/deletequestion/${question.id}`)
-        .subscribe((response: any) => {});
-        this.questions = this.questions.filter((q) => q !== question);
     }
 }
