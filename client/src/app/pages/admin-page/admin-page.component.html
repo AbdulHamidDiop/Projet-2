@@ -1,17 +1,19 @@
 <div class="container">
     <div class="scroll-box">
-        <app-game-card *ngFor="let game of games" [game]="game" (deleteEvent)="onDeleteGame($event)"></app-game-card>
+        <app-game-card *ngFor="let game of games" [game]="game" (deleteEvent)="onDeleteGame($event)" (checkEvent)="onCheckGame($event)"></app-game-card>
     </div>
     <div id="menu-choix-admin">
         <button mat-button [matMenuTriggerFor]="menu">Menu</button>
         <mat-menu #menu="matMenu">
             <button mat-button id="createGameButton" (click)="onCreateButtonClick()">Créer un jeu</button>
             <button mat-button id="questionsData" (click)="onQuestionsButtonClick()">Voir les questions</button>
-            <div>
-                Importer un jeu
-                <input type="file" accept=".json" (change)="onFileSelected($event)" />
-                <input type="button" id="importGameButton" (click)="onImportButtonClick()" value="Importer le jeu" />
-            </div>
         </mat-menu>
+        <h2>Importer un jeu</h2>
+        <div>
+            <input type="file" accept=".json" (change)="onFileSelected($event)" />
+            <input type="button" id="importGameButton" (click)="onImportButtonClick()" value="Importer le jeu" />
+        </div>
+        <p>Résultat de l'importation</p>
+        <div id="handleErrorsGrid"></div>
     </div>
 </div>
