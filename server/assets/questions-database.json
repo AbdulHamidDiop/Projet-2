@@ -24,10 +24,10 @@
     },
     {
         "type": "QRL",
-        "text": "A",
-        "points": 10,
+        "text": "test mod",
+        "points": 20,
         "addToBank": true,
-        "id": "65b0a272-daf4-4309-b0ae-dbf5cdea1a64",
-        "lastModification": "2024-01-31T00:11:37.439Z"
+        "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+        "lastModification": "2024-01-30T22:34:16.468Z"
     }
 ]
