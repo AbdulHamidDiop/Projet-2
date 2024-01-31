@@ -1,31 +1,28 @@
 <header class="header">
-    <nav id="nav-bar">
-        <ul>
-            <li><img src="https://bit.ly/3QofL1J" alt="Logo Projet" /></li>
-            <li>Créer une partie</li>
-            <li>Rejoindre une partie</li>
-        </ul>
-    </nav>
+    <div class="wrapper">
+        <div class="sidebar">
+            <a href="#">
+                <img src="../../../assets/img/Qui(ck)zz_Icon.png" class="Logo-Projet" />
+            </a>
+            <ul>
+                <li><a style="text-decoration:none" href="#"><i class="fas fa-home"></i>Accueil</a></li>
+                <li><a style="text-decoration:none" routerLink="/createGame"><i class="fas fa-blog"></i>Créer une
+                        partie</a></li>
+                <li><a style="text-decoration:none" routerLink="/game"><i class="fas fa-address-book"></i>Rejoindre
+                        une
+                        partie</a></li>
+                <li><a style="text-decoration:none" routerLink="/admin"><i class="fas fa-map-pin"></i>Administrer les
+                        jeux</a></li>
+            </ul>
+        </div>
+    </div>
 </header>
 
 <main>
     <div class="container justified">
-        <h1 class="header-item">Bienvenue au cours {{ title }}</h1>
-        <section id="server-message" class="justified">
-            <p>Petit message du serveur : {{ message.getValue() }}</p>
-            <div class="justified">
-                <button class="button" (click)="getMessagesFromServer()">Récupérer un message du serveur</button>
-                <button class="button" (click)="sendTimeToServer()">Envoyer un message au serveur</button>
-                <button class="button" routerLink="/material">Voir la page démo Angular Material</button>
-            </div>
-        </section>
-
-        <button class="button" routerLink="/createGame">Créer une partie.</button>
-
-        <button class="button" [disabled]="false" routerLink="/game">Rejoindre une partie.</button>
-
-    <input type="text" placeholder="Entrez le mot de passe" [(ngModel)]="userInput" />
-        <button class="button" (click)="onButtonClick()">Administrer les jeux.</button>
+        <h1 class="header-item">Bienvenue sur {{ title }}</h1>
+        <input type="text" placeholder="Entrez le mot de passe" [(ngModel)]="userInput" />
+        <button class="button" (click)="onButtonClick()">Administrer les jeux</button>
     </div>
 </main>
 

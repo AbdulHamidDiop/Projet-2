@@ -1,32 +1,55 @@
 /* Reset some default browser styles */
-body, h1, h2, h3, p, ul, li {
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li {
     margin: 0;
     padding: 0;
 }
 
-/* General styles */
-body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f5f5f5;
-}
-
 /* Header styles */
-.header {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    border-bottom: 1px solid #555;
-}
-
-#nav-bar ul {
+.wrapper {
     display: flex;
-    align-items: center;
-    list-style: none;
-    gap: 20px;
+    position: relative;
 }
 
-#nav-bar img {
-    max-height: 50px;
+.wrapper .sidebar {
+    width: 200px;
+    height: 100%;
+    background: #503bb8;
+    padding: 30px 0px;
+    position: fixed;
+}
+
+.wrapper .sidebar ul li {
+    padding: 15px;
+    border-bottom: 1px solid #1e1e22;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.Logo-Projet {
+    height: auto;
+    width: 130px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper .sidebar ul li a {
+    color: #bdb8d7;
+    display: block;
+}
+
+.wrapper .sidebar ul li:hover {
+    background-color: #594f8d;
+}
+
+.wrapper .sidebar ul li:hover a {
+    color: #fff;
 }
 
 /* Main content styles */
@@ -62,7 +85,7 @@ main {
 
 /* Footer styles */
 .footer-item {
-    background-color: #333;
+    background: #503bb8;
     color: white;
     padding: 10px;
     border-top: 1px solid #555;
@@ -83,41 +106,28 @@ main {
     color: #17a2b8; /* Bleu cyan */
 }
 
-/* Server message section styles */
-#server-message {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-}
-
-.server-message button {
-    margin-top: 10px;
-}
-
 /* Header item styles */
 .header-item {
     text-align: center;
     margin-bottom: 20px;
     font-size: 1.8em;
-    color: #007bff; 
+    color: #007bff;
 }
 
 /* Team name styles */
 .team-name {
-    color: #28a745; 
+    color: #28a745;
 }
 
 /* Adjustments for inputs */
 input {
     padding: 10px;
     margin-top: 10px;
-    border: 1px solid #ced4da; 
-    border-radius: 5px; 
+    border: 1px solid #ced4da;
+    border-radius: 5px;
 }
 
 input:focus {
-    border-color: #007bff; 
+    border-color: #007bff;
     outline: none;
 }

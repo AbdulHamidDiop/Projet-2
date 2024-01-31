@@ -12,28 +12,31 @@ import { map } from 'rxjs/operators';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent {
-    readonly title: string = 'LOG2990';
+    readonly title: string = 'Qui(ck)zz';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private readonly communicationService: CommunicationService, private router: Router, private http: HttpClient) {}
+    constructor(
+        private readonly communicationService: CommunicationService,
+        private router: Router,
+        private http: HttpClient,
+    ) {}
 
-    userInput:string = "";
+    userInput: string = '';
 
     verifyPassword() {
-        this.http.post('http://localhost:3000/api/admin/password', { password: this.userInput })
-            .subscribe((response: any) => {
-                if (response.body === "true") {
-                    this.router.navigate(['/admin']);
-                    this.communicationService.updateSharedVariable(true);
-                } else {
-                    alert('Incorrect password');
-                }
-            });
+        this.http.post('http://localhost:3000/api/admin/password', { password: this.userInput }).subscribe((response: any) => {
+            if (response.body === 'true') {
+                this.router.navigate(['/admin']);
+                this.communicationService.updateSharedVariable(true);
+            } else {
+                alert('Incorrect password');
+            }
+        });
     }
 
     onButtonClick() {
         this.verifyPassword();
-      }
+    }
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {
