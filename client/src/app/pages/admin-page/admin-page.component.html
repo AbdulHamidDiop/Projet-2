@@ -24,8 +24,8 @@
 
 <main>
     <h1 class="header-item">Page Administrateur</h1>
-    <mat-grid-list cols="2" rowHeight="2:1">
-        <mat-grid-tile>
+    <div class="grid-container-admin-page">
+        <div class="grid-area-game-list">
             <div class="scroll-box">
                 <app-game-card
                     *ngFor="let game of games"
@@ -34,8 +34,37 @@
                     (checkEvent)="onCheckGame($event)"
                 ></app-game-card>
             </div>
-        </mat-grid-tile>
-        <mat-grid-tile>
+        </div>
+        <div class="grid-area-add-game">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title><h3>Créer un jeu</h3></mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>
+                        Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un qui(ck)zz complétement
+                        personnalisé.
+                    </p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button (click)="onCreateButtonClick()"><mat-icon>launch</mat-icon></button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+        <div class="grid-area-question-bank">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-title><h3>Banque de questions</h3></mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>Parcourez, modifiez et ajoutez des questions à la banque de quiz qui est partagée par tous les utilisateurs qui(ck)zz.</p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button (click)="onQuestionsButtonClick()"><mat-icon>launch</mat-icon></button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+        <div class="grid-area-import">
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>Importer un jeu</mat-card-title>
@@ -50,28 +79,8 @@
                     <button mat-button (click)="onImportButtonClick()">Importer le jeu</button>
                 </mat-card-actions>
             </mat-card>
-        </mat-grid-tile>
-        <mat-grid-tile>
-            <mat-card>
-                <mat-card-header>
-                    <mat-card-title>Créer un jeu</mat-card-title>
-                </mat-card-header>
-                <mat-card-actions>
-                    <button mat-button (click)="onCreateButtonClick()">Créer un jeu</button>
-                </mat-card-actions>
-            </mat-card>
-        </mat-grid-tile>
-        <mat-grid-tile>
-            <mat-card>
-                <mat-card-header>
-                    <mat-card-title>Banque de questions</mat-card-title>
-                </mat-card-header>
-                <mat-card-actions>
-                    <button mat-button (click)="onQuestionsButtonClick()">Voir les questions</button>
-                </mat-card-actions>
-            </mat-card>
-        </mat-grid-tile>
-    </mat-grid-list>
+        </div>
+    </div>
 </main>
 
 <footer class="footer-item">

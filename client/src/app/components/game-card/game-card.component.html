@@ -1,6 +1,8 @@
 <mat-card class="game-card">
     <mat-card-header>
-        <mat-card-title>{{ game.title }}</mat-card-title>
+        <mat-card-title
+            ><h2>{{ game.title }}</h2></mat-card-title
+        >
     </mat-card-header>
     <mat-card-content> Dernière modification: {{ game.lastModification | date: 'short' }} </mat-card-content>
     <mat-card-actions>
