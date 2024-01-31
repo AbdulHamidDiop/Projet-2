@@ -1,6 +1,6 @@
 {
-  "dependencies": {
-    "@angular/cli": "^17.1.1",
-    "uuid": "^9.0.1"
-  }
+    "dependencies": {
+        "@angular/cli": "^17.1.1",
+        "uuid": "^9.0.1"
+    }
 }
