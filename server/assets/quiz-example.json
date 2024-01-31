@@ -1,52 +1,5 @@
 [
   {
-    "id": "462778813468",
-    "title": "Les stars les plus connus du Royaume-Uni",
-    "description": "Questaqions de pratique sur le langage JavaScript",
-    "duration": 60,
-    "lastModification": "2024-01-30T15:23:55.592Z",
-    "isHidden": true,
-    "questions": [
-      {
-        "type": "QCM",
-        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-        "points": 40,
-        "choices": [
-          {
-            "text": "var",
-            "isCorrect": true
-          },
-          {
-            "text": "self",
-            "isCorrect": false
-          },
-          {
-            "text": "this",
-            "isCorrect": true
-          },
-          {
-            "text": "int"
-          }
-        ]
-      },
-      {
-        "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
-        "points": 20,
-        "choices": [
-          {
-            "text": "Non",
-            "isCorrect": true
-          },
-          {
-            "text": "Oui",
-            "isCorrect": false
-          }
-        ]
-      }
-    ]
-  },
-  {
     "id": "462778813469",
     "title": "Trivia des top 50 artistes des années 2000",
     "description": "Questaqions de pratique sur le langage JavaScript",
@@ -530,6 +483,61 @@
         "addToBank": true,
         "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
         "lastModification": "2024-01-30T22:29:59.715Z"
+      }
+    ],
+    "isHidden": true
+  },
+  {
+    "id": "462778813468",
+    "lastModification": "2024-01-30T22:34:18.141Z",
+    "title": "Les stars les plus connus du Royaume-Uni",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int"
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QRL",
+        "text": "test mod",
+        "points": 20,
+        "addToBank": true,
+        "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+        "lastModification": "2024-01-30T22:34:16.468Z"
       }
     ],
     "isHidden": true

@@ -126,5 +126,6 @@ export class AdminCreateGamePageComponent {
         };
 
         this.gameService.addGame(this.game);
+        this.router.navigate(['/admin']);
     }
 }
