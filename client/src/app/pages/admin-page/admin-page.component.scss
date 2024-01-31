@@ -96,11 +96,10 @@ mat-grid-tile {
 }
 
 .scroll-box {
-    width: 35%;
-    height: 100vh;
     overflow: auto;
     border: 1px solid #ccc;
     padding: 10px;
+    height: 100%;
 }
 
 #handleErrorsGrid {

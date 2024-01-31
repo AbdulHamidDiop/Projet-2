@@ -26,12 +26,14 @@
     <h1 class="header-item">Page Administrateur</h1>
     <mat-grid-list cols="2" rowHeight="2:1">
         <mat-grid-tile>
-            <app-game-card
-                *ngFor="let game of games"
-                [game]="game"
-                (deleteEvent)="onDeleteGame($event)"
-                (checkEvent)="onCheckGame($event)"
-            ></app-game-card>
+            <div class="scroll-box">
+                <app-game-card
+                    *ngFor="let game of games"
+                    [game]="game"
+                    (deleteEvent)="onDeleteGame($event)"
+                    (checkEvent)="onCheckGame($event)"
+                ></app-game-card>
+            </div>
         </mat-grid-tile>
         <mat-grid-tile>
             <mat-card>

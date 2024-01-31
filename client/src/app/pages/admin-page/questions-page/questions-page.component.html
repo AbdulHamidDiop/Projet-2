@@ -25,16 +25,24 @@
 <main>
     <h1 class="header-item">Banque de questions</h1>
 
-    <div class="scroll-box">
-        <div *ngFor="let question of questions; index as i">
-            <app-admin-question [question]="question" [index]="i" [editable]="true"></app-admin-question>
+    <div class="grid-container-question-bank">
+        <div class="questions-list-column">
+            <div class="scroll-box">
+                <div *ngFor="let question of questions; index as i">
+                    <app-admin-question [question]="question" [index]="i" [editable]="true"></app-admin-question>
+                </div>
+            </div>
         </div>
-    </div>
-    <div>
-        <h1>Questions</h1>
-        <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
-            <mat-icon class="add-icon">add</mat-icon>
-        </button>
+        <div class="question-add-column">
+            <div>
+                <h1>
+                    Questions
+                    <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
+                        <mat-icon class="add-icon">add</mat-icon>
+                    </button>
+                </h1>
+            </div>
+        </div>
     </div>
 </main>
 
