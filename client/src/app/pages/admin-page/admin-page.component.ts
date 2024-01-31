@@ -1,4 +1,3 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
@@ -13,7 +12,6 @@ import { v4 } from 'uuid';
 })
 export class AdminPageComponent {
     constructor(
-        private http: HttpClient,
         private router: Router,
         private communicationService: CommunicationService,
         private el: ElementRef,
@@ -82,7 +80,7 @@ export class AdminPageComponent {
                 isHidden: true,
                 questions: jsonArray.questions,
             };
-            this.http.post('http://localhost:3000/api/game/importgame', { game }).subscribe((response: unknown) => {});
+            this.gameService.addGame(game);
             this.games.push(game);
             handleErrorsGrid.innerText = 'Le jeu a été importé correctement.';
         } else {
