@@ -53,7 +53,14 @@ li {
 main {
     padding: 20px;
     margin-left: 250px;
-    min-height: 100%;
+    min-height: 88%;
+}
+
+.header-item {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #007bff;
 }
 
 mat-grid-list {

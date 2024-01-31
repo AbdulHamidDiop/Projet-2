@@ -1,55 +1,40 @@
-<header class="header">
-    <nav id="nav-bar">
-        <ul>
-            <li><img src="https://bit.ly/3QofL1J" alt="Logo Projet" /></li>
-            <li>Créer une partie</li>
-            <li>Rejoindre une partie</li>
-        </ul>
-    </nav>
-</header>
-
 <body>
-<div *ngFor="let game of gameService.games">
-    <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(getSelectedGame())">
-        <mat-expansion-panel-header>
-            <mat-panel-title>
-                <a [title]="game.title + ' details'">
-                    {{ game.title }}
-                </a>
-            </mat-panel-title>
-        </mat-expansion-panel-header>
-        <h2>Détails du jeu</h2>
+    <div *ngFor="let game of gameService.games">
+        <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(getSelectedGame())">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <a [title]="game.title + ' details'">
+                        {{ game.title }}
+                    </a>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <strong>Détails du jeu</strong>
 
-        <p>Description du jeu: {{ getSelectedGame().description }}</p>
-        <p>Temps alloué pour répondre : {{ getSelectedGame().duration }} secondes</p>
+            <p>Description du jeu: {{ getSelectedGame().description }}</p>
+            <p>Temps alloué pour répondre : {{ getSelectedGame().duration }} secondes</p>
 
-        <p>Liste des questions du questionnaire </p>
-        <ul>
-            <li *ngFor="let question of getSelectedGame().questions">
-                {{ question }}
-            </li>
-        </ul>
+            <p>Liste des questions du questionnaire </p>
+            <ul>
+                <li *ngFor="let question of getSelectedGame().questions">
+                    {{ question }}
+                </li>
+            </ul>
 
-        <div class="button-row">
-            <button mat-fab extended color="primary" [routerLink]="['/playArea', getSelectedGame().id]"
-            (click)="check(getSelectedGame())">
-                Tester le jeu
-            </button>
+            <div class="button-row">
+                <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
+                bouton "tester le jeu" -->
+                <button mat-fab extended color="primary" [routerLink]="['/playArea', getSelectedGame().id]"
+                    (click)="check(getSelectedGame())">
+                    Tester le jeu
+                </button>
 
-            <button mat-fab extended color="primary" routerLink="/waiting" (click)="check(getSelectedGame())">
-                Lancer une partie
-            </button>
-        </div>
+                <button mat-fab extended color="primary" routerLink="/waiting" (click)="check(getSelectedGame())">
+                    Lancer une partie
+                </button>
+            </div>
 
 
-    </mat-expansion-panel>
+        </mat-expansion-panel>
 
-</div>
+    </div>
 </body>
-
-<footer class="footer-item">
-    <h4 class="team-name">Équipe 312</h4>
-    <p><span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
-        <span>Youva</span>
-    </p>
-</footer>
