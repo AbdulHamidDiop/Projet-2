@@ -63,13 +63,45 @@ main {
     color: #007bff;
 }
 
-mat-grid-list {
-    margin-top: 100px;
+.grid-container-admin-page {
+    display: grid;
+    grid-template-columns: 1.5fr 1.5fr 1.5fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+        'game-list add-game see-bank'
+        'game-list import import';
 }
 
-mat-grid-tile {
-    justify-content: center;
-    align-items: center;
+.grid-area-import {
+    grid-area: import;
+    justify-self: center;
+}
+
+.grid-area-add-game {
+    grid-area: add-game;
+}
+
+.grid-area-question-bank {
+    grid-area: see-bank;
+}
+
+.grid-area-game-list {
+    grid-area: game-list;
+}
+
+.scroll-box {
+    overflow: auto;
+    padding: 10px;
+    height: 90vh;
+}
+
+#handleErrorsGrid {
+    border-style: solid;
+    border-color: black;
+    height: 300px;
+    width: 353.19px;
 }
 
 /* Footer styles */

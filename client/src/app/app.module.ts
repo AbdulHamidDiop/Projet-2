@@ -12,17 +12,19 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
+import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
 import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
-import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
+import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
+import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
-import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
-import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
-import { QuestionsBankService } from './services/questions-bank.service';
-import { GameService } from './services/game.service';
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
+import { GameService } from './services/game.service';
+import { QuestionsBankService } from './services/questions-bank.service';
+import { QuestionsService } from './services/questions.service';
 
 /**
  * Main module that is used in main.ts.
@@ -40,25 +42,21 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
         AdminPageComponent,
         AdminCreateGamePageComponent,
         CreateQuestionDialogComponent,
+        AdminCreateGamePageComponent,
+        CreateQuestionDialogComponent,
         PlayAreaComponent,
         SidebarComponent,
         GameListComponent,
         WaitingPageComponent,
         QuestionsPageComponent,
+        QuestionsPageComponent,
+        GameCardComponent,
         AdminQuestionComponent,
         AdminQuestionsBankComponent,
     ],
     // eslint-disable-next-line prettier/prettier
-    imports: [
-        AppMaterialModule, 
-        AppRoutingModule, 
-        AppReactiveFormsModule, 
-        BrowserAnimationsModule, 
-        BrowserModule, 
-        FormsModule, 
-        HttpClientModule
-    ],
-    providers: [GameService, QuestionsBankService],
+    imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    providers: [GameService, QuestionsBankService, QuestionsService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

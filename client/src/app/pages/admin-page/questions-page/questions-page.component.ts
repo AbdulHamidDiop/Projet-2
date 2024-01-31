@@ -1,5 +1,9 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
+import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
+import { CommunicationService } from '@app/services/communication.service';
+import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
 
 @Component({
@@ -8,26 +12,39 @@ import { Question } from '@common/game';
     styleUrls: ['./questions-page.component.scss'],
 })
 export class QuestionsPageComponent {
-    constructor(private http: HttpClient) {}
     questions: Question[];
+    isAuthentificated: boolean;
 
-    getQuestions() {
-        this.http.get("http://localhost:3000/api/admin/questions")
-            .subscribe((response: any) => {
-              this.questions = response;
-            });
+    constructor(
+        public dialog: MatDialog,
+        private communicationService: CommunicationService,
+        private router: Router,
+        private questionsService: QuestionsService,
+    ) {}
+
+    async getQuestions() {
+        this.questions = await this.questionsService.getAllQuestions();
     }
 
-    ngOnInit() {
-        this.getQuestions();
+    async ngOnInit() {
+        this.communicationService.sharedVariable$.subscribe((data) => {
+            this.isAuthentificated = data;
+        });
+        if (!this.isAuthentificated) {
+            this.router.navigate(['/home']);
+        }
+        await this.getQuestions();
+        this.questionsService.deleteRequest.subscribe(() => {
+            this.getQuestions();
+        });
     }
+    openDialog(): void {
+        const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {});
 
-    onModifyButtonClick() {
-        //link to create question but with arguments
-    }
-
-    onDeleteButtonClick(question: Question) {
-        this.http.delete(`http://localhost:3000/api/admin/questions/deletequestion/${question.id}`)
-        .subscribe((response: any) => {});
+        dialogRef.afterClosed().subscribe((result: Question) => {
+            if (result) {
+                this.questions.push(result);
+            }
+        });
     }
 }

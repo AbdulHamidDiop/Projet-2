@@ -5,11 +5,20 @@
     border-radius: 10px;
 }
 
+mat-panel-title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2em;
+    max-height: 2.4em;
+}
+
 mat-panel-description {
     max-width: 60px;
     padding-left: 3px;
     border-left: 1px solid rgba(0, 0, 0, 0.299);
-
 }
 .question-header {
     margin-bottom: 0px;
@@ -47,4 +56,12 @@ mat-panel-description {
 
 .cross-icon {
     color: red;
+}
+
+.delete-button {
+    color: red;
+}
+
+.edit-button {
+    color: blue;
 }

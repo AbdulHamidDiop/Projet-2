@@ -1,50 +1,33 @@
 [
-    {
-      "id": "1",
-      "type": "QCM",
-      "lastModification": "2024-01-18T20:55:10.186Z",
-      "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-      "points": 40,
-      "choices": [
-        {
-          "text": "var",
-          "isCorrect": true
-        },
-        {
-          "text": "self",
-          "isCorrect": false
-        },
-        {
-          "text": "this",
-          "isCorrect": true
-        },
-        {
-          "text": "int"
-        }
-      ]
-    },
-    {
-      "id": "2",
-      "type": "QRL",
-      "lastModification": "2024-01-19T20:55:10.186Z",
-      "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
-      "points": 60
-    },
-    {
-      "id": "3",
-      "type": "QCM",
-      "lastModification": "2024-01-17T20:55:10.186Z",
-      "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
-      "points": 20,
-      "choices": [
-        {
-          "text": "Non",
-          "isCorrect": true
-        },
-        {
-          "text": "Oui",
-          "isCorrect": null
-        }
-      ]
-    }
-  ]
+  {
+    "type": "QRL",
+    "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
+    "points": 50,
+    "addToBank": false,
+    "id": "2",
+    "lastModification": "2024-01-30T20:15:04.920Z"
+  },
+  {
+    "type": "QRL",
+    "text": "test mod",
+    "points": 20,
+    "addToBank": true,
+    "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+    "lastModification": "2024-01-30T22:34:16.468Z"
+  },
+  {
+    "type": "QRL",
+    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+    "points": 30,
+    "addToBank": false,
+    "lastModification": "2024-01-31T16:09:01.684Z"
+  },
+  {
+    "type": "QRL",
+    "text": "Question test test",
+    "points": 20,
+    "addToBank": true,
+    "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+    "lastModification": "2024-01-31T16:39:55.649Z"
+  }
+]

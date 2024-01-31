@@ -8,20 +8,38 @@
 }
 .questions-bank-container {
     max-height: 100%;
+    min-width: 450px;
     overflow-y: auto;
     border-left-color: rgba(128, 128, 128, 0.347);
     border-left-width: 1px;
     border-left-style: solid;
     right: 20px;
     top: 15px;
-    position: absolute; 
+    position: absolute;
 }
 
 .quiz-questions-container {
+    min-height: 100px;
     max-height: 400px;
-    width:90%;
+    overflow-y: auto;
+    min-width: 400px;
+    width: 90%;
     overflow-y: auto;
 }
+
+mat-accordion {
+    min-height: 100%;
+    min-width: 100%;
+}
+.placeholder {
+    color: grey;
+    border-radius: 10px;
+    min-height: 80px;
+    line-height: 50px;
+    text-align: center;
+    border: 1px dashed #ccc;
+}
+
 .row-container {
     display: flex;
     flex-direction: column;
@@ -65,9 +83,9 @@
     height: 30px;
     border-radius: 5px;
     margin-top: 15px;
+    margin-bottom: 15px;
 }
 
-#sidebar {
-    flex-basis: 350px;
-    min-width: 200px;
+small {
+    color: red;
 }
