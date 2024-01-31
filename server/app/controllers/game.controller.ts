@@ -89,7 +89,7 @@ export class GameController {
          */
 
         this.router.post('/importgame', (req: Request, res: Response) => {
-            res.json(this.gamesService.addGame(req.body.game));
+            res.json(this.gamesService.addGame(req.body));
             res.status(HTTP_STATUS_CREATED);
         });
 
