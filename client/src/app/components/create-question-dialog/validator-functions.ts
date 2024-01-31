@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { Choices } from '@app/interfaces/game-elements';
+import { Choices } from '@common/game';
 
 const MULTIPLE_OF_TEN = 10;
 
