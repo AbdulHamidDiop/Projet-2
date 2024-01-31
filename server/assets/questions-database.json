@@ -1,25 +1,33 @@
 [
-  {
-    "type": "QRL",
-    "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
-    "points": 50,
-    "addToBank": false,
-    "id": "2",
-    "lastModification": "2024-01-30T20:15:04.920Z"
-  },
-  {
-    "type": "QRL",
-    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-    "points": 30,
-    "addToBank": false,
-    "lastModification": "2024-01-30T22:18:47.365Z"
-  },
-  {
-    "type": "QRL",
-    "text": "Question test test",
-    "points": 20,
-    "addToBank": false,
-    "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
-    "lastModification": "2024-01-30T22:30:51.159Z"
-  }
+    {
+        "type": "QRL",
+        "text": "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
+        "points": 50,
+        "addToBank": false,
+        "id": "2",
+        "lastModification": "2024-01-30T20:15:04.920Z"
+    },
+    {
+        "type": "QRL",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 30,
+        "addToBank": false,
+        "lastModification": "2024-01-30T22:18:47.365Z"
+    },
+    {
+        "type": "QRL",
+        "text": "Question test test",
+        "points": 20,
+        "addToBank": false,
+        "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+        "lastModification": "2024-01-30T22:30:51.159Z"
+    },
+    {
+        "type": "QRL",
+        "text": "A",
+        "points": 10,
+        "addToBank": true,
+        "id": "65b0a272-daf4-4309-b0ae-dbf5cdea1a64",
+        "lastModification": "2024-01-31T00:11:37.439Z"
+    }
 ]

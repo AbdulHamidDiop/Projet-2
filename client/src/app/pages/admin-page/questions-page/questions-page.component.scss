@@ -12,3 +12,12 @@
     flex-basis: 350px;
     min-width: 200px;
 }
+
+.scroll-box {
+    width: 65%;
+    height: 100vh;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    gap: 5px;
+}

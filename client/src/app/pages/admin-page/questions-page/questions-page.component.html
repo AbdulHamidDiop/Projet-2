@@ -1,6 +1,15 @@
 <div class="container">
     <h1>Banque de questions</h1>
-    <div *ngFor="let question of questions; index as i">
-        <app-admin-question [question]="question" [index]="i" [editable]="true"></app-admin-question>
+    <div class="scroll-box">
+        <div *ngFor="let question of questions; index as i">
+            <app-admin-question [question]="question" [index]="i" [editable]="true"></app-admin-question>
+        </div>
+    </div>
+
+    <div>
+        <h1>Questions</h1>
+        <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
+            <mat-icon class="add-icon">add</mat-icon>
+        </button>
     </div>
 </div>
