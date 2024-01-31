@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { Game } from '../interfaces/game-props';
 import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { API_URL } from '@common/consts';
+import { Game } from '@common/game';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -12,17 +13,9 @@ export class GameService {
     private selectedGame: Game = {} as Game;
 
     constructor(private http: HttpClient) {
-        this.games = [
-            {
-                title: 'Mode Aléatoire',
-            },
-            {
-                title: 'QCM',
-            },
-            {
-                title: 'QRL',
-            },
-        ];
+        this.getAllGames().then((games: Game[]) => {
+            this.games = games;
+        });
     }
 
     // Modification : Modification du type de retour de getSelectedGame à Game
@@ -36,7 +29,64 @@ export class GameService {
 
     checkGame(id: string | undefined): Observable<Game> {
         return this.http.get<Game>(`/api/games/${id}`);
-      }
+    }
+
+    async getAllGames(): Promise<Game[]> {
+        const response = await fetch(API_URL + 'game');
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const games: Game[] = await response.json();
+        return games;
+    }
+
+    async addGame(game: Game): Promise<void> {
+        const response = await fetch(API_URL + 'game/importgame', {
+            method: 'POST',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(game),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+    }
+
+    async getGameByID(id: string): Promise<Game> {
+        const games: Game[] = await this.getAllGames();
+        const game = games.find((g) => g.id === id);
+        if (!game) {
+            throw new Error('Game not found');
+        }
+        return game;
+    }
+
+    async toggleGameHidden(id: string): Promise<boolean> {
+        const response = await fetch(API_URL + 'game/togglehidden', {
+            method: 'PATCH',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        return true;
+    }
+
+    async deleteGameByID(id: string): Promise<boolean> {
+        const response = await fetch(API_URL + 'game/deletegame/' + id, {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        return true;
+    }
 }
 
 export { Game };

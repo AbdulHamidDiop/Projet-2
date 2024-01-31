@@ -94,3 +94,18 @@ mat-grid-tile {
 .footer-item p span:nth-child(odd) {
     color: #17a2b8; /* Bleu cyan */
 }
+
+.scroll-box {
+    width: 35%;
+    height: 100vh;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+#handleErrorsGrid {
+    border-style: solid;
+    border-color: black;
+    height: 300px;
+    width: 353.19px;
+}

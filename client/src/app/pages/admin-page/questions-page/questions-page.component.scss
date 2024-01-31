@@ -89,3 +89,12 @@ mat-card {
 .footer-item p span:nth-child(odd) {
     color: #17a2b8; /* Bleu cyan */
 }
+
+.scroll-box {
+    width: 65%;
+    height: 100vh;
+    overflow: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    gap: 5px;
+}

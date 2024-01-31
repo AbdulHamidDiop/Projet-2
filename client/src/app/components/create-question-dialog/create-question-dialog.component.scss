@@ -1,5 +1,5 @@
 .container {
-    padding: 20px
+    padding: 20px;
 }
 
 .row-container {
@@ -20,6 +20,11 @@
     justify-content: center;
 }
 
+.submit-options {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
 .choices-container {
     padding-left: 20px;
 }
@@ -28,8 +33,7 @@
     color: red;
 }
 
-
-.select{
+.select {
     border-radius: 20px;
 }
 
@@ -38,8 +42,25 @@
     height: 30px;
     border-radius: 5px;
     margin-top: 10px;
+    margin-right: 10px;
 }
 
-#position-display {
-    border: 1px dashed blue;
+.choices-container {
+    padding-top: 10px;
+}
+
+.is-correct-instruction {
+    color: grey;
+    font-style: italic;
+}
+
+.drag-icon {
+    color: rgb(62, 62, 62);
+}
+.drag-icon:hover {
+    cursor: grab;
+}
+
+small {
+    color: red;
 }

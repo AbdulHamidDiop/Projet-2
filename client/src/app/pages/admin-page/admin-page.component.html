@@ -5,14 +5,18 @@
                 <img src="../../../assets/img/Qui(ck)zz_Icon.png" class="Logo-Projet" />
             </a>
             <ul>
-                <li><a style="text-decoration:none" href="#"><i class="fas fa-home"></i>Accueil</a></li>
-                <li><a style="text-decoration:none" routerLink="/createGame"><i class="fas fa-blog"></i>Créer une
-                        partie</a></li>
-                <li><a style="text-decoration:none" routerLink="/game"><i class="fas fa-address-book"></i>Rejoindre
-                        une
-                        partie</a></li>
-                <li><a style="text-decoration:none" routerLink="/admin"><i class="fas fa-map-pin"></i>Administrer les
-                        jeux</a></li>
+                <li>
+                    <a style="text-decoration: none" href="#"><i class="fas fa-home"></i>Accueil</a>
+                </li>
+                <li>
+                    <a style="text-decoration: none" routerLink="/createGame"><i class="fas fa-blog"></i>Créer une partie</a>
+                </li>
+                <li>
+                    <a style="text-decoration: none" routerLink="/game"><i class="fas fa-address-book"></i>Rejoindre une partie</a>
+                </li>
+                <li>
+                    <a style="text-decoration: none" routerLink="/admin"><i class="fas fa-map-pin"></i>Administrer les jeux</a>
+                </li>
             </ul>
         </div>
     </div>
@@ -22,23 +26,12 @@
     <h1 class="header-item">Page Administrateur</h1>
     <mat-grid-list cols="2" rowHeight="2:1">
         <mat-grid-tile>
-            <mat-card *ngFor="let game of games">
-                <mat-card-header>
-                    <mat-card-title>{{game.title}}</mat-card-title>
-                    <mat-card-subtitle>
-                        <label for="hiddenCheckBox">Le jeu est caché:</label>
-                        <input type="checkBox" id="hiddenCheckBox" (change)="onCheck(game)" [(ngModel)]="game.isHidden">
-                    </mat-card-subtitle>
-                </mat-card-header>
-                <mat-card-content>
-                    <p>Dernière modification: {{game.lastModification}}</p>
-                </mat-card-content>
-                <mat-card-actions>
-                    <button mat-button (click)="onModifyButtonClick()">Modifier le jeu </button>
-                    <button mat-button (click)="onExportButtonClick(game)">Exporter le jeu </button>
-                    <button mat-button (click)="onDeleteButtonClick(game)">Supprimer le jeu </button>
-                </mat-card-actions>
-            </mat-card>
+            <app-game-card
+                *ngFor="let game of games"
+                [game]="game"
+                (deleteEvent)="onDeleteGame($event)"
+                (checkEvent)="onCheckGame($event)"
+            ></app-game-card>
         </mat-grid-tile>
         <mat-grid-tile>
             <mat-card>
@@ -47,11 +40,12 @@
                 </mat-card-header>
                 <mat-card-content>
                     <p>Choisissez le fichier à importer</p>
-                    <input type="file" accept=".json" (change)="onFileSelected($event)">
+                    <input type="file" accept=".json" (change)="onFileSelected($event)" />
+                    <p>Résultat de l'importation</p>
+                    <div id="handleErrorsGrid"></div>
                 </mat-card-content>
                 <mat-card-actions>
-
-                    <button mat-button (click)="onImportButtonClick()">Importer le jeu </button>
+                    <button mat-button (click)="onImportButtonClick()">Importer le jeu</button>
                 </mat-card-actions>
             </mat-card>
         </mat-grid-tile>
@@ -61,7 +55,7 @@
                     <mat-card-title>Créer un jeu</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
-                    <button mat-button (click)="onCreateButtonClick()">Créer un jeu </button>
+                    <button mat-button (click)="onCreateButtonClick()">Créer un jeu</button>
                 </mat-card-actions>
             </mat-card>
         </mat-grid-tile>
@@ -71,17 +65,17 @@
                     <mat-card-title>Banque de questions</mat-card-title>
                 </mat-card-header>
                 <mat-card-actions>
-                    <button mat-button (click)="onQuestionsButtonClick()">Voir les questions </button>
+                    <button mat-button (click)="onQuestionsButtonClick()">Voir les questions</button>
                 </mat-card-actions>
             </mat-card>
         </mat-grid-tile>
     </mat-grid-list>
 </main>
 
-
 <footer class="footer-item">
     <h4 class="team-name">Équipe 312</h4>
-    <p><span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
+    <p>
+        <span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
         <span>Youva</span>
     </p>
 </footer>

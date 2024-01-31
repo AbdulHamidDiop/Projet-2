@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
+import { GameService } from '@app/services/game.service';
 import { Choices, Game, Question } from '@common/game';
+import { v4 } from 'uuid';
 
 @Component({
     selector: 'app-admin-page',
@@ -14,58 +16,33 @@ export class AdminPageComponent {
         private http: HttpClient,
         private router: Router,
         private communicationService: CommunicationService,
+        private el: ElementRef,
+        private gameService: GameService,
     ) {}
 
     games: Game[];
     selectedFile: File;
     isAuthentificated: boolean;
+    errors: string;
 
-    getGames() {
-        this.http.get('http://localhost:3000/api/admin').subscribe((response: any) => {
-            this.games = response;
-        });
+    async getGames() {
+        // - cdl
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.games = await this.gameService.getAllGames();
     }
 
-    ngOnInit() {
-        this.getGames();
+    async ngOnInit() {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });
         if (!this.isAuthentificated) {
             this.router.navigate(['/home']);
         }
-    }
-
-    onCheck(game: Game) {
-        this.http.patch('http://localhost:3000/api/admin/toggleHidden', { id: game.id }).subscribe((response: any) => {});
-    }
-
-    onDeleteButtonClick(game: Game) {
-        this.http.delete(`http://localhost:3000/api/admin/deletegame/${game.id}`).subscribe((response: any) => {
-            window.location.reload();
-        });
-    }
-
-    onModifyButtonClick() {
-        // link to create new game but with arguments
-    }
-
-    onExportButtonClick(game: Game) {
-        const { isHidden, ...gameWithoutHidden }: Game = game;
-        const jsonData = JSON.stringify(gameWithoutHidden);
-        const blob = new Blob([jsonData], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'data.json';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        await this.getGames();
     }
 
     onCreateButtonClick() {
-        // link to create new game
+        this.router.navigate(['/admin/createGame']);
     }
 
     onQuestionsButtonClick() {
@@ -81,14 +58,23 @@ export class AdminPageComponent {
         }
     }
 
+    onCheckGame(game: Game) {
+        game.lastModification = new Date();
+    }
+
+    onDeleteGame(game: Game) {
+        this.games = this.games.filter((g) => g !== game);
+    }
+
     verifyIfJSON(): boolean {
         return this.selectedFile && this.selectedFile.type === 'application/json';
     }
 
     handleFile(jsonArray: unknown) {
+        const handleErrorsGrid = this.el.nativeElement.querySelector('#handleErrorsGrid');
         if (this.isGame(jsonArray)) {
             const game: Game = {
-                id: this.getRandomID(),
+                id: v4(),
                 title: jsonArray.title,
                 description: jsonArray.description,
                 duration: jsonArray.duration,
@@ -96,27 +82,23 @@ export class AdminPageComponent {
                 isHidden: true,
                 questions: jsonArray.questions,
             };
-            this.http.post('http://localhost:3000/api/admin/importgame', { game }).subscribe((response: any) => {});
+            this.http.post('http://localhost:3000/api/game/importgame', { game }).subscribe((response: unknown) => {});
+            this.games.push(game);
+            handleErrorsGrid.innerText = 'Le jeu a été importé correctement.';
+        } else {
+            handleErrorsGrid.innerText = this.errors;
         }
     }
 
-    getRandomID(): string {
-        let randomID = '';
-        for (let i = 0; i < 12; i++) {
-            randomID += Math.floor(Math.random() * 10);
-        }
-        return randomID;
-    }
-
-    isArrayOfQuestions(questions: Question[]): questions is Question[] {
+    questionErrorsHandling(questions: Question[]) {
         if (questions.length === 0) {
-            console.log('Le jeu doit contenir au moins une question.');
+            this.errors += 'Le jeu doit contenir au moins une question. ';
         }
         if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
-            console.log('Les questions du jeu doivent être de type QCM ou QRL.');
+            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
         }
         if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
-            console.log('Les questions doivent avoir un texte de type string.');
+            this.errors += 'Les questions doivent avoir un texte de type string. ';
         }
         if (
             !questions.every(
@@ -128,15 +110,17 @@ export class AdminPageComponent {
                     question.points % 10 === 0,
             )
         ) {
-            console.log('Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10.');
+            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
         }
         if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
-            console.log('Les questions doivent contenir un nombre de choix compris entre 2 et 4.');
+            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
         }
         if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
-            console.log('Les choix de réponse des questions doivent avoir un texte de type string.');
+            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
         }
+    }
 
+    isArrayOfQuestions(questions: Question[]): questions is Question[] {
         return (
             Array.isArray(questions) &&
             questions.every(
@@ -155,25 +139,27 @@ export class AdminPageComponent {
             )
         );
     }
-
+    // - cdl
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, complexity
     isGame(obj: any): obj is Game {
         if (!obj.title || typeof obj.title !== 'string') {
-            console.log('Le jeu importé doit avoir un titre de type string.');
+            this.errors += 'Le jeu importé doit avoir un titre de type string. ';
         } else {
             if (this.games.some((game) => game.title === obj.title)) {
-                console.log('Le titre choisi existe déjà. Veuillez en choisir un nouveau.');
+                this.errors += 'Le titre choisi existe déjà. Veuillez en choisir un nouveau. ';
             }
         }
         if (!obj.description || typeof obj.description !== 'string') {
-            console.log('Le jeu importé doit avoir une description de type string.');
+            this.errors += 'Le jeu importé doit avoir une description de type string. ';
         }
         if (!obj.duration || typeof obj.duration !== 'number') {
-            console.log('Le jeu importé doit avoir un temps alloué de type int.');
+            this.errors += 'Le jeu importé doit avoir un temps alloué de type int. ';
         } else {
             if (obj.duration < 10 || obj.duration > 60) {
-                console.log('Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes.');
+                this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes. ';
             }
         }
+        this.questionErrorsHandling(obj.questions);
 
         return (
             obj &&
@@ -188,12 +174,15 @@ export class AdminPageComponent {
     }
 
     onImportButtonClick() {
+        this.errors = 'Erreurs rencontrées: ';
+
         if (this.verifyIfJSON()) {
             this.readFile(this.selectedFile).then((jsonArray: unknown) => {
                 this.handleFile(jsonArray);
             });
         } else {
-            console.log('Type de fichier invalide. Veuillez sélectionner un fichier de type JSON.');
+            const handleErrorsGrid = this.el.nativeElement.querySelector('#handleErrorsGrid');
+            handleErrorsGrid.innerText = 'Le type de fichier est invalide. Veuillez sélectionner un fichier de type JSON.';
         }
     }
 
