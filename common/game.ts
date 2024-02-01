@@ -2,11 +2,12 @@ export interface Choices {
     text: string;
     isCorrect: boolean;
 }
-enum Type {
+export enum Type {
     QCM = 'QCM',
     QRL = 'QRL',
 }
 export interface Question {
+    nbChoices: number;
     id: string;
     type: Type;
     lastModification: Date;

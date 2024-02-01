@@ -11,6 +11,7 @@ export interface Question {
     text: string;
     points: number;
     choices: Choices[];
+    nbChoices: number;
 }
 export interface Game {
     id?: string;

@@ -26,12 +26,14 @@
             "text": "Angular",
             "isCorrect": true
           }
-        ]
+        ],
+          "nbChoices":4
       },
       {
         "type": "QRL",
         "text": "Explain the purpose of the 'async' keyword in JavaScript.",
-        "points": 50
+        "points": 50,
+        "nbChoices":0 
       },
       {
         "type": "QCM",
@@ -54,7 +56,8 @@
             "text": "font",
             "isCorrect": false
           }
-        ]
+        ],
+        "nbChoices":4
       }
     ]
   }
