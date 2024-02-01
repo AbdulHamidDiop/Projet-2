@@ -23,7 +23,6 @@ import { QuestionsPageComponent } from './pages/admin-page/questions-page/questi
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
 import { GameService } from './services/game.service';
-import { QuestionsBankService } from './services/questions-bank.service';
 import { QuestionsService } from './services/questions.service';
 
 /**
@@ -56,7 +55,7 @@ import { QuestionsService } from './services/questions.service';
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
-    providers: [GameService, QuestionsBankService, QuestionsService],
+    providers: [GameService, QuestionsService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

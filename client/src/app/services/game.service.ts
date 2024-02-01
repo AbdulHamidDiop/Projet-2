@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+// import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
-import { Observable } from 'rxjs';
+// import { Observable } from 'rxjs';
 
 @Injectable({
     providedIn: 'root',
@@ -12,7 +12,7 @@ export class GameService {
     // Modification : Déclaration de selectedGame comme Game directement
     private selectedGame: Game = {} as Game;
 
-    constructor(private http: HttpClient) {
+    constructor() {
         this.getAllGames().then((games: Game[]) => {
             this.games = games;
         });
@@ -27,8 +27,14 @@ export class GameService {
         this.selectedGame = game;
     }
 
-    checkGame(id: string | undefined): Observable<Game> {
-        return this.http.get<Game>(`/api/games/${id}`);
+    async checkGame(id: string | undefined): Promise<Game> {
+        // return this.http.get<Game>(`/api/game/${id}`);
+        const response = await fetch(API_URL + 'game/' + id);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const game: Game = await response.json();
+        return game;
     }
 
     async getAllGames(): Promise<Game[]> {
