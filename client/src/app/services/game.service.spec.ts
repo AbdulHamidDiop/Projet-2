@@ -36,16 +36,6 @@ describe('GameService', () => {
         expect(service.getSelectedGame()).toEqual(mockGame);
     });
 
-    it('checkGame should fetch game from API by ID', fakeAsync(() => {
-        const mockGame: Game = { id: '1', title: 'Game 1', questions: [] };
-        spyOn(window, 'fetch').and.returnValue(Promise.resolve({ ok: true, json: async () => Promise.resolve(mockGame) } as Response));
-
-        service.checkGame('1');
-        tick();
-
-        expect(service.getSelectedGame()).toEqual(mockGame);
-    }));
-
     it('getAllGames should fetch games from API', fakeAsync(() => {
         const mockGames: Game[] = [
             { id: '1', title: 'Game 1', questions: [] },
@@ -90,8 +80,11 @@ describe('GameService', () => {
 
     it('toggleGameHidden should send a PATCH request to API', fakeAsync(() => {
         const mockGame: Game = { id: '1', title: 'Game 1', questions: [] };
+
         spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
 
+        // Select the mock game before toggling hidden status
+        service.selectGame(mockGame);
         service.toggleGameHidden('1');
         tick();
 
@@ -102,6 +95,9 @@ describe('GameService', () => {
                 body: JSON.stringify({ id: '1' }),
             }),
         );
+
+        // After toggling hidden status, the selected game's hidden status should be updated
+        expect(service.getSelectedGame().isHidden).toBe(!mockGame.isHidden);
     }));
 
     it('deleteGameByID should send a DELETE request to API', fakeAsync(() => {

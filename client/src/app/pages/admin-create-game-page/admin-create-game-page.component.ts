@@ -71,9 +71,7 @@ export class AdminCreateGamePageComponent {
     }
 
     loadGameData(gameId: string): void {
-        this.gameService.getGameByID(gameId).then((game: Game) => {
-            this.populateForm(game);
-        });
+        this.populateForm(this.gameService.getGameByID(gameId));
     }
 
     populateForm(game: Game): void {

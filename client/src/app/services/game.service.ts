@@ -8,7 +8,7 @@ import { Game } from '@common/game';
     providedIn: 'root',
 })
 export class GameService {
-    games: Game[];
+    games: Game[] = [];
     // Modification : Déclaration de selectedGame comme Game directement
     private selectedGame: Game = {} as Game;
 
@@ -50,7 +50,7 @@ export class GameService {
         }
     }
 
-    async getGameByID(id: string): Promise<Game> {
+    getGameByID(id: string): Game {
         const game = this.games.find((g) => g.id === id);
         if (!game) {
             throw new Error('Game not found');
