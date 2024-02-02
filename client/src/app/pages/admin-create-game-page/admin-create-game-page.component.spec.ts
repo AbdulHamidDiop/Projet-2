@@ -17,7 +17,58 @@ describe('AdminCreateGamePageComponent', () => {
         duration: 10,
         questions: [
             {
+                id: '2',
+                type: 'QCM',
+                text: 'Question valide',
+                points: 10,
+                choices: [
+                    {
+                        text: 'Choix valide #1',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'Choix valide #2',
+                        isCorrect: false,
+                    },
+                ],
+                answer: 'Choix #1',
+            },
+            {
+                id: '1',
+                type: 'QCM',
+                text: 'Question valide',
+                points: 10,
+                choices: [
+                    {
+                        text: 'Choix valide #1',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'Choix valide #2',
+                        isCorrect: false,
+                    },
+                ],
+                answer: 'Choix #1',
+            },
+            {
                 id: '0',
+                type: 'QCM',
+                text: 'Question valide',
+                points: 10,
+                choices: [
+                    {
+                        text: 'Choix valide #1',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'Choix valide #2',
+                        isCorrect: false,
+                    },
+                ],
+                answer: 'Choix #1',
+            },
+            {
+                id: '3',
                 type: 'QCM',
                 text: 'Question valide',
                 points: 10,
@@ -127,9 +178,32 @@ describe('AdminCreateGamePageComponent', () => {
         component.populateForm(game);
         expect(component.gameForm.valid).toBeTruthy();
     });
+
     it('Should let user create 2 to 4 answers to each question', () => {
-        expect(component).toBeTruthy();
+        const lowerBound = 2;
+        const upperBound = 4;
+        let game: Game = validGame;
+        component.populateForm(game);
+        let gameSizeValid: boolean = game.questions.length >= lowerBound && game.questions.length <= upperBound;
+        expect(component.gameForm.valid === gameSizeValid).toBeTruthy();
+        game = validGame;
+        while (game.questions.length >= lowerBound) {
+            game.questions.slice(1, 1);
+        }
+        gameSizeValid = false;
+        component.populateForm(game);
+        expect(component.gameForm.valid === gameSizeValid).toBeTruthy();
+
+        game = validGame;
+        {
+            game.questions.push(game.questions[0]);
+            game.questions.push(game.questions[0]);
+        }
+        component.populateForm(game);
+        gameSizeValid = false;
+        expect(component.gameForm.valid === gameSizeValid).toBeTruthy();
     });
+
     it('Should let user define if an answer is correct or wrong', () => {
         const game: Game = validGame;
         component.populateForm(game);
@@ -187,7 +261,10 @@ describe('AdminCreateGamePageComponent', () => {
         expect(component).toBeTruthy();
     });
     it('Should save a game with visibility parameter set to hidden at the end of the existing game list', () => {
-        expect(component).toBeTruthy();
+        const game: Game = validGame;
+        component.populateForm(game);
+        component.saveQuiz();
+        expect(component.game.visible === false).toBeTruthy();
     });
     it('Should save data in a persistent manner even after a complete reboot of website and dynamic server ( 100% server-side )', () => {
         expect(component).toBeTruthy();
