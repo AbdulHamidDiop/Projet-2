@@ -37,12 +37,6 @@ export class QuestionsService {
         return questions;
     }
 
-    sortAllQuestions(): Question[] {
-        const sortedQuestions: Question[] = this.questions.sort(
-            (a, b) => new Date(b.lastModification).getTime() - new Date(a.lastModification).getTime(),
-        );
-        return sortedQuestions;
-    }
     async addQuestion(question: Question): Promise<void> {
         const response = await fetch(API_URL + 'questions/add', {
             method: 'POST',
