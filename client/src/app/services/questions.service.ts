@@ -8,11 +8,21 @@ import { Question } from '@common/game';
 export class QuestionsService {
     deleteRequest = new EventEmitter<Question>();
     questions: Question[] = [];
+    currentQuestionIndex: number = 0;
 
     constructor() {
         this.getAllQuestions().then((questions: Question[]) => {
             this.questions = questions;
         });
+    }
+    get question(): Question {
+        if (this.questions.length === 0) {
+            return {} as Question;
+        } else if (this.currentQuestionIndex + 1 === this.questions.length) {
+            return this.questions[this.currentQuestionIndex];
+        } else {
+            return this.questions[this.currentQuestionIndex++];
+        }
     }
 
     async getAllQuestions(): Promise<Question[]> {
@@ -33,7 +43,6 @@ export class QuestionsService {
         );
         return sortedQuestions;
     }
-
     async addQuestion(question: Question): Promise<void> {
         const response = await fetch(API_URL + 'questions/add', {
             method: 'POST',

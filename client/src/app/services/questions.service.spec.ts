@@ -20,7 +20,10 @@ describe('QuestionsService', () => {
     });
 
     it('getAllQuestions should fetch questions from API', fakeAsync(() => {
-        const mockChoices: Choices[] = [{ text: 'Choice 1', isCorrect: true }];
+        const mockChoices: Choices[] = [
+            { text: 'Choice 1', isCorrect: true },
+            { text: 'Choice 2', isCorrect: false },
+        ];
         const mockQuestion: Question = {
             id: '1',
             type: Type.QCM,
@@ -51,12 +54,15 @@ describe('QuestionsService', () => {
     });
 
     it('addQuestion should send a POST request to API', fakeAsync(() => {
-        const mockChoices: Choices[] = [{ text: 'Choice 1', isCorrect: true }];
+        const mockChoices: Choices[] = [
+            { text: 'Choice 1', isCorrect: true },
+            { text: 'Choice 2', isCorrect: false },
+        ];
         const mockQuestion: Question = {
             id: '1',
             type: Type.QCM,
             lastModification: new Date(),
-            text: 'New Question',
+            text: 'Question 1',
             points: 5,
             choices: mockChoices,
         };
@@ -76,12 +82,15 @@ describe('QuestionsService', () => {
     }));
 
     it('editQuestion should send a PUT request to API', fakeAsync(() => {
-        const mockChoices: Choices[] = [{ text: 'Choice 1', isCorrect: true }];
+        const mockChoices: Choices[] = [
+            { text: 'Choice 1', isCorrect: true },
+            { text: 'Choice 2', isCorrect: false },
+        ];
         const mockQuestion: Question = {
             id: '1',
             type: Type.QCM,
             lastModification: new Date(),
-            text: 'Updated Question',
+            text: 'Question 1',
             points: 5,
             choices: mockChoices,
         };
@@ -102,12 +111,15 @@ describe('QuestionsService', () => {
     }));
 
     it('deleteQuestion should send a DELETE request to API and emit deleteRequest event', fakeAsync(() => {
-        const mockChoices: Choices[] = [{ text: 'Choice 1', isCorrect: true }];
+        const mockChoices: Choices[] = [
+            { text: 'Choice 1', isCorrect: true },
+            { text: 'Choice 2', isCorrect: false },
+        ];
         const mockQuestion: Question = {
             id: '1',
             type: Type.QCM,
             lastModification: new Date(),
-            text: 'Question to delete',
+            text: 'Question 1',
             points: 5,
             choices: mockChoices,
         };
