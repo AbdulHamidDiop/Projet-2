@@ -27,16 +27,6 @@ export class GameService {
         this.selectedGame = game;
     }
 
-    async checkGame(id: string | undefined): Promise<Game> {
-        // return this.http.get<Game>(`/api/game/${id}`);
-        const response = await fetch(API_URL + 'game/' + id);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        const game: Game = await response.json();
-        return game;
-    }
-
     async getAllGames(): Promise<Game[]> {
         const response = await fetch(API_URL + 'game');
         if (!response.ok) {
@@ -61,8 +51,7 @@ export class GameService {
     }
 
     async getGameByID(id: string): Promise<Game> {
-        const games: Game[] = await this.getAllGames();
-        const game = games.find((g) => g.id === id);
+        const game = this.games.find((g) => g.id === id);
         if (!game) {
             throw new Error('Game not found');
         }
