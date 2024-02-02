@@ -8,7 +8,7 @@ import { Game } from '@common/game';
     providedIn: 'root',
 })
 export class GameService {
-    games: Game[];
+    games: Game[] = [];
     // Modification : Déclaration de selectedGame comme Game directement
     private selectedGame: Game = {} as Game;
 
@@ -25,16 +25,6 @@ export class GameService {
 
     selectGame(game: Game): void {
         this.selectedGame = game;
-    }
-
-    async checkGame(id: string | undefined): Promise<Game> {
-        // return this.http.get<Game>(`/api/game/${id}`);
-        const response = await fetch(API_URL + 'game/' + id);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        const game: Game = await response.json();
-        return game;
     }
 
     async getAllGames(): Promise<Game[]> {
@@ -60,9 +50,8 @@ export class GameService {
         }
     }
 
-    async getGameByID(id: string): Promise<Game> {
-        const games: Game[] = await this.getAllGames();
-        const game = games.find((g) => g.id === id);
+    getGameByID(id: string): Game {
+        const game = this.games.find((g) => g.id === id);
         if (!game) {
             throw new Error('Game not found');
         }

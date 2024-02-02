@@ -51,6 +51,20 @@ export class PlayAreaComponent {
         }
     }
 
+    // Devra être changé plus tard.
+    get time(): number {
+        if (this.timeService.time === 0) this.updateScore();
+        return this.timeService.time;
+    }
+
+    get point(): number {
+        return this.points;
+    }
+
+    get playerScore(): number {
+        return this.score;
+    }
+
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -92,19 +106,6 @@ export class PlayAreaComponent {
             this.question.choices[i].text = '';
             this.question.choices[i].isCorrect = false;
         }
-    }
-    // Devra être changé plus tard.
-    get time(): number {
-        if (this.timeService.time === 0) this.updateScore();
-        return this.timeService.time;
-    }
-
-    get point(): number {
-        return this.points;
-    }
-
-    get playerScore(): number {
-        return this.score;
     }
 
     handleQCMChoice(answer: string, isCorrect: boolean) {

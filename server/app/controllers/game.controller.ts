@@ -178,7 +178,7 @@ export class GameController {
         /**
          * @swagger
          *
-         * /api/game/togglehidden/:
+         * /api/game/togglehidden:
          *   patch:
          *     description: Toggle game isHidden
          *     tags:
