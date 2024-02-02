@@ -13,7 +13,7 @@ export class GameService {
     private selectedGame: Game = {} as Game;
 
     constructor() {
-        this.getAllGames().then((games: Game[]) => {
+        this.getAllGames().then((games) => {
             this.games = games;
         });
     }
@@ -58,19 +58,18 @@ export class GameService {
         return game;
     }
 
-    async toggleGameHidden(id: string): Promise<boolean> {
+    async toggleGameHidden(gameID: string): Promise<void> {
         const response = await fetch(API_URL + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({ id: gameID }),
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
-        return true;
     }
 
     async deleteGameByID(id: string): Promise<boolean> {

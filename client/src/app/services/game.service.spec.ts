@@ -20,7 +20,16 @@ describe('GameService', () => {
     });
 
     it('getSelectedGame should return selectedGame', () => {
-        const mockGame: Game = { id: '1', title: 'Game 1', questions: [] };
+        const mockGame: Game = {
+            id: '1',
+            title: 'Mock Game',
+            pin: '1234',
+            description: 'A mock game for testing purposes',
+            duration: 60,
+            lastModification: new Date('2024-02-02T12:00:00Z'),
+            questions: [],
+            isHidden: false,
+        };
         service.selectGame(mockGame);
 
         const selectedGame = service.getSelectedGame();
@@ -29,8 +38,16 @@ describe('GameService', () => {
     });
 
     it('selectGame should set selectedGame', () => {
-        const mockGame: Game = { id: '1', title: 'Game 1', questions: [] };
-
+        const mockGame: Game = {
+            id: '1',
+            title: 'Mock Game',
+            pin: '1234',
+            description: 'A mock game for testing purposes',
+            duration: 60,
+            lastModification: new Date('2024-02-02T12:00:00Z'),
+            questions: [],
+            isHidden: false,
+        };
         service.selectGame(mockGame);
 
         expect(service.getSelectedGame()).toEqual(mockGame);
@@ -42,15 +59,23 @@ describe('GameService', () => {
             { id: '2', title: 'Game 2', questions: [] },
         ];
         spyOn(window, 'fetch').and.returnValue(Promise.resolve({ ok: true, json: async () => Promise.resolve(mockGames) } as Response));
-
-        service.getAllGames();
-        tick();
-
-        expect(service.games).toEqual(mockGames);
+        service.getAllGames().then((games) => {
+            tick();
+            expect(games).toEqual(mockGames);
+        });
     }));
 
     it('addGame should send a POST request to API', fakeAsync(() => {
-        const mockGame: Game = { id: '1', title: 'Game 1', questions: [] };
+        const mockGame: Game = {
+            id: '1',
+            title: 'Mock Game',
+            pin: '1234',
+            description: 'A mock game for testing purposes',
+            duration: 60,
+            lastModification: new Date('2024-02-02T12:00:00Z'),
+            questions: [],
+            isHidden: false,
+        };
         spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
 
         service.addGame(mockGame);
@@ -79,12 +104,18 @@ describe('GameService', () => {
     }));
 
     it('toggleGameHidden should send a PATCH request to API', fakeAsync(() => {
-        const mockGame: Game = { id: '1', title: 'Game 1', questions: [] };
-
+        const mockGame: Game = {
+            id: '1',
+            title: 'Mock Game',
+            pin: '1234',
+            description: 'A mock game for testing purposes',
+            duration: 60,
+            lastModification: new Date('2024-02-02T12:00:00Z'),
+            questions: [],
+            isHidden: false,
+        };
         spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
 
-        // Select the mock game before toggling hidden status
-        service.selectGame(mockGame);
         service.toggleGameHidden('1');
         tick();
 
@@ -97,7 +128,7 @@ describe('GameService', () => {
         );
 
         // After toggling hidden status, the selected game's hidden status should be updated
-        expect(service.getSelectedGame().isHidden).toBe(!mockGame.isHidden);
+        expect(service.getGameByID('1').isHidden).toBe(!mockGame.isHidden);
     }));
 
     it('deleteGameByID should send a DELETE request to API', fakeAsync(() => {
