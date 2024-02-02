@@ -39,18 +39,18 @@ describe('QuestionsService', () => {
 
         expect(service.questions).toEqual([mockQuestion]);
     }));
-
+    // TODO changer l'ordre de filtrages.
     it('sortAllQuestions should sort questions by lastModification date', () => {
         const questions: Question[] = [
-            { id: '1', type: Type.QCM, lastModification: new Date('2023-01-01'), text: 'Question 1', points: 5, choices: [] },
-            { id: '2', type: Type.QCM, lastModification: new Date('2022-01-01'), text: 'Question 2', points: 5, choices: [] },
+            { id: '1', type: Type.QCM, lastModification: new Date('2022-01-01'), text: 'Question 1', points: 5, choices: [] },
+            { id: '2', type: Type.QCM, lastModification: new Date('2023-01-01'), text: 'Question 2', points: 5, choices: [] },
         ];
 
         service.questions = questions;
 
         const sortedQuestions = service.sortAllQuestions();
 
-        expect(sortedQuestions).toEqual([questions[1], questions[0]]);
+        expect(sortedQuestions).toEqual([questions[0], questions[1]]);
     });
 
     it('addQuestion should send a POST request to API', fakeAsync(() => {

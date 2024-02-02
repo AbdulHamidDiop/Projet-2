@@ -39,7 +39,7 @@ export class QuestionsService {
 
     sortAllQuestions(): Question[] {
         const sortedQuestions: Question[] = this.questions.sort(
-            (a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime(),
+            (a, b) => new Date(b.lastModification).getTime() - new Date(a.lastModification).getTime(),
         );
         return sortedQuestions;
     }
