@@ -4,6 +4,7 @@ import { Service } from 'typedi';
 
 const HTTP_STATUS_OK = 200;
 const HTTP_STATUS_CREATED = 201;
+const HTTP_STATUS_NO_CONTENT = 204;
 
 @Service()
 export class GameController {
@@ -200,7 +201,7 @@ export class GameController {
          */
         this.router.patch('/togglehidden', (req: Request, res: Response) => {
             res.json(this.gamesService.toggleGameHidden(req.body.id));
-            res.status(HTTP_STATUS_OK);
+            res.status(HTTP_STATUS_NO_CONTENT);
         });
 
         /**
@@ -225,7 +226,7 @@ export class GameController {
          */
         this.router.delete('/deletegame/:id', (req: Request, res: Response) => {
             res.json(this.gamesService.deleteGameByID(req.params.id));
-            res.status(HTTP_STATUS_OK);
+            res.status(HTTP_STATUS_NO_CONTENT);
         });
     }
 }
