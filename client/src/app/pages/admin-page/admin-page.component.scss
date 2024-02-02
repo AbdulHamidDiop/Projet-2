@@ -34,6 +34,9 @@ li {
 .Logo-Projet {
     height: auto;
     width: 130px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .wrapper .sidebar ul li a {
@@ -53,7 +56,7 @@ li {
 main {
     padding: 20px;
     margin-left: 250px;
-    min-height: 88%;
+    min-height: 100%;
 }
 
 .header-item {
@@ -64,9 +67,9 @@ main {
 }
 
 .grid-container-admin-page {
+    min-height: 100%;
     display: grid;
     grid-template-columns: 1.5fr 1.5fr 1.5fr;
-    grid-template-rows: 0.6fr 0.5fr;
     gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
@@ -75,6 +78,7 @@ main {
 }
 
 .grid-area-import {
+    margin-bottom: 210px;
     grid-area: import;
     justify-self: center;
 }
@@ -94,7 +98,7 @@ main {
 .scroll-box {
     overflow: auto;
     padding: 10px;
-    height: 90vh;
+    height: 100vh;
 }
 
 #handleErrorsGrid {
