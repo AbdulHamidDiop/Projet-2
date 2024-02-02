@@ -7,6 +7,7 @@ export enum Type {
     QRL = 'QRL',
 }
 export interface Question {
+    nbChoices: number;
     id: string;
     type: Type;
     lastModification: Date;

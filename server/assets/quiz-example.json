@@ -51,8 +51,8 @@
     "title": "Drapeaux du monde",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
-    "lastModification": "2024-01-26T20:23:40.529Z",
-    "isHidden": true,
+    "lastModification": "2024-02-01T15:04:37.203Z",
+    "isHidden": false,
     "questions": [
       {
         "type": "QCM",
@@ -192,102 +192,8 @@
     "title": "Trivia : fait ou fiction",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
-    "lastModification": "2024-01-26T20:23:40.529Z",
-    "isHidden": true,
-    "questions": [
-      {
-        "type": "QCM",
-        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-        "points": 40,
-        "choices": [
-          {
-            "text": "var",
-            "isCorrect": true
-          },
-          {
-            "text": "self",
-            "isCorrect": false
-          },
-          {
-            "text": "this",
-            "isCorrect": true
-          },
-          {
-            "text": "int"
-          }
-        ]
-      },
-      {
-        "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
-        "points": 20,
-        "choices": [
-          {
-            "text": "Non",
-            "isCorrect": true
-          },
-          {
-            "text": "Oui",
-            "isCorrect": false
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "462778813475",
-    "title": "Questionnaire Python",
-    "description": "Questaqions de pratique sur le langage JavaScript",
-    "duration": 60,
-    "lastModification": "2024-01-26T20:23:40.529Z",
-    "isHidden": true,
-    "questions": [
-      {
-        "type": "QCM",
-        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-        "points": 40,
-        "choices": [
-          {
-            "text": "var",
-            "isCorrect": true
-          },
-          {
-            "text": "self",
-            "isCorrect": false
-          },
-          {
-            "text": "this",
-            "isCorrect": true
-          },
-          {
-            "text": "int"
-          }
-        ]
-      },
-      {
-        "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
-        "points": 20,
-        "choices": [
-          {
-            "text": "Non",
-            "isCorrect": true
-          },
-          {
-            "text": "Oui",
-            "isCorrect": false
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "462778813475",
-    "title": "Questionnaire C++",
-    "description": "Questaqions de pratique sur le langage JavaScript",
-    "duration": 60,
-    "lastModification": "2024-01-26T20:23:40.529Z",
-    "isHidden": true,
+    "lastModification": "2024-02-01T15:04:39.681Z",
+    "isHidden": false,
     "questions": [
       {
         "type": "QCM",
@@ -330,7 +236,7 @@
   },
   {
     "id": "46277881345",
-    "lastModification": "2024-01-30T20:01:54.638Z",
+    "lastModification": "2024-02-01T15:04:41.171Z",
     "title": "Questionnaire sur le JS",
     "description": "Questions de pratique sur le langage JavaScript",
     "duration": 59,
@@ -373,11 +279,11 @@
         ]
       }
     ],
-    "isHidden": true
+    "isHidden": false
   },
   {
     "id": "462778813466",
-    "lastModification": "2024-01-30T20:02:07.859Z",
+    "lastModification": "2024-02-01T15:04:42.270Z",
     "title": "Capitales du monde",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 59,
@@ -420,11 +326,11 @@
         ]
       }
     ],
-    "isHidden": true
+    "isHidden": false
   },
   {
     "id": "462778813467",
-    "lastModification": "2024-01-30T20:52:53.674Z",
+    "lastModification": "2024-02-01T15:04:43.380Z",
     "title": "CP1 LOG1810",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
@@ -467,11 +373,11 @@
         ]
       }
     ],
-    "isHidden": true
+    "isHidden": false
   },
   {
     "id": "a2da8433-4819-4f3e-83a9-a21d8fd256f1",
-    "lastModification": "2024-01-30T22:30:19.277Z",
+    "lastModification": "2024-02-01T15:04:45.198Z",
     "title": "quiz test",
     "description": "test",
     "duration": 10,
@@ -485,11 +391,11 @@
         "lastModification": "2024-01-30T22:29:59.715Z"
       }
     ],
-    "isHidden": true
+    "isHidden": false
   },
   {
     "id": "462778813468",
-    "lastModification": "2024-01-30T22:34:18.141Z",
+    "lastModification": "2024-02-01T15:04:47.178Z",
     "title": "Les stars les plus connus du Royaume-Uni",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
@@ -540,6 +446,6 @@
         "lastModification": "2024-01-30T22:34:16.468Z"
       }
     ],
-    "isHidden": true
+    "isHidden": false
   }
 ]

@@ -1,6 +1,8 @@
 import { Component, HostListener } from '@angular/core';
 import { MatListOption } from '@angular/material/list';
+import { QuestionsService } from '@app/services/questions.service';
 import { TimeService } from '@app/services/time.service';
+import { Question, Type } from '@common/game';
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -21,51 +23,72 @@ export enum MouseButton {
 })
 export class PlayAreaComponent {
     buttonPressed = '';
-    question = {
-        type: 'QCM',
-        text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
-        points: 40,
-        nbChoices: 5,
-        choices: [
-            {
-                text: 'var',
-                isCorrect: true,
-                index: 'A',
-            },
-            {
-                text: 'self',
-                isCorrect: false,
-                index: 'B',
-            },
-            {
-                text: 'this',
-                isCorrect: true,
-                index: 'C',
-            },
-            {
-                text: 'int',
-                isCorrect: false,
-                index: 'D',
-            },
-            {
-                text: 'private',
-                isCorrect: false,
-                index: 'E',
-            },
-        ],
-    };
+    question: Question;
 
     private isCorrect: boolean;
     private answer: string;
-    private readonly timer = 5;
+    private readonly timer = 25;
     private points = 0;
     private score = 0;
-    constructor(private readonly timeService: TimeService) {
+    private nbChoices = 0;
+    constructor(
+        private readonly timeService: TimeService,
+        private readonly questionService: QuestionsService,
+    ) {
         this.timeService.startTimer(this.timer);
         this.isCorrect = false;
         this.answer = '';
+        this.questionService.getAllQuestions();
+        this.question = this.questionService.question;
+        this.nbChoices = this.question.choices.length;
+        const nbMaxQuestionsQCM = 10;
+        for (let i = this.question.choices.length; i < nbMaxQuestionsQCM; i++) {
+            this.question.choices.push({ text: '', isCorrect: false });
+        }
     }
 
+    @HostListener('keydown', ['$event'])
+    buttonDetect(event: KeyboardEvent) {
+        this.buttonPressed = event.key;
+        if (this.buttonPressed === 'Enter') {
+            /* if (this.isCorrect && this.answer !== '') {
+                this.score += this.question.points;
+            }
+            this.timeService.stopTimer();
+            this.timeService.startTimer(this.timer);
+            this.answer = '';
+            this.isCorrect = false;*/
+            this.updateScore();
+        } else if (
+            this.buttonPressed >= '1' &&
+            this.buttonPressed <= '9' &&
+            this.question.type === Type.QCM &&
+            this.buttonPressed <= this.nbChoices.toString()
+        ) {
+            const index = parseInt(this.buttonPressed, 10);
+            this.handleQCMChoice(this.question.choices[index - 1].text, this.question.choices[index - 1].isCorrect);
+        }
+    }
+
+    shouldRender(text: string) {
+        return text !== '';
+    }
+
+    nextQuestion() {
+        this.answer = '';
+        this.isCorrect = false;
+        const question = this.questionService.question;
+        this.nbChoices = question.choices.length;
+        this.question.text = question.text;
+        for (let i = 0; i < question.choices.length; i++) {
+            this.question.choices[i].text = question.choices[i].text;
+            this.question.choices[i].isCorrect = question.choices[i].isCorrect;
+        }
+        for (let i = question.choices.length; i < this.question.choices.length; i++) {
+            this.question.choices[i].text = '';
+            this.question.choices[i].isCorrect = false;
+        }
+    }
     // Devra être changé plus tard.
     get time(): number {
         if (this.timeService.time === 0) this.updateScore();
@@ -78,28 +101,6 @@ export class PlayAreaComponent {
 
     get playerScore(): number {
         return this.score;
-    }
-
-    @HostListener('keydown', ['$event'])
-    buttonDetect(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
-        if (this.buttonPressed === 'Enter') {
-            if (this.isCorrect && this.answer !== '') {
-                this.score += this.question.points;
-            }
-            this.timeService.stopTimer();
-            this.timeService.startTimer(this.timer);
-            this.answer = '';
-            this.isCorrect = false;
-        } else if (
-            this.buttonPressed >= '1' &&
-            this.buttonPressed <= '9' &&
-            this.question.type === 'QCM' &&
-            this.buttonPressed <= this.question.nbChoices.toString()
-        ) {
-            const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices[index - 1].text, this.question.choices[index - 1].isCorrect);
-        }
     }
 
     handleQCMChoice(answer: string, isCorrect: boolean) {
@@ -134,6 +135,7 @@ export class PlayAreaComponent {
         this.timeService.startTimer(this.timer);
         this.answer = '';
         this.isCorrect = false;
+        this.nextQuestion();
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!

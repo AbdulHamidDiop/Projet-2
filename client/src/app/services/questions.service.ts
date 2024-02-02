@@ -21,6 +21,9 @@ export class QuestionsService {
             throw new Error(`Error: ${response.status}`);
         }
         const questions: Question[] = await response.json();
+        if (this.questions.length < questions.length) {
+            this.questions = questions;
+        }
         return questions;
     }
 

@@ -8,6 +8,12 @@ import { Game, GameService } from '../../services/game.service';
 })
 export class GameListComponent {
     constructor(public gameService: GameService) {}
+    games: Game[];
+
+    async ngOnInit() {
+        this.games = await this.gameService.getAllGames();
+        this.games = this.games.filter((game) => game.isHidden === false);
+    }
 
     selectGame(game: Game): void {
         this.gameService.selectGame(game);
@@ -18,7 +24,7 @@ export class GameListComponent {
     }
 
     check(game: Game): void {
-        this.gameService.checkGame(game.id).subscribe((game) => {
+        this.gameService.checkGame(game.id).then((game) => {
             if (game.isHidden || game === null) {
                 this.getSelectedGame().unavailable = true;
             }

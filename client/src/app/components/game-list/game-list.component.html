@@ -1,5 +1,5 @@
 <body>
-    <div *ngFor="let game of gameService.games">
+    <div *ngFor="let game of games">
         <mat-expansion-panel hideToggle (click)="selectGame(game)" (click)="check(getSelectedGame())">
             <mat-expansion-panel-header>
                 <mat-panel-title>
