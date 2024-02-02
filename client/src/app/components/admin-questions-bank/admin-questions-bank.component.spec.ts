@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { CdkDropList } from '@angular/cdk/drag-drop';
 import { AdminQuestionsBankComponent } from './admin-questions-bank.component';
 
 describe('AdminQuestionsBankComponent', () => {
@@ -8,6 +9,7 @@ describe('AdminQuestionsBankComponent', () => {
 
     beforeEach(() => {
         TestBed.configureTestingModule({
+            imports: [CdkDropList],
             declarations: [AdminQuestionsBankComponent],
         });
         fixture = TestBed.createComponent(AdminQuestionsBankComponent);
