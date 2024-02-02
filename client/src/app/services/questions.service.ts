@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
+import { GameService } from './game.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +11,7 @@ export class QuestionsService {
     questions: Question[] = [];
     currentQuestionIndex: number = 0;
 
-    constructor() {
+    constructor(private readonly gameService: GameService) {
         this.getAllQuestions().then((questions: Question[]) => {
             this.questions = questions;
         });
@@ -22,6 +23,15 @@ export class QuestionsService {
             return this.questions[this.currentQuestionIndex];
         } else {
             return this.questions[this.currentQuestionIndex++];
+        }
+    }
+
+    getQuestionsFromGame(id: string) {
+        const questions = this.gameService.getGameQuestionsByID(id);
+        if (questions.length === 0) {
+            return;
+        } else {
+            this.questions = questions;
         }
     }
 

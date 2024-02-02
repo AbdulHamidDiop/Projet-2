@@ -60,6 +60,15 @@ export class GameService {
         }
     }
 
+    getGameQuestionsByID(id: string): Question[] {
+        const game = this.games.find((g) => g.id === id);
+        if (!game) {
+            return [];
+        } else {
+            return game.questions;
+        }
+    }
+
     async getGameByID(id: string): Promise<Game> {
         const games: Game[] = await this.getAllGames();
         const game = games.find((g) => g.id === id);
