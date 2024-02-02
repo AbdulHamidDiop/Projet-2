@@ -17,11 +17,11 @@ export class GameListComponent {
         return this.gameService.getSelectedGame();
     }
 
-    check(game : Game): void{
-        this.gameService.checkGame(game.id).subscribe(game => {
+    check(game: Game): void {
+        this.gameService.checkGame(game.id).then((game) => {
             if (game.isHidden || game === null) {
-              this.getSelectedGame().unavailable = true;
-            } 
-          });
+                this.getSelectedGame().unavailable = true;
+            }
+        });
     }
 }

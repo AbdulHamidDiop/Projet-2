@@ -3,6 +3,7 @@ export interface Question {
     text: string;
     points: number;
     choices: Choice[];
+    nbChoices: number;
 }
 
 export interface Choice {
