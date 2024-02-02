@@ -16,7 +16,7 @@
             <p>Liste des questions du questionnaire </p>
             <ul>
                 <li *ngFor="let question of getSelectedGame().questions">
-                    {{ question }}
+                    {{ question.text }}
                 </li>
             </ul>
 
