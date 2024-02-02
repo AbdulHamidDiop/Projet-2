@@ -25,20 +25,20 @@ export class PlayAreaComponent {
     buttonPressed = '';
     question: Question;
 
-    private isCorrect: boolean;
-    private answer: string;
+    private isCorrect: boolean[] = [];
+    private answer: string[] = [];
+    private nbChoices: number = 0;
     private readonly timer = 25;
     private points = 0;
     private score = 0;
-    private nbChoices = 0;
     constructor(
         private readonly timeService: TimeService,
         private readonly questionService: QuestionsService,
     ) {
         this.timeService.startTimer(this.timer);
-        this.isCorrect = false;
-        this.answer = '';
-        this.questionService.getAllQuestions();
+        this.isCorrect = [];
+        this.answer = [];
+        //        this.questionService.getAllQuestions();
         this.question = this.questionService.question;
         this.nbChoices = this.question.choices.length;
         const nbMaxQuestionsQCM = 10;
@@ -75,8 +75,8 @@ export class PlayAreaComponent {
     }
 
     nextQuestion() {
-        this.answer = '';
-        this.isCorrect = false;
+        this.answer = [];
+        this.isCorrect = [];
         const question = this.questionService.question;
         this.nbChoices = question.choices.length;
         this.question.text = question.text;
@@ -104,17 +104,38 @@ export class PlayAreaComponent {
     }
 
     handleQCMChoice(answer: string, isCorrect: boolean) {
-        if (answer === this.answer) {
-            this.answer = '';
-            this.isCorrect = false;
-        } else {
-            this.isCorrect = isCorrect;
-            this.answer = answer;
+        let choiceInList = false;
+        for (let i = 0; i < this.answer.length; i++) {
+            if (answer === this.answer[i]) {
+                this.answer.splice(i, 1);
+                this.isCorrect.splice(i, 1);
+                choiceInList = true;
+                i--;
+                break;
+            }
+            // else {
+            //                this.isCorrect &&= isCorrect;
+            //                this.answer[i] = answer;
+            // }
+        }
+        if (!choiceInList) {
+            this.answer.push(answer);
+            this.isCorrect.push(isCorrect);
         }
     }
 
     isChoice(choice: string): boolean {
-        return this.answer === choice;
+        for (const answer of this.answer) {
+            if (answer === choice) {
+                return true;
+            }
+        }
+        /*      for (let i = 0; i < this.answer.length; i++) {
+            if (this.answer[i] === choice) {
+                return true;
+            }
+        }*/
+        return false;
     }
 
     handleQRLAnswer(answer: string) {
@@ -128,13 +149,22 @@ export class PlayAreaComponent {
     }
 
     updateScore() {
-        if (this.isCorrect && this.answer !== '') {
+        let correctAnswer = false;
+        for (let i = 0; i < this.isCorrect.length && this.isCorrect.length === this.answer.length; i++) {
+            if (this.isCorrect[i]) {
+                correctAnswer = true;
+                // this.score += this.question.points;
+            } else {
+                correctAnswer = false;
+            }
+        }
+        if (correctAnswer) {
             this.score += this.question.points;
         }
         this.timeService.stopTimer();
         this.timeService.startTimer(this.timer);
-        this.answer = '';
-        this.isCorrect = false;
+        this.answer = [];
+        this.isCorrect = [];
         this.nextQuestion();
     }
 
@@ -147,7 +177,7 @@ export class PlayAreaComponent {
     }
 
     getStyle(choice: string) {
-        if (choice === this.answer) {
+        if (this.answer.length < 0 && choice !== '') {
             return 'selected';
         } else {
             return '';
