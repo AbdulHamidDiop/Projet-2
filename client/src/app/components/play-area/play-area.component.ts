@@ -6,6 +6,7 @@ import { Question, Type } from '@common/game';
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
+const nbMaxQuestionsQCM = 10;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -25,12 +26,12 @@ export class PlayAreaComponent {
     buttonPressed = '';
     question: Question;
 
-    private isCorrect: boolean;
-    private answer: string;
+    isCorrect: boolean;
+    answer: string;
+    nbChoices = 0;
     private readonly timer = 25;
     private points = 0;
     private score = 0;
-    private nbChoices = 0;
     constructor(
         private readonly timeService: TimeService,
         private readonly questionService: QuestionsService,
@@ -39,9 +40,12 @@ export class PlayAreaComponent {
         this.isCorrect = false;
         this.answer = '';
         this.questionService.getAllQuestions();
-        this.question = this.questionService.question;
+    }
+
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+    ngOnInit() {
+        this.question = this.questionService.question || { choices: [] };
         this.nbChoices = this.question.choices.length;
-        const nbMaxQuestionsQCM = 10;
         for (let i = this.question.choices.length; i < nbMaxQuestionsQCM; i++) {
             this.question.choices.push({ text: '', isCorrect: false });
         }
