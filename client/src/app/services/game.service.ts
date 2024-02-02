@@ -28,7 +28,7 @@ export class GameService {
     }
 
     checkGame(id: string | undefined): Observable<Game> {
-        return this.http.get<Game>(`/api/games/${id}`);
+        return this.http.get<Game>(`/api/game/${id}`);
     }
 
     async getAllGames(): Promise<Game[]> {

@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-import { CreateGamePageComponent } from './waiting-page.component';
+import { WaitingPageComponent } from './waiting-page.component';
 
-describe('CreateGamePageComponent', () => {
-    let component: CreateGamePageComponent;
-    let fixture: ComponentFixture<CreateGamePageComponent>;
+describe('WaitingPageComponent', () => {
+    let component: WaitingPageComponent;
+    let fixture: ComponentFixture<WaitingPageComponent>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [CreateGamePageComponent, SidebarComponent, PlayAreaComponent],
+            declarations: [WaitingPageComponent, SidebarComponent, PlayAreaComponent],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(CreateGamePageComponent);
+        fixture = TestBed.createComponent(WaitingPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

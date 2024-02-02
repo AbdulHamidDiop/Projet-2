@@ -7,6 +7,13 @@ import { Question } from '@common/game';
 })
 export class QuestionsService {
     deleteRequest = new EventEmitter<Question>();
+    questions: Question[] = [];
+
+    constructor() {
+        this.getAllQuestions().then((questions: Question[]) => {
+            this.questions = questions;
+        });
+    }
 
     async getAllQuestions(): Promise<Question[]> {
         const response = await fetch(API_URL + 'questions');
@@ -17,9 +24,10 @@ export class QuestionsService {
         return questions;
     }
 
-    async sortAllQuestions(): Promise<Question[]> {
-        const questions: Question[] = await this.getAllQuestions();
-        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime());
+    sortAllQuestions(): Question[] {
+        const sortedQuestions: Question[] = this.questions.sort(
+            (a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime(),
+        );
         return sortedQuestions;
     }
 

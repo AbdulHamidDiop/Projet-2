@@ -2,7 +2,7 @@ export interface Choices {
     text: string;
     isCorrect: boolean;
 }
-enum Type {
+export enum Type {
     QCM = 'QCM',
     QRL = 'QRL',
 }
