@@ -12,7 +12,7 @@ describe('GameCardComponent', () => {
     let fixture: ComponentFixture<GameCardComponent>;
     let httpClient: HttpClient;
     let router: Router;
-    const game: Game = { id: '1', title: 'Test Game', isHidden: false };
+    const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
 
     beforeEach(() => {
         TestBed.configureTestingModule({
@@ -46,11 +46,13 @@ describe('GameCardComponent', () => {
     it('should call onExportButtonClick method', () => {
         const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callThrough();
         const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
+        const fakeDownloadSpy = spyOn(component, 'onExportButtonClick').and.callFake(() => {});
 
         component.onExportButtonClick(game);
 
         expect(createObjectURLSpy).toHaveBeenCalled();
         expect(revokeObjectURLSpy).toHaveBeenCalled();
+        expect(fakeDownloadSpy).toHaveBeenCalled();
     });
 
     it('should call onDeleteButtonClick method', () => {

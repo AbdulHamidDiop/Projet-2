@@ -11,17 +11,16 @@ import { v4 } from 'uuid';
     styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent {
+    games: Game[];
+    selectedFile: File;
+    isAuthentificated: boolean;
+    errors: string;
     constructor(
         private router: Router,
         private communicationService: CommunicationService,
         private el: ElementRef,
         private gameService: GameService,
     ) {}
-
-    games: Game[];
-    selectedFile: File;
-    isAuthentificated: boolean;
-    errors: string;
 
     async getGames() {
         // - cdl
