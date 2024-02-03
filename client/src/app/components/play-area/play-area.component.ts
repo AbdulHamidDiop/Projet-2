@@ -6,7 +6,6 @@ import { Question, Type } from '@common/game';
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
-const nbMaxQuestionsQCM = 10;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -24,53 +23,51 @@ export enum MouseButton {
 })
 export class PlayAreaComponent {
     buttonPressed = '';
-    question = {
-        type: 'QCM',
+    question: Question = {
+        id: '0',
+        type: Type.QCM,
         text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
         points: 40,
-        nbChoices: 5,
+        lastModification: new Date(),
         choices: [
             {
                 text: 'var',
                 isCorrect: true,
-                index: 'A',
             },
             {
                 text: 'self',
                 isCorrect: false,
-                index: 'B',
             },
             {
                 text: 'this',
                 isCorrect: true,
-                index: 'C',
             },
             {
                 text: 'int',
                 isCorrect: false,
-                index: 'D',
-            },
-            {
-                text: 'private',
-                isCorrect: false,
-                index: 'E',
             },
         ],
     };
 
-    private isCorrect: boolean;
-    private answer: string;
-    private readonly timer = 5;
+    private isCorrect: boolean[] = [];
+    private answer: string[] = [];
+    private readonly timer = 25;
     private points = 0;
     private score = 0;
+    private nbChoices: number;
     constructor(
         private readonly timeService: TimeService,
         private readonly questionService: QuestionsService,
     ) {
         this.timeService.startTimer(this.timer);
-<<<<<<< Updated upstream
-        this.isCorrect = false;
-        this.answer = '';
+        this.isCorrect = [];
+        this.answer = [];
+        this.question = this.questionService.question;
+        this.nbChoices = this.question.choices.length;
+        const nbMaxQuestionsQCM = 10;
+        for (let i = this.question.choices.length; i < nbMaxQuestionsQCM; i++) {
+            this.question.choices.push({ text: '', isCorrect: false });
+        }
     }
 
     // Devra être changé plus tard.
@@ -115,8 +112,8 @@ export class PlayAreaComponent {
     }
 
     nextQuestion() {
-        this.answer = '';
-        this.isCorrect = false;
+        this.answer = [];
+        this.isCorrect = [];
         const question = this.questionService.question;
         this.nbChoices = question.choices.length;
         this.question.text = question.text;
@@ -190,9 +187,9 @@ export class PlayAreaComponent {
         }
         this.timeService.stopTimer();
         this.timeService.startTimer(this.timer);
-<<<<<<< Updated upstream
-        this.answer = '';
-        this.isCorrect = false;
+        this.answer = [];
+        this.isCorrect = [];
+        this.nextQuestion();
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
