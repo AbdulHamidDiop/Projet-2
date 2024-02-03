@@ -1,9 +1,12 @@
 import { Component, HostListener } from '@angular/core';
 import { MatListOption } from '@angular/material/list';
+import { QuestionsService } from '@app/services/questions.service';
 import { TimeService } from '@app/services/time.service';
+import { Question, Type } from '@common/game';
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
+const nbMaxQuestionsQCM = 10;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -55,34 +58,33 @@ export class PlayAreaComponent {
         ],
     };
 
-<<<<<<< Updated upstream
     private isCorrect: boolean;
     private answer: string;
     private readonly timer = 5;
-=======
-    private isCorrect: boolean[] = [];
-    private answer: string[] = [];
-    private readonly timer = 25;
->>>>>>> Stashed changes
     private points = 0;
     private score = 0;
-    constructor(private readonly timeService: TimeService) {
+    constructor(
+        private readonly timeService: TimeService,
+        private readonly questionService: QuestionsService,
+    ) {
         this.timeService.startTimer(this.timer);
 <<<<<<< Updated upstream
         this.isCorrect = false;
         this.answer = '';
     }
 
-=======
-        this.isCorrect = [];
-        this.answer = [];
-        //        this.questionService.getAllQuestions();
-        this.question = this.questionService.question;
-        this.nbChoices = this.question.choices.length;
-        const nbMaxQuestionsQCM = 10;
-        for (let i = this.question.choices.length; i < nbMaxQuestionsQCM; i++) {
-            this.question.choices.push({ text: '', isCorrect: false });
-        }
+    // Devra être changé plus tard.
+    get time(): number {
+        if (this.timeService.time === 0) this.updateScore();
+        return this.timeService.time;
+    }
+
+    get point(): number {
+        return this.points;
+    }
+
+    get playerScore(): number {
+        return this.score;
     }
 
     @HostListener('keydown', ['$event'])
@@ -113,8 +115,8 @@ export class PlayAreaComponent {
     }
 
     nextQuestion() {
-        this.answer = [];
-        this.isCorrect = [];
+        this.answer = '';
+        this.isCorrect = false;
         const question = this.questionService.question;
         this.nbChoices = question.choices.length;
         this.question.text = question.text;
@@ -125,42 +127,6 @@ export class PlayAreaComponent {
         for (let i = question.choices.length; i < this.question.choices.length; i++) {
             this.question.choices[i].text = '';
             this.question.choices[i].isCorrect = false;
-        }
-    }
->>>>>>> Stashed changes
-    // Devra être changé plus tard.
-    get time(): number {
-        if (this.timeService.time === 0) this.updateScore();
-        return this.timeService.time;
-    }
-
-    get point(): number {
-        return this.points;
-    }
-
-    get playerScore(): number {
-        return this.score;
-    }
-
-    @HostListener('keydown', ['$event'])
-    buttonDetect(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
-        if (this.buttonPressed === 'Enter') {
-            if (this.isCorrect && this.answer !== '') {
-                this.score += this.question.points;
-            }
-            this.timeService.stopTimer();
-            this.timeService.startTimer(this.timer);
-            this.answer = '';
-            this.isCorrect = false;
-        } else if (
-            this.buttonPressed >= '1' &&
-            this.buttonPressed <= '9' &&
-            this.question.type === 'QCM' &&
-            this.buttonPressed <= this.question.nbChoices.toString()
-        ) {
-            const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices[index - 1].text, this.question.choices[index - 1].isCorrect);
         }
     }
 
@@ -227,11 +193,6 @@ export class PlayAreaComponent {
 <<<<<<< Updated upstream
         this.answer = '';
         this.isCorrect = false;
-=======
-        this.answer = [];
-        this.isCorrect = [];
-        this.nextQuestion();
->>>>>>> Stashed changes
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!

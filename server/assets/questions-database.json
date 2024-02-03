@@ -59,7 +59,7 @@
             },
             {
                 "text": "li",
-                "isCorrect": false
+                "isCorrect": true
             },
             {
                 "text": "mat-input",
@@ -88,11 +88,11 @@
         "choices": [
             {
                 "text": "Angular = front-end, NodeJS = back-end",
-                "isCorrect": true
+                "isCorrect": false
             },
             {
                 "text": "Angular = back-end, NodeJS = front-end",
-                "isCorrect": false
+                "isCorrect": true
             },
             {
                 "text": "Aucune de ces réponses",

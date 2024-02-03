@@ -1,6 +1,8 @@
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
+import { QuestionsService } from '@app/services/questions.service';
 import { Message } from '@common/message';
 import { BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -11,10 +13,36 @@ import { map } from 'rxjs/operators';
     styleUrls: ['./main-page.component.scss'],
 })
 export class MainPageComponent {
-    readonly title: string = 'LOG2990';
+    readonly title: string = 'Qui(ck)zz';
     message: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
-    constructor(private readonly communicationService: CommunicationService) {}
+    constructor(
+        private readonly communicationService: CommunicationService,
+        private router: Router,
+        private http: HttpClient,
+        private questionsService: QuestionsService,
+    ) {
+        // Pourra être supprimé après la démo.
+        this.questionsService.getAllQuestions();
+    }
+
+    userInput: string = '';
+
+    verifyPassword() {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.http.post('http://localhost:3000/api/admin/password', { password: this.userInput }).subscribe((response: any) => {
+            if (response.body === 'true') {
+                this.router.navigate(['/admin']);
+                this.communicationService.updateSharedVariable(true);
+            } else {
+                alert('Incorrect password');
+            }
+        });
+    }
+
+    onButtonClick() {
+        this.verifyPassword();
+    }
 
     sendTimeToServer(): void {
         const newTimeMessage: Message = {

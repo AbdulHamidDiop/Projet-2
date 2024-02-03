@@ -1,13 +1,16 @@
 import { HttpException } from '@app/classes/http.exception';
+import { AdminController } from '@app/controllers/admin.controller';
 import { DateController } from '@app/controllers/date.controller';
 import { ExampleController } from '@app/controllers/example.controller';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
-import * as express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
+import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-import * as swaggerJSDoc from 'swagger-jsdoc';
-import * as swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
+import { GameController } from './controllers/game.controller';
+import { QuestionsController } from './controllers/questions.controller';
 
 @Service()
 export class Application {
@@ -18,6 +21,9 @@ export class Application {
     constructor(
         private readonly exampleController: ExampleController,
         private readonly dateController: DateController,
+        private readonly adminController: AdminController,
+        private readonly questionsController: QuestionsController,
+        private readonly gamesController: GameController,
     ) {
         this.app = express();
 
@@ -41,6 +47,9 @@ export class Application {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/example', this.exampleController.router);
         this.app.use('/api/date', this.dateController.router);
+        this.app.use('/api/admin', this.adminController.router);
+        this.app.use('/api/questions', this.questionsController.router);
+        this.app.use('/api/game', this.gamesController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

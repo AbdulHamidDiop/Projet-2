@@ -1,0 +1,39 @@
+<body>
+    <div *ngFor="let game of games">
+        <mat-expansion-panel hideToggle (click)="selectGame(game)">
+            <mat-expansion-panel-header>
+                <mat-panel-title>
+                    <a [title]="game.title + ' details'">
+                        {{ game.title }}
+                    </a>
+                </mat-panel-title>
+            </mat-expansion-panel-header>
+            <strong>Détails du jeu</strong>
+
+            <p>Description du jeu: {{ getSelectedGame().description }}</p>
+            <p>Temps alloué pour répondre : {{ getSelectedGame().duration }} secondes</p>
+
+            <p>Liste des questions du questionnaire </p>
+            <ul>
+                <li *ngFor="let question of getSelectedGame().questions">
+                    {{ question.text }}
+                </li>
+            </ul>
+
+            <div class="button-row">
+                <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
+                bouton "tester le jeu" -->
+                <button mat-fab extended color="primary" [routerLink]="['/playArea', getSelectedGame().id]">
+                    Tester le jeu
+                </button>
+
+                <button mat-fab extended color="primary" routerLink="/waiting">
+                    Lancer une partie
+                </button>
+            </div>
+
+
+        </mat-expansion-panel>
+
+    </div>
+</body>
