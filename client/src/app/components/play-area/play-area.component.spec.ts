@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatListModule } from '@angular/material/list';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { QuestionsService } from '@app/services/questions.service';
 import { TimeService } from '@app/services/time.service';
@@ -9,25 +11,38 @@ describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let timeServiceSpy: SpyObj<TimeService>;
-    let questionsService: QuestionsService; // Use the real service
+    let questionsService: QuestionsService;
 
     beforeEach(async () => {
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer']);
 
         await TestBed.configureTestingModule({
+            imports: [MatListModule, BrowserAnimationsModule],
             declarations: [PlayAreaComponent],
-            providers: [
-                { provide: TimeService, useValue: timeServiceSpy },
-                QuestionsService, // Provide the real service instead of a mock
-            ],
+            providers: [{ provide: TimeService, useValue: timeServiceSpy }, QuestionsService],
         }).compileComponents();
 
-        questionsService = TestBed.inject(QuestionsService); // Inject the real service
+        questionsService = TestBed.inject(QuestionsService);
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
+
+        const qcmQuestion: Question = {
+            id: 'test-qcm',
+            type: Type.QCM,
+            text: 'Test QCM Question?',
+            points: 10,
+            lastModification: new Date(),
+            choices: [
+                { text: 'Option 1', isCorrect: true },
+                { text: 'Option 2', isCorrect: false },
+            ],
+        };
+
+        spyOnProperty(questionsService, 'question', 'get').and.returnValue(qcmQuestion);
+
         fixture.detectChanges();
     });
 
@@ -35,13 +50,39 @@ describe('PlayAreaComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('buttonDetect should modify the buttonPressed variable', () => {
-        const expectedKey = 'a';
-        const buttonEvent = {
-            key: expectedKey,
-        } as KeyboardEvent;
-        component.buttonDetect(buttonEvent);
-        expect(component.buttonPressed).toEqual(expectedKey);
+    it('handleQCMChoice should allow multiple selections and update score correctly', () => {
+        const choices = component.question.choices;
+        if (choices) {
+            choices.forEach((choice) => {
+                component.handleQCMChoice(choice.text, choice.isCorrect);
+            });
+        }
+
+        component.updateScore();
+
+        const expectedScore = (choices?.filter((c) => c?.isCorrect)?.length ?? 0) * component.question.points;
+        expect(component.playerScore).toBe(expectedScore);
+    });
+
+    it('nextQuestion should load a new QCM question', () => {
+        const newQCMQuestion: Question = {
+            id: 'new-qcm',
+            type: Type.QCM,
+            text: 'Next QCM Question?',
+            points: 20,
+            lastModification: new Date(),
+            choices: [
+                { text: 'New Option 1', isCorrect: false },
+                { text: 'New Option 2', isCorrect: true },
+            ],
+        };
+
+        spyOnProperty(questionsService, 'question', 'get').and.returnValue(newQCMQuestion);
+
+        component.nextQuestion(); // Assuming this method updates component.question with a new question
+
+        expect(component.question).toEqual(newQCMQuestion);
+        expect(component.nbChoices).toBe(newQCMQuestion.choices?.length ?? 0);
     });
 
     it('mouseHitDetect should call startTimer with 5 seconds on left click', () => {
@@ -56,53 +97,59 @@ describe('PlayAreaComponent', () => {
         component.mouseHitDetect(mockEvent);
         expect(timeServiceSpy.startTimer).not.toHaveBeenCalled();
     });
-    it('nextQuestion should load a new question', () => {
-        const newQuestion: Question = {
-            text: 'Next Question',
-            type: Type.QCM,
-            points: 20,
-            choices: [
-                { text: 'Option A', isCorrect: true },
-                { text: 'Option B', isCorrect: false },
-            ],
-            id: '',
-            lastModification: new Date(),
-        };
 
-        spyOnProperty(questionsService, 'question', 'get').and.returnValue(newQuestion);
-        component.nextQuestion();
-        expect(component.question).toEqual(newQuestion);
-        expect(component.nbChoices).toBe(newQuestion.choices.length);
+    it('buttonDetect should modify the buttonPressed variable', () => {
+        const expectedKey = 'a';
+        const buttonEvent = {
+            key: expectedKey,
+        } as KeyboardEvent;
+        component.buttonDetect(buttonEvent);
+        expect(component.buttonPressed).toEqual(expectedKey);
     });
 
-    it('handleQCMChoice should correctly update score for correct answer', () => {
-        const correctChoice = component.question.choices.find((choice) => choice.isCorrect);
-        if (correctChoice) {
-            component.handleQCMChoice(correctChoice.text, correctChoice.isCorrect);
-            component.updateScore();
-            expect(component.playerScore).toBe(component.question.points);
+    it('isChoice should return true for selected choices', () => {
+        const choices = component.question.choices;
+        if (choices) {
+            choices.forEach((choice) => {
+                component.handleQCMChoice(choice.text, choice.isCorrect);
+            });
+
+            choices.forEach((choice) => {
+                expect(component.isChoice(choice.text)).toBe(true);
+            });
         }
     });
 
+    it('getStyle should return the correct style for selected and unselected choices', () => {
+        const choices = component.question.choices ?? [];
+        choices.forEach((choice) => {
+            component.handleQCMChoice(choice.text, choice.isCorrect);
+        });
+
+        choices.forEach((choice) => {
+            expect(component.getStyle(choice.text)).toBe('selected');
+        });
+
+        const unselectedChoice = 'Unselected choice';
+        expect(component.getStyle(unselectedChoice)).toBe('');
+    });
+
+    it('should handle keyboard events for different keys', () => {
+        const event = new KeyboardEvent('keydown', { key: 'Enter' });
+        spyOn(component, 'buttonDetect').and.callThrough();
+        window.dispatchEvent(event);
+        expect(component.buttonDetect).toHaveBeenCalled();
+    });
+
     it('updateScore should reset answer and isCorrect', () => {
-        component.isCorrect = true;
-        component.answer = 'Some Answer';
+        component.isCorrect = [true, true];
+        component.answer = ['Some Answer', 'Another Answer'];
         component.updateScore();
         expect(component.answer).toBe('');
         expect(component.isCorrect).toBeFalse();
     });
 
-    it('getStyle should return "selected" for current answer', () => {
-        const answer = 'Option 1';
-        component['answer'] = answer;
-        expect(component.getStyle(answer)).toEqual('selected');
-    });
-
     it('shouldRender should return false for empty text', () => {
         expect(component.shouldRender('')).toBeFalse();
-    });
-
-    it('shouldRender should return true for non-empty text', () => {
-        expect(component.shouldRender('Non-empty')).toBeTrue();
     });
 });

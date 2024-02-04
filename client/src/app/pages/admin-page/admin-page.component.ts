@@ -110,10 +110,14 @@ export class AdminPageComponent {
         ) {
             this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
         }
-        if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
+        if (!questions.every((question: Question) => (question.choices?.length ?? 0) >= 2 && (question.choices?.length ?? 0) <= 4)) {
             this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
         }
-        if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
+        if (
+            !questions.every(
+                (question: Question) => question.choices?.every((choice: Choices) => choice.text && typeof choice.text === 'string') ?? false,
+            )
+        ) {
             this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
         }
     }
@@ -130,8 +134,8 @@ export class AdminPageComponent {
                     question.points >= 10 &&
                     question.points <= 100 &&
                     question.points % 10 === 0 &&
-                    question.choices.length >= 2 &&
-                    question.choices.length <= 4 &&
+                    (question.choices?.length ?? 0) >= 2 &&
+                    (question.choices?.length ?? 0) <= 4 &&
                     Array.isArray(question.choices) &&
                     question.choices.every((choice: Choices) => typeof choice.text === 'string'),
             )

@@ -6,6 +6,7 @@ import { Question, Type } from '@common/game';
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
+const NB_MAX_CHOICES_QCM = 10;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -23,38 +24,14 @@ export enum MouseButton {
 })
 export class PlayAreaComponent {
     buttonPressed = '';
-    question: Question = {
-        id: '0',
-        type: Type.QCM,
-        text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
-        points: 40,
-        lastModification: new Date(),
-        choices: [
-            {
-                text: 'var',
-                isCorrect: true,
-            },
-            {
-                text: 'self',
-                isCorrect: false,
-            },
-            {
-                text: 'this',
-                isCorrect: true,
-            },
-            {
-                text: 'int',
-                isCorrect: false,
-            },
-        ],
-    };
+    question: Question = {} as Question;
 
-    private isCorrect: boolean[] = [];
-    private answer: string[] = [];
+    isCorrect: boolean[] = [];
+    answer: string[] = [];
+    nbChoices: number;
     private readonly timer = 25;
     private points = 0;
     private score = 0;
-    private nbChoices: number;
     constructor(
         private readonly timeService: TimeService,
         private readonly questionService: QuestionsService,
@@ -62,12 +39,6 @@ export class PlayAreaComponent {
         this.timeService.startTimer(this.timer);
         this.isCorrect = [];
         this.answer = [];
-        this.question = this.questionService.question;
-        this.nbChoices = this.question.choices.length;
-        const nbMaxQuestionsQCM = 10;
-        for (let i = this.question.choices.length; i < nbMaxQuestionsQCM; i++) {
-            this.question.choices.push({ text: '', isCorrect: false });
-        }
     }
 
     // Devra être changé plus tard.
@@ -111,19 +82,34 @@ export class PlayAreaComponent {
         return text !== '';
     }
 
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+    ngOnInit(): void {
+        this.question = this.questionService.question;
+        if (this.question.type === Type.QCM) {
+            this.nbChoices = this.question.choices.length;
+            for (let i = this.question.choices.length; i < NB_MAX_CHOICES_QCM; i++) {
+                this.question.choices.push({ text: '', isCorrect: false });
+            }
+        }
+    }
+
     nextQuestion() {
         this.answer = [];
         this.isCorrect = [];
         const question = this.questionService.question;
         this.nbChoices = question.choices.length;
         this.question.text = question.text;
-        for (let i = 0; i < question.choices.length; i++) {
-            this.question.choices[i].text = question.choices[i].text;
-            this.question.choices[i].isCorrect = question.choices[i].isCorrect;
-        }
-        for (let i = question.choices.length; i < this.question.choices.length; i++) {
-            this.question.choices[i].text = '';
-            this.question.choices[i].isCorrect = false;
+
+        if (question.type === Type.QCM) {
+            this.question.choices = [];
+            for (let i = 0; i < question.choices.length; i++) {
+                this.question.choices[i].text = question.choices[i].text;
+                this.question.choices[i].isCorrect = question.choices[i].isCorrect;
+            }
+            for (let i = question.choices.length; i < this.question.choices.length; i++) {
+                this.question.choices[i].text = '';
+                this.question.choices[i].isCorrect = false;
+            }
         }
     }
 
