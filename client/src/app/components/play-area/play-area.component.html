@@ -39,7 +39,7 @@
 
     <br />
     <mat-selection-list #choices>
-        <div *ngFor="let choice of question.choices; let index = index">
+        <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
             <mat-list-item
                 (click)="handleQCMChoice(choice.text, choice.isCorrect)"
                 (keydown)="$event.stopPropagation(); buttonDetect($event)"
