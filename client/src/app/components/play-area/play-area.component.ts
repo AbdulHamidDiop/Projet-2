@@ -99,8 +99,9 @@ export class PlayAreaComponent {
         const question = this.questionService.question;
         this.nbChoices = question.choices.length;
         this.question.text = question.text;
+        console.log(this.question);
 
-        if (question.type === Type.QCM) {
+        if (question.type === 'QCM') {
             this.question.choices = [];
             for (let i = 0; i < question.choices.length; i++) {
                 this.question.choices[i].text = question.choices[i].text;
