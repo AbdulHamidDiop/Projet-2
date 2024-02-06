@@ -42,6 +42,30 @@ export class QuestionsController {
         /**
          * @swagger
          *
+         * /api/questions/test:
+         *   get:
+         *     summary: Get the questions without the attribute isCorrect
+         *     description: Return all questions sorted by date of modification and without showing which answer(s) is(are) correct on the client side
+         *     tags:
+         *       - Question
+         *     produces:
+         *      - application/json
+         *     responses:
+         *       200:
+         *         description: All questions without the correct answer shown
+         *         schema:
+         *           type: array
+         *           items:
+         *             $ref: '#/components/schemas/Question'
+         */
+        this.router.get('/test', async (req: Request, res: Response) => {
+            res.json(await this.questionsService.sortQuestionsWithoutCorrectShown());
+            res.status(HTTP_STATUS_OK);
+        });
+
+        /**
+         * @swagger
+         *
          * /api/questions/add:
          *   post:
          *     summary: Add a question
@@ -53,7 +77,7 @@ export class QuestionsController {
          *         content:
          *           application/json:
          *             schema:
-         *               $ref: '#/components/schemas/Question'
+         *               $ref: '#/components/schemas/Question/choice'
          *             example:
          *               id: "test"
          *               type: "QCM"
@@ -72,6 +96,35 @@ export class QuestionsController {
             res.json(this.questionsService.addQuestion(req.body));
             res.status(HTTP_STATUS_OK);
         });
+
+
+         /**
+         * @swagger
+         *
+         * /api/questions/check:
+         *   post:
+         *     summary: Check if an answer is correct
+         *     tags:
+         *       - Question
+         *     requestBody:
+         *         description: Choice
+         *         required: true
+         *         content:
+         *           application/json:
+         *             schema:
+         *               $ref: '#/components/schemas/Question'
+         *             example:
+         *               
+         *
+         */
+         this.router.post('/check', (req: Request, res: Response) => {
+            const userChoice = req.body.choice;
+            const question = req.body.question;
+            const isCorrect = this.questionsService.isCorrectAnswer(userChoice, question);
+            res.json({ isCorrect });
+            res.status(HTTP_STATUS_OK);
+        });
+
 
         /**
          * @swagger
