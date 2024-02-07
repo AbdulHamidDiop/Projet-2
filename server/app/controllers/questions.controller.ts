@@ -103,8 +103,9 @@ export class QuestionsController {
          *
          */
         this.router.put('/edit', async (req: Request, res: Response) => {
+            await this.questionsService.addQuestion(req.body);
             res.status(StatusCodes.NO_CONTENT);
-            res.json(await this.questionsService.addQuestion(req.body));
+            res.send();
         });
 
         /**
