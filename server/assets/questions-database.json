@@ -133,5 +133,27 @@
       }
     ],
     "isHidden": true
+  },
+  {
+    "type": "QCM",
+    "text": "Quelle est la différence entre NodeJS et Angular",
+    "points": 20,
+    "addToBank": true,
+    "choices": [
+      {
+        "text": "Angular = front-end, NodeJS = back-end",
+        "isCorrect": false
+      },
+      {
+        "text": "Angular = back-end, NodeJS = front-end",
+        "isCorrect": true
+      },
+      {
+        "text": "Aucune de ces réponses",
+        "isCorrect": false
+      }
+    ],
+    "id": "00000000-1111-2222-test-000000000000",
+    "lastModification": "2021-01-31T16:39:55.649Z"
   }
 ]

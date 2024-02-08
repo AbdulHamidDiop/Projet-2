@@ -157,7 +157,7 @@ describe('GameController', () => {
 
     it('should change a game in db on valid post request to /edit ', async () => {
         gamesService.addGame.resolves();
-        return supertest(expressApp).put('/api/questions/edit').send(gamesList[1]).set('Content', 'application/json').expect(StatusCodes.NO_CONTENT);
+        return supertest(expressApp).put('/api/game/edit').send(gamesList[1]).set('Content', 'application/json').expect(StatusCodes.NO_CONTENT);
     });
 
     it('should get a game by id from db ', async () => {
