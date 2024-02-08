@@ -38,6 +38,7 @@ export class GameService {
                     type: 'QRL',
                     text: 'Question 2',
                     points: 20,
+                    choices: [],
                     answer: 'Answer',
                 },
             ],

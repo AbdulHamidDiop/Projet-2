@@ -33,6 +33,7 @@ export class QuestionsBankService {
         {
             type: 'QRL',
             text: "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
+            choices: [],
             points: 60,
         },
         {
@@ -76,6 +77,7 @@ export class QuestionsBankService {
         {
             type: 'QRL',
             text: "Expliquez ce que signifie 'hoisting' en JavaScript.",
+            choices: [],
             points: 50,
         },
         {

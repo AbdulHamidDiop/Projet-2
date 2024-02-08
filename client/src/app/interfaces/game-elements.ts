@@ -8,9 +8,9 @@ export interface Question {
     type: 'QCM' | 'QRL';
     text: string;
     points: number;
-    choices?: Choices[] | null | undefined;
+    choices: Choices[];
     lastModification?: Date;
-    answer?: string | null | undefined;
+    answer?: string;
 }
 
 export interface Game {

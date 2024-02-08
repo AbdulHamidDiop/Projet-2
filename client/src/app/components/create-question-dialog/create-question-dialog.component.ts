@@ -100,7 +100,8 @@ export class CreateQuestionDialogComponent {
         });
     }
 
-    private populateForm(questionData: Question): void {
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    populateForm(questionData: Question): void {
         this.questionForm.patchValue({
             type: questionData.type,
             text: questionData.text,
