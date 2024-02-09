@@ -27,23 +27,23 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-actions align="end">
-                <button mat-button routerLink="/createGame">
-                    <h3>Abandonner</h3>
+                <button mat-button (click)="handleAbort()">
+                    <h3 class="abort-button">Abandonner</h3>
                 </button>
-                <button mat-button (click)="updateScore()">
-                    <h3>Confirmer</h3>
+                <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
+                    <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>
         </mat-card>
     </section>
 
     <br />
-    <mat-selection-list #choices>
-        <div *ngFor="let choice of question.choices; let index = index">
+    <mat-selection-list #choices [attr.aria-disabled]="disableChoices ? 'true' : null">
+        <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
             <mat-list-item
-                (click)="handleQCMChoice(choice.text, choice.isCorrect)"
-                (keydown)="$event.stopPropagation(); buttonDetect($event)"
-                (keyup)="$event.stopPropagation()"
+                (click)="!disableChoices && handleQCMChoice(choice.text, choice.isCorrect)"
+                (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
+                (keyup)="!disableChoices && $event.stopPropagation()"
                 *ngIf="shouldRender(choice.text)"
             >
                 <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">

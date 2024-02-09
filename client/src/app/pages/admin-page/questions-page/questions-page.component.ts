@@ -17,9 +17,9 @@ export class QuestionsPageComponent {
 
     constructor(
         public dialog: MatDialog,
-        private communicationService: CommunicationService,
-        private router: Router,
-        private questionsService: QuestionsService,
+        readonly communicationService: CommunicationService,
+        readonly router: Router,
+        readonly questionsService: QuestionsService,
     ) {}
 
     async getQuestions() {

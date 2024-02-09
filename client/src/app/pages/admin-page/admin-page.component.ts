@@ -16,10 +16,10 @@ export class AdminPageComponent {
     isAuthentificated: boolean;
     errors: string;
     constructor(
-        private router: Router,
-        private communicationService: CommunicationService,
-        private el: ElementRef,
-        private gameService: GameService,
+        readonly router: Router,
+        readonly communicationService: CommunicationService,
+        public el: ElementRef,
+        readonly gameService: GameService,
     ) {}
 
     async getGames() {
@@ -88,32 +88,36 @@ export class AdminPageComponent {
     }
 
     questionErrorsHandling(questions: Question[]) {
-        if (questions.length === 0) {
+        if (questions === undefined || questions.length === 0) {
             this.errors += 'Le jeu doit contenir au moins une question. ';
-        }
-        if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
-            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
-        }
-        if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
-            this.errors += 'Les questions doivent avoir un texte de type string. ';
-        }
-        if (
-            !questions.every(
-                (question: Question) =>
-                    question.points &&
-                    typeof question.points === 'number' &&
-                    question.points >= 10 &&
-                    question.points <= 100 &&
-                    question.points % 10 === 0,
-            )
-        ) {
-            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
-        }
-        if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
-            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
-        }
-        if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
-            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
+        } else {
+            if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
+                this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
+            }
+            if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
+                this.errors += 'Les questions doivent avoir un texte de type string. ';
+            }
+            if (
+                !questions.every(
+                    (question: Question) =>
+                        question.points &&
+                        typeof question.points === 'number' &&
+                        question.points >= 10 &&
+                        question.points <= 100 &&
+                        question.points % 10 === 0,
+                )
+            ) {
+                this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
+            }
+            if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
+                this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
+            }
+            if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
+                this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
+            }
+            if (!questions.every((question: Question) => !question.choices.every((choice: Choices) => choice.isCorrect === true) && !question.choices.every((choiche: Choices) => choiche.isCorrect === false))) {
+                this.errors += "La validité des choix de réponse ne peut pas être que vraie ou que fausse.";
+            }
         }
     }
 
@@ -129,10 +133,12 @@ export class AdminPageComponent {
                     question.points >= 10 &&
                     question.points <= 100 &&
                     question.points % 10 === 0 &&
-                    question.choices.length >= 2 &&
-                    question.choices.length <= 4 &&
+                    (question.choices?.length ?? 0) >= 2 &&
+                    (question.choices?.length ?? 0) <= 4 &&
                     Array.isArray(question.choices) &&
-                    question.choices.every((choice: Choices) => typeof choice.text === 'string'),
+                    question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
+                    !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
+                    !question.choices.every((choiche: Choices) => choiche.isCorrect === false)
             )
         );
     }
@@ -183,7 +189,7 @@ export class AdminPageComponent {
         }
     }
 
-    private async readFile(file: File): Promise<unknown[]> {
+    async readFile(file: File): Promise<unknown[]> {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
 
