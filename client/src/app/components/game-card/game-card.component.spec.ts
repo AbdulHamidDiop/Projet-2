@@ -44,14 +44,16 @@ describe('GameCardComponent', () => {
         expect(component.checkEvent.emit).toHaveBeenCalledWith(game);
     });
 
-    it('should call onExportButtonClick method and download a file', () => {
+    it('should download a json file', () => {
         const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callFake((blob) => `fake-url/${blob}`);
+        const documentSpy = spyOn(HTMLAnchorElement.prototype, 'click');
         const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
 
         component.onExportButtonClick(game);
 
         expect(createObjectURLSpy).toHaveBeenCalled();
         expect(revokeObjectURLSpy).toHaveBeenCalled();
+        expect(documentSpy).toHaveBeenCalled();
     });
 
     it('should emit deleteEvent when onDeleteButtonClick is called', () => {
