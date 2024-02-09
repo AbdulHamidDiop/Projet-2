@@ -1,21 +1,21 @@
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { CommunicationService } from '@app/services/communication.service';
 import { Message } from '@common/message';
+import { StatusCodes } from 'http-status-codes';
+import { environment } from 'src/environments/environment';
+import { CommunicationService } from './communication.service';
 
 describe('CommunicationService', () => {
     let httpMock: HttpTestingController;
     let service: CommunicationService;
-    let baseUrl: string;
 
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
+            providers: [CommunicationService],
         });
         service = TestBed.inject(CommunicationService);
         httpMock = TestBed.inject(HttpTestingController);
-        // eslint-disable-next-line dot-notation -- baseUrl is private and we need access for the test
-        baseUrl = service['baseUrl'];
     });
 
     afterEach(() => {
@@ -26,48 +26,53 @@ describe('CommunicationService', () => {
         expect(service).toBeTruthy();
     });
 
-    it('should return expected message (HttpClient called once)', () => {
+    it('should return expected message (HttpClient.get called once)', () => {
         const expectedMessage: Message = { body: 'Hello', title: 'World' };
 
-        // check the content of the mocked call
-        service.basicGet().subscribe({
-            next: (response: Message) => {
-                expect(response.title).toEqual(expectedMessage.title);
-                expect(response.body).toEqual(expectedMessage.body);
-            },
-            error: fail,
+        service.basicGet().subscribe((message) => {
+            expect(message).toEqual(expectedMessage);
         });
 
-        const req = httpMock.expectOne(`${baseUrl}/example`);
+        const req = httpMock.expectOne(`${environment.serverUrl}/example`);
         expect(req.request.method).toBe('GET');
-        // actually send the request
         req.flush(expectedMessage);
     });
 
-    it('should not return any message when sending a POST request (HttpClient called once)', () => {
+    it('should send a POST request and receive a response', () => {
         const sentMessage: Message = { body: 'Hello', title: 'World' };
-        // subscribe to the mocked call
-        service.basicPost(sentMessage).subscribe({
-            // eslint-disable-next-line @typescript-eslint/no-empty-function
-            next: () => {},
-            error: fail,
+
+        service.basicPost(sentMessage).subscribe((response) => {
+            expect(response.status).toBe(StatusCodes.OK);
+            expect(response.body).toBe('OK');
         });
-        const req = httpMock.expectOne(`${baseUrl}/example/send`);
+
+        const req = httpMock.expectOne(`${environment.serverUrl}/example/send`);
         expect(req.request.method).toBe('POST');
-        // actually send the request
-        req.flush(sentMessage);
+        req.flush('OK', { status: StatusCodes.OK, statusText: 'OK' });
     });
 
     it('should handle http error safely', () => {
         service.basicGet().subscribe({
-            next: (response: Message) => {
+            next: (response) => {
                 expect(response).toBeUndefined();
             },
-            error: fail,
+            error: () => fail('expected an error, not heroes'),
         });
 
-        const req = httpMock.expectOne(`${baseUrl}/example`);
-        expect(req.request.method).toBe('GET');
-        req.error(new ProgressEvent('Random error occurred'));
+        const req = httpMock.expectOne(`${environment.serverUrl}/example`);
+        req.flush('Something went wrong', { status: StatusCodes.NOT_FOUND, statusText: 'Not Found' });
+    });
+
+    it('should update sharedVariable$ when updateSharedVariable is called', () => {
+        let initialValue = false;
+        service.sharedVariable$.subscribe((value) => {
+            initialValue = value;
+        });
+        expect(initialValue).toBe(false);
+
+        service.updateSharedVariable(true);
+        service.sharedVariable$.subscribe((value) => {
+            expect(value).toBe(true);
+        });
     });
 });
