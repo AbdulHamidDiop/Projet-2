@@ -1,4 +1,4 @@
-import { TestBed, discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed, discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
 
 import { TimeService } from './time.service';
 
@@ -15,6 +15,26 @@ describe('TimeService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
+    it('should start with a defined start value', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        expect(service.time).toEqual(TIMEOUT);
+        flush();
+    }));
+
+    it('should decrement time by 1 every second', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(MS_SECOND);
+        expect(service.time).toEqual(TIMEOUT - 1);
+        flush();
+    }));
+
+    it('should stop after reaching 0', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(TIMEOUT * MS_SECOND);
+        expect(service.time).toEqual(0);
+        flush();
+    }));
 
     it('startTimer should start an interval', fakeAsync(() => {
         service.startTimer(TIMEOUT);
@@ -58,7 +78,7 @@ describe('TimeService', () => {
     it('startTimer should call stopTimer at the end of timer', fakeAsync(() => {
         const spy = spyOn(service, 'stopTimer').and.callThrough();
         service.startTimer(TIMEOUT);
-        tick((TIMEOUT + 1) * MS_SECOND); // un tick de plus que la limite
+        tick((TIMEOUT + 1) * MS_SECOND);
         expect(spy).toHaveBeenCalled();
         discardPeriodicTasks();
     }));
