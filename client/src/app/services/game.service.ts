@@ -17,7 +17,6 @@ export class GameService {
             this.games = games;
         });
     }
-
     // Modification : Modification du type de retour de getSelectedGame à Game
     getSelectedGame(): Game {
         return this.selectedGame;

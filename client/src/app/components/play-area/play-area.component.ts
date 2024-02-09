@@ -88,14 +88,6 @@ export class PlayAreaComponent {
         return text !== '';
     }
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
-    // ngOnInit(): void {
-    //     this.question = this.questionService.question;
-    //     if (this.question.type === Type.QCM) {
-    //         this.nbChoices = this.question.choices.length;
-    //     }
-    // }
-
     nextQuestion() {
         const newQuestion = this.questionService.question;
         this.question = newQuestion;

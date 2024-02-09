@@ -1,8 +1,9 @@
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
+import { Choices } from '@app/interfaces/game-elements';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
-import { Choices, Game, Question } from '@common/game';
+import { Choice, Game, Question } from '@common/game';
 import { v4 } from 'uuid';
 
 @Component({
@@ -11,17 +12,16 @@ import { v4 } from 'uuid';
     styleUrls: ['./admin-page.component.scss'],
 })
 export class AdminPageComponent {
+    games: Game[];
+    selectedFile: File;
+    isAuthentificated: boolean;
+    errors: string;
     constructor(
         private router: Router,
         private communicationService: CommunicationService,
         private el: ElementRef,
         private gameService: GameService,
     ) {}
-
-    games: Game[];
-    selectedFile: File;
-    isAuthentificated: boolean;
-    errors: string;
 
     async getGames() {
         // - cdl
@@ -137,7 +137,7 @@ export class AdminPageComponent {
                     (question.choices?.length ?? 0) >= 2 &&
                     (question.choices?.length ?? 0) <= 4 &&
                     Array.isArray(question.choices) &&
-                    question.choices.every((choice: Choices) => typeof choice.text === 'string'),
+                    question.choices.every((choice: Choice) => typeof choice.text === 'string'),
             )
         );
     }

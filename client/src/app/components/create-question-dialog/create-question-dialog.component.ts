@@ -3,7 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { QuestionsService } from '@app/services/questions.service';
-import { Choices, Question } from '@common/game';
+import { Choice, Question } from '@common/game';
 import { v4 } from 'uuid';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
 
@@ -73,7 +73,7 @@ export class CreateQuestionDialogComponent {
         this.choices.removeAt(index);
     }
 
-    dropChoice(event: CdkDragDrop<Choices[]>) {
+    dropChoice(event: CdkDragDrop<Choice[]>) {
         const choicesArray = this.choices.getRawValue();
         moveItemInArray(choicesArray, event.previousIndex, event.currentIndex);
         this.choices.setValue(choicesArray);

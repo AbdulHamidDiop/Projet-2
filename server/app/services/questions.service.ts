@@ -1,4 +1,4 @@
-import { Question } from '@common/game';
+import { Choice, Question } from '@common/game';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
 
@@ -35,5 +35,40 @@ export class QuestionsService {
         const updatedQuestions: Question[] = questions.filter((question) => question.id !== id);
         await fs.writeFile(QUESTIONS_PATH, JSON.stringify(updatedQuestions, null, 2), 'utf8');
         return true;
+    }
+
+    async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
+        const data: string = await fs.readFile(QUESTIONS_PATH, 'utf8');
+        const questions: Question[] = JSON.parse(data);
+        const questionsWithoutCorrect : Question[] = [];
+        for (let i = 0; i < questions.length; i++) {
+            const currentQuestion: Question = questions[i];
+            const choicesWithoutCorrect : Choice[] = [];
+            for (let j = 0; j < currentQuestion.choices.length; j++) {
+                const currentChoice: Choice = currentQuestion.choices[j];
+                const { isCorrect, ...choiceWithoutCorrect }: Choice = currentChoice;
+                choicesWithoutCorrect.push(choiceWithoutCorrect as Choice); 
+            }
+            currentQuestion.choices = choicesWithoutCorrect;
+            questionsWithoutCorrect.push(currentQuestion);
+        }
+        return questionsWithoutCorrect;
+    }
+
+    async sortQuestionsWithoutCorrectShown(): Promise<Question[]> {
+        const questions: Question[] = await this.getQuestionsWithoutCorrectShown();
+        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime());
+        return sortedQuestions;
+    }
+
+    async isCorrectAnswer(choice : Choice, question : Question): Promise<boolean> {
+        const questions: Question[] = await this.getAllQuestions();
+        const questionCheck : Question = questions.find((q) => q.id === question.id);
+        for (let i = 0; i < questionCheck.choices.length; i++){
+            if (questionCheck.choices[i] === choice) {
+                return questionCheck.choices[i].isCorrect;
+            }
+        }
+        return false;
     }
 }

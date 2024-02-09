@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { Choices } from '@common/game';
+import { Choice } from '@common/game';
 
 const MULTIPLE_OF_TEN = 10;
 
@@ -8,7 +8,7 @@ export const multipleOfTenValidator: ValidatorFn = (control: AbstractControl): {
     return isValid ? null : { notMultipleOfTen: { value: control.value } };
 };
 export const hasIncorrectAndCorrectAnswer: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
-    const choices: Choices[] = control.value;
+    const choices: Choice[] = control.value;
 
     let hasCorrectAnswer = false;
     let hasIncorrectAnswer = false;
