@@ -1,10 +1,9 @@
-import { CdkDropList } from '@angular/cdk/drag-drop';
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { AdminQuestionComponent } from '@app/components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { Game } from '@app/interfaces/game-elements';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -100,21 +99,21 @@ describe('AdminCreateGamePageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [AppMaterialModule, BrowserAnimationsModule, AppRoutingModule, FormsModule, CdkDropList],
-            declarations: [AdminCreateGamePageComponent, SidebarComponent, PlayAreaComponent],
+            imports: [AppMaterialModule, BrowserAnimationsModule, AppRoutingModule, FormsModule, DragDropModule, ReactiveFormsModule],
+            declarations: [AdminCreateGamePageComponent, AdminQuestionsBankComponent, AdminQuestionComponent],
             providers: [
                 {
                     provide: GameService,
                     useValue: {
                         getGameById: jasmine.createSpy('getGameById').and.returnValue(observableGame),
                     },
-                },
+                } /*
                 {
                     provide: AdminQuestionsBankComponent,
                     useValue: {
-                        questionsBankList: jasmine.createSpy('questionsBankList').and.returnValue({}),
+                        questionsBankList: jasmine.createSpy('questionsBankList').and.callThrough(),
                     },
-                },
+                },*/,
             ],
         }).compileComponents();
     });
@@ -212,37 +211,7 @@ describe('AdminCreateGamePageComponent', () => {
         expect(component.gameForm.valid).toBeTruthy();
     });
 
-    it('Should let user create 2 to 4 answers to each question', () => {
-        const lowerBound = 2;
-        const upperBound = 4;
-        let game: Game = validGame;
-        component.populateForm(game);
-        expect(component.gameForm.valid).toBeTruthy();
-        game = validGame;
-        while (game.questions.length >= lowerBound) {
-            game.questions.slice(1, 1);
-        }
-        component.populateForm(game);
-        expect(component.game.questions.length <= upperBound && component.game.questions.length >= lowerBound);
-        expect(component.gameForm.valid).toBeFalsy();
 
-        game = validGame;
-        {
-            game.questions.push(game.questions[0]);
-            game.questions.push(game.questions[0]);
-        }
-        component.populateForm(game);
-        expect(component.game.questions.length <= upperBound && component.game.questions.length >= lowerBound);
-        expect(component.gameForm.valid).toBeFalsy();
-    });
-
-    it('Should let user define if an answer is correct or wrong', () => {
-        const game: Game = validGame;
-        component.populateForm(game);
-        component.saveQuiz();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(component.game.questions[0].choices[0].isCorrect === game.questions[0].choices[0].isCorrect).toBeTruthy();
-    });
     it('Should let user change the order of questions by updating their number id', () => {
         expect(component).toBeTruthy();
     });

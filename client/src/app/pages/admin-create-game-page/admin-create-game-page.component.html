@@ -50,7 +50,7 @@
                         cdkDropList
                         [cdkDropListData]="questions"
                         #questionsList="cdkDropList"
-                        [cdkDropListConnectedTo]="[questionsBankList]"
+                        [cdkDropListConnectedTo]="[questionsBankComponent.questionsBankList]"
                         (cdkDropListDropped)="dropQuestion($event)"
                     >
                         <div *ngIf="questions.length === 0" class="placeholder">Rajouter les questions de la banque ici</div>

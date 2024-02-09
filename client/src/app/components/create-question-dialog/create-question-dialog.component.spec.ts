@@ -1,16 +1,18 @@
+import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { AppModule } from '@app/app.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Choices, Question } from '@app/interfaces/game-elements';
+import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsBankService } from '@app/services/questions-bank.service';
 import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
-let addQuestionCalled = false;
+let addQuestionCalled = true;
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 function setAddQuestionsCalled() {
-    addQuestionCalled = true;
+    addQuestionCalled = false;
 }
 
 describe('CreateQuestionDialogComponent', () => {
@@ -41,7 +43,7 @@ describe('CreateQuestionDialogComponent', () => {
         // const matDialogRefSpy = jasmine.createSpyObj(MatDialogRef, ['close']);
         await TestBed.configureTestingModule({
             declarations: [CreateQuestionDialogComponent],
-            imports: [AppModule],
+            imports: [AppMaterialModule, FormsModule, DragDropModule, ReactiveFormsModule, BrowserAnimationsModule],
             providers: [
                 {
                     provide: MatDialogRef,

@@ -34,7 +34,7 @@ export class AdminCreateGamePageComponent {
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit(): void {
         // Access the cdkDropList from the child component after view initialization
-        this.questionsBankList = this.questionsBankComponent.questionsBankList;
+        // this.questionsBankList = this.questionsBankComponent.questionsBankList;
         this.cd.detectChanges();
     }
 
