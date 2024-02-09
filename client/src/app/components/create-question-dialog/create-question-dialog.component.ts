@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/explicit-member-accessibility */
-/* eslint-disable @typescript-eslint/member-ordering */
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Choices, Question } from '@app/interfaces/game-elements';
-import { QuestionsBankService } from '@app/services/questions-bank.service';
+import { QuestionsService } from '@app/services/questions.service';
+import { Choices, Question } from '@common/game';
 import { v4 } from 'uuid';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
 
@@ -24,12 +22,13 @@ export class CreateQuestionDialogComponent {
     question: Question;
     id: string;
 
+    // eslint-disable-next-line max-params
     constructor(
-        public fb: FormBuilder,
+        private fb: FormBuilder,
         private dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
+        public questionsService: QuestionsService,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @Inject(MAT_DIALOG_DATA) public data: any,
-        private questionBankService: QuestionsBankService,
     ) {
         this.initializeForm();
         this.handleQuestionTypeChanges(); // pour negliger choices si type = QRL
@@ -88,9 +87,7 @@ export class CreateQuestionDialogComponent {
             this.dialogRef.close(this.question);
 
             if (this.questionForm.get('addToBank')?.value) {
-                // TODO: add question to bank
-                this.questionBankService.addQuestion(this.question);
-                console.log('add question to bank');
+                this.questionsService.addQuestion(this.question);
             }
         }
     }
@@ -105,7 +102,7 @@ export class CreateQuestionDialogComponent {
         });
     }
 
-    public populateForm(questionData: Question): void {
+    private populateForm(questionData: Question): void {
         this.questionForm.patchValue({
             type: questionData.type,
             text: questionData.text,

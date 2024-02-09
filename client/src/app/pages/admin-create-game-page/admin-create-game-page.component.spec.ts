@@ -120,6 +120,7 @@ describe('AdminCreateGamePageComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(AdminCreateGamePageComponent);
+        fixture = TestBed.createComponent(AdminCreateGamePageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });

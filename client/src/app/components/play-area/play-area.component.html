@@ -1,13 +1,57 @@
 <div id="grid-container">
-    <p>Section de jeu!</p>
-    <section id="timer-container">
-        <h2>Débutez une minuterie de 5 secondes</h2>
-        <button (click)="mouseHitDetect($event)">Commencer</button>
-        <p *ngIf="time">Temps restant : {{ time }}</p>
+    <section id="question-container">
+        <mat-card *ngIf="shouldRender(this.question.text)">
+            <mat-card-header>
+                <mat-card-title>
+                    <h2>Question</h2>
+                </mat-card-title>
+                <mat-card-subtitle>
+                    <h3>{{ this.question.text }}</h3>
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions align="end">
+                <button mat-button [disabled]="true">
+                    <h4>{{ this.question.points }} points.</h4>
+                </button>
+                <br />
+                <button mat-button [disabled]="true">
+                    <h4>{{ time }}s</h4>
+                </button>
+            </mat-card-actions>
+        </mat-card>
+        <br />
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    <p>Score du joueur : {{ this.playerScore }}</p>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-actions align="end">
+                <button mat-button (click)="handleAbort()">
+                    <h3 class="abort-button">Abandonner</h3>
+                </button>
+                <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
+                    <h3 class="confirm-text">Confirmer</h3>
+                </button>
+            </mat-card-actions>
+        </mat-card>
     </section>
 
-    <div id="position-display">
-        <p>Appuyez sur une touche du clavier pour la détecter</p>
-        <p *ngIf="buttonPressed !== ''"> Touche : {{ buttonPressed }}</p>
-    </div>
+    <br />
+    <mat-selection-list #choices [attr.aria-disabled]="disableChoices ? 'true' : null">
+        <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
+            <mat-list-item
+                (click)="!disableChoices && handleQCMChoice(choice.text, choice.isCorrect)"
+                (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
+                (keyup)="!disableChoices && $event.stopPropagation()"
+                *ngIf="shouldRender(choice.text)"
+            >
+                <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
+                    <span>
+                        Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>
+                    </span>
+                </mat-list-option>
+            </mat-list-item>
+        </div>
+    </mat-selection-list>
 </div>

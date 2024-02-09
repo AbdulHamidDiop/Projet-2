@@ -1,7 +1,7 @@
 import { CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { Component, Input, ViewChild } from '@angular/core';
-import { Question } from '@app/interfaces/game-elements';
-import { QuestionsBankService } from '@app/services/questions-bank.service';
+import { QuestionsService } from '@app/services/questions.service';
+import { Question } from '@common/game';
 
 @Component({
     selector: 'app-admin-questions-bank',
@@ -11,13 +11,14 @@ import { QuestionsBankService } from '@app/services/questions-bank.service';
 export class AdminQuestionsBankComponent {
     @ViewChild(CdkDropList) questionsBankList!: CdkDropList;
     @Input() questionsList!: CdkDropList;
+    @Input() editable?: boolean = false;
 
     questions: Question[];
     displayQuestions: Question[] = [];
     selectedTypes: Set<string> = new Set(['QCM', 'QRL']);
 
-    constructor(public questionsBankService: QuestionsBankService) {
-        this.questionsBankService.getQuestions().subscribe((questions) => {
+    constructor(public questionsBankService: QuestionsService) {
+        this.questionsBankService.getAllQuestions().then((questions) => {
             this.questions = questions;
             this.updateDisplayQuestions();
         });
@@ -28,7 +29,9 @@ export class AdminQuestionsBankComponent {
             if (!a.lastModification || !b.lastModification) {
                 return 1;
             }
-            return b.lastModification.getTime() - a.lastModification.getTime();
+            const dateA = new Date(a.lastModification);
+            const dateB = new Date(b.lastModification);
+            return dateB.getTime() - dateA.getTime();
         });
 
         if (this.selectedTypes.size === 0 || this.selectedTypes.size === 2) {
@@ -57,7 +60,7 @@ export class AdminQuestionsBankComponent {
     }
 
     reloadQuestions(): void {
-        this.questionsBankService.getQuestions().subscribe((questions) => {
+        this.questionsBankService.getAllQuestions().then((questions) => {
             this.questions = questions;
             this.updateDisplayQuestions();
         });
