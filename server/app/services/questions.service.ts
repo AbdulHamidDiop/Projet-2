@@ -45,9 +45,9 @@ export class QuestionsService {
             const currentQuestion: Question = questions[i];
             const choicesWithoutCorrect : Choice[] = [];
             for (let j = 0; j < currentQuestion.choices.length; j++) {
-                const currentChoice: Choice = currentQuestion.choices[i];
+                const currentChoice: Choice = currentQuestion.choices[j];
                 const { isCorrect, ...choiceWithoutCorrect }: Choice = currentChoice;
-                choicesWithoutCorrect.push(choiceWithoutCorrect);
+                choicesWithoutCorrect.push(choiceWithoutCorrect as Choice); 
             }
             currentQuestion.choices = choicesWithoutCorrect;
             questionsWithoutCorrect.push(currentQuestion);

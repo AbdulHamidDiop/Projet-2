@@ -1,6 +1,6 @@
 export interface Choice {
     text: string;
-    isCorrect?: boolean;
+    isCorrect: boolean;
 }
 
 export enum Type {

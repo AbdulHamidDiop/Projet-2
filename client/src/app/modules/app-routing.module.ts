@@ -16,7 +16,7 @@ const routes: Routes = [
     { path: 'home', component: MainPageComponent },
     { path: 'game', component: GamePageComponent },
     { path: 'createGame', component: CreateGamePageComponent },
-    { path: 'playAreaTest', component: PlayAreaTestComponent},
+    { path: 'playAreaTest/:id', component: PlayAreaTestComponent},
     { path: 'admin', component: AdminPageComponent },
     { path: 'admin/questions', component: QuestionsPageComponent },
     { path: 'admin/createGame', component: AdminCreateGamePageComponent },
