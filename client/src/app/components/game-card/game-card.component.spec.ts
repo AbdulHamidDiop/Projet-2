@@ -2,8 +2,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { GameService } from '@app/services/game.service';
 import { Game } from '@common/game';
-import { GameService } from '../../services/game.service';
 import { GameCardComponent } from './game-card.component';
 
 describe('GameCardComponent', () => {
