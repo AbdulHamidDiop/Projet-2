@@ -1,3 +1,5 @@
+import { Type } from '@common/game';
+
 export interface Choices {
     text: string;
     isCorrect: boolean;
@@ -5,7 +7,7 @@ export interface Choices {
 
 export interface Question {
     id?: string;
-    type: 'QCM' | 'QRL';
+    type: Type.QCM | Type.QRL;
     text: string;
     points: number;
     choices: Choices[];

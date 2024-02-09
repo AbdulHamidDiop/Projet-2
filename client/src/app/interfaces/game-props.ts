@@ -3,8 +3,8 @@ export interface Choices {
     isCorrect: boolean;
 }
 enum Type {
-    QCM = 'QCM',
-    QRL = 'QRL',
+    QCM = Type.QCM,
+    QRL = Type.QRL,
 }
 export interface Question {
     type: Type;

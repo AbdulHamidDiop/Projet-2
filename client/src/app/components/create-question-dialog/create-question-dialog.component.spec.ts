@@ -3,9 +3,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Choices, Question } from '@app/interfaces/game-elements';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsBankService } from '@app/services/questions-bank.service';
+import { Choices, Question, Type } from '@common/game';
 import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
 let addQuestionCalled = true;
@@ -20,9 +20,10 @@ describe('CreateQuestionDialogComponent', () => {
     let fixture: ComponentFixture<CreateQuestionDialogComponent>;
     const validQuestion: Question = {
         id: '2',
-        type: 'QCM',
+        type: Type.QCM,
         text: 'Question valide',
         points: 10,
+        lastModification: null,
         choices: [
             {
                 text: 'Choix valide #1',
@@ -57,15 +58,14 @@ describe('CreateQuestionDialogComponent', () => {
                     useValue: {
                         addQuestion: jasmine.createSpy('addQuestion').and.callFake(setAddQuestionsCalled),
                     },
-                },
-                /*
+                } /*
                 {
                     provide: FormGroup,
                     useValue: {
                         get: jasmine
                             .createSpy('get')
                             .withArgs('type')
-                            .and.returnValue('QCM')
+                            .and.returnValue(Type.QCM)
                             .withArgs('addToBank')
                             .and.returnValue(true)
                             .withArgs('choices')
@@ -80,7 +80,7 @@ describe('CreateQuestionDialogComponent', () => {
                     useValue: {
                         clear: jasmine.createSpy('clear'),
                     },
-                },*/
+                },*/,
             ],
         }).compileComponents();
     });
@@ -91,9 +91,9 @@ describe('CreateQuestionDialogComponent', () => {
         fixture.detectChanges();
     });
 
-//     it('should create', () => {
-//         expect(component).toBeTruthy();
-//     });
+    //     it('should create', () => {
+    //         expect(component).toBeTruthy();
+    //     });
 
     it('Should be able to call a function', () => {
         component.populateForm(validQuestion);

@@ -14,16 +14,6 @@
         <button mat-icon-button (click)="openDialog()" name="edit-question" class="edit-button">
             <mat-icon class="edit-icon">edit</mat-icon>
         </button>
-        <button mat-icon-button (click)="deleteQuestion()" name="delete-question" class="delete-button">
-            <mat-icon class="delete-icon">delete</mat-icon>
-        </button>
-    </div>
-
-    <div *ngIf="editable === true">
-        <p>Dernière modification: {{ question.lastModification | date: 'short' }}</p>
-        <button mat-icon-button (click)="openDialog()" name="edit-question" class="edit-button">
-            <mat-icon class="edit-icon">edit</mat-icon>
-        </button>
         <button mat-icon-button (click)="deleteQuestion(question)" name="delete-question" class="delete-button">
             <mat-icon class="delete-icon">delete</mat-icon>
         </button>

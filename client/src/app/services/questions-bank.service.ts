@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Question } from '@app/interfaces/game-elements';
+import { Type } from '@common/game';
 import { Observable, of } from 'rxjs';
 
 @Injectable({
@@ -8,7 +9,7 @@ import { Observable, of } from 'rxjs';
 export class QuestionsBankService {
     dummyQuestions: Question[] = [
         {
-            type: 'QCM',
+            type: Type.QCM,
             text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
             points: 40,
             choices: [
@@ -32,14 +33,14 @@ export class QuestionsBankService {
             answer: '',
         },
         {
-            type: 'QRL',
+            type: Type.QRL,
             text: "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
             choices: [],
             points: 60,
             answer: '',
         },
         {
-            type: 'QCM',
+            type: Type.QCM,
             text: "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ?",
             points: 20,
             choices: [
@@ -55,7 +56,7 @@ export class QuestionsBankService {
             answer: '',
         },
         {
-            type: 'QCM',
+            type: Type.QCM,
             text: "Quel méthode est utilisée pour arrondir un nombre à l'entier le plus proche en JavaScript?",
             points: 30,
             choices: [
@@ -79,14 +80,14 @@ export class QuestionsBankService {
             answer: '',
         },
         {
-            type: 'QRL',
+            type: Type.QRL,
             text: "Expliquez ce que signifie 'hoisting' en JavaScript.",
             choices: [],
             points: 50,
             answer: '',
         },
         {
-            type: 'QCM',
+            type: Type.QCM,
             text: "Quelle méthode permet de supprimer le dernier élément d'un tableau en JavaScript?",
             points: 25,
             choices: [

@@ -31,6 +31,7 @@ describe('QuestionsService', () => {
             text: 'Question 1',
             points: 5,
             choices: mockChoices,
+            answer: '',
         };
         spyOn(window, 'fetch').and.returnValue(Promise.resolve({ ok: true, json: async () => Promise.resolve([mockQuestion]) } as Response));
 
@@ -52,6 +53,7 @@ describe('QuestionsService', () => {
             text: 'Question 1',
             points: 5,
             choices: mockChoices,
+            answer: '',
         };
         spyOn(window, 'fetch').and.returnValue(
             Promise.resolve(new Response(JSON.stringify([mockQuestion]), { status: 200, headers: { 'Content-type': 'application/json' } })),
@@ -80,6 +82,7 @@ describe('QuestionsService', () => {
             text: 'Question 1',
             points: 5,
             choices: mockChoices,
+            answer: '',
         };
         spyOn(window, 'fetch').and.returnValue(
             Promise.resolve(new Response(null, { status: 200, statusText: 'OK', headers: { 'Content-type': 'application/json' } })),
@@ -109,6 +112,7 @@ describe('QuestionsService', () => {
             text: 'Question 1',
             points: 5,
             choices: mockChoices,
+            answer: '',
         };
 
         const deleteRequestSpy = spyOn(service.deleteRequest, 'emit');

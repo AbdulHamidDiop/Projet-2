@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Question } from '@app/interfaces/game-elements';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsBankService } from '@app/services/questions-bank.service';
+import { Type } from '@common/game';
 import { Observable } from 'rxjs';
 import { AdminQuestionsBankComponent } from './admin-questions-bank.component';
 
@@ -12,7 +13,7 @@ describe('AdminQuestionsBankComponent', () => {
     let fixture: ComponentFixture<AdminQuestionsBankComponent>;
     const validQuestion: Question = {
         id: '2',
-        type: 'QCM',
+        type: Type.QCM,
         text: 'Question valide',
         points: 10,
         choices: [

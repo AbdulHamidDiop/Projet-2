@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
-import { Choices, Game, Question } from '@common/game';
+import { Choices, Game, Question, Type } from '@common/game';
 import { v4 } from 'uuid';
 
 @Component({
@@ -91,7 +92,7 @@ export class AdminPageComponent {
         if (questions.length === 0) {
             this.errors += 'Le jeu doit contenir au moins une question. ';
         }
-        if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
+        if (!questions.every((question: Question) => question.type === Type.QCM || question.type === Type.QRL)) {
             this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
         }
         if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
@@ -127,7 +128,7 @@ export class AdminPageComponent {
             questions.every(
                 (question: Question) =>
                     typeof question.type === 'string' &&
-                    (question.type === 'QCM' || question.type === 'QRL') &&
+                    (question.type === Type.QCM || question.type === Type.QRL) &&
                     typeof question.text === 'string' &&
                     typeof question.points === 'number' &&
                     question.points >= 10 &&

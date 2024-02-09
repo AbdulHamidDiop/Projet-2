@@ -77,6 +77,7 @@ describe('PlayAreaComponent', () => {
                 { text: 'Option 1', isCorrect: true },
                 { text: 'Option 2', isCorrect: false },
             ],
+            answer: '',
         };
 
         spyOnProperty(questionsService, 'question', 'get').and.returnValue(qcmQuestion);
@@ -115,6 +116,7 @@ describe('PlayAreaComponent', () => {
                 { text: 'New Option 1', isCorrect: false },
                 { text: 'New Option 2', isCorrect: true },
             ],
+            answer: '',
         };
 
         spyOnProperty(questionsService, 'question', 'get').and.returnValue(newQCMQuestion);
@@ -304,6 +306,7 @@ describe('PlayAreaComponent', () => {
                     { text: 'Option 2', isCorrect: false },
                     { text: 'Option 3', isCorrect: true },
                 ],
+                answer: '',
             };
 
             component.showFeedback = true;

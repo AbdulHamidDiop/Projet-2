@@ -101,7 +101,7 @@ export class PlayAreaComponent {
         this.question = newQuestion;
         this.answer = [];
         this.isCorrect = [];
-        if (newQuestion && newQuestion.type === 'QCM') {
+        if (newQuestion && newQuestion.type === Type.QCM) {
             this.nbChoices = this.question.choices.length;
         }
         this.timeService.stopTimer();

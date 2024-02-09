@@ -3,7 +3,7 @@ import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { QuestionsService } from '@app/services/questions.service';
-import { Choices, Question } from '@common/game';
+import { Choices, Question, Type } from '@common/game';
 import { v4 } from 'uuid';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
 
@@ -24,8 +24,8 @@ export class CreateQuestionDialogComponent {
 
     // eslint-disable-next-line max-params
     constructor(
-        private fb: FormBuilder,
-        private dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
+        public fb: FormBuilder,
+        public dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
         public questionsService: QuestionsService,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @Inject(MAT_DIALOG_DATA) public data: any,
@@ -49,7 +49,7 @@ export class CreateQuestionDialogComponent {
 
     handleQuestionTypeChanges(): void {
         this.questionForm.get('type')?.valueChanges.subscribe((value) => {
-            if (value === 'QCM') {
+            if (value === Type.QCM) {
                 this.questionForm.setControl('choices', this.fb.array([], [Validators.minLength(MIN_CHOICES), hasIncorrectAndCorrectAnswer]));
             } else {
                 this.choices.clear();
@@ -92,7 +92,7 @@ export class CreateQuestionDialogComponent {
         }
     }
 
-    private initializeForm(): void {
+    initializeForm(): void {
         this.questionForm = this.fb.group({
             type: ['', Validators.required],
             text: ['', Validators.required],
@@ -102,7 +102,8 @@ export class CreateQuestionDialogComponent {
         });
     }
 
-    private populateForm(questionData: Question): void {
+    // eslint-disable-next-line @typescript-eslint/member-ordering
+    populateForm(questionData: Question): void {
         this.questionForm.patchValue({
             type: questionData.type,
             text: questionData.text,
