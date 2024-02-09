@@ -207,8 +207,11 @@ export class GameController {
          *         description: OK
          */
         this.router.patch('/togglehidden', async (req: Request, res: Response) => {
-            await this.gamesService.toggleGameHidden(req.body.id);
-            res.status(StatusCodes.NO_CONTENT);
+            if (await this.gamesService.toggleGameHidden(req.body.id)) {
+                res.status(StatusCodes.NO_CONTENT);
+            } else {
+                res.status(StatusCodes.BAD_REQUEST);
+            }
             res.send();
         });
 

@@ -31,5 +31,4 @@ export class CommunicationService {
     updateSharedVariable(newData: boolean) {
         this.sharedVariableSubject.next(newData);
     }
-
 }

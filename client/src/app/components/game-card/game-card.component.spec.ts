@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
+import { Game } from '@common/game';
+import { GameCardComponent } from './game-card.component';
 import SpyObj = jasmine.SpyObj;
 
 describe('GameCardComponent', () => {
     let component: GameCardComponent;
     let fixture: ComponentFixture<GameCardComponent>;
-    let httpClient: HttpClient;
-    let router: Router;
     const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
 
     beforeEach(() => {

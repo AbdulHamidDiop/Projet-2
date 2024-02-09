@@ -1,107 +1,72 @@
 import { Question } from '@common/game';
 import { expect } from 'chai';
-import fs from 'fs';
+import * as fs from 'fs';
 import sinon from 'sinon';
 import { QuestionsService } from './questions.service';
 
-const QUESTIONS = [
-    {
-        type: 'QCM',
-        text: 'Quel mot-clé parmi les suivants ne figure pas dans HTML ?',
-        points: 30,
-        addToBank: false,
-        choices: [
-            {
-                text: 'div',
-                isCorrect: false,
-            },
-            {
-                text: 'li',
-                isCorrect: true,
-            },
-            {
-                text: 'mat-input',
-                isCorrect: true,
-            },
-            {
-                text: 'button',
-                isCorrect: false,
-            },
-            {
-                text: 'table',
-                isCorrect: false,
-            },
-            {
-                text: 'input',
-                isCorrect: false,
-            },
-        ],
-        lastModification: '2024-01-31T16:09:01.684Z',
-    },
-    {
-        type: 'QCM',
-        text: 'Quelle est la différence entre NodeJS et Angular',
-        points: 20,
-        addToBank: true,
-        choices: [
-            {
-                text: 'Angular = front-end, NodeJS = back-end',
-                isCorrect: false,
-            },
-            {
-                text: 'Angular = back-end, NodeJS = front-end',
-                isCorrect: true,
-            },
-            {
-                text: 'Aucune de ces réponses',
-                isCorrect: false,
-            },
-        ],
-        id: 'e6547406-2543-4683-b0a2-dc0f1b01df66',
-        lastModification: '2023-01-31T16:39:55.649Z',
-    },
-    {
-        id: '9a9010c6-65d2-4370-b78e-c4211bb86eb9',
-        lastModification: '2023-02-02T15:28:59.795Z',
-        title: 'Quiz 1',
-        description: 'quiz',
-        duration: 40,
-        questions: [
-            {
-                type: 'QCM',
-                text: 'Quelle est la différence entre NodeJS et Angular',
-                points: 20,
-                addToBank: true,
-                choices: [
-                    {
-                        text: 'Angular = front-end, NodeJS = back-end',
-                        isCorrect: false,
-                    },
-                    {
-                        text: 'Angular = back-end, NodeJS = front-end',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Aucune de ces réponses',
-                        isCorrect: false,
-                    },
-                ],
-                id: 'e6547406-2543-4683-b0a2-dc0f1b01df66',
-                lastModification: '2022-01-31T16:39:55.649Z',
-            },
-        ],
-        isHidden: true,
-    },
-];
+const DATALENGTH = 1;
+
+const FIRST_QUESTION = {
+    type: 'QCM',
+    text: 'Quelle est la différence entre NodeJS et Angular',
+    points: 20,
+    addToBank: true,
+    choices: [
+        {
+            text: 'Angular = front-end, NodeJS = back-end',
+            isCorrect: false,
+        },
+        {
+            text: 'Angular = back-end, NodeJS = front-end',
+            isCorrect: true,
+        },
+        {
+            text: 'Aucune de ces réponses',
+            isCorrect: false,
+        },
+    ],
+    id: '00000000-1111-2222-test-000000000000',
+    lastModification: '2021-01-31T16:39:55.649Z',
+};
+
+const SECOND_QUESTION = {
+    type: 'QCM',
+    text: 'Quelle est la différence entre NodeJS et Angular',
+    points: 20,
+    addToBank: true,
+    choices: [
+        {
+            text: 'Angular = front-end, NodeJS = back-end',
+            isCorrect: false,
+        },
+        {
+            text: 'Angular = back-end, NodeJS = front-end',
+            isCorrect: true,
+        },
+        {
+            text: 'Aucune de ces réponses',
+            isCorrect: false,
+        },
+    ],
+    id: '00000000-1111-2222-test-111111111111',
+    lastModification: '2024-01-31T16:39:55.649Z',
+};
+
+let QUESTIONS = JSON.stringify([FIRST_QUESTION]);
 
 describe('Questions Service', () => {
     let questionsService: QuestionsService;
     let readFileStub: sinon.SinonStub;
     let writeFileStub: sinon.SinonStub;
 
-    beforeEach(() => {
-        readFileStub = sinon.stub(fs, 'readFile').resolves(JSON.stringify(QUESTIONS)); // Stub readFile to return an empty array initially
-        writeFileStub = sinon.stub(fs, 'writeFile').resolves(); // Stub writeFile to resolve without doing anything
+    beforeEach(async () => {
+        readFileStub = sinon.stub(fs.promises, 'readFile').resolves(QUESTIONS);
+        writeFileStub = sinon.stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
+            return new Promise<void>((resolve) => {
+                QUESTIONS = data;
+                resolve();
+            });
+        });
 
         questionsService = new QuestionsService();
     });
@@ -111,73 +76,54 @@ describe('Questions Service', () => {
         writeFileStub.restore();
     });
 
-    describe('getAllQuestions', () => {
-        it('should return an empty array if no questions are present', async () => {
-            const questions = await questionsService.getAllQuestions();
-            expect(questions).to.be.an('array');
-            expect(questions).to.have.lengthOf(3);
-        });
-
-        // Add more test cases as needed
+    it('should get all questions', async () => {
+        const questions = await questionsService.getAllQuestions();
+        expect(questions).to.be.an('array').with.lengthOf(DATALENGTH);
+        expect(questions[0]).to.deep.equal(FIRST_QUESTION);
+        expect(readFileStub.called);
     });
 
-    describe('sortAllQuestions', () => {
-        it('should return sorted questions by lastModification date', async () => {
-            readFileStub.resolves(JSON.stringify(QUESTIONS));
-
-            const sortedQuestions = await questionsService.sortAllQuestions();
-            expect(sortedQuestions).to.deep.equal([QUESTIONS[2], QUESTIONS[1], QUESTIONS[0]]);
-        });
-
-        // Add more test cases as needed
+    it('should add a question to the database', async () => {
+        await questionsService.addQuestion(SECOND_QUESTION as unknown as Question);
+        expect(JSON.parse(QUESTIONS)).to.be.an('array');
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATALENGTH + 1);
+        expect(JSON.parse(QUESTIONS)[DATALENGTH]).to.deep.equal(SECOND_QUESTION);
+        expect(readFileStub.called);
+        expect(writeFileStub.called);
     });
 
-    describe('addQuestion', () => {
-        it('should add a new question to the list', async () => {
-            const question = {
-                type: 'QCM',
-                text: 'Quelle est la différence entre NodeJS et Angular',
-                points: 20,
-                addToBank: true,
-                choices: [
-                    {
-                        text: 'Angular = front-end, NodeJS = back-end',
-                        isCorrect: false,
-                    },
-                    {
-                        text: 'Angular = back-end, NodeJS = front-end',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Aucune de ces réponses',
-                        isCorrect: false,
-                    },
-                ],
-                id: '00000000-1111-2222-test-000000000000',
-                lastModification: '2021-01-31T16:39:55.649Z',
-            } as unknown as Question;
-
-            await questionsService.addQuestion(question);
-            const updatedQuestions = JSON.parse(writeFileStub.args[0][1]);
-            expect(updatedQuestions).to.deep.include(question);
-        });
+    it('should get all questions sorted by newest first', async () => {
+        const questions = await questionsService.sortAllQuestions();
+        expect(questions)
+            .to.be.an('array')
+            .with.lengthOf(DATALENGTH + 1);
+        expect(questions).to.deep.equal([SECOND_QUESTION, FIRST_QUESTION]);
+        expect(readFileStub.called);
     });
 
-    describe('deleteQuestionByID', () => {
-        it('should delete the question with the given ID', async () => {
-            const questionIdToDelete = '1';
-            const existingQuestions = [
-                { id: '1', lastModification: '2022-01-01T00:00:00.000Z' },
-                { id: '2', lastModification: '2023-01-01T00:00:00.000Z' },
-            ];
-            readFileStub.resolves(JSON.stringify(existingQuestions));
+    it('should change a question from the database, if that question already exists', async () => {
+        const newText = 'Nouveau Texte';
+        await questionsService.addQuestion({ ...SECOND_QUESTION, text: newText } as unknown as Question);
+        expect(JSON.parse(QUESTIONS)).to.be.an('array');
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATALENGTH + 1);
+        expect(JSON.parse(QUESTIONS)[DATALENGTH].text).to.equal(newText);
 
-            const result = await questionsService.deleteQuestionByID(questionIdToDelete);
-            expect(result).to.equal(true);
-            const updatedQuestions = JSON.parse(writeFileStub.args[0][1]);
-            expect(updatedQuestions).to.not.deep.include({ id: questionIdToDelete });
-        });
+        expect(readFileStub.called);
+        expect(writeFileStub.called);
+    });
 
-        // Add more test cases as needed
+    it('should delete a question from the database based on its id', async () => {
+        await questionsService.deleteQuestionByID(SECOND_QUESTION.id);
+        expect(JSON.parse(QUESTIONS)).to.be.an('array');
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(1);
+        expect(readFileStub.called);
+        expect(writeFileStub.called);
+    });
+    it('should not delete an unexisting question ', async () => {
+        await questionsService.deleteQuestionByID('FakeID');
+        expect(JSON.parse(QUESTIONS)).to.be.an('array');
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(1);
+        expect(readFileStub.called);
+        expect(writeFileStub.notCalled);
     });
 });

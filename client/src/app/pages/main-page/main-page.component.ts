@@ -31,7 +31,7 @@ export class MainPageComponent {
     verifyPassword() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.http.post('http://localhost:3000/api/admin/password', { password: this.userInput }).subscribe((response: any) => {
-            if (response.body === 'true') {
+            if (response === true) {
                 this.router.navigate(['/admin']);
                 this.communicationService.updateSharedVariable(true);
             } else {

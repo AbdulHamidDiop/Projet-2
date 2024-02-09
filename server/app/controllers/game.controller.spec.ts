@@ -130,6 +130,39 @@ describe('GameController', () => {
         },
     ];
 
+    const fakeGame = {
+        id: '00000000-1111-2222-test-111111111111',
+        lastModification: '2024-02-02T15:28:59.795Z',
+        title: 'test',
+        description: 'test',
+        duration: 40,
+        questions: [
+            {
+                type: 'QCM',
+                text: 'Quelle est la différence entre NodeJS et Angular',
+                points: 20,
+                addToBank: true,
+                choices: [
+                    {
+                        text: 'Angular = front-end, NodeJS = back-end',
+                        isCorrect: false,
+                    },
+                    {
+                        text: 'Angular = back-end, NodeJS = front-end',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'Aucune de ces réponses',
+                        isCorrect: false,
+                    },
+                ],
+                id: 'e6547406-2543-4683-b0a2-dc0f1b01df66',
+                lastModification: '2024-01-25T16:09:35.649Z',
+            },
+        ],
+        isHidden: true,
+    };
+
     let gamesService: SinonStubbedInstance<GamesService>;
     let expressApp: Express.Application;
 
@@ -192,6 +225,18 @@ describe('GameController', () => {
             .expect(StatusCodes.NO_CONTENT)
             .then(() => {
                 assert.calledWith(gamesService.toggleGameHidden, gamesList[2].id);
+            });
+    });
+
+    it('should return 400 if an unexisting game is toggled ', async () => {
+        gamesService.toggleGameHidden.resolves(false);
+        return supertest(expressApp)
+            .patch('/api/game/togglehidden')
+            .set('Content', 'application/json')
+            .send(fakeGame)
+            .expect(StatusCodes.BAD_REQUEST)
+            .then(() => {
+                assert.calledWith(gamesService.toggleGameHidden, fakeGame.id);
             });
     });
 
