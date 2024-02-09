@@ -23,6 +23,9 @@ describe('GameCardComponent', () => {
 
         fixture = TestBed.createComponent(GameCardComponent);
         component = fixture.componentInstance;
+        component.game = game;
+        fixture.detectChanges();
+
         gameService = TestBed.inject(GameService);
         router = TestBed.inject(Router);
     });
