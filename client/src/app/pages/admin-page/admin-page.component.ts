@@ -2,7 +2,7 @@ import { Component, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
-import { Choices, Game, Question } from '@common/game';
+import { Choice, Game, Question } from '@common/game';
 import { v4 } from 'uuid';
 
 @Component({
@@ -112,7 +112,7 @@ export class AdminPageComponent {
         if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
             this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
         }
-        if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
+        if (!questions.every((question: Question) => question.choices.every((choice: Choice) => choice.text && typeof choice.text === 'string'))) {
             this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
         }
     }
@@ -132,7 +132,7 @@ export class AdminPageComponent {
                     question.choices.length >= 2 &&
                     question.choices.length <= 4 &&
                     Array.isArray(question.choices) &&
-                    question.choices.every((choice: Choices) => typeof choice.text === 'string'),
+                    question.choices.every((choice: Choice) => typeof choice.text === 'string'),
             )
         );
     }

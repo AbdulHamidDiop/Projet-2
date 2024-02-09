@@ -1,9 +1,9 @@
 import { Component, HostListener } from '@angular/core';
 import { MatListOption } from '@angular/material/list';
+import { Router } from '@angular/router';
 import { QuestionsService } from '@app/services/questions.service';
 import { TimeService } from '@app/services/time.service';
 import { Question, Type } from '@common/game';
-import { Router } from '@angular/router';
 
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
@@ -23,11 +23,11 @@ export enum MouseButton {
     templateUrl: './play-area-test.component.html',
     styleUrls: ['./play-area-test.component.scss'],
 })
-export class PlayAreaComponent {
+export class PlayAreaTestComponent {
     buttonPressed = '';
     question: Question;
 
-    private isCorrect: boolean;
+    private isCorrect: boolean | undefined;
     private answer: string;
     private readonly timer = 25;
     private points = 0;
@@ -35,13 +35,13 @@ export class PlayAreaComponent {
     private nbChoices = 0;
     constructor(
         private readonly timeService: TimeService,
-        private readonly questionService: QuestionsService,
+        private  questionService: QuestionsService,
         private readonly router: Router,
     ) {
         this.timeService.startTimer(this.timer);
         this.isCorrect = false;
         this.answer = '';
-        this.questionService.getAllQuestions();
+        this.questionService.getQuestionsWithoutCorrectShown();
         this.question = this.questionService.question;
         this.nbChoices = this.question.choices.length;
         const nbMaxQuestionsQCM = 10;
@@ -51,7 +51,7 @@ export class PlayAreaComponent {
     }
 
     @HostListener('keydown', ['$event'])
-    buttonDetect(event: KeyboardEvent) {
+    async buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
         if (this.buttonPressed === 'Enter') {
             /* if (this.isCorrect && this.answer !== '') {
@@ -69,7 +69,7 @@ export class PlayAreaComponent {
             this.buttonPressed <= this.nbChoices.toString()
         ) {
             const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices[index - 1].text, this.question.choices[index - 1].isCorrect);
+            this.handleQCMChoice(this.question.choices[index - 1].text, await this.questionService.checkAnswer(this.question.choices[index - 1], this.question));
         }
     }
 
@@ -106,7 +106,7 @@ export class PlayAreaComponent {
         return this.score;
     }
 
-    handleQCMChoice(answer: string, isCorrect: boolean) {
+    handleQCMChoice(answer: string, isCorrect: boolean | undefined) {
         if (answer === this.answer) {
             this.answer = '';
             this.isCorrect = false;
@@ -130,11 +130,11 @@ export class PlayAreaComponent {
         option.focus();
     }
 
+
     updateScore() {
-        if (this.question.type === "QCM"){
+        if (this.question.type === 'QCM') {
             if (this.isCorrect && this.answer !== '') {
-                this.score = this.score * 1.2;
-                
+                this.score += this.question.points;
             }
         } else {
             this.score += this.question.points;
@@ -170,9 +170,9 @@ export class PlayAreaComponent {
     }
 
     endGameTest() {
-        if (this.questionService.currentQuestionIndex + 1 === this.questionService.questions.length){
+        if (this.questionService.currentQuestionIndex + 1 === this.questionService.questions.length) {
             setTimeout(() => {
-                this.router.navigate(['/createGame']); 
+                this.router.navigate(['/createGame']);
             }, 3000);
         }
     }

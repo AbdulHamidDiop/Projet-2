@@ -26,7 +26,7 @@ export class PlayAreaComponent {
     buttonPressed = '';
     question: Question;
 
-    isCorrect: boolean;
+    isCorrect: boolean |undefined;
     answer: string;
     nbChoices = 0;
     private readonly timer = 25;
@@ -108,7 +108,7 @@ export class PlayAreaComponent {
         }
     }
 
-    handleQCMChoice(answer: string, isCorrect: boolean) {
+    handleQCMChoice(answer: string, isCorrect: boolean | undefined) {
         if (answer === this.answer) {
             this.answer = '';
             this.isCorrect = false;
