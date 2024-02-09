@@ -6,6 +6,7 @@ import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
 import { Game } from '@common/game';
+import { of } from 'rxjs';
 import { AdminPageComponent } from './admin-page.component';
 
 describe('AdminPageComponent', () => {
@@ -94,10 +95,22 @@ describe('AdminPageComponent', () => {
     });
 
     it('should navigate to home if not authenticated', () => {
+        component.communicationService.sharedVariable$ = of(false);
         const routerSpy = spyOn(component.router, 'navigate');
         component.ngOnInit();
         expect(routerSpy).toHaveBeenCalledWith(['/home']);
     });
+
+    it('should get games when authentificated', async () => {
+        component.communicationService.sharedVariable$ = of(true);
+        const mockGame: Game = {
+            title:"test",
+            questions: []
+        }
+        spyOn(component.gameService, "getAllGames").and.returnValue(Promise.resolve([mockGame]));
+        await component.ngOnInit();
+        expect(component.games).toEqual([mockGame]);      
+    })
     
     it('should navigate to createGame when onCreateButtonClick is called', () => {
         const routerSpy = spyOn(component.router, 'navigate');
