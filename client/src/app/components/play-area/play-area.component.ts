@@ -29,7 +29,7 @@ export class PlayAreaComponent {
     buttonPressed = '';
     question: Question = {} as Question;
 
-    isCorrect: boolean[] = [];
+    // isCorrect: boolean[] = [];
     answer: string[] = [];
     nbChoices: number;
     score = 0;
@@ -47,8 +47,9 @@ export class PlayAreaComponent {
         public router: Router,
     ) {
         this.timeService.startTimer(this.timer);
-        this.isCorrect = [];
+        // this.isCorrect = [];
         this.answer = [];
+
         this.question = this.questionService.question;
         if (this.question.type === Type.QCM) {
             this.nbChoices = this.question.choices.length;
@@ -92,7 +93,7 @@ export class PlayAreaComponent {
         const newQuestion = this.questionService.question;
         this.question = newQuestion;
         this.answer = [];
-        this.isCorrect = [];
+        // this.isCorrect = [];
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
@@ -106,7 +107,7 @@ export class PlayAreaComponent {
         for (let i = 0; i < this.answer.length; i++) {
             if (answer === this.answer[i]) {
                 this.answer.splice(i, 1);
-                this.isCorrect.splice(i, 1);
+                // this.isCorrect.splice(i, 1);
                 choiceInList = true;
                 i--;
                 break;
@@ -114,7 +115,7 @@ export class PlayAreaComponent {
         }
         if (!choiceInList) {
             this.answer.push(answer);
-            this.isCorrect.push(isCorrect);
+            // this.isCorrect.push(isCorrect);
         }
     }
 
@@ -146,14 +147,14 @@ export class PlayAreaComponent {
 
     updateScore() {
         let correctAnswer = true;
-        if (this.question.choices !== undefined) {
+        if (this.question.choices) {
             const correctChoices = this.question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
             if (this.answer.length !== correctChoices.length || !this.answer.every((answer) => correctChoices.includes(answer))) {
                 correctAnswer = false;
             }
         }
 
-        if (correctAnswer && this.question.points !== undefined) {
+        if (correctAnswer && this.question.points) {
             this.score += this.question.points;
         }
     }
@@ -173,7 +174,7 @@ export class PlayAreaComponent {
                 this.timeService.stopTimer();
                 this.score = 0;
                 this.answer = [];
-                this.isCorrect = [];
+                // this.isCorrect = [];
                 this.router.navigate(['/createGame']);
             }
         });
