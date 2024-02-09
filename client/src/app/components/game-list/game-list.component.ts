@@ -1,14 +1,14 @@
-import { Component } from '@angular/core';
-import { Game, GameService } from '../../services/game.service';
+import { Component, OnInit } from '@angular/core';
+import { Game, GameService } from '@app/services/game.service';
 
 @Component({
     selector: 'app-game-list',
     templateUrl: './game-list.component.html',
     styleUrls: ['game-list.component.scss'],
 })
-export class GameListComponent {
-    constructor(public gameService: GameService) {}
+export class GameListComponent implements OnInit {
     games: Game[];
+    constructor(public gameService: GameService) {}
 
     async ngOnInit() {
         this.games = await this.gameService.getAllGames();

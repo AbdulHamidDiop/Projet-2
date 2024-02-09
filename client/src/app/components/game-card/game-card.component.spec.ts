@@ -44,7 +44,7 @@ describe('GameCardComponent', () => {
         expect(component.checkEvent.emit).toHaveBeenCalledWith(game);
     });
 
-    it('should download a json file', () => {
+    it('should fake download a json file', () => {
         const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callFake((blob) => `fake-url/${blob}`);
         const documentSpy = spyOn(HTMLAnchorElement.prototype, 'click');
         const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');

@@ -9,6 +9,8 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class CommunicationService {
+    private sharedVariableSubject = new BehaviorSubject<boolean>(false);
+    sharedVariable$ = this.sharedVariableSubject.asObservable();
     private readonly baseUrl: string = environment.serverUrl;
 
     constructor(private readonly http: HttpClient) {}
@@ -20,16 +22,11 @@ export class CommunicationService {
     basicPost(message: Message): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/example/send`, message, { observe: 'response', responseType: 'text' });
     }
-
-    private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
-        return () => of(result as T);
-    }
-
-    private sharedVariableSubject = new BehaviorSubject<boolean>(false);
-    sharedVariable$ = this.sharedVariableSubject.asObservable();
-
     updateSharedVariable(newData: boolean) {
         this.sharedVariableSubject.next(newData);
     }
 
+    private handleError<T>(request: string, result?: T): (error: Error) => Observable<T> {
+        return () => of(result as T);
+    }
 }
