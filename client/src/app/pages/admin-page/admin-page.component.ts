@@ -133,8 +133,8 @@ export class AdminPageComponent {
                     question.points >= 10 &&
                     question.points <= 100 &&
                     question.points % 10 === 0 &&
-                    question.choices.length >= 2 &&
-                    question.choices.length <= 4 &&
+                    (question.choices?.length ?? 0) >= 2 &&
+                    (question.choices?.length ?? 0) <= 4 &&
                     Array.isArray(question.choices) &&
                     question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
                     !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
