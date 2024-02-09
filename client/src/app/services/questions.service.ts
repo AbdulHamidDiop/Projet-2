@@ -87,14 +87,14 @@ export class QuestionsService {
         return questions;
     }
 
-    async checkAnswer(choice : Choice, question : Question): Promise<boolean> {
+    async checkAnswer(answers : string[], question : Question): Promise<boolean> {
         try {
             const response = await fetch(API_URL + 'questions/check', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ choice, question }),
+                body: JSON.stringify({ answers, question }),
             });
     
             if (!response.ok) {

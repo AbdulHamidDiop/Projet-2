@@ -47,17 +47,11 @@ export class PlayAreaComponent {
         public router: Router,
     ) {
         this.timeService.startTimer(this.timer);
-        this.isCorrect = false;
-        this.answer = '';
-        this.questionService.getAllQuestions();
-    }
-
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
-    ngOnInit() {
-        this.question = this.questionService.question || { choices: [] };
-        this.nbChoices = this.question.choices.length;
-        for (let i = this.question.choices.length; i < nbMaxQuestionsQCM; i++) {
-            this.question.choices.push({ text: '', isCorrect: false });
+        this.isCorrect = [];
+        this.answer = [];
+        this.question = this.questionService.question;
+        if (this.question.type === Type.QCM) {
+            this.nbChoices = this.question.choices.length;
         }
     }
 
