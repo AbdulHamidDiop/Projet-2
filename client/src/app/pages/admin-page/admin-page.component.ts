@@ -115,6 +115,9 @@ export class AdminPageComponent {
             if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
                 this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
             }
+            if (!questions.every((question: Question) => !question.choices.every((choice: Choices) => choice.isCorrect === true) && !question.choices.every((choiche: Choices) => choiche.isCorrect === false))) {
+                this.errors += "La validité des choix de réponse ne peut pas être que vraie ou que fausse.";
+            }
         }
     }
 
