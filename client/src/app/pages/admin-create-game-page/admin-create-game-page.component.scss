@@ -126,20 +126,12 @@ mat-accordion {
     max-height: 300px;
 }
 
-.add-button {
-    background-color: rgb(105, 104, 104);
-    margin-left: 10px;
-}
-.add-icon {
-    color: rgb(84, 183, 84);
-}
-
 .bank-visibility-button {
     border-radius: 20px;
-    border-color:  #503bb8;
+    border-color: #503bb8;
     border-style: solid;
-    margin-left: 10px;
 }
+
 .save-button {
     background-color: rgb(84, 183, 84);
     height: 30px;
@@ -147,7 +139,6 @@ mat-accordion {
     margin-top: 15px;
     margin-bottom: 15px;
 }
-
 
 small {
     color: red;
