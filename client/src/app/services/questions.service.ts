@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
-import { Question, Choice } from '@common/game';
+import { Question } from '@common/game';
 
 @Injectable({
     providedIn: 'root',
@@ -87,7 +87,7 @@ export class QuestionsService {
         return questions;
     }
 
-    async checkAnswer(answers : string[], question : Question): Promise<boolean> {
+    async checkAnswer(answers: string[], question: Question): Promise<boolean> {
         try {
             const response = await fetch(API_URL + 'questions/check', {
                 method: 'POST',
@@ -96,7 +96,7 @@ export class QuestionsService {
                 },
                 body: JSON.stringify({ answers, question }),
             });
-    
+
             if (!response.ok) {
                 throw new Error(`Erreur de communication avec le serveur. Statut : ${response.status}`);
             }
@@ -108,13 +108,10 @@ export class QuestionsService {
             }
         } catch (error) {
             console.error('Erreur lors de la vérification de la réponse:', error);
-            return false; 
+            return false;
         }
     }
 }
-import { EventEmitter, Injectable } from '@angular/core';
-import { API_URL } from '@common/consts';
-import { Question } from '@common/game';
 
 @Injectable({
     providedIn: 'root',
