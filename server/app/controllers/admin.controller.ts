@@ -40,6 +40,7 @@ export class AdminController {
         this.router.post('/password', (req: Request, res: Response) => {
             if (this.adminService.checkPassword(req.body.password)) {
                 res.status(StatusCodes.OK);
+                res.json(true);
             } else {
                 res.status(StatusCodes.UNAUTHORIZED);
             }
