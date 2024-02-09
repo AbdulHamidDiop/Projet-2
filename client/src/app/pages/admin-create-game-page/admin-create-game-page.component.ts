@@ -23,7 +23,6 @@ export class AdminCreateGamePageComponent {
     game: Game;
     questions: Question[] = [];
 
-    // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         private fb: FormBuilder,

@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
+import { AppModule } from '@app/app.module';
+// eslint-disable-next-line no-restricted-imports
+import { CreateQuestionDialogComponent } from '../create-question-dialog/create-question-dialog.component';
 import { AdminQuestionComponent } from './admin-question.component';
 // eslint-disable-next-line no-restricted-imports
 
@@ -9,10 +12,11 @@ describe('AdminQuestionComponent', () => {
     let fixture: ComponentFixture<AdminQuestionComponent>;
 
     beforeEach(async () => {
+        const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']);
         TestBed.configureTestingModule({
-            imports: [MatDialogModule],
-            declarations: [AdminQuestionComponent],
-            providers: [MatDialog],
+            imports: [AppModule],
+            declarations: [AdminQuestionComponent, CreateQuestionDialogComponent],
+            providers: [{ provide: MatDialog, useValue: matDialogSpy }],
         }).compileComponents();
     });
 

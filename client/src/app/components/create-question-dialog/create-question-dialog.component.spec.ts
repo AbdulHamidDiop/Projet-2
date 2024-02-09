@@ -1,23 +1,90 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { TimeService } from '@app/services/time.service';
-import SpyObj = jasmine.SpyObj;
+import { Validators } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AppModule } from '@app/app.module';
+import { Choices, Question } from '@app/interfaces/game-elements';
+import { QuestionsBankService } from '@app/services/questions-bank.service';
+import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
-describe('PlayAreaComponent', () => {
-    let component: PlayAreaComponent;
-    let fixture: ComponentFixture<PlayAreaComponent>;
-    let timeServiceSpy: SpyObj<TimeService>;
+let addQuestionCalled = false;
+
+// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
+function setAddQuestionsCalled() {
+    addQuestionCalled = true;
+}
+
+describe('CreateQuestionDialogComponent', () => {
+    let component: CreateQuestionDialogComponent;
+    let fixture: ComponentFixture<CreateQuestionDialogComponent>;
+    const validQuestion: Question = {
+        id: '2',
+        type: 'QCM',
+        text: 'Question valide',
+        points: 10,
+        choices: [
+            {
+                text: 'Choix valide #1',
+                isCorrect: true,
+            },
+            {
+                text: 'Choix valide #2',
+                isCorrect: false,
+            },
+        ],
+        answer: 'Choix #1',
+    };
+    const validQuestionForm = {
+        question: validQuestion,
+    };
 
     beforeEach(async () => {
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer']);
+        // const matDialogRefSpy = jasmine.createSpyObj(MatDialogRef, ['close']);
         await TestBed.configureTestingModule({
-            declarations: [PlayAreaComponent],
-            providers: [{ provide: TimeService, useValue: timeServiceSpy }],
+            declarations: [CreateQuestionDialogComponent],
+            imports: [AppModule],
+            providers: [
+                {
+                    provide: MatDialogRef,
+                    useValue: {
+                        close: jasmine.createSpy('close'),
+                    },
+                },
+                { provide: MAT_DIALOG_DATA, useValue: validQuestionForm },
+                {
+                    provide: QuestionsBankService,
+                    useValue: {
+                        addQuestion: jasmine.createSpy('addQuestion').and.callFake(setAddQuestionsCalled),
+                    },
+                },
+                /*
+                {
+                    provide: FormGroup,
+                    useValue: {
+                        get: jasmine
+                            .createSpy('get')
+                            .withArgs('type')
+                            .and.returnValue('QCM')
+                            .withArgs('addToBank')
+                            .and.returnValue(true)
+                            .withArgs('choices')
+                            .and.returnValue({}),
+                        setControl: jasmine.createSpy('setControl'),
+                        removeControl: jasmine.createSpy('removeControl'),
+                        patchValue: jasmine.createSpy('patchValue'),
+                    },
+                },
+                {
+                    provide: FormArray,
+                    useValue: {
+                        clear: jasmine.createSpy('clear'),
+                    },
+                },*/
+            ],
         }).compileComponents();
     });
 
     beforeEach(() => {
-        fixture = TestBed.createComponent(PlayAreaComponent);
+        fixture = TestBed.createComponent(CreateQuestionDialogComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
@@ -26,99 +93,133 @@ describe('PlayAreaComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('buttonDetect should modify the buttonPressed variable', () => {
-        const expectedKey = 'a';
-        const buttonEvent = {
-            key: expectedKey,
-        } as KeyboardEvent;
-        component.buttonDetect(buttonEvent);
-        expect(component.buttonPressed).toEqual(expectedKey);
+    it('Should be able to call a function', () => {
+        component.populateForm(validQuestion);
+        component.onSubmit();
+        expect(component.question.id === validQuestion.id).toBeTruthy();
     });
 
-    it('mouseHitDetect should call startTimer with 5 seconds on left click', () => {
-        const mockEvent = { button: 0 } as MouseEvent;
-        component.mouseHitDetect(mockEvent);
-        expect(timeServiceSpy.startTimer).toHaveBeenCalled();
-        expect(timeServiceSpy.startTimer).toHaveBeenCalledWith(component['timer']);
+    it('Le système doit permettre la suppression et modification d un choix de réponse', () => {
+        // const choice: Choices = { text: '', isCorrect: false };
+        const nbChoices = component.choices.length;
+        component.addChoice();
+        expect(component.choices.length === nbChoices + 1).toBeTruthy();
+
+        component.removeChoice(0);
+        expect(component.choices.length === nbChoices).toBeTruthy();
+
+        const question: Question = validQuestion;
+        component.populateForm(question);
+        expect(component.choices.length === question.choices.length).toBeTruthy();
+        expect(component.choices.at(0).value.text === question.choices[0].text).toBeTruthy();
     });
 
-    it('mouseHitDetect should not call startTimer on right click', () => {
-        const mockEvent = { button: 2 } as MouseEvent;
-        component.mouseHitDetect(mockEvent);
-        expect(timeServiceSpy.startTimer).not.toHaveBeenCalled();
+    it('Le système doit permettre le changement d ordre des choix en mettant à jour leur numération.', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const event: any = {
+            previousIndex: 0,
+            currentIndex: 1,
+        };
+        const choices: Choices[] = [
+            { text: '1', isCorrect: true },
+            { text: '2', isCorrect: false },
+        ];
+        while (component.choices.length > 0) {
+            component.removeChoice(0);
+        }
+        component.choices.push(
+            component.fb.group({
+                text: [choices[0].text, Validators.required],
+                isCorrect: [choices[0].isCorrect],
+            }),
+        );
+        component.choices.push(
+            component.fb.group({
+                text: [choices[1].text, Validators.required],
+                isCorrect: [choices[1].isCorrect],
+            }),
+        );
+        expect(component.choices.length === 2).toBeTruthy();
+        component.dropChoice(event);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const choice: Choices | any = component.choices.at(0);
+        expect(choice.value.text === '2').toBeTruthy();
     });
 
-    it('Should create new question game', () => {
-        expect(component).toBeTruthy();
+    it('Le système doit permettre la saisie des points pour une bonne réponse : intervalle [10 à 100] et un multiple de 10.', () => {
+        const question: Question = validQuestion;
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeTruthy();
+
+        question.points = 51;
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
+
+        component.populateForm(validQuestion); // Remets valid à true
+
+        question.points = 0;
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
+
+        component.populateForm(validQuestion); // Remets valid à true
+
+        question.points = 110;
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
     });
 
-    it('Should let user type a name and game description', () => {
-        expect(component).toBeTruthy();
+    it('Le système doit permettre la création de 2 à 4 choix de réponse pour chaque question.', () => {
+        //      const lowerBound = 2;
+        //      const upperBound = 4;
+        let question: Question = validQuestion;
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeTruthy();
+
+        question = validQuestion;
+        question.choices = [{ text: 'Valid text', isCorrect: true }];
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
+
+        question = validQuestion;
+        question.choices = [
+            { text: 'Valid text', isCorrect: true },
+            { text: 'Valid text', isCorrect: false },
+            { text: 'Valid text', isCorrect: true },
+            { text: 'Valid text', isCorrect: true },
+            { text: 'Valid text', isCorrect: true },
+        ];
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
     });
-    it('Should validate game name and game description as not empty', () => {
-        expect(component).toBeTruthy();
+
+    it('Le système doit permettre de définir si un choix de réponse est considéré comme bon ou mauvais', () => {
+        const question: Question = validQuestion;
+        question.choices = [
+            { text: 'Valid text', isCorrect: true },
+            { text: 'Valid text', isCorrect: false },
+        ];
+        component.populateForm(question);
+        component.onSubmit();
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(component.choices.at(0).value.isCorrect).toBeTruthy();
+        expect(component.choices.at(1).value.isCorrect).toBeFalsy();
     });
-    it('Should let user pick a time interval between 10 and 60 seconds inclusively', () => {
-        expect(component).toBeTruthy();
+
+    it('Le système doit exiger au moins un bon et un mauvais choix de réponse par question.', () => {
+        const question: Question = validQuestion;
+        question.choices = [
+            { text: 'Valid text', isCorrect: true },
+            { text: 'Valid text', isCorrect: true },
+        ];
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
     });
-    it('Should let user create 2 to 4 answers to each question', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user define if an answer is correct or wrong', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user delete and modify an answer choice', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user change the order of questions by updating their number id', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user create one or multiple questions', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user write score associated to each question,the score must in interval [10,100], the score must also be a multiple of 10', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should display questions in a numbered list by increasing order', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user delete or modify an existing question', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user change the order of questions in the list', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user add questions from question bank', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user save question in question bank', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user modify existing question-game', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should update existing game information after successful save ( check if request is sent )', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should create new game if game was deleted by another user while it was being modified ( 100% server-side )', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user save a game', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should validate a game before saving it with at least one valid question', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should notify user in case of missing fields in game or its questions', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should save questions and answers in specified numerical order', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should save a game with visibility parameter set to hidden at the end of the existing game list', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should save data in a persistent manner even after a complete reboot of website and dynamic server ( 100% server-side )', () => {
-        expect(component).toBeTruthy();
+
+    it("Le système doit permettre la sauvegarde d'une question dans la banque de questions", () => {
+        const question: Question = validQuestion;
+        component.populateForm(question);
+        component.questionForm.patchValue({ addToBank: true });
+        component.onSubmit();
+        expect(addQuestionCalled).toBeTruthy();
     });
 });

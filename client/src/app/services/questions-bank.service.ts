@@ -29,11 +29,14 @@ export class QuestionsBankService {
                     isCorrect: false,
                 },
             ],
+            answer: '',
         },
         {
             type: 'QRL',
             text: "Donnez la différence entre 'let' et 'var' pour la déclaration d'une variable en JS ?",
             points: 60,
+            choices: [],
+            answer: '',
         },
         {
             type: 'QCM',
@@ -49,6 +52,7 @@ export class QuestionsBankService {
                     isCorrect: false,
                 },
             ],
+            answer: '',
         },
         {
             type: 'QCM',
@@ -72,11 +76,14 @@ export class QuestionsBankService {
                     isCorrect: false,
                 },
             ],
+            answer: '',
         },
         {
             type: 'QRL',
             text: "Expliquez ce que signifie 'hoisting' en JavaScript.",
             points: 50,
+            choices: [],
+            answer: '',
         },
         {
             type: 'QCM',
@@ -100,10 +107,15 @@ export class QuestionsBankService {
                     isCorrect: false,
                 },
             ],
+            answer: '',
         },
     ];
 
     getQuestions(): Observable<Question[]> {
         return of([...this.dummyQuestions]);
+    }
+
+    addQuestion(question: Question) {
+        this.dummyQuestions.push(question);
     }
 }

@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/explicit-member-accessibility */
+/* eslint-disable @typescript-eslint/member-ordering */
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Inject } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Choices, Question } from '@app/interfaces/game-elements';
+import { QuestionsBankService } from '@app/services/questions-bank.service';
 import { v4 } from 'uuid';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
 
@@ -22,10 +25,11 @@ export class CreateQuestionDialogComponent {
     id: string;
 
     constructor(
-        private fb: FormBuilder,
+        public fb: FormBuilder,
         private dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @Inject(MAT_DIALOG_DATA) public data: any,
+        private questionBankService: QuestionsBankService,
     ) {
         this.initializeForm();
         this.handleQuestionTypeChanges(); // pour negliger choices si type = QRL
@@ -85,6 +89,7 @@ export class CreateQuestionDialogComponent {
 
             if (this.questionForm.get('addToBank')?.value) {
                 // TODO: add question to bank
+                this.questionBankService.addQuestion(this.question);
                 console.log('add question to bank');
             }
         }
@@ -100,7 +105,7 @@ export class CreateQuestionDialogComponent {
         });
     }
 
-    private populateForm(questionData: Question): void {
+    public populateForm(questionData: Question): void {
         this.questionForm.patchValue({
             type: questionData.type,
             text: questionData.text,
