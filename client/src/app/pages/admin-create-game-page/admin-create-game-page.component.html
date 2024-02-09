@@ -22,35 +22,6 @@
     </div>
 </header>
 
-<<<<<<< HEAD
-                    <mat-form-field class="base-input text-area">
-                        <mat-label>Description:</mat-label>
-                        <textarea matInput id="description" formControlName="description"></textarea>
-                    </mat-form-field>
-                </div>
-
-                <div name="qcm-duration">
-                    <mat-form-field class="base-input number-input">
-                        <mat-label>Durée des QCM en secondes:</mat-label>
-                        <input matInput type="number" id="durationInput" formControlName="duration" list="timeChoices" />
-                    </mat-form-field>
-                    <datalist id="timeChoices">
-                        <option value="10"></option>
-                        <option value="20"></option>
-                        <option value="30"></option>
-                        <option value="40"></option>
-                        <option value="50"></option>
-                        <option value="60"></option>
-                    </datalist>
-                </div>
-                <div *ngIf="gameForm.get('duration')?.errors && gameForm.get('duration')?.touched">
-                    <small>Veuillez choisir un temps entre 10 à 60 secondes</small>
-                </div>
-            </div>
-
-            <mat-divider></mat-divider>
-            <div name="quiz-questions-section" class="questions-display">
-=======
 <main>
     <mat-drawer-container class="example-container">
         <mat-drawer #bankDrawer mode="side" opened="false" position="end">
@@ -58,32 +29,9 @@
         </mat-drawer>
         <mat-drawer-content>
             <div name="create-quiz" class="create-quiz-container">
->>>>>>> 6b98a4a5d4fc13e0df9d8403a7a0091f8803fedb
                 <div class="column-container">
                     <h1 class="page-title">Créer un quiz</h1>
                 </div>
-<<<<<<< HEAD
-                <div *ngIf="questions.length < 1">
-                    <small>Veuillez rajouter au moins une question</small>
-                </div>
-                <div name="quiz-questions-container" class="quiz-questions-container">
-                    <mat-accordion
-                        cdkDropList
-                        [cdkDropListData]="questions"
-                        #questionsList="cdkDropList"
-                        [cdkDropListConnectedTo]="[questionsBankComponent.questionsBankList]"
-                        (cdkDropListDropped)="dropQuestion($event)"
-                    >
-                        <div *ngIf="questions.length === 0" class="placeholder">Rajouter les questions de la banque ici</div>
-                        <div *ngFor="let question of questions; index as order" cdkDrag class="question-container">
-                            <app-admin-question
-                                [question]="question"
-                                [index]="order + 1"
-                                [editable]="true"
-                                (deleteRequest)="handleDeleteQuestion(order)"
-                                (saveRequest)="handleSaveQuestion($event, order)"
-                            ></app-admin-question>
-=======
 
                 <form [formGroup]="gameForm">
                     <div name="quiz-header-section">
@@ -97,19 +45,8 @@
                                 <mat-label>Description:</mat-label>
                                 <textarea matInput id="description" formControlName="description"></textarea>
                             </mat-form-field>
->>>>>>> 6b98a4a5d4fc13e0df9d8403a7a0091f8803fedb
                         </div>
 
-<<<<<<< HEAD
-            <div>
-                <button (click)="saveQuiz()" name="save-game" [disabled]="!gameForm.valid || questions.length <= 0" class="save-button">
-                    Enregistrer le quiz
-                </button>
-            </div>
-            <small>*Champs obligatoires</small>
-        </form>
-    </div>
-=======
                         <div name="qcm-duration">
                             <mat-form-field class="base-input number-input">
                                 <mat-label>Durée des QCM en secondes:</mat-label>
@@ -128,7 +65,6 @@
                             <small>Veuillez choisir un temps entre 10 à 60 secondes</small>
                         </div>
                     </div>
->>>>>>> 6b98a4a5d4fc13e0df9d8403a7a0091f8803fedb
 
                     <mat-divider></mat-divider>
                     <div name="quiz-questions-section" class="questions-display">
