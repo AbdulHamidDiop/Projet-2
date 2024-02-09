@@ -27,7 +27,7 @@ export class PlayAreaTestComponent {
     buttonPressed = '';
     question: Question;
 
-    private isCorrect: boolean | undefined;
+    //private isCorrect: boolean | undefined;
     private answer: string;
     private readonly timer = 25;
     private points = 0;
@@ -39,7 +39,7 @@ export class PlayAreaTestComponent {
         private readonly router: Router,
     ) {
         this.timeService.startTimer(this.timer);
-        this.isCorrect = false;
+        //this.isCorrect = false;
         this.answer = '';
         this.questionService.getQuestionsWithoutCorrectShown();
         this.question = this.questionService.question;
@@ -79,7 +79,7 @@ export class PlayAreaTestComponent {
 
     nextQuestion() {
         this.answer = '';
-        this.isCorrect = false;
+        //this.isCorrect = false;
         const question = this.questionService.question;
         this.nbChoices = question.choices.length;
         this.question.text = question.text;
@@ -109,9 +109,9 @@ export class PlayAreaTestComponent {
     handleQCMChoice(answer: string, isCorrect: boolean | undefined) {
         if (answer === this.answer) {
             this.answer = '';
-            this.isCorrect = false;
+            //this.isCorrect = false;
         } else {
-            this.isCorrect = isCorrect;
+            //this.isCorrect = isCorrect;
             this.answer = answer;
         }
     }
@@ -131,9 +131,10 @@ export class PlayAreaTestComponent {
     }
 
 
-    updateScore() {
+    async updateScore() {
         if (this.question.type === 'QCM') {
-            if (this.isCorrect && this.answer !== '') {
+            const index = parseInt(this.buttonPressed, 10);
+            if (await this.questionService.checkAnswer(this.question.choices[index - 1], this.question) && this.answer !== '') {
                 this.score += this.question.points;
             }
         } else {
@@ -142,7 +143,7 @@ export class PlayAreaTestComponent {
         this.timeService.stopTimer();
         this.timeService.startTimer(this.timer);
         this.answer = '';
-        this.isCorrect = false;
+        //this.isCorrect = false;
         this.endGameTest();
         this.presentNextQuestion();
     }
