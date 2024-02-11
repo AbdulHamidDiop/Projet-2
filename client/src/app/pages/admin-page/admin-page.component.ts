@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
@@ -11,12 +11,15 @@ const MAX_POINTS = 100;
 const MIN_DURATION = 10;
 const MAX_DURATION = 60;
 
+const MIN_CHOICES = 2;
+const MAX_CHOICES = 4;
+
 @Component({
     selector: 'app-admin-page',
     templateUrl: './admin-page.component.html',
     styleUrls: ['./admin-page.component.scss'],
 })
-export class AdminPageComponent {
+export class AdminPageComponent implements OnInit {
     games: Game[];
     selectedFile: File;
     isAuthentificated: boolean;
@@ -113,7 +116,7 @@ export class AdminPageComponent {
             ) {
                 this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
             }
-            if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
+            if (!questions.every((question: Question) => question.choices.length >= MIN_CHOICES && question.choices.length <= MAX_CHOICES)) {
                 this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
             }
             if (
@@ -146,7 +149,7 @@ export class AdminPageComponent {
                     question.points <= MAX_POINTS &&
                     question.points % MIN_POINTS === 0 &&
                     (question.choices?.length ?? 0) >= 2 &&
-                    (question.choices?.length ?? 0) <= 4 &&
+                    (question.choices?.length ?? 0) <= MAX_CHOICES &&
                     Array.isArray(question.choices) &&
                     question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
                     !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
