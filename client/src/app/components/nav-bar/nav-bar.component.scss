@@ -34,6 +34,9 @@ li {
 .Logo-Projet {
     height: auto;
     width: 130px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .wrapper .sidebar ul li a {
@@ -50,51 +53,34 @@ li {
 }
 
 /* Main content styles */
-// main {
-//     padding: 20px;
-//     margin-left: 250px;
-//     min-height: 88%;
-// }
-
-.confirm-button {
-    background-color: #26a243;
-    margin-left: 10px;
+main {
+    padding: 20px;
 }
 
-.confirm-button:disabled {
-    background-color: #555555;
+.container {
+    min-height: 100vh;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.confirm-text {
+.button {
+    margin-top: 10px;
+    margin-right: 10px;
+    text-align: center;
+    border: none;
+    padding: 10px 20px;
+    background-color: #007bff; /* Bleu */
     color: white;
-}
-.abort-button {
-    color: #dc3545;
-}
-
-.correct {
-    background-color: lightgreen;
+    cursor: pointer;
+    border-radius: 5px; /* Coins arrondis */
+    transition: background-color 0.3s ease;
 }
 
-.incorrect {
-    background-color: salmon;
-}
-
-.missed {
-    background-color: rgb(240, 240, 109);
-}
-
-#position-display {
-    border: 1px dashed blue;
-}
-
-.answer {
-    border: 1px solid black;
-    width: 150px;
-}
-
-.selected {
-    background-color: #e0e0e0;
+.button:hover {
+    background-color: #0056b3; /* Bleu foncé au survol */
 }
 
 /* Footer styles */
@@ -118,4 +104,30 @@ li {
 
 .footer-item p span:nth-child(odd) {
     color: #17a2b8; /* Bleu cyan */
+}
+
+/* Header item styles */
+.header-item {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #007bff;
+}
+
+/* Team name styles */
+.team-name {
+    color: #28a745;
+}
+
+/* Adjustments for inputs */
+input {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
 }

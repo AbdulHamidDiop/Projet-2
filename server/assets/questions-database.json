@@ -59,7 +59,7 @@
             },
             {
                 "text": "li",
-                "isCorrect": false
+                "isCorrect": true
             },
             {
                 "text": "mat-input",
@@ -101,9 +101,7 @@
         ],
         "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
         "lastModification": "2024-01-31T16:39:55.649Z"
-    }
-]
-[
+    },
     {
         "type": "QCM",
         "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",

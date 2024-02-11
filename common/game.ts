@@ -16,7 +16,7 @@ export interface Question {
     choices: Choice[];
 }
 export interface Game {
-    id?: string;
+    id: string;
     title: string;
     pin?: string;
     description?: string;

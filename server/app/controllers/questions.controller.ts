@@ -59,7 +59,7 @@ export class QuestionsController {
          *             $ref: '#/components/schemas/Question'
          */
         this.router.get('/test', async (req: Request, res: Response) => {
-            res.json(await this.questionsService.sortQuestionsWithoutCorrectShown());
+            res.json(await this.questionsService.getQuestionsWithoutCorrectShown());
             res.status(HTTP_STATUS_OK);
         });
 
@@ -92,13 +92,12 @@ export class QuestionsController {
          *                   isCorrect: false
          *
          */
-        this.router.post('/add', (req: Request, res: Response) => {
-            res.json(this.questionsService.addQuestion(req.body));
+        this.router.post('/add', async (req: Request, res: Response) => {
+            res.json(await this.questionsService.addQuestion(req.body));
             res.status(HTTP_STATUS_OK);
         });
 
-
-         /**
+        /**
          * @swagger
          *
          * /api/questions/check:
@@ -114,17 +113,14 @@ export class QuestionsController {
          *             schema:
          *               $ref: '#/components/schemas/Question'
          *             example:
-         *               
+         *
          *
          */
-         this.router.post('/check', (req: Request, res: Response) => {
-            const userChoice = req.body.choice;
-            const question = req.body.question;
-            const isCorrect = this.questionsService.isCorrectAnswer(userChoice, question);
-            res.json({ isCorrect });
-            res.status(HTTP_STATUS_OK);
+        this.router.post('/check', async (req, res) => {
+            const { answer, id } = req.body;
+            const isCorrect = await this.questionsService.isCorrectAnswer(answer, id);
+            res.status(HTTP_STATUS_OK).json({ isCorrect });
         });
-
 
         /**
          * @swagger

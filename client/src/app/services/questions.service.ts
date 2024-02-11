@@ -8,22 +8,22 @@ import { Question } from '@common/game';
 export class QuestionsService {
     deleteRequest = new EventEmitter<Question>();
     questions: Question[] = [];
-    currentQuestionIndex: number = 0;
+    // currentQuestionIndex: number = 0;
 
-    constructor() {
-        this.getAllQuestions().then((questions: Question[]) => {
-            this.questions = questions;
-        });
-    }
-    get question(): Question {
-        if (this.questions.length === 0) {
-            return {} as Question;
-        } else if (this.currentQuestionIndex + 1 === this.questions.length) {
-            return this.questions[this.currentQuestionIndex];
-        } else {
-            return this.questions[this.currentQuestionIndex++];
-        }
-    }
+    // constructor() {
+    //     this.getAllQuestions().then((questions: Question[]) => {
+    //         this.questions = questions;
+    //     });
+    // }
+    // get question(): Question {
+    //     if (this.questions.length === 0) {
+    //         return {} as Question;
+    //     } else if (this.currentQuestionIndex + 1 === this.questions.length) {
+    //         return this.questions[this.currentQuestionIndex];
+    //     } else {
+    //         return this.questions[this.currentQuestionIndex++];
+    //     }
+    // }
 
     async getAllQuestions(): Promise<Question[]> {
         const response = await fetch(API_URL + 'questions');
@@ -87,27 +87,28 @@ export class QuestionsService {
         return questions;
     }
 
-    async checkAnswer(answers: string[], question: Question): Promise<boolean> {
+    async checkAnswer(answer: string[], id: string): Promise<boolean> {
         try {
             const response = await fetch(API_URL + 'questions/check', {
                 method: 'POST',
                 headers: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ answers, question }),
+                body: JSON.stringify({ answer, id }),
             });
 
             if (!response.ok) {
                 throw new Error(`Erreur de communication avec le serveur. Statut : ${response.status}`);
             }
             const result = await response.json();
-            if (result && result.isCorrect !== undefined) {
+
+            if (result && result.isCorrect) {
                 return result.isCorrect;
             } else {
                 throw new Error('Réponse du serveur malformée');
             }
         } catch (error) {
-            // console.error('Erreur lors de la vérification de la réponse:', error);
             return false;
         }
     }

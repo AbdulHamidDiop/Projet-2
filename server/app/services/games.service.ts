@@ -49,4 +49,36 @@ export class GamesService {
         await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
         return true;
     }
+
+    async getQuestionsWithoutCorrectShown(id: string): Promise<Game> {
+        const game: Game = await this.getGameByID(id);
+        const questionsWithoutCorrect = game.questions.map((question) => {
+            if (question.choices) {
+                const choicesWithoutCorrect = question.choices.map((choice) => {
+                    const choiceWithoutCorrect = { ...choice };
+                    delete choiceWithoutCorrect.isCorrect;
+                    return choiceWithoutCorrect;
+                });
+                return { ...question, choices: choicesWithoutCorrect };
+            }
+            return question; // Add this line to return the question if it doesn't have choices
+        });
+        return { ...game, questions: questionsWithoutCorrect };
+    }
+
+    async isCorrectAnswer(answer: string[], gameID: string, questionID: string): Promise<boolean> {
+        const game: Game = await this.getGameByID(gameID);
+        if (!game) {
+            return false;
+        }
+        const question = game.questions.find((q) => q.id === questionID);
+        if (question.choices) {
+            const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
+            if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
 }

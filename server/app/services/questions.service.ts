@@ -40,14 +40,14 @@ export class QuestionsService {
     async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
         const data: string = await fs.readFile(QUESTIONS_PATH, 'utf8');
         const questions: Question[] = JSON.parse(data);
-        const questionsWithoutCorrect : Question[] = [];
-        for (let i = 0; i < questions.length; i++) {
-            const currentQuestion: Question = questions[i];
-            const choicesWithoutCorrect : Choice[] = [];
-            for (let j = 0; j < currentQuestion.choices.length; j++) {
-                const currentChoice: Choice = currentQuestion.choices[j];
-                const { isCorrect, ...choiceWithoutCorrect }: Choice = currentChoice;
-                choicesWithoutCorrect.push(choiceWithoutCorrect as Choice); 
+        const questionsWithoutCorrect: Question[] = [];
+
+        for (const currentQuestion of questions) {
+            const choicesWithoutCorrect: Choice[] = [];
+            for (const currentChoice of currentQuestion.choices) {
+                const choiceWithoutCorrect: Choice = { ...currentChoice };
+                delete choiceWithoutCorrect.isCorrect;
+                choicesWithoutCorrect.push(choiceWithoutCorrect);
             }
             currentQuestion.choices = choicesWithoutCorrect;
             questionsWithoutCorrect.push(currentQuestion);
@@ -55,20 +55,17 @@ export class QuestionsService {
         return questionsWithoutCorrect;
     }
 
-    async sortQuestionsWithoutCorrectShown(): Promise<Question[]> {
-        const questions: Question[] = await this.getQuestionsWithoutCorrectShown();
-        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime());
-        return sortedQuestions;
-    }
-
-    async isCorrectAnswer(choice : Choice, question : Question): Promise<boolean> {
+    // TODO: implement the case where the question is not in the bank but still in a game
+    async isCorrectAnswer(answer: string[], id: string): Promise<boolean> {
         const questions: Question[] = await this.getAllQuestions();
-        const questionCheck : Question = questions.find((q) => q.id === question.id);
-        for (let i = 0; i < questionCheck.choices.length; i++){
-            if (questionCheck.choices[i] === choice) {
-                return questionCheck.choices[i].isCorrect;
+        const question: Question | undefined = questions.find((q) => q.id === id);
+        if (question.choices) {
+            const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
+            if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
+                return false;
             }
+            return true;
         }
-        return false;
+        return true;
     }
 }

@@ -228,5 +228,88 @@ export class GameController {
             res.json(this.gamesService.deleteGameByID(req.params.id));
             res.status(HTTP_STATUS_NO_CONTENT);
         });
+
+        /**
+         * @swagger
+         *
+         * /api/game/questionswithoutcorrect/{id}:
+         *   get:
+         *     description: Get game questions without correct answers
+         *     tags:
+         *       - Game
+         *     parameters:
+         *       - in: path
+         *         name: id
+         *         required: true
+         *         description: The ID of the game to get
+         *         schema:
+         *           type: string
+         *         example: "test"
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       200:
+         *         description: Successful response
+         */
+        this.router.get('/questionswithoutcorrect/:id', async (req: Request, res: Response) => {
+            res.status(HTTP_STATUS_OK).json(await this.gamesService.getQuestionsWithoutCorrectShown(req.params.id));
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/questions/check:
+         *   post:
+         *     summary: Check if an answer is correct
+         *     tags:
+         *       - Question
+         *     description: Check whether the provided answer to a question is correct.
+         *     requestBody:
+         *         required: true
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               required:
+         *                 - answer
+         *                 - gameID
+         *                 - questionID
+         *               properties:
+         *                 answer:
+         *                   type: array
+         *                   items:
+         *                     type: string
+         *                   description: The user's answer(s) to the question.
+         *                 gameID:
+         *                   type: string
+         *                   description: The unique identifier for the game session.
+         *                 questionID:
+         *                   type: string
+         *                   description: The unique identifier for the question being answered.
+         *             example:
+         *               answer: ["Choice1", "Choice2"]
+         *               gameID: "game123"
+         *               questionID: "question456"
+         *     responses:
+         *       200:
+         *         description: A boolean value indicating if the answer is correct.
+         *         content:
+         *           application/json:
+         *             schema:
+         *               type: object
+         *               properties:
+         *                 isCorrect:
+         *                   type: boolean
+         *             example:
+         *               isCorrect: true
+         *       400:
+         *         description: Bad request if the request body does not contain the required fields.
+         */
+
+        this.router.post('/check', async (req, res) => {
+            const { answer, gameID, questionID } = req.body;
+            const isCorrect = await this.gamesService.isCorrectAnswer(answer, gameID, questionID);
+            res.status(HTTP_STATUS_OK).json({ isCorrect });
+        });
     }
 }

@@ -23,7 +23,7 @@
             <div class="button-row">
                 <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
                 bouton "tester le jeu" -->
-                <button mat-fab extended color="primary" [routerLink]="['/playAreaTest', getSelectedGame().id]">
+                <button mat-fab extended color="primary" [routerLink]="['/game/', getSelectedGame().id, 'test']">
                     Tester le jeu
                 </button>
 
