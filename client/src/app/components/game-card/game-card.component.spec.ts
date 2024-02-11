@@ -30,9 +30,9 @@ describe('GameCardComponent', () => {
         router = TestBed.inject(Router);
     });
 
-    //     it('should create', () => {
-    //         expect(component).toBeTruthy();
-    //     });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
     it('should emit checkEvent when onCheck is called', async () => {
         spyOn(gameService, 'toggleGameHidden').and.returnValue(Promise.resolve());
