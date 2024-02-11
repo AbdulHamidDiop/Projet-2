@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { API_URL } from '@common/consts';
 import { Game, Question } from '@common/game';
 import { GameService } from './game.service';
 
@@ -38,5 +39,21 @@ export class GameManagerService {
 
     async isCorrectAnswer(answer: string[], questionID: string): Promise<boolean> {
         return await this.gameService.checkAnswer(answer, this.game.id, questionID);
+    }
+
+    async getFeedBack(questionID: string, answer: string[]): Promise<unknown[]> {
+        const response = await fetch(API_URL + 'game/feedback', {
+            method: 'POST',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ gameID: this.game.id, questionID, submittedAnswers: answer }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const feedback = await response.json();
+        return feedback;
     }
 }

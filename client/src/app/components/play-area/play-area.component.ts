@@ -37,12 +37,12 @@ export class PlayAreaComponent {
 
     disableChoices = false;
     showFeedback = false;
+    feedback: unknown[];
     private readonly timer = 25;
     private points = 0;
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
-        // private readonly questionService: QuestionsService,
         private readonly gameManager: GameManagerService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
@@ -146,10 +146,11 @@ export class PlayAreaComponent {
     //     }
     // }
 
-    confirmAnswers() {
+    async confirmAnswers() {
         this.disableChoices = true;
 
         this.showFeedback = true;
+        this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
 
         setTimeout(() => {
             this.updateScore();
@@ -201,18 +202,13 @@ export class PlayAreaComponent {
         }
     }
 
-    getStyle(choice: string): string {
-        if (!this.showFeedback) return '';
+    getStyle(choiceText: string): string {
+        if (!this.feedback) return '';
 
-        const isCorrect = this.question.choices.find((c) => c.text === choice)?.isCorrect ?? false;
-        const isSelected = this.answer.includes(choice);
+        const feedbackItem = this.feedback.find((f) => f.choice === choiceText);
+        if (!feedbackItem) return '';
 
-        if (isSelected) {
-            return isCorrect ? 'correct' : 'incorrect';
-        } else if (isCorrect) {
-            return 'missed';
-        }
-        return '';
+        return feedbackItem.status;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

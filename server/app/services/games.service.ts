@@ -1,6 +1,7 @@
 import { Game } from '@common/game';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
+import { Feedback } from './../../../common/feedback';
 
 const QUIZ_PATH = './assets/quiz-example.json';
 
@@ -80,5 +81,23 @@ export class GamesService {
             return true;
         }
         return true;
+    }
+
+    async generateFeedback(gameID: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
+        const game = await this.getGameByID(gameID);
+        const question = game.questions.find((q) => q.id === questionId);
+
+        if (!question) {
+            throw new Error('Question not found');
+        }
+
+        const feedback = question.choices.map((choice) => {
+            const isSelected = submittedAnswers.includes(choice.text);
+            const statusText = isSelected ? (choice.isCorrect ? 'correct' : 'incorrect') : choice.isCorrect ? 'missed' : '';
+
+            return { choice: choice.text, status: statusText };
+        });
+
+        return feedback;
     }
 }

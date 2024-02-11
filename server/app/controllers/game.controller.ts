@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { GamesService } from '@app/services/games.service';
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';
@@ -5,6 +6,8 @@ import { Service } from 'typedi';
 const HTTP_STATUS_OK = 200;
 const HTTP_STATUS_CREATED = 201;
 const HTTP_STATUS_NO_CONTENT = 204;
+const HTTP_STATUS_NOT_FOUND = 404;
+const HTTP_STATUS_BAD_REQUEST = 400;
 
 @Service()
 export class GameController {
@@ -310,6 +313,56 @@ export class GameController {
             const { answer, gameID, questionID } = req.body;
             const isCorrect = await this.gamesService.isCorrectAnswer(answer, gameID, questionID);
             res.status(HTTP_STATUS_OK).json({ isCorrect });
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/feedback:
+         *   post:
+         *     description: Submit answers for a question in a game and receive feedback
+         *     tags:
+         *       - Feedback
+         *     requestBody:
+         *       required: true
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             required:
+         *               - gameID
+         *               - questionId
+         *               - submittedAnswers
+         *             properties:
+         *               gameID:
+         *                 type: string
+         *                 description: The unique identifier of the game.
+         *               questionId:
+         *                 type: string
+         *                 description: The unique identifier of the question being answered.
+         *               submittedAnswers:
+         *                 type: array
+         *                 items:
+         *                   type: string
+         *                 description: An array of submitted answers.
+         
+        /** */
+        this.router.post('/feedback', async (req, res) => {
+            try {
+                const { gameID, questionId, submittedAnswers } = req.body;
+
+                if (!questionId || !submittedAnswers || !gameID) {
+                    return res.status(HTTP_STATUS_BAD_REQUEST).json({ message: 'Question ID and submitted answers are required.' });
+                }
+
+                const feedback = await this.gamesService.generateFeedback(gameID, questionId, submittedAnswers);
+                res.json(feedback);
+            } catch (error) {
+                res.status(HTTP_STATUS_NOT_FOUND).json({ message: error.message });
+                return { message: error.message };
+            }
+
+            return { message: 'err' };
         });
     }
 }
