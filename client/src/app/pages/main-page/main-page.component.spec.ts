@@ -1,6 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { CommunicationService } from '@app/services/communication.service';
@@ -36,23 +36,24 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should verify password successfully', () => {
-        const userInput = 'password';
-        const mockResponse = { body: 'true' };
-    
-        spyOn(component.router, 'navigate');
-        spyOn(component.communicationService, 'updateSharedVariable');
-    
-        component.userInput = userInput;
-        component.verifyPassword();
-    
-        const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
-        expect(req.request.method).toBe('POST');
-        req.flush(mockResponse);
-    
-        expect(component.router.navigate).toHaveBeenCalledWith(['/admin']);
-        expect(component.communicationService.updateSharedVariable).toHaveBeenCalledWith(true);
-      });
+    it('should navigate to /admin and update shared variable when password is correct', fakeAsync(() => {
+      const spyNavigate = spyOn(component.router, 'navigate').and.stub();
+      const spyUpdateSharedVariable = spyOn(component.communicationService, 'updateSharedVariable').and.stub();
+  
+      component.userInput = 'LOG2990-312';
+  
+      component.verifyPassword();
+  
+      const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
+      expect(req.request.method).toBe('POST');
+
+      req.flush(true);
+  
+      tick();
+  
+      expect(spyNavigate).toHaveBeenCalledWith(['/admin']);
+      expect(spyUpdateSharedVariable).toHaveBeenCalledWith(true);
+    }));
     
       it('should display alert for incorrect password', () => {
         const userInput = 'wrongpassword';
