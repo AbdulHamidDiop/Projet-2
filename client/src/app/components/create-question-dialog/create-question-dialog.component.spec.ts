@@ -4,16 +4,15 @@ import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from '@app/modules/material.module';
-import { QuestionsBankService } from '@app/services/questions-bank.service';
-import { Choices, Question, Type } from '@common/game';
+import { QuestionsService } from '@app/services/questions.service';
+import { Question, Type } from '@common/game';
 import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
-let addQuestionCalled = true;
-
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-function setAddQuestionsCalled() {
-    addQuestionCalled = false;
+async function addQuestionMock(): Promise<void> {
+    return;
 }
+const addQuestionSpy = jasmine.createSpy('getAllQuestions').and.callFake(addQuestionMock);
 
 describe('CreateQuestionDialogComponent', () => {
     let component: CreateQuestionDialogComponent;
@@ -39,9 +38,9 @@ describe('CreateQuestionDialogComponent', () => {
     const validQuestionForm = {
         question: validQuestion,
     };
+    const closeDialogSpy = jasmine.createSpy('close').and.callThrough();
 
     beforeEach(async () => {
-        // const matDialogRefSpy = jasmine.createSpyObj(MatDialogRef, ['close']);
         await TestBed.configureTestingModule({
             declarations: [CreateQuestionDialogComponent],
             imports: [AppMaterialModule, FormsModule, DragDropModule, ReactiveFormsModule, BrowserAnimationsModule],
@@ -49,14 +48,14 @@ describe('CreateQuestionDialogComponent', () => {
                 {
                     provide: MatDialogRef,
                     useValue: {
-                        close: jasmine.createSpy('close'),
+                        close: closeDialogSpy,
                     },
                 },
                 { provide: MAT_DIALOG_DATA, useValue: validQuestionForm },
                 {
-                    provide: QuestionsBankService,
+                    provide: QuestionsService,
                     useValue: {
-                        addQuestion: jasmine.createSpy('addQuestion').and.callFake(setAddQuestionsCalled),
+                        addQuestion: addQuestionSpy,
                     },
                 } /*
                 {
@@ -95,20 +94,15 @@ describe('CreateQuestionDialogComponent', () => {
     //         expect(component).toBeTruthy();
     //     });
 
-    it('Should be able to call a function', () => {
-        component.populateForm(validQuestion);
-        component.onSubmit();
-        expect(component.question.id === validQuestion.id).toBeTruthy();
-    });
-
-    it('Le système doit permettre la suppression et modification d un choix de réponse', () => {
-        // const choice: Choices = { text: '', isCorrect: false };
-        const nbChoices = component.choices.length;
+    it('Should add empty choice when pressing the add choice button, remove choice when pressing the remove choice button', () => {
+        while (component.choices.length > 0) {
+            component.removeChoice(0);
+        }
         component.addChoice();
-        expect(component.choices.length === nbChoices + 1).toBeTruthy();
+        expect(component.choices.length).toBe(1);
 
         component.removeChoice(0);
-        expect(component.choices.length === nbChoices).toBeTruthy();
+        expect(component.choices.length).toBe(0);
 
         const question: Question = validQuestion;
         component.populateForm(question);
@@ -116,73 +110,64 @@ describe('CreateQuestionDialogComponent', () => {
         expect(component.choices.at(0).value.text === question.choices[0].text).toBeTruthy();
     });
 
-    it('Le système doit permettre le changement d ordre des choix en mettant à jour leur numération.', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const event: any = {
-            previousIndex: 0,
-            currentIndex: 1,
-        };
-        const choices: Choices[] = [
-            { text: '1', isCorrect: true },
-            { text: '2', isCorrect: false },
-        ];
+    it('Should let user change the order of questions by calling moveItemInArray on a drag and drop event', () => {
         while (component.choices.length > 0) {
             component.removeChoice(0);
         }
         component.choices.push(
             component.fb.group({
-                text: [choices[0].text, Validators.required],
-                isCorrect: [choices[0].isCorrect],
+                text: ['1', Validators.required],
+                isCorrect: [true],
             }),
         );
         component.choices.push(
             component.fb.group({
-                text: [choices[1].text, Validators.required],
-                isCorrect: [choices[1].isCorrect],
+                text: ['2', Validators.required],
+                isCorrect: [false],
             }),
         );
-        expect(component.choices.length === 2).toBeTruthy();
-        component.dropChoice(event);
+        expect(component.choices.length).toBe(2);
+        expect(component.choices.at(0).value.text).toBe('1');
+        expect(component.choices.at(1).value.text).toBe('2');
+
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const choice: Choices | any = component.choices.at(0);
-        expect(choice.value.text === '2').toBeTruthy();
+        const event: any = {
+            previousIndex: 0,
+            currentIndex: 1,
+        };
+        component.dropChoice(event);
+        expect(component.choices.at(0).value.text).toBe('2');
+        expect(component.choices.at(1).value.text).toBe('1');
     });
 
-    it('Le système doit permettre la saisie des points pour une bonne réponse : intervalle [10 à 100] et un multiple de 10.', () => {
-        const question: Question = validQuestion;
-        component.populateForm(question);
-        expect(component.questionForm.valid).toBeTruthy();
-
+    it('Should check if question points are in interval [10 à 100] and a multiple of 10.', () => {
+        const question: Question = { ...validQuestion };
         question.points = 51;
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
 
-        component.populateForm(validQuestion); // Remets valid à true
+        question.points = 50;
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeTruthy();
 
         question.points = 0;
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
-
-        component.populateForm(validQuestion); // Remets valid à true
 
         question.points = 110;
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
     });
 
-    it('Le système doit permettre la création de 2 à 4 choix de réponse pour chaque question.', () => {
-        //      const lowerBound = 2;
-        //      const upperBound = 4;
-        let question: Question = validQuestion;
+    it('Should check if there are between 2 and 4 choices in the question', () => {
+        const question: Question = { ...validQuestion };
         component.populateForm(question);
         expect(component.questionForm.valid).toBeTruthy();
 
-        question = validQuestion;
         question.choices = [{ text: 'Valid text', isCorrect: true }];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
 
-        question = validQuestion;
         question.choices = [
             { text: 'Valid text', isCorrect: true },
             { text: 'Valid text', isCorrect: false },
@@ -194,34 +179,49 @@ describe('CreateQuestionDialogComponent', () => {
         expect(component.questionForm.valid).toBeFalsy();
     });
 
-    it('Le système doit permettre de définir si un choix de réponse est considéré comme bon ou mauvais', () => {
-        const question: Question = validQuestion;
+    it('Should copy choices from question and their correctness', () => {
+        const question: Question = { ...validQuestion };
         question.choices = [
-            { text: 'Valid text', isCorrect: true },
-            { text: 'Valid text', isCorrect: false },
+            { text: '1', isCorrect: true },
+            { text: '2', isCorrect: false },
         ];
         component.populateForm(question);
         component.onSubmit();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        expect(component.choices.at(0).value.text).toBe('1');
+        expect(component.choices.at(1).value.text).toBe('2');
         expect(component.choices.at(0).value.isCorrect).toBeTruthy();
         expect(component.choices.at(1).value.isCorrect).toBeFalsy();
     });
 
-    it('Le système doit exiger au moins un bon et un mauvais choix de réponse par question.', () => {
-        const question: Question = validQuestion;
+    it('Should ask for at least one correct or incorrect choices per question.', () => {
+        const question: Question = { ...validQuestion };
         question.choices = [
             { text: 'Valid text', isCorrect: true },
             { text: 'Valid text', isCorrect: true },
         ];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
+
+        question.choices = [
+            { text: 'Valid text', isCorrect: false },
+            { text: 'Valid text', isCorrect: false },
+        ];
+        component.populateForm(question);
+        expect(component.questionForm.valid).toBeFalsy();
     });
 
-    it("Le système doit permettre la sauvegarde d'une question dans la banque de questions", () => {
+    it('Should call questionsService.addQuestion when selecting addToBank option in the question form.', async () => {
         const question: Question = validQuestion;
         component.populateForm(question);
         component.questionForm.patchValue({ addToBank: true });
         component.onSubmit();
-        expect(addQuestionCalled).toBeTruthy();
+        addQuestionMock().then(() => {
+            expect(addQuestionSpy).toHaveBeenCalled();
+        });
+    });
+
+    it('Should call MatDialogRef.close after pressing submit button to close the dialog', () => {
+        component.onSubmit();
+        expect(closeDialogSpy).toHaveBeenCalled();
     });
 });

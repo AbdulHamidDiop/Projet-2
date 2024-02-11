@@ -16,6 +16,7 @@ export class AdminQuestionsBankComponent {
     questions: Question[];
     displayQuestions: Question[] = [];
     selectedTypes: Set<string> = new Set([Type.QCM, Type.QRL]);
+    currentType: string = Type.QCM;
 
     constructor(public questionsBankService: QuestionsService) {
         this.questionsBankService.getAllQuestions().then((questions) => {
@@ -34,21 +35,14 @@ export class AdminQuestionsBankComponent {
             return dateB.getTime() - dateA.getTime();
         });
 
-        if (this.selectedTypes.size === 0 || this.selectedTypes.size === 2) {
-            this.displayQuestions = [...this.questions];
-        } else {
-            const type = Array.from(this.selectedTypes)[0];
-            this.displayQuestions = this.questions.filter((question) => question.type === type);
-        }
+        this.displayQuestions = this.questions.filter((question) => question.type === this.currentType);
     }
 
     toggleQuestionType(type: string): void {
         if (this.selectedTypes.has(type)) {
-            this.selectedTypes.delete(type);
-        } else {
-            this.selectedTypes.add(type);
+            this.currentType = type;
+            this.updateDisplayQuestions();
         }
-        this.updateDisplayQuestions();
     }
 
     dropQuestion(event: CdkDragDrop<Question[]>) {

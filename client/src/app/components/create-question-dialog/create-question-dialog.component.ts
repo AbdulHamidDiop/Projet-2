@@ -50,7 +50,10 @@ export class CreateQuestionDialogComponent {
     handleQuestionTypeChanges(): void {
         this.questionForm.get('type')?.valueChanges.subscribe((value) => {
             if (value === Type.QCM) {
-                this.questionForm.setControl('choices', this.fb.array([], [Validators.minLength(MIN_CHOICES), hasIncorrectAndCorrectAnswer]));
+                this.questionForm.setControl(
+                    'choices',
+                    this.fb.array([], [Validators.minLength(MIN_CHOICES), Validators.maxLength(MAX_CHOICES), hasIncorrectAndCorrectAnswer]),
+                );
             } else {
                 this.choices.clear();
                 this.questionForm.removeControl('choices');
@@ -97,7 +100,7 @@ export class CreateQuestionDialogComponent {
             type: ['', Validators.required],
             text: ['', Validators.required],
             points: ['', [Validators.required, Validators.min(MIN_POINTS), Validators.max(MAX_POINTS), multipleOfTenValidator]],
-            choices: this.fb.array([], [Validators.minLength(MIN_CHOICES), hasIncorrectAndCorrectAnswer]),
+            choices: this.fb.array([], [Validators.minLength(MIN_CHOICES), Validators.maxLength(MAX_CHOICES), hasIncorrectAndCorrectAnswer]),
             addToBank: [false],
         });
     }

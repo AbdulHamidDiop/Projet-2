@@ -16,7 +16,7 @@ export class AdminQuestionComponent {
     @Output() deleteRequest = new EventEmitter<number>();
 
     constructor(
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private questionsService: QuestionsService,
     ) {}
 

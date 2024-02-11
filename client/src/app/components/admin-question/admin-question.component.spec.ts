@@ -8,7 +8,6 @@ import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question, Type } from '@common/game';
 import { Observable } from 'rxjs';
-import { CreateQuestionDialogComponent } from '../create-question-dialog/create-question-dialog.component';
 import { AdminQuestionComponent } from './admin-question.component';
 // eslint-disable-next-line no-restricted-imports
 
@@ -31,41 +30,27 @@ const validQuestion: Question = {
     answer: 'Choix #1',
 };
 
-const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
-    subscriber.next([validQuestion]);
-});
-
-let openCallCount = 0;
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-function openCallCountFunction() {
-    openCallCount++;
-    return { afterClosed: () => observableQuestion };
-}
-
-let editQuestionCallCount = 0;
-function editQuestionCallCountFunction() {
-    editQuestionCallCount++;
-}
-
-let deleteQuestionCallCount = 0;
-function deleteQuestionCallCountFunction() {
-    deleteQuestionCallCount++;
-}
-
 describe('AdminQuestionComponent', () => {
     let component: AdminQuestionComponent;
     let fixture: ComponentFixture<AdminQuestionComponent>;
+    const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
+        subscriber.next([validQuestion]);
+    });
+    const editQuestionSpy = jasmine.createSpy('editQuestion').and.callThrough();
+    const deleteQuestionSpy = jasmine.createSpy('deleteQuestion').and.callThrough();
+    const openDialogSpy = jasmine.createSpy('open').and.callFake(() => {
+        return { afterClosed: () => observableQuestion };
+    });
 
     beforeEach(async () => {
-        //        const matDialogSpy = jasmine.createSpyObj('MatDialog', ['open']).and.callFake(openCallCountFunction);
         TestBed.configureTestingModule({
             imports: [AppMaterialModule, BrowserAnimationsModule],
-            declarations: [AdminQuestionComponent, CreateQuestionDialogComponent],
+            declarations: [AdminQuestionComponent],
             providers: [
                 {
                     provide: MatDialog,
                     useValue: {
-                        open: jasmine.createSpy('open').and.callFake(openCallCountFunction),
+                        open: openDialogSpy,
                     },
                 },
                 /*                {
@@ -81,8 +66,8 @@ describe('AdminQuestionComponent', () => {
                 {
                     provide: QuestionsService,
                     useValue: {
-                        editQuestion: jasmine.createSpy('editQuestion').and.callFake(editQuestionCallCountFunction),
-                        deleteQuestion: jasmine.createSpy('deleteQuestion').and.callFake(deleteQuestionCallCountFunction),
+                        editQuestion: editQuestionSpy,
+                        deleteQuestion: deleteQuestionSpy,
                     },
                 },
             ],
@@ -100,31 +85,20 @@ describe('AdminQuestionComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("Le système doit permettre la suppression et modification d'une question existante.", () => {
-        openCallCount = 0;
+    it('System should call MatDialog.open when pressing button to edit question', () => {
         component.openDialog();
-        expect(openCallCount === 1).toBeTruthy();
-
-        observableQuestion.subscribe(() => {
-            expect(editQuestionCallCount === 1).toBeTruthy();
-        });
-
-        deleteQuestionCallCount = 0;
-        component.deleteQuestion(validQuestion);
-        expect(deleteQuestionCallCount === 1).toBeTruthy();
+        expect(openDialogSpy).toHaveBeenCalled();
     });
 
-    it('Le système doit faire un appel à questionService.editQuestion pour éditer une question', () => {
-        editQuestionCallCount = 0;
+    it('System should call questionService.editQuestion when pressing button to edit question', () => {
         component.openDialog();
         observableQuestion.subscribe(() => {
-            expect(editQuestionCallCount === 1).toBeTruthy();
+            expect(editQuestionSpy).toHaveBeenCalled();
         });
     });
 
-    it('Le système doit faire un appel à questionService.deleteQuestion pour supprimer une question', () => {
-        deleteQuestionCallCount = 0;
+    it('System should call questionService.deleteQuestion when pressing button to delete question', () => {
         component.deleteQuestion(validQuestion);
-        expect(deleteQuestionCallCount === 1).toBeTruthy();
+        expect(deleteQuestionSpy).toHaveBeenCalled();
     });
 });

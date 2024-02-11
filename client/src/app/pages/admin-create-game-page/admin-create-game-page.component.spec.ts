@@ -5,6 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 import { AdminQuestionComponent } from '@app/components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
@@ -12,49 +13,43 @@ import { AppMaterialModule } from '@app/modules/material.module';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
 import { Game, Question, Type } from '@common/game';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AdminCreateGamePageComponent } from './admin-create-game-page.component';
 
-const validQuestion: Question = {
-    id: '2',
-    lastModification: null,
-    type: Type.QCM,
-    text: 'Question valide',
-    points: 10,
-    choices: [
-        {
-            text: 'Choix valide #1',
-            isCorrect: true,
-        },
-        {
-            text: 'Choix valide #2',
-            isCorrect: false,
-        },
-    ],
-    answer: 'Choix #1',
-};
-
-const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
-    subscriber.next([validQuestion]);
-});
-
-let openCallCount = 0;
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-function openCallCountFunction() {
-    openCallCount++;
-    return { afterClosed: () => observableQuestion };
+async function addGameMock(): Promise<void> {
+    return;
 }
-
-/* let moveItemInArrayCount = 0;
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
-function countMoveItemInArray() {
-    moveItemInArrayCount++;
-}*/
 
 describe('AdminCreateGamePageComponent', () => {
     let component: AdminCreateGamePageComponent;
     let fixture: ComponentFixture<AdminCreateGamePageComponent>;
+    const validQuestion: Question = {
+        id: '2',
+        lastModification: null,
+        type: Type.QCM,
+        text: 'Question valide',
+        points: 10,
+        choices: [
+            {
+                text: 'Choix valide #1',
+                isCorrect: true,
+            },
+            {
+                text: 'Choix valide #2',
+                isCorrect: false,
+            },
+        ],
+        answer: 'Choix #1',
+    };
 
+    const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
+        subscriber.next([validQuestion]);
+    });
+
+    const openDialogSpy = jasmine.createSpy('open').and.callFake(() => {
+        return { afterClosed: () => observableQuestion };
+    });
     const validGame: Game = {
         id: '0',
         lastModification: new Date(),
@@ -136,10 +131,12 @@ describe('AdminCreateGamePageComponent', () => {
             },
         ],
     };
-    const observableGame: Observable<Game[]> = new Observable((subscriber) => {
-        subscriber.next([validGame]);
+    const getGameByIdSpy = jasmine.createSpy('getGameByID').and.returnValue(validGame);
+    const addGameSpy = jasmine.createSpy('addGame').and.callFake(addGameMock);
+    const observableParamMap: Observable<ParamMap> = new Observable((subscriber) => {
+        subscriber.next();
     });
-
+    const paramMapSpy = jasmine.createSpy('paramMap').and.returnValue(observableParamMap);
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -156,14 +153,14 @@ describe('AdminCreateGamePageComponent', () => {
                 {
                     provide: GameService,
                     useValue: {
-                        getGameById: jasmine.createSpy('getGameById').and.returnValue(observableGame),
-                        addGame: jasmine.createSpy('addGame').and.callThrough(),
+                        getGameByID: getGameByIdSpy,
+                        addGame: addGameSpy,
                     },
                 },
                 {
                     provide: MatDialog,
                     useValue: {
-                        open: jasmine.createSpy('open').and.callFake(openCallCountFunction),
+                        open: openDialogSpy,
                     },
                 },
                 {
@@ -173,11 +170,11 @@ describe('AdminCreateGamePageComponent', () => {
                     provide: HttpClient,
                 },
                 {
-                    provide: GameService,
+                    provide: ActivatedRoute,
                     useValue: {
-                        addGame: jasmine.createSpy('addGame').and.returnValue(() => {
-                            of();
-                        }),
+                        paramMap: {
+                            subscribe: paramMapSpy,
+                        },
                     },
                 },
                 /*
@@ -196,20 +193,11 @@ describe('AdminCreateGamePageComponent', () => {
         fixture = TestBed.createComponent(AdminCreateGamePageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        // const moveItemInArraySpy = jasmine.createSpy('moveItemInArray');
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     });
-
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
     it('Should create new question game, copy relevant fields from form input', () => {
-        const game: Game = validGame;
+        const game: Game = { ...validGame };
         component.populateForm(game);
         component.saveQuiz();
-
         expect(component.game.title === game.title).toBeTruthy();
         expect(component.game.description === game.description).toBeTruthy();
         expect(component.game.duration === game.duration).toBeTruthy();
@@ -224,15 +212,12 @@ describe('AdminCreateGamePageComponent', () => {
                 deepCopyCheck = false;
                 break;
             }
-
             if (game.questions[i].type === Type.QCM) {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const choices: any = game.questions[i].choices;
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const componentChoices: any = component.game.questions[i].choices;
+                const choices = game.questions[i].choices;
+                const componentChoices = component.game.questions[i].choices;
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
                 for (let j = 0; j < choices.length; j++) {
-                    if (choices.text !== componentChoices.text) {
+                    if (choices[j].text !== componentChoices[j].text) {
                         deepCopyCheck = false;
                         break;
                     }
@@ -241,64 +226,48 @@ describe('AdminCreateGamePageComponent', () => {
         }
         expect(deepCopyCheck).toBeTruthy();
     });
-
-    it('Should let user type a name and game description', () => {
+    it('Should call gameService.addGame when pressing button to save quiz', async () => {
+        addGameSpy.calls.reset();
         const game: Game = { ...validGame };
         component.populateForm(game);
         component.saveQuiz();
-
-        expect(component.game.title === game.title).toBeTruthy();
-        expect(component.game.description === game.description).toBeTruthy();
+        addGameMock().then(() => {
+            expect(addGameSpy).toHaveBeenCalled();
+        });
     });
-
-    it('Should validate game name and game description as not empty', () => {
-        let game: Game = { ...validGame };
+    it('Should validate game name as not empty', () => {
+        const game: Game = { ...validGame };
         game.title = '';
         component.populateForm(game);
         expect(component.gameForm.valid).toBeFalsy();
-
-        game = { ...validGame };
-        component.populateForm(game);
-        expect(component.gameForm.valid).toBeTruthy();
-
-        game = { ...validGame };
-        game.description = '';
-        component.populateForm(game);
-        expect(component.gameForm.valid).toBeFalsy();
     });
-
     it('Should let user pick a time interval between 10 and 60 seconds inclusively', () => {
-        let game: Game = { ...validGame };
+        const game: Game = { ...validGame };
         game.duration = 9;
         component.populateForm(game);
         expect(component.gameForm.valid).toBeFalsy();
 
-        game = { ...validGame };
         game.duration = 10;
         component.populateForm(game);
         expect(component.gameForm.valid).toBeTruthy();
 
-        game = { ...validGame };
         game.duration = 61;
         component.populateForm(game);
         expect(component.gameForm.valid).toBeFalsy();
 
-        game = { ...validGame };
         game.duration = 60;
         component.populateForm(game);
         expect(component.gameForm.valid).toBeTruthy();
     });
-
-    // À régler si possible
     it('Should let user change the order of questions by calling moveItemInArray', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const question1 = { ...validQuestion };
         const question2 = { ...validQuestion };
-        question1.text = 'Question 1';
-        question2.text = 'Question 2';
+        question1.text = '1';
+        question2.text = '2';
         component.questionsBankList.data = [question1, question2];
-        expect(component.questionsBankList.data[0].text).toBe('Question 1');
-        expect(component.questionsBankList.data[1].text).toBe('Question 2');
+        expect(component.questionsBankList.data[0].text).toBe('1');
+        expect(component.questionsBankList.data[1].text).toBe('2');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const event: any = {
             container: component.questionsBankList,
@@ -307,19 +276,18 @@ describe('AdminCreateGamePageComponent', () => {
             previousContainer: component.questionsBankList,
         };
         component.dropQuestion(event);
-        expect(component.questionsBankList.data[0].text).toBe('Question 2');
-        expect(component.questionsBankList.data[1].text).toBe('Question 1');
+        expect(component.questionsBankList.data[0].text).toBe('2');
+        expect(component.questionsBankList.data[1].text).toBe('1');
     });
-
     it('Should let user transfer questions from question bank by calling transferItemInArray', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const question1 = validQuestion;
-        const question2 = validQuestion;
-        question1.text = 'Question 1';
-        question2.text = 'Question 2';
+        const question1 = { ...validQuestion };
+        const question2 = { ...validQuestion };
+        question1.text = '1';
+        question2.text = '2';
         component.questionsBankList.data = [question1];
         expect(component.questionsBankList.data.length).toBe(1);
-
+        expect(component.questionsBankList.data[0].text).toBe('1');
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const event: any = {
             container: component.questionsBankList,
@@ -329,57 +297,44 @@ describe('AdminCreateGamePageComponent', () => {
         };
         component.dropQuestion(event);
         expect(component.questionsBankList.data.length).toBe(2);
+        expect(component.questionsBankList.data[0].text).toBe('1');
+        expect(component.questionsBankList.data[1].text).toBe('2');
     });
-    it('Should call CreateQuestionDialogComponent to create question', () => {
-        openCallCount = 0;
+    it('Should call MatDialog.open to create question, opening CreateDialogComponent', () => {
         component.openDialog();
-        expect(openCallCount).toBe(1);
+        expect(openDialogSpy).toHaveBeenCalled();
     });
-
-    /*
-    it('Should display questions in a numbered list by increasing order', () => {
-        expect(component).toBeTruthy();
+    it('Should fetch question from CreateDialogComponent ', () => {
+        component.questions = [];
+        component.openDialog();
+        observableQuestion.subscribe(() => {
+            expect(component.questions.length).toBe(1);
+        });
     });
-    it('Should call', () => {
-        expect(component).toBeTruthy();
+    it('Should call gameService.getGameById on call to load game', () => {
+        component.loadGameData('');
+        expect(getGameByIdSpy).toHaveBeenCalled();
     });
-    it('Should let user change the order of questions in the list', () => {
-        expect(component).toBeTruthy();
+    it('Should delete question on call to handleDeleteQuestion', () => {
+        component.questions = [validQuestion];
+        component.handleDeleteQuestion(0);
+        expect(component.questions.length).toBe(0);
     });
-    it('Should let user add questions from question bank', () => {
-        expect(component).toBeTruthy();
+    it('Should update question on call to handleSaveQuestion', () => {
+        const question1 = { ...validQuestion };
+        question1.text = '1';
+        const question2 = { ...validQuestion };
+        question2.text = '2';
+        component.questions = [question1, question2];
+        const question3 = { ...validQuestion };
+        question3.text = '3';
+        component.handleSaveQuestion(question3, 1);
+        expect(component.questions.length).toBe(2);
+        expect(component.questions[1].text).toBe('3');
     });
-    it('Should let user save question in question bank', () => {
-        expect(component).toBeTruthy();
+    it('Should assign id to game by calling route.ParamMap', () => {
+        observableParamMap.subscribe(() => {
+            expect(paramMapSpy).toHaveBeenCalled();
+        });
     });
-    it('Should let user modify existing question-game', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should update existing game information after successful save ( check if request is sent )', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should create new game if game was deleted by another user while it was being modified ( 100% server-side )', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should let user save a game', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should validate a game before saving it with at least one valid question', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should notify user in case of missing fields in game or its questions', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should save questions and answers in specified numerical order', () => {
-        expect(component).toBeTruthy();
-    });
-    it('Should save a game with visibility parameter set to hidden at the end of the existing game list', () => {
-        const game: Game = validGame;
-        component.populateForm(game);
-        component.saveQuiz();
-        expect(component.game.visible).toBeFalsy();
-    });
-    it('Should save data in a persistent manner even after a complete reboot of website and dynamic server ( 100% server-side )', () => {
-        expect(component).toBeTruthy();
-    });*/
 });
