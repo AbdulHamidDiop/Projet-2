@@ -82,7 +82,7 @@ export class AdminCreateGamePageComponent {
             duration: game.duration,
         });
 
-        this.questions = [...game.questions];
+        this.questions = [...(game.questions as Question[])];
     }
 
     openDialog(): void {

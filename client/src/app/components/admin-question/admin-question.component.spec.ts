@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -102,3 +103,5 @@ describe('AdminQuestionComponent', () => {
         expect(deleteQuestionSpy).toHaveBeenCalled();
     });
 });
+=======
+>>>>>>> b3339ce74aedd2b734627e4e3f5e4cce434b7ace

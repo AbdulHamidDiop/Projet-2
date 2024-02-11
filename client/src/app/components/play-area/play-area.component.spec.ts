@@ -10,6 +10,7 @@ import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
 const ONE_SECOND = 1000;
+const DEFAULT_POINTS = 10;
 // TODO : update once QRL questions are implemented
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
@@ -32,6 +33,7 @@ describe('PlayAreaComponent', () => {
                             id: 'test-qcm';
                             type: Type.QCM;
                             text: 'Test QCM Question?';
+                            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
                             points: 10;
                             lastModification: Date;
                             choices: [{ text: 'Option 1'; isCorrect: true }, { text: 'Option 2'; isCorrect: false }];
@@ -188,7 +190,7 @@ describe('PlayAreaComponent', () => {
         } as Question;
         component.answer = ['Answer 1'];
         component.updateScore();
-        expect(component.score).toEqual(10);
+        expect(component.score).toEqual(DEFAULT_POINTS);
     });
 
     it('updateScore should not update score for incorrect or incomplete answers', () => {
