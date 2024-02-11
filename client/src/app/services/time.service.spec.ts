@@ -1,7 +1,7 @@
-import { TestBed, discardPeriodicTasks, fakeAsync, tick } from '@angular/core/testing';
-
+import { TestBed, discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
 import { TimeService } from './time.service';
 
+const INVALID_TIME = -1;
 describe('TimeService', () => {
     let service: TimeService;
     const TIMEOUT = 5;
@@ -15,6 +15,44 @@ describe('TimeService', () => {
     it('should be created', () => {
         expect(service).toBeTruthy();
     });
+
+    it('should start with a defined start value', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        expect(service.time).toEqual(TIMEOUT);
+        discardPeriodicTasks();
+    }));
+
+    it('should decrement time by 1 every second', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(MS_SECOND);
+        expect(service.time).toEqual(TIMEOUT - 1);
+        tick(MS_SECOND);
+        expect(service.time).toEqual(TIMEOUT - 2);
+        discardPeriodicTasks();
+    }));
+    it('should stop at 0 and not go negative after the timeout period', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(TIMEOUT * MS_SECOND);
+        expect(service.time).toEqual(0);
+
+        tick(2 * MS_SECOND);
+        expect(service.time).toEqual(0);
+        discardPeriodicTasks();
+    }));
+
+    it('interval should stop after TIMEOUT seconds ', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick((TIMEOUT + 2) * MS_SECOND);
+        expect(service.time).toEqual(0);
+    }));
+
+    it('startTimer should call stopTimer at the end of timer', fakeAsync(() => {
+        const spy = spyOn(service, 'stopTimer').and.callThrough();
+        service.startTimer(TIMEOUT);
+        tick((TIMEOUT + 1) * MS_SECOND);
+        expect(spy).toHaveBeenCalled();
+        discardPeriodicTasks();
+    }));
 
     it('startTimer should start an interval', fakeAsync(() => {
         service.startTimer(TIMEOUT);
@@ -31,35 +69,11 @@ describe('TimeService', () => {
         discardPeriodicTasks();
     }));
 
-    it('interval should reduce time by 1 every second ', fakeAsync(() => {
-        service.startTimer(TIMEOUT);
-        tick(MS_SECOND);
-        expect(service.time).toEqual(TIMEOUT - 1);
-        tick(MS_SECOND);
-        expect(service.time).toEqual(TIMEOUT - 2);
-        discardPeriodicTasks();
-    }));
-
-    it('interval should stop after TIMEOUT seconds ', fakeAsync(() => {
-        service.startTimer(TIMEOUT);
-        tick((TIMEOUT + 2) * MS_SECOND);
-        expect(service.time).toEqual(0);
-        discardPeriodicTasks();
-    }));
-
     it('startTimer should not start a new interval if one exists', fakeAsync(() => {
         service.startTimer(TIMEOUT);
         const spy = spyOn(window, 'setInterval');
         service.startTimer(TIMEOUT);
         expect(spy).not.toHaveBeenCalled();
-        discardPeriodicTasks();
-    }));
-
-    it('startTimer should call stopTimer at the end of timer', fakeAsync(() => {
-        const spy = spyOn(service, 'stopTimer').and.callThrough();
-        service.startTimer(TIMEOUT);
-        tick((TIMEOUT + 1) * MS_SECOND); // un tick de plus que la limite
-        expect(spy).toHaveBeenCalled();
         discardPeriodicTasks();
     }));
 
@@ -69,5 +83,36 @@ describe('TimeService', () => {
         expect(spy).toHaveBeenCalled();
         expect(service['interval']).toBeFalsy();
         discardPeriodicTasks();
+    }));
+
+    it('should not start the timer with non-positive values', fakeAsync(() => {
+        service.startTimer(0);
+        expect(service.time).toEqual(0);
+        service.startTimer(INVALID_TIME);
+        expect(service.time).toEqual(0);
+        discardPeriodicTasks();
+    }));
+
+    it('should handle multiple stopTimer calls gracefully', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(TIMEOUT * MS_SECOND);
+        service.stopTimer();
+        const timeAfterFirstStop = service.time;
+        service.stopTimer();
+        expect(service.time).toEqual(timeAfterFirstStop);
+    }));
+
+    it('stopTimer should stop the countdown', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(MS_SECOND * 2);
+        service.stopTimer();
+        const timeAfterStop = service.time;
+        tick(MS_SECOND * 3);
+        expect(service.time).toEqual(timeAfterStop);
+    }));
+
+    afterEach(fakeAsync(() => {
+        service.stopTimer();
+        flush();
     }));
 });

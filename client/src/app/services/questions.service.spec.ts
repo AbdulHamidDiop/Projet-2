@@ -1,6 +1,6 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { API_URL } from '@common/consts';
-import { Choices, Question, Type } from '@common/game';
+import { Choice, Question, Type } from '@common/game';
 import { QuestionsService } from './questions.service';
 
 describe('QuestionsService', () => {
@@ -20,7 +20,7 @@ describe('QuestionsService', () => {
     });
 
     it('getAllQuestions should fetch questions from API', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];
@@ -40,21 +40,8 @@ describe('QuestionsService', () => {
         expect(service.questions).toEqual([mockQuestion]);
     }));
 
-    it('sortAllQuestions should sort questions by lastModification date', () => {
-        const questions: Question[] = [
-            { id: '1', type: Type.QCM, lastModification: new Date('2023-01-01'), text: 'Question 1', points: 5, choices: [] },
-            { id: '2', type: Type.QCM, lastModification: new Date('2022-01-01'), text: 'Question 2', points: 5, choices: [] },
-        ];
-
-        service.questions = questions;
-
-        const sortedQuestions = service.sortAllQuestions();
-
-        expect(sortedQuestions).toEqual([questions[1], questions[0]]);
-    });
-
     it('addQuestion should send a POST request to API', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];
@@ -82,7 +69,7 @@ describe('QuestionsService', () => {
     }));
 
     it('editQuestion should send a PUT request to API', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];
@@ -111,7 +98,7 @@ describe('QuestionsService', () => {
     }));
 
     it('deleteQuestion should send a DELETE request to API and emit deleteRequest event', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];

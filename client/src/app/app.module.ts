@@ -24,6 +24,7 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
+import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 
 /**
  * Main module that is used in main.ts.
@@ -52,6 +53,7 @@ import { QuestionsService } from './services/questions.service';
         GameCardComponent,
         AdminQuestionComponent,
         AdminQuestionsBankComponent,
+        ConfirmDialogComponent,
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],

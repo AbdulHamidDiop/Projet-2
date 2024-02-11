@@ -1,105 +1,159 @@
 [
-    {
-        "type": "QCM",
-        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-        "points": 50,
-        "addToBank": true,
-        "id": "2",
-        "choices": [
-            {
-                "text": "Array",
-                "isCorrect": false
-            },
-            {
-                "text": "var",
-                "isCorrect": true
-            },
-            {
-                "text": "const",
-                "isCorrect": true
-            },
-            {
-                "text": "def",
-                "isCorrect": false
-            }
-        ],
-        "lastModification": "2024-01-30T20:15:04.920Z"
-    },
-    {
-        "type": "QCM",
-        "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
-        "points": 20,
-        "addToBank": true,
-        "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
-        "choices": [
-            {
-                "text": "npm ci",
-                "isCorrect": true
-            },
-            {
-                "text": "git pull",
-                "isCorrect": false
-            },
-            {
-                "text": "ng serve",
-                "isCorrect": false
-            }
-        ],
-        "lastModification": "2024-01-30T22:34:16.468Z"
-    },
-    {
-        "type": "QCM",
-        "text": "Quel mot-clé parmi les suivants ne figure pas dans HTML ?",
-        "points": 30,
-        "addToBank": false,
-        "choices": [
-            {
-                "text": "div",
-                "isCorrect": false
-            },
-            {
-                "text": "li",
-                "isCorrect": true
-            },
-            {
-                "text": "mat-input",
-                "isCorrect": true
-            },
-            {
-                "text": "button",
-                "isCorrect": false
-            },
-            {
-                "text": "table",
-                "isCorrect": false
-            },
-            {
-                "text": "input",
-                "isCorrect": false
-            }
-        ],
-        "lastModification": "2024-01-31T16:09:01.684Z"
-    },
-    {
+  {
+    "type": "QCM",
+    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+    "points": 50,
+    "addToBank": true,
+    "id": "2",
+    "choices": [
+      {
+        "text": "Array",
+        "isCorrect": false
+      },
+      {
+        "text": "var",
+        "isCorrect": true
+      },
+      {
+        "text": "const",
+        "isCorrect": true
+      },
+      {
+        "text": "def",
+        "isCorrect": false
+      }
+    ],
+    "lastModification": "2024-01-30T20:15:04.920Z"
+  },
+  {
+    "type": "QCM",
+    "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+    "points": 20,
+    "addToBank": true,
+    "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+    "choices": [
+      {
+        "text": "npm ci",
+        "isCorrect": true
+      },
+      {
+        "text": "git pull",
+        "isCorrect": false
+      },
+      {
+        "text": "ng serve",
+        "isCorrect": false
+      }
+    ],
+    "lastModification": "2024-01-30T22:34:16.468Z"
+  },
+  {
+    "type": "QCM",
+    "text": "Quel mot-clé parmi les suivants ne figure pas dans HTML ?",
+    "points": 30,
+    "addToBank": false,
+    "choices": [
+      {
+        "text": "div",
+        "isCorrect": false
+      },
+      {
+        "text": "li",
+        "isCorrect": true
+      },
+      {
+        "text": "mat-input",
+        "isCorrect": true
+      },
+      {
+        "text": "button",
+        "isCorrect": false
+      },
+      {
+        "text": "table",
+        "isCorrect": false
+      },
+      {
+        "text": "input",
+        "isCorrect": false
+      }
+    ],
+    "lastModification": "2024-01-31T16:09:01.684Z"
+  },
+  {
+    "type": "QCM",
+    "text": "Quelle est la différence entre NodeJS et Angular",
+    "points": 20,
+    "addToBank": true,
+    "choices": [
+      {
+        "text": "Angular = front-end, NodeJS = back-end",
+        "isCorrect": false
+      },
+      {
+        "text": "Angular = back-end, NodeJS = front-end",
+        "isCorrect": true
+      },
+      {
+        "text": "Aucune de ces réponses",
+        "isCorrect": false
+      }
+    ],
+    "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+    "lastModification": "2024-01-31T16:39:55.649Z"
+  },
+  {
+    "id": "9a9010c6-65d2-4370-b78e-c4211bb86eb9",
+    "lastModification": "2024-02-02T15:28:59.795Z",
+    "title": "Quiz 1",
+    "description": "quiz",
+    "duration": 40,
+    "questions": [
+      {
         "type": "QCM",
         "text": "Quelle est la différence entre NodeJS et Angular",
         "points": 20,
         "addToBank": true,
         "choices": [
-            {
-                "text": "Angular = front-end, NodeJS = back-end",
-                "isCorrect": false
-            },
-            {
-                "text": "Angular = back-end, NodeJS = front-end",
-                "isCorrect": true
-            },
-            {
-                "text": "Aucune de ces réponses",
-                "isCorrect": false
-            }
+          {
+            "text": "Angular = front-end, NodeJS = back-end",
+            "isCorrect": false
+          },
+          {
+            "text": "Angular = back-end, NodeJS = front-end",
+            "isCorrect": true
+          },
+          {
+            "text": "Aucune de ces réponses",
+            "isCorrect": false
+          }
         ],
         "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
         "lastModification": "2024-01-31T16:39:55.649Z"
-    }
+      }
+    ],
+    "isHidden": true
+  },
+  {
+    "type": "QCM",
+    "text": "Quelle est la différence entre NodeJS et Angular",
+    "points": 20,
+    "addToBank": true,
+    "choices": [
+      {
+        "text": "Angular = front-end, NodeJS = back-end",
+        "isCorrect": false
+      },
+      {
+        "text": "Angular = back-end, NodeJS = front-end",
+        "isCorrect": true
+      },
+      {
+        "text": "Aucune de ces réponses",
+        "isCorrect": false
+      }
+    ],
+    "id": "00000000-1111-2222-test-000000000000",
+    "lastModification": "2021-01-31T16:39:55.649Z"
+  }
 ]

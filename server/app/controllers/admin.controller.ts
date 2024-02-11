@@ -2,8 +2,7 @@ import { AdminService } from '@app/services/admin.service';
 import { Request, Response, Router } from 'express';
 import { Service } from 'typedi';
 
-const HTTP_STATUS_OK = 200;
-
+import { StatusCodes } from 'http-status-codes';
 @Service()
 export class AdminController {
     router: Router;
@@ -39,8 +38,13 @@ export class AdminController {
          *         description: Created
          */
         this.router.post('/password', (req: Request, res: Response) => {
-            res.json(this.adminService.checkPassword(req.body.password));
-            res.status(HTTP_STATUS_OK);
+            if (this.adminService.checkPassword(req.body.password)) {
+                res.status(StatusCodes.OK);
+                res.json(true);
+            } else {
+                res.status(StatusCodes.UNAUTHORIZED);
+            }
+            res.send();
         });
     }
 }

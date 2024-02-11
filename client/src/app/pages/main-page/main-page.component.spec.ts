@@ -1,15 +1,17 @@
-import { HttpClientModule, HttpResponse } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpResponse } from '@angular/common/http';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { CommunicationService } from '@app/services/communication.service';
-import { of, throwError } from 'rxjs';
+import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
 describe('MainPageComponent', () => {
     let component: MainPageComponent;
     let fixture: ComponentFixture<MainPageComponent>;
     let communicationServiceSpy: SpyObj<CommunicationService>;
+    let httpMock: HttpTestingController;
 
     beforeEach(async () => {
         communicationServiceSpy = jasmine.createSpyObj('ExampleService', ['basicGet', 'basicPost']);
@@ -17,13 +19,14 @@ describe('MainPageComponent', () => {
         communicationServiceSpy.basicPost.and.returnValue(of(new HttpResponse<string>({ status: 201, statusText: 'Created' })));
 
         await TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule],
+            imports: [RouterTestingModule, HttpClientTestingModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: CommunicationService, useValue: communicationServiceSpy }],
+            providers: [CommunicationService],
         }).compileComponents();
     });
 
     beforeEach(() => {
+        httpMock = TestBed.inject(HttpTestingController);
         fixture = TestBed.createComponent(MainPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -33,34 +36,44 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should have as title 'LOG2990'", () => {
-        expect(component.title).toEqual('LOG2990');
+    it('should navigate to /admin and update shared variable when password is correct', fakeAsync(() => {
+        const spyNavigate = spyOn(component.router, 'navigate').and.stub();
+        const spyUpdateSharedVariable = spyOn(component.communicationService, 'updateSharedVariable').and.stub();
+
+        component.userInput = 'LOG2990-312';
+
+        component.verifyPassword();
+
+        const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
+        expect(req.request.method).toBe('POST');
+
+        req.flush(true);
+
+        tick();
+
+        expect(spyNavigate).toHaveBeenCalledWith(['/admin']);
+        expect(spyUpdateSharedVariable).toHaveBeenCalledWith(true);
+    }));
+
+    it('should display alert for incorrect password', () => {
+        const userInput = 'wrongpassword';
+        const mockResponse = { body: 'false' };
+
+        spyOn(window, 'alert');
+
+        component.userInput = userInput;
+        component.verifyPassword();
+
+        const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
+        expect(req.request.method).toBe('POST');
+        req.flush(mockResponse);
+
+        expect(window.alert).toHaveBeenCalledWith('Incorrect password');
     });
 
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(communicationServiceSpy.basicGet).toHaveBeenCalled();
-    });
-
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(communicationServiceSpy.basicPost).toHaveBeenCalled();
-    });
-
-    it('should handle basicPost that returns a valid HTTP response', () => {
-        component.sendTimeToServer();
-        component.message.subscribe((res) => {
-            expect(res).toContain('201 : Created');
-        });
-    });
-
-    it('should handle basicPost that returns an invalid HTTP response', () => {
-        communicationServiceSpy.basicPost.and.returnValue(throwError(() => new Error('test')));
-        component.sendTimeToServer();
-        component.message.subscribe({
-            next: (res) => {
-                expect(res).toContain('Le serveur ne répond pas');
-            },
-        });
+    it('should call verifyPassword on button click', () => {
+        spyOn(component, 'verifyPassword');
+        component.onButtonClick();
+        expect(component.verifyPassword).toHaveBeenCalled();
     });
 });

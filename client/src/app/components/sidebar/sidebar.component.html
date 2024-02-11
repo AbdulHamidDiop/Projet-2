@@ -16,13 +16,8 @@
     <div>
         <mat-form-field class="example-full-width">
             <mat-label>Clavardage</mat-label>
-            <input
-                #input
-                matInput
-                (keyup)="$event.stopPropagation(); handleKeyboardPress($event, input)"
-                placeholder="Vous pouvez laisser un message ici"
-                [value]="displayMessage"
-            />
+            <input #input matInput (keyup)="$event.stopPropagation(); handleKeyboardPress($event, input)"
+                placeholder="Vous pouvez laisser un message ici" [value]="currentMessage" />
         </mat-form-field>
     </div>
 </mat-sidenav-container>

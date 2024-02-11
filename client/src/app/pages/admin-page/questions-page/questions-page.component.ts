@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
@@ -11,15 +11,15 @@ import { Question } from '@common/game';
     templateUrl: './questions-page.component.html',
     styleUrls: ['./questions-page.component.scss'],
 })
-export class QuestionsPageComponent {
+export class QuestionsPageComponent implements OnInit {
     questions: Question[];
     isAuthentificated: boolean;
 
     constructor(
         public dialog: MatDialog,
-        private communicationService: CommunicationService,
-        private router: Router,
-        private questionsService: QuestionsService,
+        readonly communicationService: CommunicationService,
+        readonly router: Router,
+        readonly questionsService: QuestionsService,
     ) {}
 
     async getQuestions() {

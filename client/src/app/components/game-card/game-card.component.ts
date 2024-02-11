@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { GameService } from '@app/services/game.service';
 import { Game } from '@common/game';
 
 @Component({
@@ -13,12 +13,13 @@ export class GameCardComponent {
     @Output() deleteEvent = new EventEmitter<Game>();
     @Output() checkEvent = new EventEmitter<Game>();
     constructor(
-        private http: HttpClient,
         private router: Router,
+        private gameService: GameService,
     ) {}
     onCheck(game: Game) {
-        this.http.patch('http://localhost:3000/api/game/toggleHidden', { id: game.id }).subscribe((response: unknown) => {});
-        this.checkEvent.emit(this.game);
+        this.gameService.toggleGameHidden(String(game.id)).then(() => {
+            this.checkEvent.emit(this.game);
+        });
     }
 
     onExportButtonClick(game: Game) {
@@ -36,7 +37,7 @@ export class GameCardComponent {
     }
 
     onDeleteButtonClick(game: Game) {
-        this.http.delete(`http://localhost:3000/api/game/deletegame/${game.id}`).subscribe((response: unknown) => {});
+        this.gameService.deleteGameByID(String(game.id));
         this.deleteEvent.emit(this.game);
     }
 

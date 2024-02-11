@@ -2,17 +2,16 @@ export interface Choices {
     text: string;
     isCorrect: boolean;
 }
-export enum Type {
+enum Type {
     QCM = 'QCM',
     QRL = 'QRL',
 }
 export interface Question {
-    id: string;
     type: Type;
-    lastModification: Date;
     text: string;
     points: number;
     choices: Choices[];
+    nbChoices: number;
 }
 export interface Game {
     id?: string;

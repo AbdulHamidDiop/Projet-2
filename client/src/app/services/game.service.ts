@@ -8,16 +8,15 @@ import { Game } from '@common/game';
     providedIn: 'root',
 })
 export class GameService {
-    games: Game[];
+    games: Game[] = [];
     // Modification : Déclaration de selectedGame comme Game directement
     private selectedGame: Game = {} as Game;
 
     constructor() {
-        this.getAllGames().then((games: Game[]) => {
+        this.getAllGames().then((games) => {
             this.games = games;
         });
     }
-
     // Modification : Modification du type de retour de getSelectedGame à Game
     getSelectedGame(): Game {
         return this.selectedGame;
@@ -25,16 +24,6 @@ export class GameService {
 
     selectGame(game: Game): void {
         this.selectedGame = game;
-    }
-
-    async checkGame(id: string | undefined): Promise<Game> {
-        // return this.http.get<Game>(`/api/game/${id}`);
-        const response = await fetch(API_URL + 'game/' + id);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        const game: Game = await response.json();
-        return game;
     }
 
     async getAllGames(): Promise<Game[]> {
@@ -60,37 +49,26 @@ export class GameService {
         }
     }
 
-    getGameQuestionsByID(id: string): Question[] {
+    getGameByID(id: string): Game {
         const game = this.games.find((g) => g.id === id);
-        if (!game) {
-            return [];
-        } else {
-            return game.questions;
-        }
-    }
-
-    async getGameByID(id: string): Promise<Game> {
-        const games: Game[] = await this.getAllGames();
-        const game = games.find((g) => g.id === id);
         if (!game) {
             throw new Error('Game not found');
         }
         return game;
     }
 
-    async toggleGameHidden(id: string): Promise<boolean> {
+    async toggleGameHidden(gameID: string): Promise<void> {
         const response = await fetch(API_URL + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ id }),
+            body: JSON.stringify({ id: gameID }),
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
-        return true;
     }
 
     async deleteGameByID(id: string): Promise<boolean> {

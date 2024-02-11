@@ -71,9 +71,7 @@ export class AdminCreateGamePageComponent {
     }
 
     loadGameData(gameId: string): void {
-        this.gameService.getGameByID(gameId).then((game: Game) => {
-            this.populateForm(game);
-        });
+        this.populateForm(this.gameService.getGameByID(gameId));
     }
 
     populateForm(game: Game): void {
@@ -83,7 +81,7 @@ export class AdminCreateGamePageComponent {
             duration: game.duration,
         });
 
-        this.questions = [...game.questions];
+        this.questions = [...(game.questions as Question[])];
     }
 
     openDialog(): void {
