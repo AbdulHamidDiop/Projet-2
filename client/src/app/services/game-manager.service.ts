@@ -20,14 +20,12 @@ export class GameManagerService {
     }
 
     reset() {
-        this.game = {} as Game;
         this.currentQuestionIndex = 0;
         this.endGame = false;
     }
 
     nextQuestion(): Question {
         if (this.game) {
-            console.log(this.game);
             if (this.currentQuestionIndex + 1 === this.game.questions.length) {
                 this.endGame = true;
                 return this.game.questions[this.currentQuestionIndex];
