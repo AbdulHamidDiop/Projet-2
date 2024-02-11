@@ -1,10 +1,8 @@
 import { GamesService } from '@app/services/games.service';
+import { Game } from '@common/game';
 import { Request, Response, Router } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
-
-const HTTP_STATUS_OK = 200;
-const HTTP_STATUS_CREATED = 201;
-const HTTP_STATUS_NO_CONTENT = 204;
 
 @Service()
 export class GameController {
@@ -37,7 +35,7 @@ export class GameController {
          */
         this.router.get('/', async (req: Request, res: Response) => {
             res.json(await this.gamesService.getAllGames());
-            res.status(HTTP_STATUS_OK);
+            res.status(StatusCodes.OK);
         });
 
         /**
@@ -89,9 +87,10 @@ export class GameController {
          *         description: Created
          */
 
-        this.router.post('/importgame', (req: Request, res: Response) => {
-            res.json(this.gamesService.addGame(req.body));
-            res.status(HTTP_STATUS_CREATED);
+        this.router.post('/importgame', async (req: Request, res: Response) => {
+            await this.gamesService.addGame(req.body);
+            res.status(StatusCodes.CREATED);
+            res.send();
         });
 
         /**
@@ -144,9 +143,10 @@ export class GameController {
          *         description: OK
          */
 
-        this.router.put('/edit', (req: Request, res: Response) => {
-            res.json(this.gamesService.addGame(req.body.game));
-            res.status(HTTP_STATUS_OK);
+        this.router.put('/edit', async (req: Request, res: Response) => {
+            await this.gamesService.addGame(req.body);
+            res.status(StatusCodes.NO_CONTENT);
+            res.send();
         });
 
         /**
@@ -173,7 +173,14 @@ export class GameController {
          */
 
         this.router.get('/:id', async (req: Request, res: Response) => {
-            res.status(HTTP_STATUS_OK).json(await this.gamesService.getGameByID(req.params.id));
+            const game: Game = await this.gamesService.getGameByID(req.params.id);
+            if (game === null) {
+                res.status(StatusCodes.NOT_FOUND);
+            } else {
+                res.status(StatusCodes.OK);
+                res.json(game);
+            }
+            res.send();
         });
 
         /**
@@ -199,15 +206,19 @@ export class GameController {
          *       200:
          *         description: OK
          */
-        this.router.patch('/togglehidden', (req: Request, res: Response) => {
-            res.json(this.gamesService.toggleGameHidden(req.body.id));
-            res.status(HTTP_STATUS_NO_CONTENT);
+        this.router.patch('/togglehidden', async (req: Request, res: Response) => {
+            if (await this.gamesService.toggleGameHidden(req.body.id)) {
+                res.status(StatusCodes.NO_CONTENT);
+            } else {
+                res.status(StatusCodes.BAD_REQUEST);
+            }
+            res.send();
         });
 
         /**
          * @swagger
          *
-         * /api/game/deletegame/{id}:
+         * /api/game/delete/{id}:
          *   delete:
          *     description: Delete game from database
          *     tags:
@@ -224,9 +235,13 @@ export class GameController {
          *       200:
          *         description: OK
          */
-        this.router.delete('/deletegame/:id', (req: Request, res: Response) => {
-            res.json(this.gamesService.deleteGameByID(req.params.id));
-            res.status(HTTP_STATUS_NO_CONTENT);
+        this.router.delete('/delete/:id', async (req: Request, res: Response) => {
+            if (await this.gamesService.deleteGameByID(req.params.id)) {
+                res.status(StatusCodes.NO_CONTENT);
+            } else {
+                res.status(StatusCodes.NOT_FOUND);
+            }
+            res.send();
         });
     }
 }

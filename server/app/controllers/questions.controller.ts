@@ -1,8 +1,7 @@
 import { QuestionsService } from '@app/services/questions.service';
 import { Request, Response, Router } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
-
-const HTTP_STATUS_OK = 200;
 
 @Service()
 export class QuestionsController {
@@ -35,8 +34,8 @@ export class QuestionsController {
          *             $ref: '#/components/schemas/Question'
          */
         this.router.get('/', async (req: Request, res: Response) => {
+            res.status(StatusCodes.OK);
             res.json(await this.questionsService.sortAllQuestions());
-            res.status(HTTP_STATUS_OK);
         });
 
         /**
@@ -68,9 +67,10 @@ export class QuestionsController {
          *                   isCorrect: false
          *
          */
-        this.router.post('/add', (req: Request, res: Response) => {
-            res.json(this.questionsService.addQuestion(req.body));
-            res.status(HTTP_STATUS_OK);
+        this.router.post('/add', async (req: Request, res: Response) => {
+            await this.questionsService.addQuestion(req.body);
+            res.status(StatusCodes.CREATED);
+            res.send();
         });
 
         /**
@@ -102,9 +102,10 @@ export class QuestionsController {
          *                   isCorrect: false
          *
          */
-        this.router.put('/edit', (req: Request, res: Response) => {
-            res.json(this.questionsService.addQuestion(req.body));
-            res.status(HTTP_STATUS_OK);
+        this.router.put('/edit', async (req: Request, res: Response) => {
+            await this.questionsService.addQuestion(req.body);
+            res.status(StatusCodes.NO_CONTENT);
+            res.send();
         });
 
         /**
@@ -128,9 +129,13 @@ export class QuestionsController {
          *         description: OK
          *
          */
-        this.router.delete('/delete/:id', (req: Request, res: Response) => {
-            res.json(this.questionsService.deleteQuestionByID(req.params.id));
-            res.status(HTTP_STATUS_OK);
+        this.router.delete('/delete/:id', async (req: Request, res: Response) => {
+            if (await this.questionsService.deleteQuestionByID(req.params.id)) {
+                res.status(StatusCodes.NO_CONTENT);
+            } else {
+                res.status(StatusCodes.NOT_FOUND);
+            }
+            res.send();
         });
     }
 }

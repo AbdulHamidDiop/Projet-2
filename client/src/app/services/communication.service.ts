@@ -9,7 +9,7 @@ import { environment } from 'src/environments/environment';
     providedIn: 'root',
 })
 export class CommunicationService {
-    private sharedVariableSubject = new BehaviorSubject<boolean>(false);
+    sharedVariableSubject = new BehaviorSubject<boolean>(false);
     sharedVariable$ = this.sharedVariableSubject.asObservable();
     private readonly baseUrl: string = environment.serverUrl;
 
@@ -22,6 +22,7 @@ export class CommunicationService {
     basicPost(message: Message): Observable<HttpResponse<string>> {
         return this.http.post(`${this.baseUrl}/example/send`, message, { observe: 'response', responseType: 'text' });
     }
+
     updateSharedVariable(newData: boolean) {
         this.sharedVariableSubject.next(newData);
     }
