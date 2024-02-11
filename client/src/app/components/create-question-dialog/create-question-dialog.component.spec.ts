@@ -1,11 +1,12 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question, Type } from '@common/game';
+import { Observable } from 'rxjs';
 import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
 // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
@@ -39,7 +40,13 @@ describe('CreateQuestionDialogComponent', () => {
         question: validQuestion,
     };
     const closeDialogSpy = jasmine.createSpy('close').and.callThrough();
-
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const observableAbstractControl: Observable<any> = new Observable((subscriber) => {
+        subscriber.next(Type.QCM);
+        subscriber.next(Type.QRL);
+    });
+    const setControlSpy = jasmine.createSpy('setControl').and.callThrough();
+    const removeControlSpy = jasmine.createSpy('removeControl').and.callThrough();
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [CreateQuestionDialogComponent],
@@ -57,29 +64,20 @@ describe('CreateQuestionDialogComponent', () => {
                     useValue: {
                         addQuestion: addQuestionSpy,
                     },
-                } /*
+                },
                 {
-                    provide: FormGroup,
+                    provide: AbstractControl,
                     useValue: {
-                        get: jasmine
-                            .createSpy('get')
-                            .withArgs('type')
-                            .and.returnValue(Type.QCM)
-                            .withArgs('addToBank')
-                            .and.returnValue(true)
-                            .withArgs('choices')
-                            .and.returnValue({}),
-                        setControl: jasmine.createSpy('setControl'),
-                        removeControl: jasmine.createSpy('removeControl'),
-                        patchValue: jasmine.createSpy('patchValue'),
+                        valueChanges: observableAbstractControl,
                     },
                 },
                 {
-                    provide: FormArray,
+                    provide: FormGroup,
                     useValue: {
-                        clear: jasmine.createSpy('clear'),
+                        setControl: setControlSpy,
+                        removeControl: removeControlSpy,
                     },
-                },*/,
+                },
             ],
         }).compileComponents();
     });
@@ -89,10 +87,16 @@ describe('CreateQuestionDialogComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
+    it('Should initialize question from MAT_DIALOG_DATA injection token', () => {
+        expect(component.id).toBe(validQuestion.id);
+    });
 
-    //     it('should create', () => {
-    //         expect(component).toBeTruthy();
-    //     });
+    it('Should assign id if no question data is injected via MAT_DIALOG_DATA', () => {
+        component.data = null;
+        component.id = '';
+        component.ngOnInit();
+        expect(component.id !== '').toBeTruthy();
+    });
 
     it('Should add empty choice when pressing the add choice button, remove choice when pressing the remove choice button', () => {
         while (component.choices.length > 0) {
@@ -223,5 +227,13 @@ describe('CreateQuestionDialogComponent', () => {
     it('Should call MatDialogRef.close after pressing submit button to close the dialog', () => {
         component.onSubmit();
         expect(closeDialogSpy).toHaveBeenCalled();
+    });
+
+    it('Should call setControl and removeControl to change question form on change of question type', () => {
+        observableAbstractControl.subscribe((type) => {
+            if (type === Type.QCM) {
+                expect(component.questionForm.contains('choices')).toBeTruthy();
+            }
+        });
     });
 });

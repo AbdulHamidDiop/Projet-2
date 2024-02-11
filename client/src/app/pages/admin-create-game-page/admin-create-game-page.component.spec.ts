@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { AdminQuestionComponent } from '@app/components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from '@app/components/admin-questions-bank/admin-questions-bank.component';
 import { AppRoutingModule } from '@app/modules/app-routing.module';
@@ -133,10 +133,12 @@ describe('AdminCreateGamePageComponent', () => {
     };
     const getGameByIdSpy = jasmine.createSpy('getGameByID').and.returnValue(validGame);
     const addGameSpy = jasmine.createSpy('addGame').and.callFake(addGameMock);
-    const observableParamMap: Observable<ParamMap> = new Observable((subscriber) => {
-        subscriber.next();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const observableParamMap: Observable<any> = new Observable((subscriber) => {
+        subscriber.next({ get: () => false });
+        subscriber.next({ get: () => '1234' });
     });
-    const paramMapSpy = jasmine.createSpy('paramMap').and.returnValue(observableParamMap);
+    //    const paramMapSpy = jasmine.createSpy('paramMap').and.returnValue(observableParamMap);
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -172,9 +174,7 @@ describe('AdminCreateGamePageComponent', () => {
                 {
                     provide: ActivatedRoute,
                     useValue: {
-                        paramMap: {
-                            subscribe: paramMapSpy,
-                        },
+                        paramMap: observableParamMap,
                     },
                 },
                 /*
@@ -187,12 +187,13 @@ describe('AdminCreateGamePageComponent', () => {
             ],
         }).compileComponents();
     });
-
     beforeEach(() => {
         fixture = TestBed.createComponent(AdminCreateGamePageComponent);
         fixture = TestBed.createComponent(AdminCreateGamePageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+        component.ngOnInit();
+        component.ngAfterViewInit();
     });
     it('Should create new question game, copy relevant fields from form input', () => {
         const game: Game = { ...validGame };
@@ -333,8 +334,10 @@ describe('AdminCreateGamePageComponent', () => {
         expect(component.questions[1].text).toBe('3');
     });
     it('Should assign id to game by calling route.ParamMap', () => {
-        observableParamMap.subscribe(() => {
-            expect(paramMapSpy).toHaveBeenCalled();
+        observableParamMap.subscribe((params) => {
+            if (params.get('id')) {
+                expect(component.id).toBe('1234');
+            }
         });
     });
 });
