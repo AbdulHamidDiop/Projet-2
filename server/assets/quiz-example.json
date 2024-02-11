@@ -464,5 +464,101 @@
       }
     ],
     "isHidden": true
+  },
+  {
+    "id": "9d61370d-a7e6-4616-8383-59b6e10ffca2",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-11T20:12:43.320Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "074dcb26-169c-4669-ac65-bfe26d89e406",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-11T20:15:00.411Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
   }
 ]

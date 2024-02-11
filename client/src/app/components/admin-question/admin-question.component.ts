@@ -25,7 +25,6 @@ export class AdminQuestionComponent {
 
     openDialog(): void {
         const questionData: Question = this.question ? this.question : ({} as Question);
-
         const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {
             data: { question: questionData },
         });

@@ -1,79 +1,76 @@
-// import { ComponentFixture, TestBed } from '@angular/core/testing';
-// import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-// import SpyObj = jasmine.SpyObj;
-// import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { RouterTestingModule } from '@angular/router/testing';
+import { GameService } from '@app/services/game.service';
+import { Game } from '@common/game';
+import { GameCardComponent } from './game-card.component';
 
-// describe('GameCardComponent', () => {
-//     let component: GameCardComponent;
-//     let fixture: ComponentFixture<GameCardComponent>;
-//     let httpClient: HttpClient;
-//     let router: Router;
-//     const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+describe('GameCardComponent', () => {
+    let component: GameCardComponent;
+    let fixture: ComponentFixture<GameCardComponent>;
+    let gameService: GameService;
+    let router: Router;
+    let game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
 
-//     beforeEach(() => {
-//         fixture = TestBed.createComponent(PlayAreaComponent);
-//         component = fixture.componentInstance;
-//         fixture.detectChanges();
-//     });
+    beforeEach(() => {
+        game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+        TestBed.configureTestingModule({
+            declarations: [GameCardComponent],
+            imports: [HttpClientTestingModule, RouterTestingModule],
+            providers: [GameService],
+        });
 
-//     it('should create', () => {
-//         expect(component).toBeTruthy();
-//     });
+        fixture = TestBed.createComponent(GameCardComponent);
+        component = fixture.componentInstance;
+        component.game = game;
+        fixture.detectChanges();
 
-//     it('buttonDetect should modify the buttonPressed variable', () => {
-//         const expectedKey = 'a';
-//         const buttonEvent = {
-//             key: expectedKey,
-//         } as KeyboardEvent;
-//         component.buttonDetect(buttonEvent);
-//         expect(component.buttonPressed).toEqual(expectedKey);
-//     });
+        gameService = TestBed.inject(GameService);
+        router = TestBed.inject(Router);
+    });
 
-//     it('mouseHitDetect should call startTimer with 5 seconds on left click', () => {
-//         const mockEvent = { button: 0 } as MouseEvent;
-//         component.mouseHitDetect(mockEvent);
-//         expect(timeServiceSpy.startTimer).toHaveBeenCalled();
-//         expect(timeServiceSpy.startTimer).toHaveBeenCalledWith(component['timer']);
-//     });
+    it('should create', () => {
+        expect(component).toBeTruthy();
+    });
 
-//     it('should call onExportButtonClick method', () => {
-//         const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callThrough();
-//         const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
+    it('should emit checkEvent when onCheck is called', async () => {
+        spyOn(gameService, 'toggleGameHidden').and.returnValue(Promise.resolve());
+        spyOn(component.checkEvent, 'emit');
 
-//         component.onExportButtonClick(game);
+        await component.onCheck(game);
 
-//         expect(createObjectURLSpy).toHaveBeenCalled();
-//         expect(revokeObjectURLSpy).toHaveBeenCalled();
-//     });
+        expect(gameService.toggleGameHidden).toHaveBeenCalledWith('1');
+        expect(component.checkEvent.emit).toHaveBeenCalledWith(game);
+    });
 
-//     it('handleQCMChoice should correctly update score for correct answer', () => {
-//         const correctChoice = component.question.choices.find((choice) => choice.isCorrect);
-//         if (correctChoice) {
-//             component.handleQCMChoice(correctChoice.text, correctChoice.isCorrect);
-//             component.updateScore();
-//             expect(component.playerScore).toBe(component.question.points);
-//         }
-//     });
+    it('should fake download a json file', () => {
+        const createObjectURLSpy = spyOn(URL, 'createObjectURL').and.callFake((blob) => `fake-url/${blob}`);
+        const documentSpy = spyOn(HTMLAnchorElement.prototype, 'click');
+        const revokeObjectURLSpy = spyOn(URL, 'revokeObjectURL');
 
-//     it('updateScore should reset answer and isCorrect', () => {
-//         component.isCorrect = true;
-//         component.answer = 'Some Answer';
-//         component.updateScore();
-//         expect(component.answer).toBe('');
-//         expect(component.isCorrect).toBeFalse();
-//     });
+        component.onExportButtonClick(game);
 
-//     it('getStyle should return "selected" for current answer', () => {
-//         const answer = 'Option 1';
-//         component['answer'] = answer;
-//         expect(component.getStyle(answer)).toEqual('selected');
-//     });
+        expect(createObjectURLSpy).toHaveBeenCalled();
+        expect(revokeObjectURLSpy).toHaveBeenCalled();
+        expect(documentSpy).toHaveBeenCalled();
+    });
 
-//     it('shouldRender should return false for empty text', () => {
-//         expect(component.shouldRender('')).toBeFalse();
-//     });
+    it('should emit deleteEvent when onDeleteButtonClick is called', () => {
+        spyOn(gameService, 'deleteGameByID');
+        spyOn(component.deleteEvent, 'emit');
 
-//     it('shouldRender should return true for non-empty text', () => {
-//         expect(component.shouldRender('Non-empty')).toBeTrue();
-//     });
-// });
+        component.onDeleteButtonClick(game);
+
+        expect(gameService.deleteGameByID).toHaveBeenCalledWith('1');
+        expect(component.deleteEvent.emit).toHaveBeenCalledWith(game);
+    });
+
+    it('should redirect to createGame page', () => {
+        const navigateSpy = spyOn(router, 'navigate');
+
+        component.onModifyButtonClick(game);
+
+        expect(navigateSpy).toHaveBeenCalledWith([`/admin/createGame/${game.id}`]);
+    });
+});
