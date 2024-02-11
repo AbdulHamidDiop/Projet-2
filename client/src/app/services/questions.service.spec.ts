@@ -1,6 +1,6 @@
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { API_URL } from '@common/consts';
-import { Choices, Question, Type } from '@common/game';
+import { Choice, Question, Type } from '@common/game';
 import { QuestionsService } from './questions.service';
 
 describe('QuestionsService', () => {
@@ -20,7 +20,7 @@ describe('QuestionsService', () => {
     });
 
     it('getAllQuestions should fetch questions from API', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];
@@ -41,7 +41,7 @@ describe('QuestionsService', () => {
     }));
 
     it('addQuestion should send a POST request to API', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];
@@ -69,7 +69,7 @@ describe('QuestionsService', () => {
     }));
 
     it('editQuestion should send a PUT request to API', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];
@@ -98,7 +98,7 @@ describe('QuestionsService', () => {
     }));
 
     it('deleteQuestion should send a DELETE request to API and emit deleteRequest event', fakeAsync(() => {
-        const mockChoices: Choices[] = [
+        const mockChoices: Choice[] = [
             { text: 'Choice 1', isCorrect: true },
             { text: 'Choice 2', isCorrect: false },
         ];

@@ -5,6 +5,12 @@ import { GameService } from '@app/services/game.service';
 import { Choices, Game, Question } from '@common/game';
 import { v4 } from 'uuid';
 
+const MIN_POINTS = 10;
+const MAX_POINTS = 100;
+
+const MIN_DURATION = 10;
+const MAX_DURATION = 60;
+
 @Component({
     selector: 'app-admin-page',
     templateUrl: './admin-page.component.html',
@@ -23,8 +29,6 @@ export class AdminPageComponent {
     ) {}
 
     async getGames() {
-        // - cdl
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.games = await this.gameService.getAllGames();
     }
 
@@ -102,9 +106,9 @@ export class AdminPageComponent {
                     (question: Question) =>
                         question.points &&
                         typeof question.points === 'number' &&
-                        question.points >= 10 &&
-                        question.points <= 100 &&
-                        question.points % 10 === 0,
+                        question.points >= MIN_POINTS &&
+                        question.points <= MAX_POINTS &&
+                        question.points % MIN_POINTS === 0,
                 )
             ) {
                 this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
@@ -112,11 +116,19 @@ export class AdminPageComponent {
             if (!questions.every((question: Question) => question.choices.length >= 2 && question.choices.length <= 4)) {
                 this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
             }
-            if (!questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))) {
+            if (
+                !questions.every((question: Question) => question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string'))
+            ) {
                 this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
             }
-            if (!questions.every((question: Question) => !question.choices.every((choice: Choices) => choice.isCorrect === true) && !question.choices.every((choiche: Choices) => choiche.isCorrect === false))) {
-                this.errors += "La validité des choix de réponse ne peut pas être que vraie ou que fausse.";
+            if (
+                !questions.every(
+                    (question: Question) =>
+                        !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
+                        !question.choices.every((choiche: Choices) => choiche.isCorrect === false),
+                )
+            ) {
+                this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.';
             }
         }
     }
@@ -130,15 +142,15 @@ export class AdminPageComponent {
                     (question.type === 'QCM' || question.type === 'QRL') &&
                     typeof question.text === 'string' &&
                     typeof question.points === 'number' &&
-                    question.points >= 10 &&
-                    question.points <= 100 &&
-                    question.points % 10 === 0 &&
+                    question.points >= MIN_POINTS &&
+                    question.points <= MAX_POINTS &&
+                    question.points % MIN_POINTS === 0 &&
                     (question.choices?.length ?? 0) >= 2 &&
                     (question.choices?.length ?? 0) <= 4 &&
                     Array.isArray(question.choices) &&
                     question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
                     !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
-                    !question.choices.every((choiche: Choices) => choiche.isCorrect === false)
+                    !question.choices.every((choiche: Choices) => choiche.isCorrect === false),
             )
         );
     }
@@ -158,7 +170,7 @@ export class AdminPageComponent {
         if (!obj.duration || typeof obj.duration !== 'number') {
             this.errors += 'Le jeu importé doit avoir un temps alloué de type int. ';
         } else {
-            if (obj.duration < 10 || obj.duration > 60) {
+            if (obj.duration < MIN_DURATION || obj.duration > MAX_DURATION) {
                 this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes. ';
             }
         }
@@ -170,8 +182,8 @@ export class AdminPageComponent {
             typeof obj.description === 'string' &&
             typeof obj.duration === 'number' &&
             !this.games.some((game) => game.title === obj.title) &&
-            obj.duration >= 10 &&
-            obj.duration <= 60 &&
+            obj.duration >= MIN_DURATION &&
+            obj.duration <= MAX_DURATION &&
             this.isArrayOfQuestions(obj.questions)
         );
     }

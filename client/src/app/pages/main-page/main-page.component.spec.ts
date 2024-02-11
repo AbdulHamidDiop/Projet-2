@@ -37,43 +37,43 @@ describe('MainPageComponent', () => {
     });
 
     it('should navigate to /admin and update shared variable when password is correct', fakeAsync(() => {
-      const spyNavigate = spyOn(component.router, 'navigate').and.stub();
-      const spyUpdateSharedVariable = spyOn(component.communicationService, 'updateSharedVariable').and.stub();
-  
-      component.userInput = 'LOG2990-312';
-  
-      component.verifyPassword();
-  
-      const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
-      expect(req.request.method).toBe('POST');
+        const spyNavigate = spyOn(component.router, 'navigate').and.stub();
+        const spyUpdateSharedVariable = spyOn(component.communicationService, 'updateSharedVariable').and.stub();
 
-      req.flush(true);
-  
-      tick();
-  
-      expect(spyNavigate).toHaveBeenCalledWith(['/admin']);
-      expect(spyUpdateSharedVariable).toHaveBeenCalledWith(true);
+        component.userInput = 'LOG2990-312';
+
+        component.verifyPassword();
+
+        const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
+        expect(req.request.method).toBe('POST');
+
+        req.flush(true);
+
+        tick();
+
+        expect(spyNavigate).toHaveBeenCalledWith(['/admin']);
+        expect(spyUpdateSharedVariable).toHaveBeenCalledWith(true);
     }));
-    
-      it('should display alert for incorrect password', () => {
+
+    it('should display alert for incorrect password', () => {
         const userInput = 'wrongpassword';
         const mockResponse = { body: 'false' };
-    
+
         spyOn(window, 'alert');
-    
+
         component.userInput = userInput;
         component.verifyPassword();
-    
+
         const req = httpMock.expectOne('http://localhost:3000/api/admin/password');
         expect(req.request.method).toBe('POST');
         req.flush(mockResponse);
-    
+
         expect(window.alert).toHaveBeenCalledWith('Incorrect password');
-      });
-    
-      it('should call verifyPassword on button click', () => {
+    });
+
+    it('should call verifyPassword on button click', () => {
         spyOn(component, 'verifyPassword');
         component.onButtonClick();
         expect(component.verifyPassword).toHaveBeenCalled();
-      });
+    });
 });

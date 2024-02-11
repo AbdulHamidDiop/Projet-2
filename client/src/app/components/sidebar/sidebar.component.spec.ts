@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 
+const NUMBER_OF_MESSAGES = 4;
+
 describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
@@ -31,7 +33,7 @@ describe('SidebarComponent', () => {
     });
 
     it('should initialize message history size', () => {
-        expect(component.messages.length).toBe(4);
+        expect(component.messages.length).toBe(NUMBER_OF_MESSAGES);
     });
 
     it('should have initial display message as empty string', () => {
@@ -48,7 +50,7 @@ describe('SidebarComponent', () => {
             component.handleKeyboardPress(event, input);
 
             expect(component.messages[4]).toBe('Test message');
-            expect(component.messages.length).toBe(5);
+            expect(component.messages.length).toBe(NUMBER_OF_MESSAGES + 1);
             expect(component.currentMessage).toBe('');
         });
 
