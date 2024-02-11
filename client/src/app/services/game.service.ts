@@ -110,6 +110,21 @@ export class GameService {
             return false;
         }
     }
+
+    async checkHiddenOrDeleted(game: Game): Promise<boolean> {
+        const response = await fetch(API_URL + 'game/availability' + game.id, {
+            method: 'GET',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const availability: boolean = await response.json();
+        return availability;
+    }
 }
 
 export { Game };
