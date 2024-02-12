@@ -1,8 +1,7 @@
 import { QuestionsService } from '@app/services/questions.service';
 import { Request, Response, Router } from 'express';
+import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
-
-const HTTP_STATUS_OK = 200;
 
 @Service()
 export class QuestionsController {
@@ -35,31 +34,8 @@ export class QuestionsController {
          *             $ref: '#/components/schemas/Question'
          */
         this.router.get('/', async (req: Request, res: Response) => {
+            res.status(StatusCodes.OK);
             res.json(await this.questionsService.sortAllQuestions());
-            res.status(HTTP_STATUS_OK);
-        });
-
-        /**
-         * @swagger
-         *
-         * /api/questions/test:
-         *   get:
-         *     summary: Get the questions without the attribute isCorrect
-         *     description: Return all questions sorted by date of modification and without showing which answer(s) is(are) correct on the client side
-         *     tags:
-         *       - Question
-         *     produces:
-         *      - application/json
-         *     responses:
-         *       200:
-         *         description: All questions without the correct answer shown
-         *         schema:
-         *           type: array
-         *           items:
-         *             $ref: '#/components/schemas/Question'
-         */
-        this.router.get('/test', async (req: Request, res: Response) => {
-            res.json(await this.questionsService.getQuestionsWithoutCorrectShown());
             res.status(HTTP_STATUS_OK);
         });
 
@@ -93,8 +69,9 @@ export class QuestionsController {
          *
          */
         this.router.post('/add', async (req: Request, res: Response) => {
-            res.json(await this.questionsService.addQuestion(req.body));
-            res.status(HTTP_STATUS_OK);
+            await this.questionsService.addQuestion(req.body);
+            res.status(StatusCodes.CREATED);
+            res.send();
         });
 
         /**
@@ -151,9 +128,10 @@ export class QuestionsController {
          *                   isCorrect: false
          *
          */
-        this.router.put('/edit', (req: Request, res: Response) => {
-            res.json(this.questionsService.addQuestion(req.body));
-            res.status(HTTP_STATUS_OK);
+        this.router.put('/edit', async (req: Request, res: Response) => {
+            await this.questionsService.addQuestion(req.body);
+            res.status(StatusCodes.NO_CONTENT);
+            res.send();
         });
 
         /**
@@ -177,9 +155,13 @@ export class QuestionsController {
          *         description: OK
          *
          */
-        this.router.delete('/delete/:id', (req: Request, res: Response) => {
-            res.json(this.questionsService.deleteQuestionByID(req.params.id));
-            res.status(HTTP_STATUS_OK);
+        this.router.delete('/delete/:id', async (req: Request, res: Response) => {
+            if (await this.questionsService.deleteQuestionByID(req.params.id)) {
+                res.status(StatusCodes.NO_CONTENT);
+            } else {
+                res.status(StatusCodes.NOT_FOUND);
+            }
+            res.send();
         });
     }
 }

@@ -14,7 +14,7 @@ export class QuestionsService {
 
     async sortAllQuestions(): Promise<Question[]> {
         const questions: Question[] = await this.getAllQuestions();
-        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime());
+        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(b.lastModification).getTime() - new Date(a.lastModification).getTime());
         return sortedQuestions;
     }
 
@@ -31,10 +31,19 @@ export class QuestionsService {
     }
 
     async deleteQuestionByID(id: string): Promise<boolean> {
+        let questionFound = false;
         const questions: Question[] = await this.getAllQuestions();
-        const updatedQuestions: Question[] = questions.filter((question) => question.id !== id);
-        await fs.writeFile(QUESTIONS_PATH, JSON.stringify(updatedQuestions, null, 2), 'utf8');
-        return true;
+        const updatedQuestions: Question[] = questions.filter((question) => {
+            if (question.id === id) {
+                questionFound = true;
+                return false;
+            }
+            return true;
+        });
+        if (questionFound) {
+            await fs.writeFile(QUESTIONS_PATH, JSON.stringify(updatedQuestions, null, 2), 'utf8');
+        }
+        return questionFound;
     }
 
     async getQuestionsWithoutCorrectShown(): Promise<Question[]> {

@@ -27,8 +27,16 @@
 }
 .choices-container {
     padding-left: 20px;
+    margin-left: 20px;
+    border-left-color: grey;
+    border-left-style: solid;
 }
 
+mat-card {
+    padding: 5px;
+    overflow: visible;
+  }
+  
 .delete-icon {
     color: red;
 }

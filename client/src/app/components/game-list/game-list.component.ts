@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Game, GameService } from '@app/services/game.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { Game, GameService } from '@app/services/game.service';
     templateUrl: './game-list.component.html',
     styleUrls: ['game-list.component.scss'],
 })
-export class GameListComponent {
+export class GameListComponent implements OnInit {
     games: Game[];
     constructor(public gameService: GameService) {}
 

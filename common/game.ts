@@ -22,7 +22,7 @@ export interface Game {
     description?: string;
     duration?: number;
     lastModification?: Date;
-    questions: Question[];
+    questions?: Question[];
     isHidden?: boolean;
     unavailable?: boolean;
 }

@@ -29,26 +29,44 @@ export class GamesService {
         const games: Game[] = await this.getAllGames();
         const game = games.find((g) => g.id === id);
         if (!game) {
-            // throw new Error('Game not found');
             return null;
         }
         return game;
     }
 
     async toggleGameHidden(id: string): Promise<boolean> {
+        let hasChanged = false;
         const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.map((game) =>
-            game.id === id ? { ...game, lastModification: new Date(), isHidden: !game.isHidden } : game,
-        );
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-        return true;
+        const updatedGames: Game[] = games.map((game) => {
+            if (game.id === id) {
+                hasChanged = true;
+                return { ...game, lastModification: new Date(), isHidden: !game.isHidden };
+            } else {
+                return game;
+            }
+        });
+        if (hasChanged) {
+            await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
+            return hasChanged;
+        } else {
+            return false;
+        }
     }
 
     async deleteGameByID(id: string): Promise<boolean> {
+        let gameFound = false;
         const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.filter((game) => game.id !== id);
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-        return true;
+        const updatedGames: Game[] = games.filter((game) => {
+            if (game.id === id) {
+                gameFound = true;
+                return false;
+            }
+            return true;
+        });
+        if (gameFound) {
+            await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
+        }
+        return gameFound;
     }
 
     async getQuestionsWithoutCorrectShown(id: string): Promise<Game> {

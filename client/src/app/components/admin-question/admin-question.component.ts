@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
@@ -19,11 +20,11 @@ export class AdminQuestionComponent {
     constructor(
         public dialog: MatDialog,
         private questionsService: QuestionsService,
+        private router: Router,
     ) {}
 
     openDialog(): void {
         const questionData: Question = this.question ? this.question : ({} as Question);
-
         const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {
             data: { question: questionData },
         });
@@ -38,7 +39,9 @@ export class AdminQuestionComponent {
     }
 
     deleteQuestion(question: Question): void {
-        this.questionsService.deleteQuestion(question);
+        if (this.router.url === '/admin/questions') {
+            this.questionsService.deleteQuestion(question);
+        }
         this.deleteRequest.emit(this.index);
     }
 }
