@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-/*
-=======
 import { HttpClientTestingModule } from '@angular/common/http/testing';
->>>>>>> b3339ce74aedd2b734627e4e3f5e4cce434b7ace
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -15,10 +11,10 @@ describe('GameCardComponent', () => {
     let fixture: ComponentFixture<GameCardComponent>;
     let gameService: GameService;
     let router: Router;
-    let game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+    let game: Game = { id: '1', title: 'Test Game', questions: [], description: '', duration: 10, lastModification: null, isHidden: false };
 
     beforeEach(() => {
-        game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+        game = { id: '1', title: 'Test Game', questions: [], description: '', duration: 10, lastModification: null, isHidden: false };
         TestBed.configureTestingModule({
             declarations: [GameCardComponent],
             imports: [HttpClientTestingModule, RouterTestingModule],
@@ -78,4 +74,3 @@ describe('GameCardComponent', () => {
         expect(navigateSpy).toHaveBeenCalledWith([`/admin/createGame/${game.id}`]);
     });
 });
-*/

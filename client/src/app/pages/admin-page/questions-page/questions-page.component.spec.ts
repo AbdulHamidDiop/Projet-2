@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,7 +13,7 @@ import { QuestionsPageComponent } from './questions-page.component';
 describe('QuestionsPageComponent', () => {
     let component: QuestionsPageComponent;
     let fixture: ComponentFixture<QuestionsPageComponent>;
-    let mockDialog: unknown;
+    let mockDialog: any;
     let mockQuestion: Question;
 
     beforeEach(() => {
@@ -40,6 +41,7 @@ describe('QuestionsPageComponent', () => {
                 { text: 'London', isCorrect: false },
                 { text: 'Madrid', isCorrect: false },
             ],
+            answer: '',
         };
     });
 
@@ -85,7 +87,7 @@ describe('QuestionsPageComponent', () => {
     });
 
     it('should not push result to questions array if result is null', () => {
-        const mockDialogRef: unknown = {
+        const mockDialogRef: any = {
             afterClosed: () => of(null),
         };
         mockDialog.open.and.returnValue(mockDialogRef);

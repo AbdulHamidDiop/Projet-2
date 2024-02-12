@@ -3,7 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { QuestionsService } from '@app/services/questions.service';
-import { Question, Type } from '@common/game';
+import { Question } from '@common/game';
 @Component({
     selector: 'app-admin-question',
     templateUrl: './admin-question.component.html',
@@ -19,15 +19,11 @@ export class AdminQuestionComponent {
     constructor(
         private dialog: MatDialog,
         private questionsService: QuestionsService,
-        private router: Router,
+        public router: Router,
     ) {}
 
     openDialog(): void {
         const questionData: Question = this.question ? this.question : ({} as Question);
-<<<<<<< HEAD
-        this.question.type = Type.QCM;
-=======
->>>>>>> b3339ce74aedd2b734627e4e3f5e4cce434b7ace
         const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {
             data: { question: questionData },
         });

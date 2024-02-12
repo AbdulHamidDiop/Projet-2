@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -12,7 +13,7 @@ import { AdminPageComponent } from './admin-page.component';
 describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
     let fixture: ComponentFixture<AdminPageComponent>;
-    let mockGameFile: unknown;
+    let mockGameFile: any;
     let fakeFile: File;
     let readFileSpy;
 
@@ -103,6 +104,10 @@ describe('AdminPageComponent', () => {
         const mockGame: Game = {
             title: 'test',
             questions: [],
+            id: '',
+            description: '',
+            duration: 10,
+            lastModification: null,
         };
         spyOn(component.gameService, 'getAllGames').and.returnValue(Promise.resolve([mockGame]));
         await component.ngOnInit();
@@ -125,7 +130,10 @@ describe('AdminPageComponent', () => {
         const mockGame: Game = {
             title: 'test',
             questions: [],
-            lastModification: new Date(),
+            id: '',
+            description: '',
+            duration: 10,
+            lastModification: null,
         };
         component.onCheckGame(mockGame);
         expect(mockGame.lastModification).toEqual(new Date());
@@ -133,13 +141,21 @@ describe('AdminPageComponent', () => {
 
     it('should delete game when onDeleteGame is called', () => {
         const mockGame1: Game = {
-            title: 'test1',
+            title: 'Game 1',
             questions: [],
+            id: '',
+            description: '',
+            duration: 10,
+            lastModification: null,
         };
         component.games.push(mockGame1);
         const mockGame2: Game = {
-            title: 'test2',
+            title: 'Game 2',
             questions: [],
+            id: '',
+            description: '',
+            duration: 10,
+            lastModification: null,
         };
         component.games.push(mockGame2);
         component.onDeleteGame(mockGame1);
@@ -159,6 +175,10 @@ describe('AdminPageComponent', () => {
         const mockGame: Game = {
             title: 'Trivia des top 50 artistes des années 2000',
             questions: [],
+            id: '',
+            description: '',
+            duration: 10,
+            lastModification: null,
         };
         component.games.push(mockGame);
         expect(component.isGame(mockGameFile)).toBeFalse();
@@ -272,7 +292,7 @@ describe('AdminPageComponent', () => {
         expect(component.verifyIfJSON()).toBeTrue();
     });
     it('should set selectedFile when a file is selected', () => {
-        const mockEvent = { target: { files: [fakeFile] } } as unknown as Event;
+        const mockEvent = { target: { files: [fakeFile] } } as any as Event;
 
         component.onFileSelected(mockEvent);
 

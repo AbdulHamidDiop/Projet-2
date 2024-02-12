@@ -27,8 +27,8 @@ describe('GameListComponent', () => {
     describe('ngOnInit', () => {
         it('should fetch all games and filter hidden ones', async () => {
             const games: Game[] = [
-                { id: '1', title: 'Game 1', isHidden: false, questions: [] },
-                { id: '2', title: 'Game 2', isHidden: true, questions: [] },
+                { id: '1', title: 'Game 1', questions: [], description: '', duration: 10, lastModification: null, isHidden: false },
+                { id: '2', title: 'Game 1', questions: [], description: '', duration: 10, lastModification: null, isHidden: true },
             ];
 
             gameService.getAllGames.and.returnValue(Promise.resolve(games));
@@ -41,7 +41,7 @@ describe('GameListComponent', () => {
 
     describe('selectGame', () => {
         it('should call gameService.selectGame with the provided game', () => {
-            const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+            const game: Game = { id: '1', title: 'Game 1', questions: [], description: '', duration: 10, lastModification: null, isHidden: false };
             component.selectGame(game);
             expect(gameService.selectGame).toHaveBeenCalledWith(game);
         });

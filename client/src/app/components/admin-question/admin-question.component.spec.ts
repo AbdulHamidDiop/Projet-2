@@ -1,10 +1,10 @@
-<<<<<<< HEAD
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { MatDialog } from '@angular/material/dialog';
 // eslint-disable-next-line no-restricted-imports
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question, Type } from '@common/game';
@@ -71,6 +71,12 @@ describe('AdminQuestionComponent', () => {
                         deleteQuestion: deleteQuestionSpy,
                     },
                 },
+                {
+                    provide: Router,
+                    useValue: {
+                        url: '/admin/questions',
+                    },
+                },
             ],
         }).compileComponents();
     });
@@ -103,5 +109,3 @@ describe('AdminQuestionComponent', () => {
         expect(deleteQuestionSpy).toHaveBeenCalled();
     });
 });
-=======
->>>>>>> b3339ce74aedd2b734627e4e3f5e4cce434b7ace

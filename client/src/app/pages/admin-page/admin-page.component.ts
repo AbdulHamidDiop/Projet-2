@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Component, ElementRef } from '@angular/core';
-=======
 import { Component, ElementRef, OnInit } from '@angular/core';
->>>>>>> b3339ce74aedd2b734627e4e3f5e4cce434b7ace
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
@@ -102,36 +97,6 @@ export class AdminPageComponent implements OnInit {
     questionErrorsHandling(questions: Question[]) {
         if (questions === undefined || questions.length === 0) {
             this.errors += 'Le jeu doit contenir au moins une question. ';
-<<<<<<< HEAD
-        }
-        if (!questions.every((question: Question) => question.type === Type.QCM || question.type === Type.QRL)) {
-            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
-        }
-        if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
-            this.errors += 'Les questions doivent avoir un texte de type string. ';
-        }
-        if (
-            !questions.every(
-                (question: Question) =>
-                    question.points &&
-                    typeof question.points === 'number' &&
-                    question.points >= 10 &&
-                    question.points <= 100 &&
-                    question.points % 10 === 0,
-            )
-        ) {
-            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
-        }
-        if (!questions.every((question: Question) => (question.choices?.length ?? 0) >= 2 && (question.choices?.length ?? 0) <= 4)) {
-            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
-        }
-        if (
-            !questions.every(
-                (question: Question) => question.choices?.every((choice: Choices) => choice.text && typeof choice.text === 'string') ?? false,
-            )
-        ) {
-            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
-=======
         } else {
             if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
                 this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
@@ -168,7 +133,6 @@ export class AdminPageComponent implements OnInit {
             ) {
                 this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.';
             }
->>>>>>> b3339ce74aedd2b734627e4e3f5e4cce434b7ace
         }
     }
 
@@ -176,6 +140,7 @@ export class AdminPageComponent implements OnInit {
         return (
             Array.isArray(questions) &&
             questions.every(
+                // eslint-disable-next-line complexity
                 (question: Question) =>
                     typeof question.type === 'string' &&
                     (question.type === Type.QCM || question.type === Type.QRL) &&
