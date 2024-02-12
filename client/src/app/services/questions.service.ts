@@ -1,6 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
+import { FetchService } from './fetch.service';
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +11,7 @@ export class QuestionsService {
     questions: Question[] = [];
     currentQuestionIndex: number = 0;
 
-    constructor() {
+    constructor(private fetchService: FetchService) {
         this.getAllQuestions().then((questions: Question[]) => {
             this.questions = questions;
         });
@@ -35,7 +36,7 @@ export class QuestionsService {
     // }
 
     async getAllQuestions(): Promise<Question[]> {
-        const response = await fetch(API_URL + 'questions');
+        const response = await this.fetchService.fetch(API_URL + 'questions');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -47,7 +48,7 @@ export class QuestionsService {
     }
 
     async addQuestion(question: Question): Promise<void> {
-        const response = await fetch(API_URL + 'questions/add', {
+        const response = await this.fetchService.fetch(API_URL + 'questions/add', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -61,7 +62,7 @@ export class QuestionsService {
     }
 
     async editQuestion(question: Question): Promise<void> {
-        const response = await fetch(API_URL + 'questions/edit', {
+        const response = await this.fetchService.fetch(API_URL + 'questions/edit', {
             method: 'PUT',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -75,7 +76,7 @@ export class QuestionsService {
     }
 
     async deleteQuestion(question: Question): Promise<void> {
-        const response = await fetch(API_URL + 'questions/delete/' + question.id, {
+        const response = await this.fetchService.fetch(API_URL + 'questions/delete/' + question.id, {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -85,7 +86,7 @@ export class QuestionsService {
     }
 
     async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
-        const response = await fetch(API_URL + 'questions/test');
+        const response = await this.fetchService.fetch(API_URL + 'questions/test');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -98,7 +99,7 @@ export class QuestionsService {
 
     async checkAnswer(answer: string[], id: string): Promise<boolean> {
         try {
-            const response = await fetch(API_URL + 'questions/check', {
+            const response = await this.fetchService.fetch(API_URL + 'questions/check', {
                 method: 'POST',
                 headers: {
                     // eslint-disable-next-line @typescript-eslint/naming-convention
