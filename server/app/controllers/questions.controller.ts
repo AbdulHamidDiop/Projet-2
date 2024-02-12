@@ -3,6 +3,8 @@ import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
+const HTTP_STATUS_OK = 200;
+
 @Service()
 export class QuestionsController {
     router: Router;
@@ -36,6 +38,7 @@ export class QuestionsController {
         this.router.get('/', async (req: Request, res: Response) => {
             res.status(StatusCodes.OK);
             res.json(await this.questionsService.sortAllQuestions());
+            res.status(StatusCodes.OK);
         });
 
         /**
@@ -52,7 +55,7 @@ export class QuestionsController {
          *         content:
          *           application/json:
          *             schema:
-         *               $ref: '#/components/schemas/Question'
+         *               $ref: '#/components/schemas/Question/choice'
          *             example:
          *               id: "test"
          *               type: "QCM"
@@ -71,6 +74,31 @@ export class QuestionsController {
             await this.questionsService.addQuestion(req.body);
             res.status(StatusCodes.CREATED);
             res.send();
+        });
+
+        /**
+         * @swagger
+         *
+         * /api/questions/check:
+         *   post:
+         *     summary: Check if an answer is correct
+         *     tags:
+         *       - Question
+         *     requestBody:
+         *         description: Choice
+         *         required: true
+         *         content:
+         *           application/json:
+         *             schema:
+         *               $ref: '#/components/schemas/Question'
+         *             example:
+         *
+         *
+         */
+        this.router.post('/check', async (req, res) => {
+            const { answer, id } = req.body;
+            const isCorrect = await this.questionsService.isCorrectAnswer(answer, id);
+            res.status(StatusCodes.OK).json({ isCorrect });
         });
 
         /**

@@ -98,7 +98,7 @@ export class CreateQuestionDialogComponent {
             text: ['', Validators.required],
             points: ['', [Validators.required, Validators.min(MIN_POINTS), Validators.max(MAX_POINTS), multipleOfTenValidator]],
             choices: this.fb.array([], [Validators.minLength(MIN_CHOICES), hasIncorrectAndCorrectAnswer]),
-            addToBank: [false],
+            addToBank: [true],
         });
     }
 

@@ -41,7 +41,7 @@
     <mat-selection-list #choices [attr.aria-disabled]="disableChoices ? 'true' : null">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
             <mat-list-item
-                (click)="!disableChoices && handleQCMChoice(choice.text, choice.isCorrect)"
+                (click)="!disableChoices && handleQCMChoice(choice.text)"
                 (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
                 (keyup)="!disableChoices && $event.stopPropagation()"
                 *ngIf="shouldRender(choice.text)"
