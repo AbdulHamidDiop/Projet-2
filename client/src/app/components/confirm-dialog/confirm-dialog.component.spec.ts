@@ -1,25 +1,31 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { AppMaterialModule } from '@app/modules/material.module';
 import { ConfirmDialogComponent } from './confirm-dialog.component';
 
 describe('ConfirmDialogComponent', () => {
     let component: ConfirmDialogComponent;
     let fixture: ComponentFixture<ConfirmDialogComponent>;
 
+    const dialogCloseSpy = jasmine.createSpy('close').and.callThrough();
+
     beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [MatDialogModule],
+            imports: [AppMaterialModule],
             declarations: [ConfirmDialogComponent],
             providers: [
                 {
                     provide: MatDialogRef,
+                    useValue: {
+                        close: dialogCloseSpy,
+                    },
                 },
                 {
                     provide: MAT_DIALOG_DATA,
                     useValue: {
-                        title: '',
-                        message: '',
+                        title: 'Title',
+                        message: 'Message',
                     },
                 },
             ],
@@ -29,7 +35,11 @@ describe('ConfirmDialogComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
+    it('Should call MatDialogRef.close on pressing confirm button, MatDialogRef.close on pressing dismiss button', () => {
+        component.onConfirm();
+        expect(dialogCloseSpy).toHaveBeenCalled();
+        dialogCloseSpy.calls.reset();
+        component.onDismiss();
+        expect(dialogCloseSpy).toBeTruthy();
     });
 });
