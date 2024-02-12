@@ -1,9 +1,8 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Choices } from '@app/interfaces/game-elements';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
-import { Choice, Game, Question } from '@common/game';
+import { Choices, Game, Question } from '@common/game';
 import { v4 } from 'uuid';
 
 const MIN_POINTS = 10;

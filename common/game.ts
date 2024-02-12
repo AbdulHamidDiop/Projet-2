@@ -1,4 +1,4 @@
-export interface Choice {
+export interface Choices {
     text: string;
     isCorrect: boolean;
 }
@@ -13,7 +13,7 @@ export interface Question {
     lastModification: Date;
     text: string;
     points: number;
-    choices: Choice[];
+    choices: Choices[];
 }
 export interface Game {
     id: string;
@@ -22,7 +22,7 @@ export interface Game {
     description?: string;
     duration?: number;
     lastModification?: Date;
-    questions?: Question[];
+    questions: Question[];
     isHidden?: boolean;
     unavailable?: boolean;
 }

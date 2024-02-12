@@ -6,8 +6,6 @@ import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
 const HTTP_STATUS_OK = 200;
-const HTTP_STATUS_CREATED = 201;
-const HTTP_STATUS_NO_CONTENT = 204;
 const HTTP_STATUS_NOT_FOUND = 404;
 const HTTP_STATUS_BAD_REQUEST = 400;
 

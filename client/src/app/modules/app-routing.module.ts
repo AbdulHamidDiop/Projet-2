@@ -12,8 +12,8 @@ import { WaitingPageComponent } from '@app/pages/waiting-page/waiting-page.compo
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: MainPageComponent },
-    { path: 'game/:id', component: GamePageComponent }, /// ///////////////////////////////////////////////////
-    { path: 'game/:id/test', component: GamePageComponent }, /// ///////////////////////////////////////////////////
+    { path: 'game/:id', component: GamePageComponent },
+    { path: 'game/:id/test', component: GamePageComponent },
     { path: 'createGame', component: CreateGamePageComponent },
     { path: 'admin', component: AdminPageComponent },
     { path: 'admin/questions', component: QuestionsPageComponent },

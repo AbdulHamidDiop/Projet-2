@@ -97,7 +97,7 @@ describe('PlayAreaComponent', () => {
     it('handleQCMChoice should allow multiple selections and update score correctly', () => {
         const correctChoices = component.question.choices.filter((choice) => choice.isCorrect);
         correctChoices.forEach((choice) => {
-            component.handleQCMChoice(choice.text, choice.isCorrect);
+            component.handleQCMChoice(choice.text);
         });
 
         component.updateScore();
@@ -147,7 +147,7 @@ describe('PlayAreaComponent', () => {
         const choices = component.question.choices;
         if (choices) {
             choices.forEach((choice) => {
-                component.handleQCMChoice(choice.text, choice.isCorrect);
+                component.handleQCMChoice(choice.text);
             });
 
             choices.forEach((choice) => {
@@ -170,12 +170,10 @@ describe('PlayAreaComponent', () => {
         expect(component.buttonDetect).toHaveBeenCalled();
     });
 
-    it('nextQuestion should reset answer and isCorrect', () => {
-        component.isCorrect = [true, true];
+    it('nextQuestion should reset answer', () => {
         component.answer = ['Some Answer', 'Another Answer'];
         component.nextQuestion();
         expect(component.answer).toEqual([]);
-        expect(component.isCorrect).toEqual([]);
     });
 
     it('updateScore should correctly update score for correct answers', () => {
@@ -219,7 +217,7 @@ describe('PlayAreaComponent', () => {
             spyOn(component, 'handleQCMChoice');
             const event = new KeyboardEvent('keydown', { key: '1' });
             component.buttonDetect(event);
-            expect(component.handleQCMChoice).toHaveBeenCalledWith(choice.text, choice.isCorrect);
+            expect(component.handleQCMChoice).toHaveBeenCalledWith(choice.text);
         }
     });
 
@@ -240,7 +238,7 @@ describe('PlayAreaComponent', () => {
         if (choices) {
             const wrongChoice = choices.find((choice) => !choice.isCorrect);
             if (wrongChoice) {
-                component.handleQCMChoice(wrongChoice.text, wrongChoice.isCorrect);
+                component.handleQCMChoice(wrongChoice.text);
                 component.updateScore();
                 expect(component.playerScore).toBe(0);
             }
@@ -283,7 +281,6 @@ describe('PlayAreaComponent', () => {
         dialogRefSpyObj.afterClosed().subscribe(() => {
             expect(component.score).toBe(0);
             expect(component.answer.length).toBe(0);
-            expect(component.isCorrect.length).toBe(0);
             expect(component.router.navigate).toHaveBeenCalledWith(['/createGame']);
         });
     });
@@ -310,8 +307,8 @@ describe('PlayAreaComponent', () => {
 
             component.showFeedback = true;
 
-            component.handleQCMChoice('Option 1', true); // Correct and selected
-            component.handleQCMChoice('Option 2', false); // Incorrect and selected
+            component.handleQCMChoice('Option 1'); // Correct and selected
+            component.handleQCMChoice('Option 2'); // Incorrect and selected
         });
 
         it('returns "correct" for correct and selected choices', () => {

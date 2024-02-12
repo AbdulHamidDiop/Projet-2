@@ -1,4 +1,4 @@
-import { Choice, Question } from '@common/game';
+import { Choices, Question } from '@common/game';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
 
@@ -52,9 +52,9 @@ export class QuestionsService {
         const questionsWithoutCorrect: Question[] = [];
 
         for (const currentQuestion of questions) {
-            const choicesWithoutCorrect: Choice[] = [];
+            const choicesWithoutCorrect: Choices[] = [];
             for (const currentChoice of currentQuestion.choices) {
-                const choiceWithoutCorrect: Choice = { ...currentChoice };
+                const choiceWithoutCorrect: Choices = { ...currentChoice };
                 delete choiceWithoutCorrect.isCorrect;
                 choicesWithoutCorrect.push(choiceWithoutCorrect);
             }
