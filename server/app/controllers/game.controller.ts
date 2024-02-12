@@ -364,5 +364,31 @@ export class GameController {
 
             return { message: 'err' };
         });
+                /**
+         * @swagger
+         *
+         * /api/game/{id}:
+         *   get:
+         *     description: Get game by ID
+         *     tags:
+         *       - Game
+         *     parameters:
+         *       - in: path
+         *         name: id
+         *         required: true
+         *         description: The ID of the game to get
+         *         schema:
+         *           type: string
+         *         example: "test"
+         *     produces:
+         *       - application/json
+         *     responses:
+         *       200:
+         *         description: Successful response
+         */
+
+        this.router.get('/availability/:id', async (req: Request, res: Response) => {
+            res.status(HTTP_STATUS_OK).json(await this.gamesService.getGameByID(req.params.id));
+        });
     }
 }

@@ -16,9 +16,9 @@ export class GameListComponent {
         this.games = this.games.filter((game) => game.isHidden === false);
     }
 
-    selectGame(game: Game): void {
+    async selectGame(game: Game): Promise<void> {
         this.gameService.selectGame(game);
-        this.checkAvailable(game);
+        await this.checkAvailable(game);
     }
 
     getSelectedGame(): Game {
@@ -26,9 +26,8 @@ export class GameListComponent {
     }
 
     async checkAvailable(game: Game): Promise<void> {
-        if (await this.gameService.checkHiddenOrDeleted(game)) {
+        if (!await this.gameService.checkHiddenOrDeleted(game)) {
             game.unavailable = true;
-            this.ngOnInit();
         }
     }
 }
