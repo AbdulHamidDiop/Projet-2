@@ -220,5 +220,13 @@
     "addToBank": true,
     "id": "32d9522c-63a2-4118-a6e1-a87b16c6303d",
     "lastModification": "2024-02-12T00:25:47.735Z"
+  },
+  {
+    "type": "QRL",
+    "text": "definessez",
+    "points": 10,
+    "addToBank": true,
+    "id": "e2cfed6b-d5c8-4bb0-bac6-cc1e91cab168",
+    "lastModification": "2024-02-12T01:42:16.454Z"
   }
 ]

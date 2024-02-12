@@ -141,7 +141,8 @@ export class PlayAreaComponent {
         return false;
     }
 
-    // handleQRLAnswer(answer: string) { // sprint 2
+    // TODO: SPRINT 2
+    // handleQRLAnswer(answer: string) {
     //     if (answer === 'B') {
     //         alert('La réponse correcte a été choisie');
     //     }
@@ -151,8 +152,9 @@ export class PlayAreaComponent {
         this.disableChoices = true;
 
         this.showFeedback = true;
-        this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
-
+        if (this.question.type === Type.QCM) {
+            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+        }
         setTimeout(() => {
             this.updateScore();
             this.showFeedback = false;
@@ -163,6 +165,10 @@ export class PlayAreaComponent {
     }
 
     async updateScore() {
+        if (this.question.type === Type.QRL) {
+            this.score += this.question.points;
+            return;
+        }
         const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.answer, this.question.id);
         if (isCorrectAnswer && this.question.points) {
             this.score += this.question.points;
