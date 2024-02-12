@@ -25,6 +25,15 @@ export class QuestionsService {
         }
     }
 
+    // getQuestionsFromGame(id: string) {
+    //     const questions = this.gameService.getGameQuestionsByID(id);
+    //     if (questions.length === 0) {
+    //         return;
+    //     } else {
+    //         this.questions = questions;
+    //     }
+    // }
+
     async getAllQuestions(): Promise<Question[]> {
         const response = await fetch(API_URL + 'questions');
         if (!response.ok) {
@@ -73,5 +82,43 @@ export class QuestionsService {
             throw new Error(`Error: ${response.status}`);
         }
         this.deleteRequest.emit(question);
+    }
+
+    async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
+        const response = await fetch(API_URL + 'questions/test');
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const questions: Question[] = await response.json();
+        if (this.questions.length < questions.length) {
+            this.questions = questions;
+        }
+        return questions;
+    }
+
+    async checkAnswer(answer: string[], id: string): Promise<boolean> {
+        try {
+            const response = await fetch(API_URL + 'questions/check', {
+                method: 'POST',
+                headers: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ answer, id }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur de communication avec le serveur. Statut : ${response.status}`);
+            }
+            const result = await response.json();
+
+            if (result && result.isCorrect) {
+                return result.isCorrect;
+            } else {
+                throw new Error('Réponse du serveur malformée');
+            }
+        } catch (error) {
+            return false;
+        }
     }
 }

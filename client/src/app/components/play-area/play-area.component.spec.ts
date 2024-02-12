@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-empty-function */
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ActivatedRoute } from '@angular/router';
 import { PlayAreaComponent, SHOW_FEEDBACK_DELAY } from '@app/components/play-area/play-area.component';
-import { QuestionsService } from '@app/services/questions.service';
+import { GameManagerService } from '@app/services/game-manager.service';
 import { TimeService } from '@app/services/time.service';
-import { Question, Type } from '@common/game';
+import { Game, Question, Type } from '@common/game';
 import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
@@ -16,7 +18,7 @@ describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let timeServiceSpy: SpyObj<TimeService>;
-    let questionsService: QuestionsService;
+    let gameManager: GameManagerService;
 
     beforeEach(async () => {
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer']);
@@ -26,31 +28,27 @@ describe('PlayAreaComponent', () => {
             declarations: [PlayAreaComponent],
             providers: [
                 { provide: TimeService, useValue: timeServiceSpy },
+                { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => 'test-game-id' }, queryParams: { testMode: 'true' } } } },
+
                 {
-                    provide: QuestionsService,
-                    useValue: {
-                        get question(): {
-                            id: 'test-qcm';
-                            type: Type.QCM;
-                            text: 'Test QCM Question?';
-                            // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-                            points: 10;
-                            lastModification: Date;
-                            choices: [{ text: 'Option 1'; isCorrect: true }, { text: 'Option 2'; isCorrect: false }];
-                        } {
-                            return {
-                                id: 'test-qcm',
-                                type: Type.QCM,
-                                text: 'Test QCM Question?',
-                                points: 10,
-                                lastModification: new Date(),
-                                choices: [
-                                    { text: 'Option 1', isCorrect: true },
-                                    { text: 'Option 2', isCorrect: false },
-                                ],
-                            };
-                        },
-                    },
+                    provide: GameManagerService,
+                    useValue: jasmine.createSpyObj('GameManagerService', {
+                        nextQuestion: () => ({
+                            id: 'test-qcm',
+                            type: Type.QCM,
+                            text: 'Test QCM Question?',
+                            points: 10,
+                            lastModification: new Date(),
+                            choices: [
+                                { text: 'Option 1', isCorrect: true },
+                                { text: 'Option 2', isCorrect: false },
+                            ],
+                        }),
+                        initialize: () => {},
+                        reset: () => {},
+                        isCorrectAnswer: () => of(true),
+                        getFeedBack: () => of([{ choice: 'Option 1', status: 'correct' }]),
+                    }),
                 },
                 {
                     provide: MatDialog,
@@ -62,28 +60,13 @@ describe('PlayAreaComponent', () => {
             ],
         }).compileComponents();
 
-        questionsService = TestBed.inject(QuestionsService);
+        gameManager = TestBed.inject(GameManagerService);
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
-
-        const qcmQuestion: Question = {
-            id: 'test-qcm',
-            type: Type.QCM,
-            text: 'Test QCM Question?',
-            points: 10,
-            lastModification: new Date(),
-            choices: [
-                { text: 'Option 1', isCorrect: true },
-                { text: 'Option 2', isCorrect: false },
-            ],
-            answer: '',
-        };
-
-        spyOnProperty(questionsService, 'question', 'get').and.returnValue(qcmQuestion);
-
+        gameManager = TestBed.inject(GameManagerService);
         fixture.detectChanges();
     });
 
@@ -95,39 +78,45 @@ describe('PlayAreaComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('handleQCMChoice should allow multiple selections and update score correctly', () => {
-        const correctChoices = component.question.choices.filter((choice) => choice.isCorrect);
-        correctChoices.forEach((choice) => {
-            component.handleQCMChoice(choice.text, choice.isCorrect);
-        });
+    it('handleQCMChoice should allow multiple selections and set the answer array correctly', () => {
+        component.handleQCMChoice('Option 1');
+        component.handleQCMChoice('Option 2');
 
-        component.updateScore();
+        expect(component.answer).toEqual(['Option 1', 'Option 2']);
 
-        const expectedScore = correctChoices.length * component.question.points;
-        expect(component.playerScore).toBe(expectedScore);
+        component.handleQCMChoice('Option 1');
+        expect(component.answer).toEqual(['Option 2']);
+
+        component.handleQCMChoice('Option 2');
+        expect(component.answer.length).toBe(0);
     });
 
-    it('nextQuestion should load a new QCM question', () => {
-        const newQCMQuestion: Question = {
+    it('nextQuestion should load a new QCM question', fakeAsync(() => {
+        // Prepare the next question to be returned by the GameManagerService
+        gameManager = TestBed.inject(GameManagerService);
+        const newQCMQuestion = {
             id: 'new-qcm',
             type: Type.QCM,
             text: 'Next QCM Question?',
-            points: 20,
+            points: 10,
             lastModification: new Date(),
             choices: [
-                { text: 'New Option 1', isCorrect: false },
-                { text: 'New Option 2', isCorrect: true },
+                { text: 'Option 1', isCorrect: true },
+                { text: 'Option 2', isCorrect: false },
             ],
             answer: '',
         };
-
-        spyOnProperty(questionsService, 'question', 'get').and.returnValue(newQCMQuestion);
+        spyOn(gameManager, 'nextQuestion').and.returnValue(newQCMQuestion);
 
         component.nextQuestion();
 
+        fixture.detectChanges();
+
         expect(component.question).toEqual(newQCMQuestion);
-        expect(component.nbChoices).toBe(newQCMQuestion.choices?.length ?? 0);
-    });
+        expect(component.question.text).toEqual('Next QCM Question?');
+        expect(component.question.choices.length).toBe(2);
+        expect(component.nbChoices).toBe(2);
+    }));
 
     it('mouseHitDetect should call startTimer with 5 seconds on left click', () => {
         const mockEvent = { button: 0 } as MouseEvent;
@@ -136,26 +125,35 @@ describe('PlayAreaComponent', () => {
         expect(timeServiceSpy.startTimer).toHaveBeenCalledWith(component['timer']);
     });
 
-    it('buttonDetect should modify the buttonPressed variable', () => {
-        const expectedKey = 'a';
+    it('buttonDetect should modify the buttonPressed variable and call handleQCMChoice', () => {
+        spyOn(component, 'handleQCMChoice');
+        component.question = {
+            type: Type.QCM, // Make sure to set the type
+            choices: [
+                { text: 'Option 1', isCorrect: true },
+                { text: 'Option 2', isCorrect: false },
+            ],
+        } as Question;
+        component.nbChoices = component.question.choices.length; // Set nbChoices
+
+        const expectedKey = '1';
         const buttonEvent = {
             key: expectedKey,
         } as KeyboardEvent;
         component.buttonDetect(buttonEvent);
         expect(component.buttonPressed).toEqual(expectedKey);
+        expect(component.handleQCMChoice).toHaveBeenCalled();
     });
 
-    it('isChoice should return true for selected choices', () => {
-        const choices = component.question.choices;
-        if (choices) {
-            choices.forEach((choice) => {
-                component.handleQCMChoice(choice.text, choice.isCorrect);
-            });
+    it('isChoice should return true for selected choices and false for unselected', () => {
+        const choices = [{ text: 'Option 1' }];
+        component.answer = choices.map((choice) => choice.text);
 
-            choices.forEach((choice) => {
-                expect(component.isChoice(choice.text)).toBe(true);
-            });
-        }
+        component.handleQCMChoice(choices[0].text);
+        expect(component.isChoice(choices[0].text)).toBe(false);
+
+        component.handleQCMChoice(choices[0].text);
+        expect(component.isChoice(choices[0].text)).toBe(true);
     });
 
     it('should handle keyboard events for different keys', () => {
@@ -172,25 +170,31 @@ describe('PlayAreaComponent', () => {
         expect(component.buttonDetect).toHaveBeenCalled();
     });
 
-    it('nextQuestion should reset answer and isCorrect', () => {
-        component.isCorrect = [true, true];
+    it('nextQuestion should reset answer', () => {
         component.answer = ['Some Answer', 'Another Answer'];
         component.nextQuestion();
         expect(component.answer).toEqual([]);
-        expect(component.isCorrect).toEqual([]);
     });
 
-    it('updateScore should correctly update score for correct answers', () => {
+    it('updateScore should correctly update score for correct answers', async () => {
+        jasmine.getEnv().allowRespy(true);
+        spyOn(gameManager, 'isCorrectAnswer').and.returnValue(Promise.resolve(true));
+
         component.question = {
             points: 10,
-            choices: [
-                { text: 'Answer 1', isCorrect: true },
-                { text: 'Answer 2', isCorrect: false },
-            ],
-        } as Question;
-        component.answer = ['Answer 1'];
-        component.updateScore();
-        expect(component.score).toEqual(DEFAULT_POINTS);
+        } as unknown as Question;
+
+        component.score = 0;
+        await component.updateScore();
+        expect(component.score).toBe(DEFAULT_POINTS);
+
+        component.score = 0;
+        component.question = {
+            type: Type.QRL,
+            points: 10,
+        } as unknown as Question;
+        await component.updateScore();
+        expect(component.score).toBe(DEFAULT_POINTS);
     });
 
     it('updateScore should not update score for incorrect or incomplete answers', () => {
@@ -221,7 +225,7 @@ describe('PlayAreaComponent', () => {
             spyOn(component, 'handleQCMChoice');
             const event = new KeyboardEvent('keydown', { key: '1' });
             component.buttonDetect(event);
-            expect(component.handleQCMChoice).toHaveBeenCalledWith(choice.text, choice.isCorrect);
+            expect(component.handleQCMChoice).toHaveBeenCalledWith(choice.text);
         }
     });
 
@@ -242,7 +246,7 @@ describe('PlayAreaComponent', () => {
         if (choices) {
             const wrongChoice = choices.find((choice) => !choice.isCorrect);
             if (wrongChoice) {
-                component.handleQCMChoice(wrongChoice.text, wrongChoice.isCorrect);
+                component.handleQCMChoice(wrongChoice.text);
                 component.updateScore();
                 expect(component.playerScore).toBe(0);
             }
@@ -285,9 +289,36 @@ describe('PlayAreaComponent', () => {
         dialogRefSpyObj.afterClosed().subscribe(() => {
             expect(component.score).toBe(0);
             expect(component.answer.length).toBe(0);
-            expect(component.isCorrect.length).toBe(0);
             expect(component.router.navigate).toHaveBeenCalledWith(['/createGame']);
         });
+    });
+
+    it('should get feedback and update state for QCM questions', async () => {
+        component.question = { id: '123', type: Type.QCM } as Question;
+        component.answer = ['Option 1'];
+
+        await component.confirmAnswers();
+        expect(gameManager.getFeedBack).toHaveBeenCalledWith('123', ['Option 1']);
+    });
+
+    it('should navigate to createGame if this.GameManager.endGame is true', () => {
+        spyOn(component.router, 'navigate');
+        gameManager.endGame = true;
+        component.endGameTest();
+        expect(component.router.navigate).toHaveBeenCalledWith(['/createGame']);
+    });
+
+    it('should set inTestMode to true when queryparams testMode is true', () => {
+        const route = TestBed.inject(ActivatedRoute);
+        route.snapshot.queryParams = { testMode: 'true' };
+        component = fixture.componentInstance;
+        expect(component.inTestMode).toBeTrue();
+    });
+
+    it('should initialize this.question on init', async () => {
+        component.gameManager.game = { duration: 10, questions: [{ type: Type.QCM, choices: [] } as unknown as Question] } as unknown as Game;
+        await component.ngOnInit();
+        expect(component.question).toBeDefined();
     });
 
     // TODO: confirmer que get point() est inutile et enlever ce test
@@ -296,42 +327,28 @@ describe('PlayAreaComponent', () => {
     });
 
     describe('getStyle should return the correct style based on choice correctness and selection', () => {
-        beforeEach(() => {
-            component.question = {
-                id: 'test-qcm',
-                type: Type.QCM,
-                text: 'Test QCM Question?',
-                points: 10,
-                lastModification: new Date(),
-                choices: [
-                    { text: 'Option 1', isCorrect: true },
-                    { text: 'Option 2', isCorrect: false },
-                    { text: 'Option 3', isCorrect: true },
-                ],
-                answer: '',
-            };
-
-            component.showFeedback = true;
-
-            component.handleQCMChoice('Option 1', true); // Correct and selected
-            component.handleQCMChoice('Option 2', false); // Incorrect and selected
+        it('should return "correct" for a correct choice', () => {
+            component.feedback = [{ choice: 'Option 1', status: 'correct' }];
+            const style = component.getStyle('Option 1');
+            expect(style).toBe('correct');
         });
 
-        it('returns "correct" for correct and selected choices', () => {
-            expect(component.getStyle('Option 1')).toBe('correct');
+        it('should return "incorrect" for an incorrect choice', () => {
+            component.feedback = [{ choice: 'Option 2', status: 'incorrect' }];
+            const style = component.getStyle('Option 2');
+            expect(style).toBe('incorrect');
         });
 
-        it('returns "incorrect" for incorrect and selected choices', () => {
-            expect(component.getStyle('Option 2')).toBe('incorrect');
+        it('should return "missed" for a missed choice', () => {
+            component.feedback = [{ choice: 'Option 3', status: 'missed' }];
+            const style = component.getStyle('Option 3');
+            expect(style).toBe('missed');
         });
 
-        it('returns "missed" for correct but unselected choices', () => {
-            expect(component.getStyle('Option 3')).toBe('missed');
-        });
-
-        it('returns an empty string for unselected and incorrect choices', () => {
-            const unselectedIncorrectChoice = 'Unselected Incorrect Choice';
-            expect(component.getStyle(unselectedIncorrectChoice)).toBe('');
+        it('should return an empty string if the choice is not found in the feedback', () => {
+            component.feedback = [{ choice: 'Option 4', status: 'correct' }];
+            const style = component.getStyle('Option 5');
+            expect(style).toBe('');
         });
     });
 });

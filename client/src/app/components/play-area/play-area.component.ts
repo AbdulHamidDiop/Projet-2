@@ -1,15 +1,18 @@
 import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
-import { QuestionsService } from '@app/services/questions.service';
+import { GameManagerService } from '@app/services/game-manager.service';
 import { TimeService } from '@app/services/time.service';
+import { Feedback } from '@common/feedback';
 import { Question, Type } from '@common/game';
+
 // TODO : Avoir un fichier séparé pour les constantes!
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
-export const SHOW_FEEDBACK_DELAY = 2500;
+export const SHOW_FEEDBACK_DELAY = 3000;
+export const DEFAULT_TIMER = 25;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -26,32 +29,32 @@ export enum MouseButton {
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent {
+    inTestMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
 
-    isCorrect: boolean[] = [];
     answer: string[] = [];
     nbChoices: number;
     score = 0;
 
     disableChoices = false;
     showFeedback = false;
-    private readonly timer = 25;
+    feedback: Feedback[];
+    private timer = DEFAULT_TIMER;
     private points = 0;
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
-        private readonly questionService: QuestionsService,
+        public gameManager: GameManagerService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
+        private route: ActivatedRoute,
     ) {
         this.timeService.startTimer(this.timer);
-        this.isCorrect = [];
         this.answer = [];
-        this.question = this.questionService.question;
-        if (this.question.type === Type.QCM) {
-            this.nbChoices = this.question.choices.length;
+        if (this.route.snapshot.queryParams.testMode === 'true') {
+            this.inTestMode = true;
         }
     }
 
@@ -79,9 +82,25 @@ export class PlayAreaComponent {
             this.question.type === Type.QCM &&
             this.buttonPressed <= this.nbChoices.toString()
         ) {
-            const index = parseInt(this.buttonPressed, 4);
-            this.handleQCMChoice(this.question.choices[index - 1].text, this.question.choices[index - 1].isCorrect);
+            const index = parseInt(this.buttonPressed, 10);
+            this.handleQCMChoice(this.question.choices[index - 1].text);
         }
+    }
+
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+    async ngOnInit() {
+        const gameID = this.route.snapshot.paramMap.get('id');
+        if (gameID) {
+            await this.gameManager.initialize(gameID);
+        }
+        this.timer = this.gameManager.game.duration ?? DEFAULT_TIMER;
+        this.question = this.gameManager.nextQuestion();
+        this.nbChoices = this.question.choices?.length ?? 0;
+    }
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+    ngOnDestroy() {
+        this.timeService.stopTimer();
+        this.gameManager.reset();
     }
 
     shouldRender(text: string) {
@@ -89,11 +108,11 @@ export class PlayAreaComponent {
     }
 
     nextQuestion() {
-        const newQuestion = this.questionService.question;
-        this.question = newQuestion;
         this.answer = [];
-        this.isCorrect = [];
-        if (newQuestion && newQuestion.type === Type.QCM) {
+        this.endGameTest();
+        const newQuestion = this.gameManager.nextQuestion();
+        this.question = newQuestion;
+        if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
         this.timeService.stopTimer();
@@ -101,12 +120,11 @@ export class PlayAreaComponent {
         this.cdr.detectChanges();
     }
 
-    handleQCMChoice(answer: string, isCorrect: boolean) {
+    handleQCMChoice(answer: string) {
         let choiceInList = false;
         for (let i = 0; i < this.answer.length; i++) {
             if (answer === this.answer[i]) {
                 this.answer.splice(i, 1);
-                this.isCorrect.splice(i, 1);
                 choiceInList = true;
                 i--;
                 break;
@@ -114,7 +132,6 @@ export class PlayAreaComponent {
         }
         if (!choiceInList) {
             this.answer.push(answer);
-            this.isCorrect.push(isCorrect);
         }
     }
 
@@ -125,17 +142,20 @@ export class PlayAreaComponent {
         return false;
     }
 
-    // handleQRLAnswer(answer: string) { // sprint 2
+    // TODO: SPRINT 2
+    // handleQRLAnswer(answer: string) {
     //     if (answer === 'B') {
     //         alert('La réponse correcte a été choisie');
     //     }
     // }
 
-    confirmAnswers() {
+    async confirmAnswers() {
         this.disableChoices = true;
 
         this.showFeedback = true;
-
+        if (this.question.type === Type.QCM) {
+            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+        }
         setTimeout(() => {
             this.updateScore();
             this.showFeedback = false;
@@ -144,16 +164,13 @@ export class PlayAreaComponent {
         }, SHOW_FEEDBACK_DELAY);
     }
 
-    updateScore() {
-        let correctAnswer = true;
-        if (this.question.choices) {
-            const correctChoices = this.question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
-            if (this.answer.length !== correctChoices.length || !this.answer.every((answer) => correctChoices.includes(answer))) {
-                correctAnswer = false;
-            }
+    async updateScore() {
+        if (this.question.type === Type.QRL) {
+            this.score += this.question.points;
+            return;
         }
-
-        if (correctAnswer && this.question.points) {
+        const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.answer, this.question.id);
+        if (isCorrectAnswer && this.question.points) {
             this.score += this.question.points;
         }
     }
@@ -173,10 +190,15 @@ export class PlayAreaComponent {
                 this.timeService.stopTimer();
                 this.score = 0;
                 this.answer = [];
-                this.isCorrect = [];
                 this.router.navigate(['/createGame']);
             }
         });
+    }
+
+    endGameTest() {
+        if (this.gameManager.endGame) {
+            this.router.navigate(['/createGame']);
+        }
     }
 
     // TODO : déplacer ceci dans un service de gestion de la souris!
@@ -187,18 +209,12 @@ export class PlayAreaComponent {
         }
     }
 
-    getStyle(choice: string): string {
-        if (!this.showFeedback) return '';
+    getStyle(choiceText: string): string {
+        if (!this.feedback) return '';
+        const feedbackItem = this.feedback.find((f) => f.choice === choiceText);
+        if (!feedbackItem) return '';
 
-        const isCorrect = this.question.choices.find((c) => c.text === choice)?.isCorrect ?? false;
-        const isSelected = this.answer.includes(choice);
-
-        if (isSelected) {
-            return isCorrect ? 'correct' : 'incorrect';
-        } else if (isCorrect) {
-            return 'missed';
-        }
-        return '';
+        return feedbackItem.status;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

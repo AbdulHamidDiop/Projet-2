@@ -56,6 +56,7 @@ describe('QuestionsService', () => {
             answer: '',
         };
         spyOn(window, 'fetch').and.returnValue(
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             Promise.resolve(new Response(JSON.stringify([mockQuestion]), { status: 200, headers: { 'Content-type': 'application/json' } })),
         );
         service.addQuestion(mockQuestion);
@@ -85,6 +86,7 @@ describe('QuestionsService', () => {
             answer: '',
         };
         spyOn(window, 'fetch').and.returnValue(
+            // eslint-disable-next-line @typescript-eslint/naming-convention
             Promise.resolve(new Response(null, { status: 200, statusText: 'OK', headers: { 'Content-type': 'application/json' } })),
         );
 

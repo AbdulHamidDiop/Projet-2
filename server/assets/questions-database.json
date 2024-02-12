@@ -88,11 +88,11 @@
     "choices": [
       {
         "text": "Angular = front-end, NodeJS = back-end",
-        "isCorrect": false
+        "isCorrect": true
       },
       {
         "text": "Angular = back-end, NodeJS = front-end",
-        "isCorrect": true
+        "isCorrect": false
       },
       {
         "text": "Aucune de ces réponses",
@@ -103,36 +103,85 @@
     "lastModification": "2024-01-31T16:39:55.649Z"
   },
   {
-    "id": "9a9010c6-65d2-4370-b78e-c4211bb86eb9",
-    "lastModification": "2024-02-02T15:28:59.795Z",
-    "title": "Quiz 1",
-    "description": "quiz",
-    "duration": 40,
-    "questions": [
+    "type": "QCM",
+    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+    "points": 50,
+    "addToBank": true,
+    "id": "2",
+    "choices": [
       {
-        "type": "QCM",
-        "text": "Quelle est la différence entre NodeJS et Angular",
-        "points": 20,
-        "addToBank": true,
-        "choices": [
-          {
-            "text": "Angular = front-end, NodeJS = back-end",
-            "isCorrect": false
-          },
-          {
-            "text": "Angular = back-end, NodeJS = front-end",
-            "isCorrect": true
-          },
-          {
-            "text": "Aucune de ces réponses",
-            "isCorrect": false
-          }
-        ],
-        "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
-        "lastModification": "2024-01-31T16:39:55.649Z"
+        "text": "Array",
+        "isCorrect": false
+      },
+      {
+        "text": "var",
+        "isCorrect": true
+      },
+      {
+        "text": "const",
+        "isCorrect": true
+      },
+      {
+        "text": "def",
+        "isCorrect": false
       }
     ],
-    "isHidden": true
+    "lastModification": "2024-01-30T20:15:04.920Z"
+  },
+  {
+    "type": "QCM",
+    "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+    "points": 20,
+    "addToBank": true,
+    "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+    "choices": [
+      {
+        "text": "npm ci",
+        "isCorrect": true
+      },
+      {
+        "text": "git pull",
+        "isCorrect": false
+      },
+      {
+        "text": "ng serve",
+        "isCorrect": false
+      }
+    ],
+    "lastModification": "2024-01-30T22:34:16.468Z"
+  },
+  {
+    "type": "QCM",
+    "text": "Quel mot-clé parmi les suivants ne figure pas dans HTML ?",
+    "points": 30,
+    "addToBank": false,
+    "choices": [
+      {
+        "text": "div",
+        "isCorrect": false
+      },
+      {
+        "text": "li",
+        "isCorrect": true
+      },
+      {
+        "text": "mat-input",
+        "isCorrect": true
+      },
+      {
+        "text": "button",
+        "isCorrect": false
+      },
+      {
+        "text": "table",
+        "isCorrect": false
+      },
+      {
+        "text": "input",
+        "isCorrect": false
+      }
+    ],
+    "lastModification": "2024-01-31T16:09:01.684Z"
   },
   {
     "type": "QCM",
@@ -153,7 +202,31 @@
         "isCorrect": false
       }
     ],
-    "id": "00000000-1111-2222-test-000000000000",
-    "lastModification": "2021-01-31T16:39:55.649Z"
+    "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+    "lastModification": "2024-01-31T16:39:55.649Z"
+  },
+  {
+    "type": "QRL",
+    "text": "Expliqeuz l'influence de Michael Jackson",
+    "points": 10,
+    "addToBank": true,
+    "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
+    "lastModification": "2024-02-12T00:24:57.430Z"
+  },
+  {
+    "type": "QRL",
+    "text": "expliquez l'influence",
+    "points": 10,
+    "addToBank": true,
+    "id": "32d9522c-63a2-4118-a6e1-a87b16c6303d",
+    "lastModification": "2024-02-12T00:25:47.735Z"
+  },
+  {
+    "type": "QRL",
+    "text": "definessez",
+    "points": 10,
+    "addToBank": true,
+    "id": "e2cfed6b-d5c8-4bb0-bac6-cc1e91cab168",
+    "lastModification": "2024-02-12T01:42:16.454Z"
   }
 ]

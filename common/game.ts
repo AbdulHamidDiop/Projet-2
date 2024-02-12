@@ -2,6 +2,7 @@ export interface Choices {
     text: string;
     isCorrect: boolean;
 }
+
 export enum Type {
     QCM = 'QCM',
     QRL = 'QRL',
@@ -19,9 +20,9 @@ export interface Game {
     id: string;
     title: string;
     pin?: string;
-    description: string;
-    duration: number;
-    lastModification: Date | null;
+    description?: string;
+    duration?: number;
+    lastModification?: Date | null;
     questions: Question[];
     isHidden?: boolean;
     unavailable?: boolean;
