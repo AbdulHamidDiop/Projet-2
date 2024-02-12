@@ -91,11 +91,21 @@ export class GamesService {
             throw new Error('Question not found');
         }
 
-        const feedback = question.choices.map((choice) => {
+        const feedback: Feedback[] = question.choices.map((choice) => {
             const isSelected = submittedAnswers.includes(choice.text);
-            const statusText = isSelected ? (choice.isCorrect ? 'correct' : 'incorrect') : choice.isCorrect ? 'missed' : '';
+            let status: 'correct' | 'incorrect' | 'missed';
 
-            return { choice: choice.text, status: statusText };
+            if (isSelected) {
+                if (choice.isCorrect) {
+                    status = 'correct';
+                } else {
+                    status = 'incorrect';
+                }
+            } else if (choice.isCorrect) {
+                status = 'missed';
+            }
+
+            return { choice: choice.text, status };
         });
 
         return feedback;

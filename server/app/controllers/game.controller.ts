@@ -346,16 +346,16 @@ export class GameController {
          *                   type: string
          *                 description: An array of submitted answers.
          
-        /** */
+         */
         this.router.post('/feedback', async (req, res) => {
             try {
-                const { gameID, questionId, submittedAnswers } = req.body;
+                const { gameID, questionID, submittedAnswers } = req.body;
 
-                if (!questionId || !submittedAnswers || !gameID) {
+                if (!questionID || !submittedAnswers || !gameID) {
                     return res.status(HTTP_STATUS_BAD_REQUEST).json({ message: 'Question ID and submitted answers are required.' });
                 }
 
-                const feedback = await this.gamesService.generateFeedback(gameID, questionId, submittedAnswers);
+                const feedback = await this.gamesService.generateFeedback(gameID, questionID, submittedAnswers);
                 res.json(feedback);
             } catch (error) {
                 res.status(HTTP_STATUS_NOT_FOUND).json({ message: error.message });

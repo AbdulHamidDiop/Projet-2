@@ -5,6 +5,7 @@ import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { TimeService } from '@app/services/time.service';
+import { Feedback } from '@common/feedback';
 import { Question, Type } from '@common/game';
 
 // TODO : Avoir un fichier séparé pour les constantes!
@@ -37,7 +38,7 @@ export class PlayAreaComponent {
 
     disableChoices = false;
     showFeedback = false;
-    feedback: unknown[];
+    feedback: Feedback[];
     private readonly timer = 25;
     private points = 0;
     // eslint-disable-next-line max-params
@@ -86,10 +87,10 @@ export class PlayAreaComponent {
     }
 
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
-    ngOnInit() {
+    async ngOnInit() {
         const gameID = this.route.snapshot.paramMap.get('id');
         if (gameID) {
-            this.gameManager.initialize(gameID);
+            await this.gameManager.initialize(gameID);
         }
         this.question = this.gameManager.nextQuestion();
         if (this.question.type === Type.QCM) {
@@ -204,7 +205,6 @@ export class PlayAreaComponent {
 
     getStyle(choiceText: string): string {
         if (!this.feedback) return '';
-
         const feedbackItem = this.feedback.find((f) => f.choice === choiceText);
         if (!feedbackItem) return '';
 

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Game, Question } from '@common/game';
+import { Feedback } from './../../../../common/feedback';
 import { GameService } from './game.service';
 
 @Injectable({
@@ -41,18 +42,17 @@ export class GameManagerService {
         return await this.gameService.checkAnswer(answer, this.game.id, questionID);
     }
 
-    async getFeedBack(questionID: string, answer: string[]): Promise<unknown[]> {
+    async getFeedBack(questionId: string, answer: string[]): Promise<Feedback[]> {
+        // console.log({ gameID: this.game.id, questionID: questionId, submittedAnswers: answer });
+
         const response = await fetch(API_URL + 'game/feedback', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ gameID: this.game.id, questionID, submittedAnswers: answer }),
+            body: JSON.stringify({ gameID: this.game.id, questionID: questionId, submittedAnswers: answer }),
         });
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
         const feedback = await response.json();
         return feedback;
     }
