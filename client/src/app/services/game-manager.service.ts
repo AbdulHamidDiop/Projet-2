@@ -5,7 +5,7 @@ import { Feedback } from './../../../../common/feedback';
 import { GameService } from './game.service';
 
 @Injectable({
-    providedIn: 'root',
+    providedIn: 'root', // SPRINT 2: might have to not be a singleton
 })
 export class GameManagerService {
     game: Game;
@@ -43,8 +43,6 @@ export class GameManagerService {
     }
 
     async getFeedBack(questionId: string, answer: string[]): Promise<Feedback[]> {
-        // console.log({ gameID: this.game.id, questionID: questionId, submittedAnswers: answer });
-
         const response = await fetch(API_URL + 'game/feedback', {
             method: 'POST',
             headers: {
