@@ -5,12 +5,6 @@ import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
-const HTTP_STATUS_OK = 200;
-const HTTP_STATUS_CREATED = 201;
-const HTTP_STATUS_NO_CONTENT = 204;
-const HTTP_STATUS_NOT_FOUND = 404;
-const HTTP_STATUS_BAD_REQUEST = 400;
-
 @Service()
 export class GameController {
     router: Router;
@@ -274,13 +268,13 @@ export class GameController {
          *         description: Successful response
          */
         this.router.get('/questionswithoutcorrect/:id', async (req: Request, res: Response) => {
-            res.status(HTTP_STATUS_OK).json(await this.gamesService.getQuestionsWithoutCorrectShown(req.params.id));
+            res.status(StatusCodes.OK).json(await this.gamesService.getQuestionsWithoutCorrectShown(req.params.id));
         });
 
         /**
          * @swagger
          *
-         * /api/questions/check:
+         * /api/game/check:
          *   post:
          *     summary: Check if an answer is correct
          *     tags:
@@ -331,13 +325,13 @@ export class GameController {
         this.router.post('/check', async (req, res) => {
             const { answer, gameID, questionID } = req.body;
             const isCorrect = await this.gamesService.isCorrectAnswer(answer, gameID, questionID);
-            res.status(HTTP_STATUS_OK).json({ isCorrect });
+            res.status(StatusCodes.OK).json({ isCorrect });
         });
 
         /**
          * @swagger
          *
-         * /api/feedback:
+         * /api/game/feedback:
          *   post:
          *     description: Submit answers for a question in a game and receive feedback
          *     tags:
@@ -367,21 +361,16 @@ export class GameController {
          
          */
         this.router.post('/feedback', async (req, res) => {
-            try {
-                const { gameID, questionID, submittedAnswers } = req.body;
+            const { gameID, questionID, submittedAnswers } = req.body;
 
-                if (!questionID || !submittedAnswers || !gameID) {
-                    return res.status(HTTP_STATUS_BAD_REQUEST).json({ message: 'Question ID and submitted answers are required.' });
-                }
-
+            if (!questionID || !submittedAnswers || !gameID) {
+                res.status(StatusCodes.BAD_REQUEST).json({ message: 'Question ID and submitted answers are required.' });
+            } else {
                 const feedback = await this.gamesService.generateFeedback(gameID, questionID, submittedAnswers);
+                res.status(StatusCodes.OK);
                 res.json(feedback);
-            } catch (error) {
-                res.status(HTTP_STATUS_NOT_FOUND).json({ message: error.message });
-                return { message: error.message };
             }
-
-            return { message: 'err' };
+            res.send();
         });
         /**
          * @swagger
@@ -407,7 +396,7 @@ export class GameController {
          */
 
         this.router.get('/availability/:id', async (req: Request, res: Response) => {
-            res.status(HTTP_STATUS_OK).json(await this.gamesService.getGameByID(req.params.id));
+            res.status(StatusCodes.OK).json(await this.gamesService.getGameByID(req.params.id));
         });
     }
 }

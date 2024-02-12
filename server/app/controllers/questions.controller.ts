@@ -36,7 +36,7 @@ export class QuestionsController {
         this.router.get('/', async (req: Request, res: Response) => {
             res.status(StatusCodes.OK);
             res.json(await this.questionsService.sortAllQuestions());
-            res.status(HTTP_STATUS_OK);
+            res.status(StatusCodes.OK);
         });
 
         /**
@@ -96,7 +96,7 @@ export class QuestionsController {
         this.router.post('/check', async (req, res) => {
             const { answer, id } = req.body;
             const isCorrect = await this.questionsService.isCorrectAnswer(answer, id);
-            res.status(HTTP_STATUS_OK).json({ isCorrect });
+            res.status(StatusCodes.OK).json({ isCorrect });
         });
 
         /**
