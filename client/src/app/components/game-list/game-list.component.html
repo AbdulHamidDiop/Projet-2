@@ -8,32 +8,33 @@
                     </a>
                 </mat-panel-title>
             </mat-expansion-panel-header>
-            <strong>Détails du jeu</strong>
 
-            <p>Description du jeu: {{ getSelectedGame().description }}</p>
-            <p>Temps alloué pour répondre : {{ getSelectedGame().duration }} secondes</p>
+            <div *ngIf="!game.unavailable; else unavailableMessage">
+                <strong>Détails du jeu</strong>
 
-            <p>Liste des questions du questionnaire </p>
-            <ul>
-                <li *ngFor="let question of getSelectedGame().questions">
-                    {{ question.text }}
-                </li>
-            </ul>
+                <p>Description du jeu: {{ game.description }}</p>
+                <p>Temps alloué pour répondre : {{ game.duration }} secondes</p>
 
-            <div class="button-row">
-                <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
-                bouton "tester le jeu" -->
-                <button mat-fab extended color="primary" [routerLink]="['/playArea', getSelectedGame().id]">
-                    Tester le jeu
-                </button>
+                <p>Liste des questions du questionnaire</p>
+                <ul>
+                    <li *ngFor="let question of game.questions">
+                        {{ question.text }}
+                    </li>
+                </ul>
 
-                <button mat-fab extended color="primary" routerLink="/waiting">
-                    Lancer une partie
-                </button>
+                <div class="button-row">
+                    <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
+                    bouton "tester le jeu" -->
+                    <button mat-fab extended color="primary" [routerLink]="['/game', game.id]" [queryParams]="{ testMode: 'true' }">
+                        Tester le jeu
+                    </button>
+
+                    <button mat-fab extended color="primary" routerLink="/waiting">Lancer une partie</button>
+                </div>
             </div>
-
-
+            <ng-template #unavailableMessage>
+                <p>Ce jeu est actuellement indisponible, veuillez en sélectionner un autre.</p>
+            </ng-template>
         </mat-expansion-panel>
-
     </div>
 </body>

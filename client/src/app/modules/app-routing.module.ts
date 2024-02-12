@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { AdminCreateGamePageComponent } from '@app/pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from '@app/pages/admin-page/questions-page/questions-page.component';
@@ -13,7 +12,8 @@ import { WaitingPageComponent } from '@app/pages/waiting-page/waiting-page.compo
 const routes: Routes = [
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: MainPageComponent },
-    { path: 'game', component: GamePageComponent },
+    { path: 'game/:id', component: GamePageComponent },
+    // { path: 'game/:id/test', component: GamePageComponent },
     { path: 'createGame', component: CreateGamePageComponent },
     { path: 'admin', component: AdminPageComponent },
     { path: 'admin/questions', component: QuestionsPageComponent },
@@ -21,7 +21,6 @@ const routes: Routes = [
     { path: 'admin/createGame/:id', component: AdminCreateGamePageComponent },
     { path: 'material', component: MaterialPageComponent },
     { path: 'waiting', component: WaitingPageComponent },
-    { path: 'playArea/:id', component: PlayAreaComponent },
     { path: '**', redirectTo: '/home' },
 ];
 

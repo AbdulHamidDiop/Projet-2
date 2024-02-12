@@ -17,6 +17,7 @@ export class GameService {
             this.games = games;
         });
     }
+
     // Modification : Modification du type de retour de getSelectedGame à Game
     getSelectedGame(): Game {
         return this.selectedGame;
@@ -79,6 +80,51 @@ export class GameService {
             throw new Error(`Error: ${response.status}`);
         }
         return true;
+    }
+
+    async getQuestionsWithoutCorrectShown(id: string): Promise<Game> {
+        const response = await fetch(API_URL + 'game/questionswithoutcorrect/' + id);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const game: Game = await response.json();
+        return game;
+    }
+
+    async checkAnswer(answer: string[], gameID: string, questionID: string): Promise<boolean> {
+        try {
+            const response = await fetch(API_URL + 'game/check', {
+                method: 'POST',
+                headers: {
+                    // eslint-disable-next-line @typescript-eslint/naming-convention
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ answer, gameID, questionID }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const result = await response.json();
+            return result.isCorrect;
+        } catch (error) {
+            return false;
+        }
+    }
+
+    async checkHiddenOrDeleted(game: Game): Promise<boolean> {
+        const response = await fetch(API_URL + 'game/availability' + game.id, {
+            method: 'GET',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const availability: boolean = await response.json();
+        return availability;
     }
 }
 
