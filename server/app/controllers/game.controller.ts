@@ -5,10 +5,6 @@ import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
-const HTTP_STATUS_OK = 200;
-const HTTP_STATUS_NOT_FOUND = 404;
-const HTTP_STATUS_BAD_REQUEST = 400;
-
 @Service()
 export class GameController {
     router: Router;
