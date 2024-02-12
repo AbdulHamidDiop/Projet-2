@@ -1,5 +1,3 @@
-
-
 <body>
     <div *ngFor="let game of games">
         <mat-expansion-panel hideToggle (click)="selectGame(game)">
@@ -27,9 +25,11 @@
                 <div class="button-row">
                     <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
                     bouton "tester le jeu" -->
-                    <button mat-fab extended color="primary" [routerLink]="['/game/', game.id, 'test']">Tester le jeu</button>
+                    <button mat-fab extended color="primary" [routerLink]="['/game', game.id]" [queryParams]="{ testMode: 'true' }">
+                        Tester le jeu
+                    </button>
 
-                    <button mat-fab extended color="primary" routerLink="/waiting" >Lancer une partie</button>
+                    <button mat-fab extended color="primary" routerLink="/waiting">Lancer une partie</button>
                 </div>
             </div>
             <ng-template #unavailableMessage>

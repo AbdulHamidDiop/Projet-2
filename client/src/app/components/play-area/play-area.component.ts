@@ -12,6 +12,7 @@ import { Question, Type } from '@common/game';
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
 export const SHOW_FEEDBACK_DELAY = 3000;
+export const DEFAULT_TIMER = 25;
 
 // TODO : Déplacer ça dans un fichier séparé accessible par tous
 export enum MouseButton {
@@ -39,12 +40,12 @@ export class PlayAreaComponent {
     disableChoices = false;
     showFeedback = false;
     feedback: Feedback[];
-    private readonly timer = 25;
+    private timer = DEFAULT_TIMER;
     private points = 0;
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
-        private readonly gameManager: GameManagerService,
+        public gameManager: GameManagerService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -52,7 +53,7 @@ export class PlayAreaComponent {
     ) {
         this.timeService.startTimer(this.timer);
         this.answer = [];
-        if (window.location.href.includes('test')) {
+        if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;
         }
     }
@@ -81,7 +82,7 @@ export class PlayAreaComponent {
             this.question.type === Type.QCM &&
             this.buttonPressed <= this.nbChoices.toString()
         ) {
-            const index = parseInt(this.buttonPressed, 4);
+            const index = parseInt(this.buttonPressed, 10);
             this.handleQCMChoice(this.question.choices[index - 1].text);
         }
     }
@@ -92,10 +93,9 @@ export class PlayAreaComponent {
         if (gameID) {
             await this.gameManager.initialize(gameID);
         }
+        this.timer = this.gameManager.game.duration ?? DEFAULT_TIMER;
         this.question = this.gameManager.nextQuestion();
-        if (this.question.type === Type.QCM) {
-            this.nbChoices = this.question.choices.length;
-        }
+        this.nbChoices = this.question.choices?.length ?? 0;
     }
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy() {
@@ -108,6 +108,7 @@ export class PlayAreaComponent {
     }
 
     nextQuestion() {
+        this.answer = [];
         this.endGameTest();
         const newQuestion = this.gameManager.nextQuestion();
         this.question = newQuestion;
@@ -159,7 +160,6 @@ export class PlayAreaComponent {
             this.updateScore();
             this.showFeedback = false;
             this.disableChoices = false;
-            this.answer = [];
             this.nextQuestion();
         }, SHOW_FEEDBACK_DELAY);
     }
