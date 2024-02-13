@@ -1,7 +1,7 @@
 import { Question } from '@common/game';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import sinon from 'sinon';
+import { SinonStub, stub } from 'sinon';
 import { QuestionsService } from './questions.service';
 
 const DATALENGTH = 1;
@@ -56,12 +56,12 @@ let QUESTIONS = JSON.stringify([FIRST_QUESTION]);
 
 describe('Questions Service', () => {
     let questionsService: QuestionsService;
-    let readFileStub: sinon.SinonStub;
-    let writeFileStub: sinon.SinonStub;
+    let readFileStub: SinonStub;
+    let writeFileStub: SinonStub;
 
     beforeEach(async () => {
-        readFileStub = sinon.stub(fs.promises, 'readFile').resolves(QUESTIONS);
-        writeFileStub = sinon.stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
+        readFileStub = stub(fs.promises, 'readFile').resolves(QUESTIONS);
+        writeFileStub = stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
             return new Promise<void>((resolve) => {
                 QUESTIONS = data;
                 resolve();
@@ -145,7 +145,7 @@ describe('Questions Service', () => {
         expect(readFileStub.called);
 
         // test that it returns true if the question is a qrl
-        sinon.stub(questionsService, 'getAllQuestions').resolves([{ type: 'QRL' } as unknown as Question]);
+        stub(questionsService, 'getAllQuestions').resolves([{ type: 'QRL' } as unknown as Question]);
         const isCorrectQRL = await questionsService.isCorrectAnswer(['qrl answer'], 'qrl id');
         expect(isCorrectQRL).to.equal(true);
     });

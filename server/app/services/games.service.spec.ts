@@ -1,9 +1,9 @@
 import { Game } from '@common/game';
 import { expect } from 'chai';
 import * as fs from 'fs';
-import sinon from 'sinon';
+import { SinonStub, stub } from 'sinon';
 import { GamesService } from './games.service';
-//import { Z_UNKNOWN } from 'zlib';
+// import { Z_UNKNOWN } from 'zlib';
 
 const DATALENGTH = 0;
 
@@ -63,12 +63,12 @@ let QUIZ = '[]';
 
 describe('Games Service', () => {
     let gamesService: GamesService;
-    let readFileStub: sinon.SinonStub;
-    let writeFileStub: sinon.SinonStub;
+    let readFileStub: SinonStub;
+    let writeFileStub: SinonStub;
 
     beforeEach(async () => {
-        readFileStub = sinon.stub(fs.promises, 'readFile').resolves(QUIZ);
-        writeFileStub = sinon.stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
+        readFileStub = stub(fs.promises, 'readFile').resolves(QUIZ);
+        writeFileStub = stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
             return new Promise<void>((resolve) => {
                 QUIZ = data;
                 resolve();
@@ -159,7 +159,7 @@ describe('Games Service', () => {
     });
 
     it('should return questions without correct answers shown', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const result = await gamesService.getQuestionsWithoutCorrectShown(gameID);
         expect(result).to.deep.equal({
@@ -174,19 +174,19 @@ describe('Games Service', () => {
     });
 
     it('should return questions without correct answers shown, including questions without choices', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
         const result = await gamesService.getQuestionsWithoutCorrectShown(SECOND_QUIZ.id);
         expect(result.questions[0].choices).to.equal(undefined);
     });
 
     it('should determine if the answer is correct', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const result = await gamesService.isCorrectAnswer(['Angular = back-end, NodeJS = front-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
         expect(result).to.equal(true);
     });
 
     it('should determine if the answer is false', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const result = await gamesService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
         expect(result).to.equal(false);
     });
@@ -197,13 +197,13 @@ describe('Games Service', () => {
     });
 
     it('should determine if the answer is correct when there are no choices', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
         const result = await gamesService.isCorrectAnswer(['Answer'], SECOND_QUIZ.id, SECOND_QUIZ.questions[0].id);
         expect(result).to.equal(true);
     });
 
     it('should generate feedback for submitted answers', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const questionID = FIRST_QUIZ.questions[0].id;
         const submittedAnswers = ['Angular = back-end, NodeJS = front-end'];
@@ -217,7 +217,7 @@ describe('Games Service', () => {
     });
 
     it('should generate feedback for submitted answers', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const questionID = FIRST_QUIZ.questions[0].id;
         const submittedAnswers = ['Angular = front-end, NodeJS = back-end'];
@@ -231,7 +231,7 @@ describe('Games Service', () => {
     });
 
     it('should generate feedback for submitted answers if the question do not exist', async () => {
-        sinon.stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const questionId = 'nonexistent-question-id';
         const submittedAnswers = ['Some submitted answer'];
