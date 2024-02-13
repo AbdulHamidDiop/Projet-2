@@ -244,7 +244,6 @@ describe('GameService', () => {
     }));
 
     it('deleteGameByID should send a DELETE request to API', fakeAsync(() => {
-
         service.deleteGameByID('1');
         tick();
 

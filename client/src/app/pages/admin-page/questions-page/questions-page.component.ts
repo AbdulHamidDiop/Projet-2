@@ -15,6 +15,7 @@ export class QuestionsPageComponent implements OnInit {
     questions: Question[];
     isAuthentificated: boolean;
 
+    // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         readonly communicationService: CommunicationService,
