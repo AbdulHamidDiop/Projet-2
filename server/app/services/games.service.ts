@@ -80,7 +80,7 @@ export class GamesService {
                 });
                 return { ...question, choices: choicesWithoutCorrect };
             }
-            return question; //  Add this line to return the question if it doesn't have choices
+            return question;
         });
         return { ...game, questions: questionsWithoutCorrect };
     }

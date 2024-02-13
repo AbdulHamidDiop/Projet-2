@@ -179,7 +179,7 @@ export class GameController {
                 res.status(StatusCodes.NOT_FOUND);
             } else {
                 res.status(StatusCodes.OK);
-                //res.json(game);
+                res.json(game);
             }
             res.send();
         });

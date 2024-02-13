@@ -115,7 +115,7 @@ describe('GameService', () => {
         ];
         service.games = mockGames;
 
-        const foundGame = service.getGameByID('1');
+        const foundGame = service.getGameByID('2');
         tick();
 
         expect(foundGame).toEqual(mockGames[0]);
