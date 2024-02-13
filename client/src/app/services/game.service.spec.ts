@@ -173,17 +173,19 @@ describe('GameService', () => {
         expectAsync(service.deleteGameByID('1')).toBeRejectedWithError('Error: 500');
     }));
 
-    it('should fetch questions without correct shown for a game', async () => {
+    it('should fetch questions without correct shown for a game', fakeAsync(() => {
         spyOn(window, 'fetch').and.returnValue(
             Promise.resolve({
                 ok: true,
                 json: async () => Promise.resolve(mockGame),
             } as Response),
         );
-        const result = await service.getQuestionsWithoutCorrectShown(mockGameId);
+        let result: Game | undefined;
+        service.getQuestionsWithoutCorrectShown(mockGameId).then((data) => (result = data)); // Note: Using then() instead of await
+        tick();
         expect(result).toEqual(mockGame);
         expect(window.fetch).toHaveBeenCalledWith(API_URL + 'game/questionswithoutcorrect/' + mockGameId);
-    });
+    }));
 
     it('should throw an error when getQuestionsWithoutCorrectShown response is not OK', fakeAsync(() => {
         spyOn(window, 'fetch').and.returnValue(
