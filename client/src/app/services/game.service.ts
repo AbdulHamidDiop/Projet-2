@@ -40,8 +40,7 @@ export class GameService {
         const response = await fetch(API_URL + 'game/importgame', {
             method: 'POST',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                contentType: 'application/json',
             },
             body: JSON.stringify(game),
         });
@@ -62,8 +61,7 @@ export class GameService {
         const response = await fetch(API_URL + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                contentType: 'application/json',
             },
             body: JSON.stringify({ id: gameID }),
         });
@@ -96,8 +94,7 @@ export class GameService {
             const response = await fetch(API_URL + 'game/check', {
                 method: 'POST',
                 headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    'Content-Type': 'application/json',
+                    contentType: 'application/json',
                 },
                 body: JSON.stringify({ answer, gameID, questionID }),
             });
@@ -116,8 +113,7 @@ export class GameService {
         const response = await fetch(API_URL + 'game/availability/' + game.id, {
             method: 'GET',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                contentType: 'application/json',
             },
         });
         if (!response.ok) {
