@@ -907,59 +907,11 @@
     ]
   },
   {
-    "id": "41656b0a-30e4-4438-9eaa-ca511919fedf",
+    "id": "5c2461cb-3be5-48ee-979d-b369158ce7cd",
     "title": "Trivia des top 50 artistes des années 2000",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
-    "lastModification": "2024-02-13T01:53:28.298Z",
-    "isHidden": true,
-    "questions": [
-      {
-        "type": "QCM",
-        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-        "points": 40,
-        "choices": [
-          {
-            "text": "var",
-            "isCorrect": true
-          },
-          {
-            "text": "self",
-            "isCorrect": false
-          },
-          {
-            "text": "this",
-            "isCorrect": true
-          },
-          {
-            "text": "int",
-            "isCorrect": false
-          }
-        ]
-      },
-      {
-        "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
-        "points": 20,
-        "choices": [
-          {
-            "text": "Non",
-            "isCorrect": true
-          },
-          {
-            "text": "Oui",
-            "isCorrect": false
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": "dc7fd644-29a7-48c7-9b29-89f93c583dc2",
-    "title": "Trivia des top 50 artistes des années 2000",
-    "description": "Questaqions de pratique sur le langage JavaScript",
-    "duration": 60,
-    "lastModification": "2024-02-13T01:54:13.951Z",
+    "lastModification": "2024-02-13T01:51:25.576Z",
     "isHidden": true,
     "questions": [
       {
