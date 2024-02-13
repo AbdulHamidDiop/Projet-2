@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Game, Question } from '@common/game';
 import { Feedback } from './../../../../common/feedback';
+import { FetchService } from './fetch.service';
 import { GameService } from './game.service';
 
 @Injectable({
@@ -12,7 +13,10 @@ export class GameManagerService {
     currentQuestionIndex: number = 0;
     endGame: boolean = false;
 
-    constructor(private gameService: GameService) {}
+    constructor(
+        private gameService: GameService,
+        private fetchService: FetchService,
+    ) {}
 
     async initialize(gameID: string) {
         const game = await this.gameService.getQuestionsWithoutCorrectShown(gameID);
@@ -43,7 +47,7 @@ export class GameManagerService {
     }
 
     async getFeedBack(questionId: string, answer: string[]): Promise<Feedback[]> {
-        const response = await fetch(API_URL + 'game/feedback', {
+        const response = await this.fetchService.fetch(API_URL + 'game/feedback', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention

@@ -131,13 +131,13 @@ describe('PlayAreaComponent', () => {
     it('buttonDetect should modify the buttonPressed variable and call handleQCMChoice', () => {
         spyOn(component, 'handleQCMChoice');
         component.question = {
-            type: Type.QCM, // Make sure to set the type
+            type: Type.QCM,
             choices: [
                 { text: 'Option 1', isCorrect: true },
                 { text: 'Option 2', isCorrect: false },
             ],
         } as Question;
-        component.nbChoices = component.question.choices.length; // Set nbChoices
+        component.nbChoices = component.question.choices.length;
 
         const expectedKey = '1';
         const buttonEvent = {
@@ -315,7 +315,6 @@ describe('PlayAreaComponent', () => {
         component = fixture.componentInstance;
         expect(component.inTestMode).toBeTrue();
     });
-
     it('should initialize this.question on init', async () => {
         component.gameManager.game = { duration: 10, questions: [{ type: Type.QCM, choices: [] } as unknown as Question] } as unknown as Game;
         await component.ngOnInit();
@@ -332,19 +331,16 @@ describe('PlayAreaComponent', () => {
             const style = component.getStyle('Option 1');
             expect(style).toBe('correct');
         });
-
         it('should return "incorrect" for an incorrect choice', () => {
             component.feedback = [{ choice: 'Option 2', status: 'incorrect' }];
             const style = component.getStyle('Option 2');
             expect(style).toBe('incorrect');
         });
-
         it('should return "missed" for a missed choice', () => {
             component.feedback = [{ choice: 'Option 3', status: 'missed' }];
             const style = component.getStyle('Option 3');
             expect(style).toBe('missed');
         });
-
         it('should return an empty string if the choice is not found in the feedback', () => {
             component.feedback = [{ choice: 'Option 4', status: 'correct' }];
             const style = component.getStyle('Option 5');
