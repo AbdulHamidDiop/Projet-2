@@ -1,8 +1,8 @@
-import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { QuestionsService } from '@app/services/questions.service';
+import { API_URL } from '@common/consts';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({
@@ -17,25 +17,32 @@ export class MainPageComponent {
     constructor(
         readonly communicationService: CommunicationService,
         readonly router: Router,
-        private http: HttpClient,
         readonly questionsService: QuestionsService,
     ) {
         // Pourra être supprimé après la démo.
         this.questionsService.getAllQuestions();
     }
-    verifyPassword() {
+
+    async verifyPassword() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.http.post('http://localhost:3000/api/admin/password', { password: this.userInput }).subscribe((response: any) => {
-            if (response === true) {
-                this.router.navigate(['/admin']);
-                this.communicationService.updateSharedVariable(true);
-            } else {
-                alert('Incorrect password');
-            }
+        const response = await fetch(API_URL + 'admin/password', {
+            method: 'POST',
+            headers: {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({password: this.userInput}),
         });
+        if (response.ok) {
+            this.router.navigate(['/admin']);
+            this.communicationService.updateSharedVariable(true);
+        }
+        else {
+            alert("Mot de passe incorrect.");
+        }
     }
 
-    onButtonClick() {
-        this.verifyPassword();
+    async onButtonClick() {
+        await this.verifyPassword();
     }
 }

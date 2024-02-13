@@ -1,6 +1,6 @@
 import { Service } from 'typedi';
 
-const PASSWORD = 'LOG2990-312';
+const PASSWORD = 'log2990-312';
 
 @Service()
 export class AdminService {
