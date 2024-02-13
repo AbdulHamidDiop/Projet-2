@@ -163,7 +163,7 @@ describe('GameService', () => {
         service.deleteGameByID('1');
         tick();
 
-        expect(window.fetch).toHaveBeenCalledWith(API_URL + 'game/deletegame/1', jasmine.objectContaining({ method: 'DELETE' }));
+        expect(window.fetch).toHaveBeenCalledWith(API_URL + 'game/delete/1', jasmine.objectContaining({ method: 'DELETE' }));
     }));
 
     it('should throw an error when response to deleteGameByID is not OK', fakeAsync(() => {
@@ -283,7 +283,7 @@ describe('GameService', () => {
 
         expect(result).toEqual(true);
         expect(window.fetch).toHaveBeenCalledWith(
-            API_URL + 'game/availability' + game.id,
+            API_URL + 'game/availability/' + game.id,
             jasmine.objectContaining({
                 method: 'GET',
                 headers: jasmine.objectContaining({

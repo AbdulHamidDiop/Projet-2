@@ -763,11 +763,11 @@
     ]
   },
   {
-    "id": "66b29764-fdd5-4958-af3f-f41ed3611416",
+    "id": "90392b62-8e47-4656-8701-a6eead3fddf3",
     "title": "Trivia des top 50 artistes des années 2000",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
-    "lastModification": "2024-02-13T01:19:44.290Z",
+    "lastModification": "2024-02-13T01:01:07.773Z",
     "isHidden": true,
     "questions": [
       {
@@ -811,11 +811,59 @@
     ]
   },
   {
-    "id": "1b285a5c-3074-451a-aca5-6747d9b817a2",
+    "id": "68e38070-af22-4a40-8a63-60fda61e66a8",
     "title": "Trivia des top 50 artistes des années 2000",
     "description": "Questaqions de pratique sur le langage JavaScript",
     "duration": 60,
-    "lastModification": "2024-02-13T01:20:22.539Z",
+    "lastModification": "2024-02-13T01:03:13.192Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ed58d56e-c16e-4920-b1a2-f2ba0c7cccac",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T01:06:06.571Z",
     "isHidden": true,
     "questions": [
       {
