@@ -12,6 +12,7 @@ import { AdminPageComponent } from './admin-page.component';
 describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
     let fixture: ComponentFixture<AdminPageComponent>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockGameFile: any;
     let fakeFile: File;
     let readFileSpy;
@@ -277,7 +278,8 @@ describe('AdminPageComponent', () => {
         expect(component.verifyIfJSON()).toBeTrue();
     });
     it('should set selectedFile when a file is selected', () => {
-        const mockEvent = { target: { files: [fakeFile] } } as unknown as Event;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mockEvent = { target: { files: [fakeFile] } } as any as Event;
 
         component.onFileSelected(mockEvent);
 

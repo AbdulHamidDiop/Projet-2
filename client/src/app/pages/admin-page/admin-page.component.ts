@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
-import { Choices, Game, Question } from '@common/game';
+import { Choices, Game, Question, Type } from '@common/game';
 import { v4 } from 'uuid';
 
 const MIN_POINTS = 10;
@@ -140,9 +140,10 @@ export class AdminPageComponent implements OnInit {
         return (
             Array.isArray(questions) &&
             questions.every(
+                // eslint-disable-next-line complexity
                 (question: Question) =>
                     typeof question.type === 'string' &&
-                    (question.type === 'QCM' || question.type === 'QRL') &&
+                    (question.type === Type.QCM || question.type === Type.QRL) &&
                     typeof question.text === 'string' &&
                     typeof question.points === 'number' &&
                     question.points >= MIN_POINTS &&

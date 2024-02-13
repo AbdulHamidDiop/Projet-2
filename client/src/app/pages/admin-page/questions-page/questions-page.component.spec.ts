@@ -5,15 +5,17 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { QuestionsService } from '@app/services/questions.service';
-import { Question, Type } from '@common/game';
+import { Type } from '@common/game';
 import { of } from 'rxjs';
 import { QuestionsPageComponent } from './questions-page.component';
 
 describe('QuestionsPageComponent', () => {
     let component: QuestionsPageComponent;
     let fixture: ComponentFixture<QuestionsPageComponent>;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockDialog: any;
-    let mockQuestion: Question;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let mockQuestion: any;
 
     beforeEach(() => {
         mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
@@ -61,7 +63,8 @@ describe('QuestionsPageComponent', () => {
     });
 
     it('should open the dialog', () => {
-        const mockDialogRef: unknown = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mockDialogRef: any = {
             afterClosed: () => of(null),
         };
         mockDialog.open.and.returnValue(mockDialogRef);
@@ -72,7 +75,8 @@ describe('QuestionsPageComponent', () => {
     });
 
     it('should push result to questions array if result exists', () => {
-        const mockDialogRef: unknown = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mockDialogRef: any = {
             afterClosed: () => of(mockQuestion),
         };
         mockDialog.open.and.returnValue(mockDialogRef);
@@ -85,7 +89,8 @@ describe('QuestionsPageComponent', () => {
     });
 
     it('should not push result to questions array if result is null', () => {
-        const mockDialogRef: unknown = {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mockDialogRef: any = {
             afterClosed: () => of(null),
         };
         mockDialog.open.and.returnValue(mockDialogRef);

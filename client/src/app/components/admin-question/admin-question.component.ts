@@ -4,7 +4,6 @@ import { Router } from '@angular/router';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
-
 @Component({
     selector: 'app-admin-question',
     templateUrl: './admin-question.component.html',
@@ -18,9 +17,9 @@ export class AdminQuestionComponent {
     @Output() deleteRequest = new EventEmitter<number>();
 
     constructor(
-        public dialog: MatDialog,
+        private dialog: MatDialog,
         private questionsService: QuestionsService,
-        private router: Router,
+        public router: Router,
     ) {}
 
     openDialog(): void {

@@ -107,6 +107,7 @@ describe('PlayAreaComponent', () => {
                 { text: 'Option 1', isCorrect: true },
                 { text: 'Option 2', isCorrect: false },
             ],
+            answer: '',
         };
         spyOn(gameManager, 'nextQuestion').and.returnValue(newQCMQuestion);
 

@@ -6,12 +6,11 @@
 
     <div *ngFor="let choice of question.choices" class="column-container">
         {{ choice.text }}
-        <mat-icon *ngIf="choice.isCorrect === true" class="check-icon">check</mat-icon>
-        <mat-icon *ngIf="choice.isCorrect === false" class="cross-icon">clear</mat-icon>
+        <mat-icon *ngIf="choice.isCorrect" class="check-icon">check</mat-icon>
+        <mat-icon *ngIf="!choice.isCorrect" class="cross-icon">clear</mat-icon>
     </div>
 
-    <div *ngIf="editable === true">
-        <p>Dernière modification: {{ question.lastModification | date: 'short' }}</p>
+    <div *ngIf="editable">
         <button mat-icon-button (click)="openDialog()" name="edit-question" class="edit-button">
             <mat-icon class="edit-icon">edit</mat-icon>
         </button>

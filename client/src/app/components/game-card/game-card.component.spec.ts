@@ -11,10 +11,10 @@ describe('GameCardComponent', () => {
     let fixture: ComponentFixture<GameCardComponent>;
     let gameService: GameService;
     let router: Router;
-    let game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+    let game: Game = { id: '1', title: 'Test Game', questions: [], description: '', duration: 10, lastModification: null, isHidden: false };
 
     beforeEach(() => {
-        game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+        game = { id: '1', title: 'Test Game', questions: [], description: '', duration: 10, lastModification: null, isHidden: false };
         TestBed.configureTestingModule({
             declarations: [GameCardComponent],
             imports: [HttpClientTestingModule, RouterTestingModule],

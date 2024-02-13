@@ -63,8 +63,8 @@ describe('GameService', () => {
 
     it('getAllGames should fetch games from API', fakeAsync(() => {
         const mockGames: Game[] = [
-            { id: '1', title: 'Game 1', questions: [] },
-            { id: '2', title: 'Game 2', questions: [] },
+            { id: '2', title: 'Game 1', questions: [], description: '', duration: 10, lastModification: null },
+            { id: '3', title: 'Game 2', questions: [], description: '', duration: 10, lastModification: null },
         ];
         spyOn(window, 'fetch').and.returnValue(Promise.resolve({ ok: true, json: async () => Promise.resolve(mockGames) } as Response));
         service.getAllGames().then((games) => {
@@ -110,8 +110,8 @@ describe('GameService', () => {
 
     it('getGameByID should fetch game by ID from all games', fakeAsync(() => {
         const mockGames: Game[] = [
-            { id: '1', title: 'Game 1', questions: [] },
-            { id: '2', title: 'Game 2', questions: [] },
+            { id: '2', title: 'Game 1', questions: [], description: '', duration: 50, lastModification: null },
+            { id: '3', title: 'Game 2', questions: [], description: '', duration: 50, lastModification: null },
         ];
         service.games = mockGames;
 

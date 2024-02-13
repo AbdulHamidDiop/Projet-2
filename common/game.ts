@@ -10,10 +10,11 @@ export enum Type {
 export interface Question {
     id: string;
     type: Type;
-    lastModification: Date;
+    lastModification: Date | null;
     text: string;
     points: number;
     choices: Choices[];
+    answer: string;
 }
 export interface Game {
     id: string;
@@ -21,7 +22,7 @@ export interface Game {
     pin?: string;
     description?: string;
     duration?: number;
-    lastModification?: Date;
+    lastModification?: Date | null;
     questions: Question[];
     isHidden?: boolean;
     unavailable?: boolean;
