@@ -2,7 +2,7 @@
   {
     "id": "462778813472",
     "title": "CP3 LOG1810",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "lastModification": "2024-01-26T23:47:40.809Z",
     "isHidden": false,
@@ -33,7 +33,7 @@
       {
         "id": "8",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -51,7 +51,7 @@
   {
     "id": "462778813473",
     "title": "Trivia : fait ou fiction",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "lastModification": "2024-02-01T15:04:39.681Z",
     "isHidden": false,
@@ -82,7 +82,7 @@
       {
         "id": "10",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -130,7 +130,7 @@
       {
         "id": "12",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -150,7 +150,7 @@
     "id": "462778813466",
     "lastModification": "2024-02-01T15:04:42.270Z",
     "title": "Capitales du monde",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 59,
     "questions": [
       {
@@ -179,7 +179,7 @@
       {
         "id": "14",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -199,7 +199,7 @@
     "id": "462778813467",
     "lastModification": "2024-02-01T15:04:43.380Z",
     "title": "CP1 LOG1810",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "questions": [
       {
@@ -228,7 +228,7 @@
       {
         "id": "16",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -266,7 +266,7 @@
     "id": "462778813468",
     "lastModification": "2024-02-01T15:04:47.178Z",
     "title": "Les stars les plus connus du Royaume-Uni",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "questions": [
       {
@@ -295,7 +295,7 @@
       {
         "id": "20",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -355,7 +355,7 @@
     "id": "462778813469",
     "lastModification": "2024-02-12T00:24:59.754Z",
     "title": "Trivia des top 50 artistes des années 2000",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "questions": [
       {
@@ -384,7 +384,7 @@
       {
         "id": "1",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -399,7 +399,7 @@
       },
       {
         "type": "QRL",
-        "text": "Expliqeuz l'influence de Michael Jackson",
+        "text": "Expliquez l'influence de Michael Jackson",
         "points": 10,
         "addToBank": true,
         "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
@@ -412,7 +412,7 @@
     "id": "462778813470",
     "lastModification": "2024-02-12T00:33:23.023Z",
     "title": "Drapeaux du monde",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "questions": [
       {
@@ -441,7 +441,7 @@
       {
         "id": "4",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -469,12 +469,12 @@
     "id": "462778813471",
     "lastModification": "2024-02-12T01:42:47.112Z",
     "title": "CP2 LOG1810",
-    "description": "Questaqions de pratique sur le langage JavaScript",
+    "description": "Questions de pratique sur le langage JavaScript",
     "duration": 60,
     "questions": [
       {
         "type": "QRL",
-        "text": "definessez",
+        "text": "definissez",
         "points": 10,
         "addToBank": true,
         "id": "e2cfed6b-d5c8-4bb0-bac6-cc1e91cab168",
@@ -506,7 +506,7 @@
       {
         "id": "6",
         "type": "QCM",
-        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
         "points": 20,
         "choices": [
           {
@@ -521,5 +521,389 @@
       }
     ],
     "isHidden": false
+  },
+  {
+    "id": "b6323a86-404f-4959-a35a-ac72a0f231e9",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T00:00:17.867Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "4ac6982f-90f3-4fb4-91b5-980531f3b447",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T00:01:26.924Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "a0122a2d-d6a8-4cce-84ab-1b199a1b7c70",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T00:06:38.458Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "1ef573b7-6fd3-4565-a3d2-686121cbb54e",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T00:30:24.552Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f38b427a-ec4c-4c6e-bf4b-26cdcd931640",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T00:32:28.790Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "90392b62-8e47-4656-8701-a6eead3fddf3",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T01:01:07.773Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "68e38070-af22-4a40-8a63-60fda61e66a8",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T01:03:13.192Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "ed58d56e-c16e-4920-b1a2-f2ba0c7cccac",
+    "title": "Trivia des top 50 artistes des années 2000",
+    "description": "Questaqions de pratique sur le langage JavaScript",
+    "duration": 60,
+    "lastModification": "2024-02-13T01:06:06.571Z",
+    "isHidden": true,
+    "questions": [
+      {
+        "type": "QCM",
+        "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+        "points": 40,
+        "choices": [
+          {
+            "text": "var",
+            "isCorrect": true
+          },
+          {
+            "text": "self",
+            "isCorrect": false
+          },
+          {
+            "text": "this",
+            "isCorrect": true
+          },
+          {
+            "text": "int",
+            "isCorrect": false
+          }
+        ]
+      },
+      {
+        "type": "QCM",
+        "text": "Est-ce qu'on le code suivant lance une erreur : const a = 1/NaN; ? ",
+        "points": 20,
+        "choices": [
+          {
+            "text": "Non",
+            "isCorrect": true
+          },
+          {
+            "text": "Oui",
+            "isCorrect": false
+          }
+        ]
+      }
+    ]
   }
 ]

@@ -8,7 +8,7 @@ describe('AdminService', () => {
     });
 
     it('should return correct password message if the correct password is provided', () => {
-        const password = 'LOG2990-312';
+        const password = 'log2990-312';
         const result = adminService.checkPassword(password);
         expect(result).to.equal(true);
     });

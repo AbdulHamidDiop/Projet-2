@@ -68,7 +68,7 @@ export class QuestionsService {
     async isCorrectAnswer(answer: string[], id: string): Promise<boolean> {
         const questions: Question[] = await this.getAllQuestions();
         const question: Question | undefined = questions.find((q) => q.id === id);
-        if (question.choices) {
+        if (question?.choices) {
             const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
             if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
                 return false;

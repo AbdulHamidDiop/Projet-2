@@ -126,4 +126,27 @@ describe('Questions Service', () => {
         expect(readFileStub.called);
         expect(writeFileStub.notCalled);
     });
+
+    it('should get questions without correct shown', async () => {
+        const questions = await questionsService.getQuestionsWithoutCorrectShown();
+        expect(questions).to.be.an('array').with.lengthOf(DATALENGTH);
+        expect(questions[0].choices[0]).to.not.have.property('isCorrect');
+        expect(questions[0].choices[1]).to.not.have.property('isCorrect');
+        expect(questions[0].choices[2]).to.not.have.property('isCorrect');
+        expect(readFileStub.called);
+    });
+
+    it('should return whether an answer is correct or not', async () => {
+        const isCorrect = await questionsService.isCorrectAnswer(['Angular = back-end, NodeJS = front-end'], FIRST_QUESTION.id);
+        expect(isCorrect).to.equal(true);
+
+        const isNotCorrect = await questionsService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], FIRST_QUESTION.id);
+        expect(isNotCorrect).to.equal(false);
+        expect(readFileStub.called);
+
+        // test that it returns true if the question is a qrl
+        sinon.stub(questionsService, 'getAllQuestions').resolves([{ type: 'QRL' } as unknown as Question]);
+        const isCorrectQRL = await questionsService.isCorrectAnswer(['qrl answer'], 'qrl id');
+        expect(isCorrectQRL).to.equal(true);
+    });
 });

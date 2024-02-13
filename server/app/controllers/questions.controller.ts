@@ -3,7 +3,6 @@ import { Request, Response, Router } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { Service } from 'typedi';
 
-
 @Service()
 export class QuestionsController {
     router: Router;

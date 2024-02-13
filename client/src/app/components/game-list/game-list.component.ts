@@ -10,7 +10,6 @@ export class GameListComponent implements OnInit {
     games: Game[];
     constructor(public gameService: GameService) {}
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     async ngOnInit() {
         this.games = await this.gameService.getAllGames();
         this.games = this.games.filter((game) => game.isHidden === false);
@@ -26,7 +25,7 @@ export class GameListComponent implements OnInit {
     }
 
     async checkAvailable(game: Game): Promise<void> {
-        if (!await this.gameService.checkHiddenOrDeleted(game)) {
+        if (!(await this.gameService.checkHiddenOrDeleted(game))) {
             game.unavailable = true;
         }
     }

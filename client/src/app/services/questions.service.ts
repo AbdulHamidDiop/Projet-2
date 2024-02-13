@@ -25,6 +25,15 @@ export class QuestionsService {
         }
     }
 
+    // getQuestionsFromGame(id: string) {
+    //     const questions = this.gameService.getGameQuestionsByID(id);
+    //     if (questions.length === 0) {
+    //         return;
+    //     } else {
+    //         this.questions = questions;
+    //     }
+    // }
+
     async getAllQuestions(): Promise<Question[]> {
         const response = await fetch(API_URL + 'questions');
         if (!response.ok) {

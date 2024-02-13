@@ -322,4 +322,14 @@ describe('GameController', () => {
                 expect(response.body).to.deep.equal({ message: 'Question ID and submitted answers are required.' });
             });
     });
+
+    it('should return OK if game is available', async () => {
+        gamesService.getGameByID.resolves(fakeGame);
+        return supertest(expressApp)
+            .get(`/api/game/availability/${fakeGame.id}`)
+            .expect(StatusCodes.OK)
+            .then((response) => {
+                expect(response.body).to.deep.equal(fakeGame);
+            });
+    });
 });
