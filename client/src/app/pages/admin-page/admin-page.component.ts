@@ -24,6 +24,7 @@ export class AdminPageComponent implements OnInit {
     selectedFile: File;
     isAuthentificated: boolean;
     errors: string;
+    // eslint-disable-next-line max-params
     constructor(
         readonly router: Router,
         readonly communicationService: CommunicationService,
