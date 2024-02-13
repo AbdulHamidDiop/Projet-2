@@ -23,6 +23,7 @@ export class GameCardComponent {
     }
 
     onExportButtonClick(game: Game) {
+        // eslint-disable-next-line no-unused-vars
         const { isHidden, ...gameWithoutHidden }: Game = game;
         const jsonData = JSON.stringify(gameWithoutHidden);
         const blob = new Blob([jsonData], { type: 'application/json' });

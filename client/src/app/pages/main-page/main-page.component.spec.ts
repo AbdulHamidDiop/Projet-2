@@ -40,8 +40,8 @@ describe('MainPageComponent', () => {
 
         spyOn(component.router, 'navigate');
         spyOn(component.communicationService, 'updateSharedVariable');
-        
-        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
+
+        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { contentType: 'application/json' } })));
 
         component.verifyPassword();
         tick();
@@ -53,24 +53,21 @@ describe('MainPageComponent', () => {
             API_URL + 'admin/password',
             jasmine.objectContaining({
                 method: 'POST',
-                body: JSON.stringify({"password":component.userInput}),
+                body: JSON.stringify({ password: component.userInput }),
             }),
         );
-        
-      }));
-    
-      it('should display alert for incorrect password', async () => {
-        spyOn(window, 'fetch').and.returnValue(
-            Promise.resolve(new Response(null, { status: 500, headers: { 'Content-type': 'application/json' } }))
-        );
+    }));
+
+    it('should display alert for incorrect password', async () => {
+        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 500, headers: { contentType: 'application/json' } })));
         spyOn(window, 'alert');
         await component.verifyPassword();
-        expect(window.alert).toHaveBeenCalledWith("Mot de passe incorrect.");
-      });
-    
-      it('should call verifyPassword on button click', () => {
+        expect(window.alert).toHaveBeenCalledWith('Mot de passe incorrect.');
+    });
+
+    it('should call verifyPassword on button click', () => {
         spyOn(component, 'verifyPassword');
         component.onButtonClick();
         expect(component.verifyPassword).toHaveBeenCalled();
-      });
+    });
 });
