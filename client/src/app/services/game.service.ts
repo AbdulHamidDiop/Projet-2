@@ -73,7 +73,7 @@ export class GameService {
     }
 
     async deleteGameByID(id: string): Promise<boolean> {
-        const response = await fetch(API_URL + 'game/deletegame/' + id, {
+        const response = await fetch(API_URL + 'game/delete/' + id, {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -113,7 +113,7 @@ export class GameService {
     }
 
     async checkHiddenOrDeleted(game: Game): Promise<boolean> {
-        const response = await fetch(API_URL + 'game/availability' + game.id, {
+        const response = await fetch(API_URL + 'game/availability/' + game.id, {
             method: 'GET',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention

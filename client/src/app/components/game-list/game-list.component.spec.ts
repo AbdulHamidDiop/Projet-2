@@ -40,9 +40,9 @@ describe('GameListComponent', () => {
     });
 
     describe('selectGame', () => {
-        it('should call gameService.selectGame with the provided game', () => {
+        it('should call gameService.selectGame with the provided game', async () => {
             const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
-            component.selectGame(game);
+            await component.selectGame(game);
             expect(gameService.selectGame).toHaveBeenCalledWith(game);
         });
     });
