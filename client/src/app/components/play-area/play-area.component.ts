@@ -42,7 +42,6 @@ export class PlayAreaComponent {
     feedback: Feedback[];
     private timer = DEFAULT_TIMER;
     private points = 0;
-    // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
@@ -87,7 +86,6 @@ export class PlayAreaComponent {
         }
     }
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     async ngOnInit() {
         const gameID = this.route.snapshot.paramMap.get('id');
         if (gameID) {
@@ -97,7 +95,6 @@ export class PlayAreaComponent {
         this.question = this.gameManager.nextQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
     }
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy() {
         this.timeService.stopTimer();
         this.gameManager.reset();
@@ -217,7 +214,6 @@ export class PlayAreaComponent {
         return feedbackItem.status;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trackByFn(item: any) {
         return item.id;
     }

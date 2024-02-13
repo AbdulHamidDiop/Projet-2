@@ -12,7 +12,11 @@ import { AdminPageComponent } from './admin-page.component';
 describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
     let fixture: ComponentFixture<AdminPageComponent>;
+<<<<<<< HEAD
     let mockGameFile: unknown;
+=======
+    let mockGameFile: any;
+>>>>>>> dev
     let fakeFile: File;
     let readFileSpy;
 

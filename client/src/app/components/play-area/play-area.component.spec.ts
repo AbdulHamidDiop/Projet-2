@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
@@ -158,7 +157,6 @@ describe('PlayAreaComponent', () => {
 
     it('should handle keyboard events for different keys', () => {
         fixture.detectChanges();
-
         const componentElement = fixture.nativeElement;
         spyOn(component, 'buttonDetect').and.callThrough();
 
@@ -279,7 +277,6 @@ describe('PlayAreaComponent', () => {
 
     it('handleAbort should reset score and navigate on confirmation', () => {
         const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(true), close: null });
-
         spyOn(component.router, 'navigate');
 
         component.handleAbort();
@@ -320,7 +317,6 @@ describe('PlayAreaComponent', () => {
         await component.ngOnInit();
         expect(component.question).toBeDefined();
     });
-
     // TODO: confirmer que get point() est inutile et enlever ce test
     it('returns the correct score', () => {
         expect(component.point).toEqual(0);

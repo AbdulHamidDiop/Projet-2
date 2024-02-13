@@ -26,7 +26,7 @@ export class GameListComponent implements OnInit {
     }
 
     async checkAvailable(game: Game): Promise<void> {
-        if (!await this.gameService.checkHiddenOrDeleted(game)) {
+        if (!(await this.gameService.checkHiddenOrDeleted(game))) {
             game.unavailable = true;
         }
     }
