@@ -10,10 +10,7 @@ describe('GameService', () => {
         TestBed.configureTestingModule({});
         service = TestBed.inject(GameService);
     });
-
     const mockGameId = '4d5e6f';
-
-    // Mocked response data for the test
     const mockGame: Game = {
         id: mockGameId,
         title: 'Quiz on Web Development',
@@ -84,7 +81,7 @@ describe('GameService', () => {
     }));
 
     it('addGame should send a POST request to API', fakeAsync(() => {
-        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
+        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { contentType: 'application/json' } })));
 
         service.addGame(mockGame);
         tick();
@@ -133,7 +130,7 @@ describe('GameService', () => {
     }));
 
     it('toggleGameHidden should send a PATCH request to API', fakeAsync(() => {
-        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
+        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { contentType: 'application/json' } })));
 
         service.toggleGameHidden(mockGameId);
         tick();
@@ -221,7 +218,7 @@ describe('GameService', () => {
             jasmine.objectContaining({
                 method: 'POST',
                 headers: jasmine.objectContaining({
-                    'Content-Type': 'application/json',
+                    contentType: 'application/json',
                 }),
                 body: JSON.stringify({ answer, gameID, questionID }),
             }),
@@ -287,7 +284,7 @@ describe('GameService', () => {
             jasmine.objectContaining({
                 method: 'GET',
                 headers: jasmine.objectContaining({
-                    'Content-Type': 'application/json',
+                    contentType: 'application/json',
                 }),
             }),
         );

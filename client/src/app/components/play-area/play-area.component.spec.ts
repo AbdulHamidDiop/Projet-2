@@ -151,10 +151,8 @@ describe('PlayAreaComponent', () => {
     it('isChoice should return true for selected choices and false for unselected', () => {
         const choices = [{ text: 'Option 1' }];
         component.answer = choices.map((choice) => choice.text);
-
         component.handleQCMChoice(choices[0].text);
         expect(component.isChoice(choices[0].text)).toBe(false);
-
         component.handleQCMChoice(choices[0].text);
         expect(component.isChoice(choices[0].text)).toBe(true);
     });
@@ -163,12 +161,9 @@ describe('PlayAreaComponent', () => {
         fixture.detectChanges();
         const componentElement = fixture.nativeElement;
         spyOn(component, 'buttonDetect').and.callThrough();
-
         const event = new KeyboardEvent('keydown', { key: 'Enter' });
         componentElement.dispatchEvent(event);
-
         fixture.detectChanges();
-
         expect(component.buttonDetect).toHaveBeenCalled();
     });
 
@@ -185,11 +180,9 @@ describe('PlayAreaComponent', () => {
         component.question = {
             points: 10,
         } as unknown as Question;
-
         component.score = 0;
         await component.updateScore();
         expect(component.score).toBe(DEFAULT_POINTS);
-
         component.score = 0;
         component.question = {
             type: Type.QRL,
@@ -206,11 +199,9 @@ describe('PlayAreaComponent', () => {
                 { text: 'Answer 2', isCorrect: true },
             ],
         } as Question;
-
         component.answer = ['Answer 1'];
         component.updateScore();
         expect(component.score).toBe(0);
-
         component.answer = [];
         component.updateScore();
         expect(component.score).toBe(0);
@@ -282,9 +273,7 @@ describe('PlayAreaComponent', () => {
     it('handleAbort should reset score and navigate on confirmation', () => {
         const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(true), close: null });
         spyOn(component.router, 'navigate');
-
         component.handleAbort();
-
         expect(component.abortDialog.open).toHaveBeenCalled();
         component.abortDialog.closeAll();
         dialogRefSpyObj.afterClosed().subscribe(() => {
@@ -321,6 +310,7 @@ describe('PlayAreaComponent', () => {
         await component.ngOnInit();
         expect(component.question).toBeDefined();
     });
+
     // TODO: confirmer que get point() est inutile et enlever ce test
     it('returns the correct score', () => {
         expect(component.point).toEqual(0);
