@@ -43,8 +43,12 @@ describe('PlayAreaComponent', () => {
                                 { text: 'Option 2', isCorrect: false },
                             ],
                         }),
-                        initialize: () => {},
-                        reset: () => {},
+                        initialize: () => {
+                            return;
+                        },
+                        reset: () => {
+                            return;
+                        },
                         isCorrectAnswer: () => of(true),
                         getFeedBack: () => of([{ choice: 'Option 1', status: 'correct' }]),
                     }),

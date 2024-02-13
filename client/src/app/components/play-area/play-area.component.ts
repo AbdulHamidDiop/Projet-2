@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, HostListener } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
@@ -28,7 +28,7 @@ export enum MouseButton {
     templateUrl: './play-area.component.html',
     styleUrls: ['./play-area.component.scss'],
 })
-export class PlayAreaComponent {
+export class PlayAreaComponent implements OnInit, OnDestroy {
     inTestMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
@@ -42,6 +42,7 @@ export class PlayAreaComponent {
     feedback: Feedback[];
     private timer = DEFAULT_TIMER;
     private points = 0;
+    // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
@@ -214,6 +215,7 @@ export class PlayAreaComponent {
         return feedbackItem.status;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trackByFn(item: any) {
         return item.id;
     }
