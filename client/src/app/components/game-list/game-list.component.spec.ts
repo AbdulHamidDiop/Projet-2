@@ -1,5 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { Game, GameService } from '@app/services/game.service';
+import { firstValueFrom, of } from 'rxjs';
 import { GameListComponent } from './game-list.component';
 
 describe('GameListComponent', () => {
@@ -7,7 +8,7 @@ describe('GameListComponent', () => {
     let gameService: jasmine.SpyObj<GameService>;
 
     beforeEach(async () => {
-        const gameServiceSpy = jasmine.createSpyObj('GameService', ['getAllGames', 'selectGame', 'getSelectedGame']);
+        const gameServiceSpy = jasmine.createSpyObj('GameService', ['getAllGames', 'selectGame', 'getSelectedGame', 'checkHiddenOrDeleted']);
 
         await TestBed.configureTestingModule({
             providers: [{ provide: GameService, useValue: gameServiceSpy }],
@@ -46,11 +47,26 @@ describe('GameListComponent', () => {
             expect(gameService.selectGame).toHaveBeenCalledWith(game);
         });
     });
-    /*
+    
     describe('getSelectedGame', () => {
         it('should call gameService.getSelectedGame', () => {
             component.getSelectedGame();
             expect(gameService.getSelectedGame).toBeTruthy();
         });
-    });*/
+    });
+    describe('checkAvailable', () => {
+        it('should set game as unavailable if checkHiddenOrDeleted returns false', async () => {
+            const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+            gameService.checkHiddenOrDeleted.and.returnValue(firstValueFrom(of(false)));
+            await component.checkAvailable(game);
+            expect(game.unavailable).toBeTrue();
+        });
+
+        it('should not modify game if checkHiddenOrDeleted returns true', async () => {
+            const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
+            gameService.checkHiddenOrDeleted.and.returnValue(firstValueFrom(of(true)));
+            await component.checkAvailable(game);
+            expect(game.unavailable).toBeUndefined();
+        });
+    });
 });
