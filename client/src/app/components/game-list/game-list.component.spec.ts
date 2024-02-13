@@ -47,7 +47,7 @@ describe('GameListComponent', () => {
             expect(gameService.selectGame).toHaveBeenCalledWith(game);
         });
     });
-    
+
     describe('getSelectedGame', () => {
         it('should call gameService.getSelectedGame', () => {
             component.getSelectedGame();

@@ -31,14 +31,13 @@ export class MainPageComponent {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({password: this.userInput}),
+            body: JSON.stringify({ password: this.userInput }),
         });
         if (response.ok) {
             this.router.navigate(['/admin']);
             this.communicationService.updateSharedVariable(true);
-        }
-        else {
-            alert("Mot de passe incorrect.");
+        } else {
+            alert('Mot de passe incorrect.');
         }
     }
 

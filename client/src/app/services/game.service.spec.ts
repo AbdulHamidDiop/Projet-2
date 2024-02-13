@@ -281,7 +281,7 @@ describe('GameService', () => {
             jasmine.objectContaining({
                 method: 'POST',
                 headers: jasmine.objectContaining({
-                    'Content-Type': 'application/json',
+                    contentType: 'application/json',
                 }),
                 body: JSON.stringify({ answer, gameID, questionID }),
             }),
@@ -324,7 +324,7 @@ describe('GameService', () => {
             jasmine.objectContaining({
                 method: 'GET',
                 headers: jasmine.objectContaining({
-                    'Content-Type': 'application/json',
+                    contentType: 'application/json',
                 }),
             }),
         );

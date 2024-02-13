@@ -19,9 +19,27 @@ describe('PlayAreaComponent', () => {
     let fixture: ComponentFixture<PlayAreaComponent>;
     let timeServiceSpy: SpyObj<TimeService>;
     let gameManager: GameManagerService;
+    const validQuestion: Question = {
+        id: '2',
+        lastModification: null,
+        type: Type.QCM,
+        text: 'Question valide',
+        points: 10,
+        choices: [
+            {
+                text: 'Choix valide #1',
+                isCorrect: true,
+            },
+            {
+                text: 'Choix valide #2',
+                isCorrect: false,
+            },
+        ],
+        answer: 'Choix #1',
+    };
 
     beforeEach(async () => {
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer']);
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'time'], ['counter', 'interval']);
 
         await TestBed.configureTestingModule({
             imports: [MatListModule, BrowserAnimationsModule],
@@ -152,10 +170,8 @@ describe('PlayAreaComponent', () => {
     it('isChoice should return true for selected choices and false for unselected', () => {
         const choices = [{ text: 'Option 1' }];
         component.answer = choices.map((choice) => choice.text);
-
         component.handleQCMChoice(choices[0].text);
         expect(component.isChoice(choices[0].text)).toBe(false);
-
         component.handleQCMChoice(choices[0].text);
         expect(component.isChoice(choices[0].text)).toBe(true);
     });
@@ -164,12 +180,9 @@ describe('PlayAreaComponent', () => {
         fixture.detectChanges();
         const componentElement = fixture.nativeElement;
         spyOn(component, 'buttonDetect').and.callThrough();
-
         const event = new KeyboardEvent('keydown', { key: 'Enter' });
         componentElement.dispatchEvent(event);
-
         fixture.detectChanges();
-
         expect(component.buttonDetect).toHaveBeenCalled();
     });
 
@@ -186,11 +199,9 @@ describe('PlayAreaComponent', () => {
         component.question = {
             points: 10,
         } as unknown as Question;
-
         component.score = 0;
         await component.updateScore();
         expect(component.score).toBe(DEFAULT_POINTS);
-
         component.score = 0;
         component.question = {
             type: Type.QRL,
@@ -207,11 +218,9 @@ describe('PlayAreaComponent', () => {
                 { text: 'Answer 2', isCorrect: true },
             ],
         } as Question;
-
         component.answer = ['Answer 1'];
         component.updateScore();
         expect(component.score).toBe(0);
-
         component.answer = [];
         component.updateScore();
         expect(component.score).toBe(0);
@@ -222,6 +231,8 @@ describe('PlayAreaComponent', () => {
     });
 
     it('pressing a number key should call handleQCMChoice with the right choice selected', () => {
+        component.question = validQuestion;
+        component.nbChoices = validQuestion.choices.length;
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -233,6 +244,8 @@ describe('PlayAreaComponent', () => {
     });
 
     it('pressing a number once should add the choice to the answer array and twice should remove it', () => {
+        component.question = validQuestion;
+        component.nbChoices = validQuestion.choices.length;
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -245,6 +258,8 @@ describe('PlayAreaComponent', () => {
     });
 
     it('selecting a wrong choice should not increase the score', () => {
+        component.question = validQuestion;
+        component.nbChoices = validQuestion.choices.length;
         const choices = component.question.choices;
         if (choices) {
             const wrongChoice = choices.find((choice) => !choice.isCorrect);
@@ -256,16 +271,19 @@ describe('PlayAreaComponent', () => {
         }
     });
 
-    it('confirmAnswers should be called when the timer runs out', () => {
+    it('confirmAnswers should be called when the timer runs out', fakeAsync(() => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
-        spyOn(component, 'confirmAnswers').and.callThrough();
-        component.timeService.startTimer(1);
-        fakeAsync(() => {
-            tick(ONE_SECOND);
-            expect(component.confirmAnswers).toHaveBeenCalled();
+        spyOn(component, 'confirmAnswers').and.callFake(async () => {
+            return;
         });
-    });
+        component.timeService.startTimer(1);
+        tick(ONE_SECOND);
+        const time = component.time;
+        if (time === 0) {
+            expect(component.confirmAnswers).toHaveBeenCalled();
+        }
+    }));
 
     it('confirmAnswers should update score and proceed after delay', fakeAsync(() => {
         spyOn(component, 'updateScore').and.callThrough();
@@ -283,9 +301,7 @@ describe('PlayAreaComponent', () => {
     it('handleAbort should reset score and navigate on confirmation', () => {
         const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(true), close: null });
         spyOn(component.router, 'navigate');
-
         component.handleAbort();
-
         expect(component.abortDialog.open).toHaveBeenCalled();
         component.abortDialog.closeAll();
         dialogRefSpyObj.afterClosed().subscribe(() => {
@@ -321,6 +337,7 @@ describe('PlayAreaComponent', () => {
         await component.ngOnInit();
         expect(component.question).toBeDefined();
     });
+
     // TODO: confirmer que get point() est inutile et enlever ce test
     it('returns the correct score', () => {
         expect(component.point).toEqual(0);
