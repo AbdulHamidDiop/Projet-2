@@ -9,6 +9,7 @@ export class TimeService {
     private readonly tick = 1000;
 
     private counter = 0;
+
     get time() {
         return this.counter;
     }

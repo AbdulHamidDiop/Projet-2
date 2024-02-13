@@ -1,0 +1,71 @@
+<div class="container center-container">
+    <form [formGroup]="questionForm" (ngSubmit)="onSubmit()">
+        <div name="question-content" class="column-container center-container">
+            <mat-card name="question-info" class="row-container">
+                <div class="center-container"><h2>Créer une question</h2></div>
+                <mat-form-field class="select">
+                    <mat-label>Type de question</mat-label>
+                    <mat-select formControlName="type">
+                        <mat-option value="QCM">QCM</mat-option>
+                        <mat-option value="QRL">QRL</mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Question</mat-label>
+                    <input matInput type="text" formControlName="text" />
+                </mat-form-field>
+
+                <mat-form-field>
+                    <mat-label>Points</mat-label>
+                    <input matInput type="number" formControlName="points" placeholder="Points" />
+                </mat-form-field>
+                <div *ngIf="questionForm.get('points')?.errors && questionForm.get('points')?.touched">
+                    <small>Veuillez entrer un multiple de 10 entre 10 et 100</small>
+                </div>
+
+                <mat-checkbox type="checkbox" formControlName="addToBank">ajouter à la banque </mat-checkbox>
+                <small>*Champs obligatoires</small>
+            </mat-card>
+
+            <mat-card *ngIf="questionForm.get('type')?.value === 'QCM'" formArrayName="choices" class="choices-container">
+                <h3>Choix de réponse</h3>
+                <p class="is-correct-instruction">cochez pour indiquer une bonne réponse</p>
+                <div *ngIf="choices?.errors" class="row-container">
+                    <small *ngIf="choices.errors?.minlength || choices.errors?.maxlength">Veuillez ajouter entre 2 à 4 choix</small>
+                    <small *ngIf="choices.errors?.hasIncorrectAndCorrectAnswer">Veuillez avoir au moins un bon et un mauvais choix</small>
+                </div>
+                <mat-divider></mat-divider>
+
+                <div name="choices-list" cdkDropList (cdkDropListDropped)="dropChoice($event)">
+                    <div *ngFor="let choice of choices.controls; let i = index" [formGroupName]="i" class="column-container" cdkDrag>
+                        <mat-icon class="drag-icon">drag_indicator</mat-icon>
+                        {{ i + 1 }}
+                        <mat-form-field>
+                            <mat-label>texte du choix</mat-label>
+                            <input matInput type="text" formControlName="text" placeholder="texte du choix" />
+                        </mat-form-field>
+                        <mat-checkbox type="checkbox" formControlName="isCorrect"></mat-checkbox>
+                        <button mat-icon-button (click)="removeChoice(i)">
+                            <mat-icon class="delete-icon">delete</mat-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="button" (click)="addChoice()" [disabled]="choices.length >= 4">Ajouter un choix</button>
+                </div>
+            </mat-card>
+        </div>
+
+        <div class="submit-options">
+            <button
+                type="submit"
+                [disabled]="!questionForm.valid || (questionForm.get('type')?.value === 'QCM' && choices.length <= 0)"
+                class="save-button"
+            >
+                Confirmer
+            </button>
+        </div>
+    </form>
+</div>

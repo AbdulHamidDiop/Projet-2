@@ -1,9 +1,11 @@
-import { HttpClientModule, HttpResponse } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpResponse } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { CommunicationService } from '@app/services/communication.service';
-import { of, throwError } from 'rxjs';
+import { API_URL } from '@common/consts';
+import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
 describe('MainPageComponent', () => {
@@ -17,9 +19,9 @@ describe('MainPageComponent', () => {
         communicationServiceSpy.basicPost.and.returnValue(of(new HttpResponse<string>({ status: 201, statusText: 'Created' })));
 
         await TestBed.configureTestingModule({
-            imports: [RouterTestingModule, HttpClientModule],
+            imports: [RouterTestingModule, HttpClientTestingModule],
             declarations: [MainPageComponent],
-            providers: [{ provide: CommunicationService, useValue: communicationServiceSpy }],
+            providers: [CommunicationService],
         }).compileComponents();
     });
 
@@ -33,34 +35,42 @@ describe('MainPageComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it("should have as title 'LOG2990'", () => {
-        expect(component.title).toEqual('LOG2990');
-    });
+    it('should verify password successfully', fakeAsync(() => {
+        component.userInput = 'log2990-312';
 
-    it('should call basicGet when calling getMessagesFromServer', () => {
-        component.getMessagesFromServer();
-        expect(communicationServiceSpy.basicGet).toHaveBeenCalled();
-    });
+        spyOn(component.router, 'navigate');
+        spyOn(component.communicationService, 'updateSharedVariable');
+        
+        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 200, headers: { 'Content-type': 'application/json' } })));
 
-    it('should call basicPost when calling sendTimeToServer', () => {
-        component.sendTimeToServer();
-        expect(communicationServiceSpy.basicPost).toHaveBeenCalled();
-    });
+        component.verifyPassword();
+        tick();
 
-    it('should handle basicPost that returns a valid HTTP response', () => {
-        component.sendTimeToServer();
-        component.message.subscribe((res) => {
-            expect(res).toContain('201 : Created');
-        });
-    });
+        expect(component.router.navigate).toHaveBeenCalledWith(['/admin']);
+        expect(component.communicationService.updateSharedVariable).toHaveBeenCalledWith(true);
 
-    it('should handle basicPost that returns an invalid HTTP response', () => {
-        communicationServiceSpy.basicPost.and.returnValue(throwError(() => new Error('test')));
-        component.sendTimeToServer();
-        component.message.subscribe({
-            next: (res) => {
-                expect(res).toContain('Le serveur ne répond pas');
-            },
-        });
-    });
+        expect(window.fetch).toHaveBeenCalledWith(
+            API_URL + 'admin/password',
+            jasmine.objectContaining({
+                method: 'POST',
+                body: JSON.stringify({"password":component.userInput}),
+            }),
+        );
+        
+      }));
+    
+      it('should display alert for incorrect password', async () => {
+        spyOn(window, 'fetch').and.returnValue(
+            Promise.resolve(new Response(null, { status: 500, headers: { 'Content-type': 'application/json' } }))
+        );
+        spyOn(window, 'alert');
+        await component.verifyPassword();
+        expect(window.alert).toHaveBeenCalledWith("Mot de passe incorrect.");
+      });
+    
+      it('should call verifyPassword on button click', () => {
+        spyOn(component, 'verifyPassword');
+        component.onButtonClick();
+        expect(component.verifyPassword).toHaveBeenCalled();
+      });
 });

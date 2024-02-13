@@ -1,14 +1,121 @@
-.container {
-    height: 100%;
+/* Reset some default browser styles */
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li {
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+.wrapper {
     display: flex;
+    position: relative;
 }
 
-.play-area-container {
-    overflow: auto;
-    flex: 1 1 auto;
+.wrapper .sidebar {
+    width: 200px;
+    height: 100%;
+    background: #503bb8;
+    padding: 30px 0px;
+    position: fixed;
 }
 
-#sidebar {
-    flex-basis: 350px;
-    min-width: 200px;
+.wrapper .sidebar ul li {
+    padding: 15px;
+    border-bottom: 1px solid #1e1e22;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.Logo-Projet {
+    height: auto;
+    width: 130px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper .sidebar ul li a {
+    color: #bdb8d7;
+    display: block;
+}
+
+.wrapper .sidebar ul li:hover {
+    background-color: #594f8d;
+}
+
+.wrapper .sidebar ul li:hover a {
+    color: #fff;
+}
+
+/* Main content styles */
+main {
+    padding: 20px;
+    margin-left: 250px;
+    min-height: 88%;
+}
+
+.header-item {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #007bff;
+}
+
+app-game-list {
+    align-items: center;
+    text-align: center;
+}
+
+/* Footer styles */
+.footer-item {
+    background: #503bb8;
+    color: white;
+    padding: 10px;
+    border-top: 1px solid #555;
+    text-align: center;
+}
+
+.footer-item h4 {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    color: #28a745; /* Vert */
+}
+
+.footer-item p span:nth-child(even) {
+    color: #ffc107; /* Jaune */
+}
+
+.footer-item p span:nth-child(odd) {
+    color: #17a2b8; /* Bleu cyan */
+}
+
+/* Header item styles */
+.header-item {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #007bff;
+}
+
+/* Team name styles */
+.team-name {
+    color: #28a745;
+}
+
+/* Adjustments for inputs */
+input {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
 }

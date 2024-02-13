@@ -1,0 +1,168 @@
+/* Reset some default browser styles */
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li {
+    margin: 0;
+    padding: 0;
+}
+
+/* Header styles */
+.wrapper {
+    display: flex;
+    position: relative;
+}
+
+.wrapper .sidebar {
+    width: 200px;
+    height: 100%;
+    background: #503bb8;
+    padding: 30px 0px;
+    position: fixed;
+}
+
+.wrapper .sidebar ul li {
+    padding: 15px;
+    border-bottom: 1px solid #1e1e22;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.Logo-Projet {
+    height: auto;
+    width: 130px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wrapper .sidebar ul li a {
+    color: #bdb8d7;
+    display: block;
+}
+
+.wrapper .sidebar ul li:hover {
+    background-color: #594f8d;
+}
+
+.wrapper .sidebar ul li:hover a {
+    color: #fff;
+}
+
+/* Main content styles */
+main {
+    padding: 20px;
+    margin-left: 200px;
+    min-height: 88%;
+}
+
+.create-quiz-container {
+    height: 100%;
+}
+.questions-bank-container {
+    max-height: 100%;
+    min-width: 450px;
+    overflow-y: auto;
+    border-left-color: rgba(128, 128, 128, 0.347);
+    border-left-width: 1px;
+    border-left-style: solid;
+    right: 20px;
+    top: 15px;
+    position: absolute;
+}
+
+.quiz-questions-container {
+    min-height: 100px;
+    max-height: 400px;
+    overflow-y: auto;
+    min-width: 400px;
+    width: 90%;
+    overflow-y: auto;
+}
+
+mat-accordion {
+    min-height: 100%;
+    min-width: 100%;
+}
+.placeholder {
+    color: grey;
+    border-radius: 10px;
+    min-height: 80px;
+    line-height: 50px;
+    text-align: center;
+    border: 1px dashed #ccc;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: column;
+}
+.column-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.question-container {
+    padding-top: 10px;
+}
+
+.questions-display {
+    width: 700px;
+}
+
+.base-input {
+    border-radius: 40px;
+}
+.short-input {
+    width: 500px;
+}
+
+.text-area {
+    width: 500px;
+    max-height: 300px;
+}
+
+.bank-visibility-button {
+    border-radius: 20px;
+    border-color: #503bb8;
+    border-style: solid;
+}
+
+.save-button {
+    background-color: rgb(84, 183, 84);
+    height: 30px;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+small {
+    color: red;
+}
+
+/* Footer styles */
+.footer-item {
+    background: #503bb8;
+    color: white;
+    padding: 10px;
+    border-top: 1px solid #555;
+    text-align: center;
+}
+
+.footer-item h4 {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    color: #28a745; /* Vert */
+}
+
+.footer-item p span:nth-child(even) {
+    color: #ffc107; /* Jaune */
+}
+
+.footer-item p span:nth-child(odd) {
+    color: #17a2b8; /* Bleu cyan */
+}

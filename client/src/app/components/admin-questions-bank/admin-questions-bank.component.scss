@@ -1,0 +1,31 @@
+.container {
+    height: 100%;
+    padding-left: 15px;
+    width: 100%;
+}
+
+.question-container {
+    padding-top: 10px;
+}
+
+.placeholder {
+    color: grey;
+    border-radius: 10px;
+    min-height: 80px;
+    line-height: 50px;
+    text-align: center;
+    border: 1px dashed #ccc;
+}
+
+.reload-icon {
+    color: rgb(84, 183, 84);
+}
+
+.control-options {
+    align-items: center;
+    display: flex;
+}
+
+.drag-instruction{
+    color: gray;
+}

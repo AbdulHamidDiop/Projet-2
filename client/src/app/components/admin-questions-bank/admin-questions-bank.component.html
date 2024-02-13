@@ -1,0 +1,26 @@
+<div class="container">
+    <h3>Banque de questions</h3>
+    <p class="drag-instruction">Vous pouvez déplacer les questions dans la zone des questions du Quiz</p>
+    <div class="control-options">
+        <mat-button-toggle-group multiple>
+            <mat-button-toggle value="QCM" (change)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
+            <mat-button-toggle value="QRL" (change)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
+        </mat-button-toggle-group>
+        <button mat-icon-button (click)="reloadQuestions()" name="refresh-button" class="refresh-button" title="rafraîchir la banque">
+            <mat-icon class="reload-icon">refresh</mat-icon>
+        </button>
+    </div>
+
+    <mat-accordion
+        cdkDropList
+        [cdkDropListData]="displayQuestions"
+        #questionsBankList="cdkDropList"
+        [cdkDropListConnectedTo]="[questionsList]"
+        (cdkDropListDropped)="dropQuestion($event)"
+    >
+        <div *ngIf="displayQuestions.length === 0" class="placeholder">Déplacer les questions à ne pas rajouter au quiz ici</div>
+        <div *ngFor="let question of displayQuestions; index as order" cdkDrag class="question-container">
+            <app-admin-question [question]="question" [index]="order + 1"></app-admin-question>
+        </div>
+    </mat-accordion>
+</div>
