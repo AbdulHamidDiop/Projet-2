@@ -1,5 +1,5 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { QuestionsService } from '@app/services/questions.service';
@@ -17,7 +17,7 @@ const MAX_POINTS = 100;
     templateUrl: './create-question-dialog.component.html',
     styleUrls: ['./create-question-dialog.component.scss'],
 })
-export class CreateQuestionDialogComponent {
+export class CreateQuestionDialogComponent implements OnInit {
     questionForm: FormGroup;
     question: Question;
     id: string;
@@ -37,7 +37,6 @@ export class CreateQuestionDialogComponent {
     get choices(): FormArray {
         return this.questionForm.get('choices') as FormArray;
     }
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit(): void {
         if (this.data && this.data.question) {
             this.populateForm(this.data.question);
@@ -105,7 +104,6 @@ export class CreateQuestionDialogComponent {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/member-ordering
     populateForm(questionData: Question): void {
         this.questionForm.patchValue({
             type: questionData.type,

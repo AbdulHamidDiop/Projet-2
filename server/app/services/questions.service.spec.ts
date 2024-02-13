@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import { SinonStub, stub } from 'sinon';
 import { QuestionsService } from './questions.service';
 
-const DATALENGTH = 1;
+const DATA_LENGTH = 1;
 
 const FIRST_QUESTION = {
     type: 'QCM',
@@ -78,7 +78,7 @@ describe('Questions Service', () => {
 
     it('should get all questions', async () => {
         const questions = await questionsService.getAllQuestions();
-        expect(questions).to.be.an('array').with.lengthOf(DATALENGTH);
+        expect(questions).to.be.an('array').with.lengthOf(DATA_LENGTH);
         expect(questions[0]).to.deep.equal(FIRST_QUESTION);
         expect(readFileStub.called);
     });
@@ -86,8 +86,8 @@ describe('Questions Service', () => {
     it('should add a question to the database', async () => {
         await questionsService.addQuestion(SECOND_QUESTION as unknown as Question);
         expect(JSON.parse(QUESTIONS)).to.be.an('array');
-        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATALENGTH + 1);
-        expect(JSON.parse(QUESTIONS)[DATALENGTH]).to.deep.equal(SECOND_QUESTION);
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATA_LENGTH + 1);
+        expect(JSON.parse(QUESTIONS)[DATA_LENGTH]).to.deep.equal(SECOND_QUESTION);
         expect(readFileStub.called);
         expect(writeFileStub.called);
     });
@@ -96,7 +96,7 @@ describe('Questions Service', () => {
         const questions = await questionsService.sortAllQuestions();
         expect(questions)
             .to.be.an('array')
-            .with.lengthOf(DATALENGTH + 1);
+            .with.lengthOf(DATA_LENGTH + 1);
         expect(questions).to.deep.equal([SECOND_QUESTION, FIRST_QUESTION]);
         expect(readFileStub.called);
     });
@@ -105,8 +105,8 @@ describe('Questions Service', () => {
         const newText = 'Nouveau Texte';
         await questionsService.addQuestion({ ...SECOND_QUESTION, text: newText } as unknown as Question);
         expect(JSON.parse(QUESTIONS)).to.be.an('array');
-        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATALENGTH + 1);
-        expect(JSON.parse(QUESTIONS)[DATALENGTH].text).to.equal(newText);
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATA_LENGTH + 1);
+        expect(JSON.parse(QUESTIONS)[DATA_LENGTH].text).to.equal(newText);
 
         expect(readFileStub.called);
         expect(writeFileStub.called);
@@ -129,7 +129,7 @@ describe('Questions Service', () => {
 
     it('should get questions without correct shown', async () => {
         const questions = await questionsService.getQuestionsWithoutCorrectShown();
-        expect(questions).to.be.an('array').with.lengthOf(DATALENGTH);
+        expect(questions).to.be.an('array').with.lengthOf(DATA_LENGTH);
         expect(questions[0].choices[0]).to.not.have.property('isCorrect');
         expect(questions[0].choices[1]).to.not.have.property('isCorrect');
         expect(questions[0].choices[2]).to.not.have.property('isCorrect');

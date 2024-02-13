@@ -129,7 +129,6 @@ describe('GameManagerService', () => {
 
     it('should get feedback for a submitted answer', async () => {
         const mockFeedback = [{ choice: 'Option 1', status: 'correct' }] as unknown as Feedback[];
-        // spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(JSON.stringify(mockFeedback))));
 
         service.game = { id: 'gameId' } as unknown as Game;
         const feedback = await service.getFeedBack('questionId', ['answer']);

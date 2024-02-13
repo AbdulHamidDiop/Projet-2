@@ -138,7 +138,6 @@ describe('AdminCreateGamePageComponent', () => {
         subscriber.next({ get: () => false });
         subscriber.next({ get: () => '1234' });
     });
-    //    const paramMapSpy = jasmine.createSpy('paramMap').and.returnValue(observableParamMap);
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -177,13 +176,6 @@ describe('AdminCreateGamePageComponent', () => {
                         paramMap: observableParamMap,
                     },
                 },
-                /*
-                {
-                    provide: AdminQuestionsBankComponent,
-                    useValue: {
-                        questionsBankList: jasmine.createSpy('questionsBankList').and.callThrough(),
-                    },
-                },*/
             ],
         }).compileComponents();
     });

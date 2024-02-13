@@ -13,7 +13,6 @@ import SpyObj = jasmine.SpyObj;
 
 const ONE_SECOND = 1000;
 const DEFAULT_POINTS = 10;
-// TODO : update once QRL questions are implemented
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
@@ -338,7 +337,6 @@ describe('PlayAreaComponent', () => {
         expect(component.question).toBeDefined();
     });
 
-    // TODO: confirmer que get point() est inutile et enlever ce test
     it('returns the correct score', () => {
         expect(component.point).toEqual(0);
     });

@@ -1,8 +1,5 @@
-/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
 import { MatDialog } from '@angular/material/dialog';
-// eslint-disable-next-line no-restricted-imports
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
@@ -10,7 +7,6 @@ import { QuestionsService } from '@app/services/questions.service';
 import { Question, Type } from '@common/game';
 import { Observable } from 'rxjs';
 import { AdminQuestionComponent } from './admin-question.component';
-// eslint-disable-next-line no-restricted-imports
 
 const validQuestion: Question = {
     id: '2',
@@ -54,16 +50,6 @@ describe('AdminQuestionComponent', () => {
                         open: openDialogSpy,
                     },
                 },
-                /*                {
-                    provide: MatDialogRef,
-                    useValue: {
-                        subscribe: jasmine.createSpy('subscribe').and.callThrough(),
-                    },
-                },
-                {
-                    provide: MAT_DIALOG_DATA,
-                    useValue: { question: validQuestion },
-                },*/
                 {
                     provide: QuestionsService,
                     useValue: {

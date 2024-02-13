@@ -26,15 +26,6 @@ export class QuestionsService {
         }
     }
 
-    // getQuestionsFromGame(id: string) {
-    //     const questions = this.gameService.getGameQuestionsByID(id);
-    //     if (questions.length === 0) {
-    //         return;
-    //     } else {
-    //         this.questions = questions;
-    //     }
-    // }
-
     async getAllQuestions(): Promise<Question[]> {
         const response = await this.fetchService.fetch(API_URL + 'questions');
         if (!response.ok) {
@@ -51,8 +42,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(API_URL + 'questions/add', {
             method: 'POST',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                contentType: 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -65,8 +55,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(API_URL + 'questions/edit', {
             method: 'PUT',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                contentType: 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -102,8 +91,7 @@ export class QuestionsService {
             const response = await this.fetchService.fetch(API_URL + 'questions/check', {
                 method: 'POST',
                 headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
-                    'Content-Type': 'application/json',
+                    contentType: 'application/json',
                 },
                 body: JSON.stringify({ answer, id }),
             });

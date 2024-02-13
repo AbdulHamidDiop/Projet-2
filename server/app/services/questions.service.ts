@@ -64,7 +64,6 @@ export class QuestionsService {
         return questionsWithoutCorrect;
     }
 
-    // TODO: implement the case where the question is not in the bank but still in a game
     async isCorrectAnswer(answer: string[], id: string): Promise<boolean> {
         const questions: Question[] = await this.getAllQuestions();
         const question: Question | undefined = questions.find((q) => q.id === id);

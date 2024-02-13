@@ -124,21 +124,6 @@ describe('QuestionsService', () => {
     });
 
     it('getAllQuestions should fetch questions from API', fakeAsync(() => {
-        /*        const mockChoices: Choices[] = [
-            { text: 'Choice 1', isCorrect: true },
-            { text: 'Choice 2', isCorrect: false },
-        ];
-        const mockQuestion: Question = {
-            id: '1',
-            type: Type.QCM,
-            lastModification: new Date(),
-            text: 'Question 1',
-            points: 5,
-            choices: mockChoices,
-            answer: '',
-        };*/
-        //       spyOn(window, 'fetch').and.returnValue(Promise.resolve({ ok: true, json: async () => Promise.resolve([mockQuestion]) } as Response));
-
         service.getAllQuestions();
         tick();
         expect(service.questions).toEqual([mockQuestion]);
@@ -146,24 +131,6 @@ describe('QuestionsService', () => {
     }));
 
     it('addQuestion should send a POST request to API', fakeAsync(() => {
-        /*    const mockChoices: Choices[] = [
-            { text: 'Choice 1', isCorrect: true },
-            { text: 'Choice 2', isCorrect: false },
-        ];
-        const mockQuestion: Question = {
-            id: '1',
-            type: Type.QCM,
-            lastModification: new Date(),
-            text: 'Question 1',
-            points: 5,
-            choices: mockChoices,
-            answer: '',
-        };*/
-        /*
-        spyOn(window, 'fetch').and.returnValue(
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            Promise.resolve(new Response(JSON.stringify([mockQuestion]), { status: 200, headers: { 'Content-type': 'application/json' } })),
-        );*/
         service.addQuestion(mockQuestion);
         tick();
 
@@ -177,24 +144,6 @@ describe('QuestionsService', () => {
     }));
 
     it('editQuestion should send a PUT request to API', fakeAsync(() => {
-        /*    const mockChoices: Choices[] = [
-            { text: 'Choice 1', isCorrect: true },
-            { text: 'Choice 2', isCorrect: false },
-        ];
-        const mockQuestion: Question = {
-            id: '1',
-            type: Type.QCM,
-            lastModification: new Date(),
-            text: 'Question 1',
-            points: 5,
-            choices: mockChoices,
-            answer: '',
-        };*/ /*
-        spyOn(window, 'fetch').and.returnValue(
-            // eslint-disable-next-line @typescript-eslint/naming-convention
-            Promise.resolve(new Response(null, { status: 200, statusText: 'OK', headers: { 'Content-type': 'application/json' } })),
-        );*/
-
         service.editQuestion(mockQuestion);
         tick();
 
@@ -208,20 +157,6 @@ describe('QuestionsService', () => {
     }));
 
     it('deleteQuestion should send a DELETE request to API and emit deleteRequest event', fakeAsync(() => {
-        /*    const mockChoices: Choices[] = [
-            { text: 'Choice 1', isCorrect: true },
-            { text: 'Choice 2', isCorrect: false },
-        ];
-        const mockQuestion: Question = {
-            id: '1',
-            type: Type.QCM,
-            lastModification: new Date(),
-            text: 'Question 1',
-            points: 5,
-            choices: mockChoices,
-            answer: '',
-        };*/
-
         const deleteRequestSpy = spyOn(service.deleteRequest, 'emit');
 
         spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 204, statusText: 'No Content' })));

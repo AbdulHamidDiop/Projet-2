@@ -1,6 +1,6 @@
 import * as dragDrop from '@angular/cdk/drag-drop';
 import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -18,7 +18,7 @@ const MAX_DURATION = 60;
     templateUrl: './admin-create-game-page.component.html',
     styleUrls: ['./admin-create-game-page.component.scss'],
 })
-export class AdminCreateGamePageComponent {
+export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     @ViewChild(AdminQuestionsBankComponent) questionsBankComponent!: AdminQuestionsBankComponent;
     questionsBankList!: CdkDropList;
 
@@ -39,14 +39,11 @@ export class AdminCreateGamePageComponent {
         private router: Router,
     ) {}
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngAfterViewInit(): void {
-        // Access the cdkDropList from the child component after view initialization
         this.questionsBankList = this.questionsBankComponent.questionsBankList;
         this.cd.detectChanges();
     }
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit(): void {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
