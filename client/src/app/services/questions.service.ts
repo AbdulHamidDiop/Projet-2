@@ -2,6 +2,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
+import { StatusCodes } from 'http-status-codes';
 import { FetchService } from './fetch.service';
 
 @Injectable({
@@ -39,7 +40,7 @@ export class QuestionsService {
         return questions;
     }
 
-    async addQuestion(question: Question): Promise<void> {
+    async addQuestion(question: Question): Promise<boolean> {
         const response = await this.fetchService.fetch(API_URL + 'questions/add', {
             method: 'POST',
             headers: {
@@ -48,8 +49,13 @@ export class QuestionsService {
             body: JSON.stringify(question),
         });
         if (!response.ok) {
+            if (response.status === StatusCodes.BAD_REQUEST) {
+                window.alert("Votre question n'a pas été ajoutée car elle existe déjà");
+                return false;
+            }
             throw new Error(`Error: ${response.status}`);
         }
+        return true;
     }
 
     async editQuestion(question: Question): Promise<void> {
