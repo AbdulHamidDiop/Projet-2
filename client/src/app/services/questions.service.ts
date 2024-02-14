@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
@@ -42,7 +43,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(API_URL + 'questions/add', {
             method: 'POST',
             headers: {
-                contentType: 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -55,7 +56,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(API_URL + 'questions/edit', {
             method: 'PUT',
             headers: {
-                contentType: 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -91,7 +92,7 @@ export class QuestionsService {
             const response = await this.fetchService.fetch(API_URL + 'questions/check', {
                 method: 'POST',
                 headers: {
-                    contentType: 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ answer, id }),
             });

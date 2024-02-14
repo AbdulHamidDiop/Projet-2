@@ -7,7 +7,8 @@
         <div class="questions-list-column">
             <div class="scroll-box">
                 <div *ngFor="let question of questions; index as i">
-                    <app-admin-question [question]="question" [index]="i" [editable]="true"></app-admin-question>
+                    <app-admin-question [question]="question" [index]="i" [editable]="true"
+                        [showModificationDate]="true"></app-admin-question>
                 </div>
             </div>
         </div>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
@@ -39,7 +40,7 @@ export class GameService {
         const response = await this.fetchService.fetch(API_URL + 'game/importgame', {
             method: 'POST',
             headers: {
-                contentType: 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(game),
         });
@@ -60,7 +61,7 @@ export class GameService {
         const response = await this.fetchService.fetch(API_URL + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
-                contentType: 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({ id: gameID }),
         });
@@ -93,7 +94,7 @@ export class GameService {
             const response = await this.fetchService.fetch(API_URL + 'game/check', {
                 method: 'POST',
                 headers: {
-                    contentType: 'application/json',
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ answer, gameID, questionID }),
             });
@@ -112,7 +113,7 @@ export class GameService {
         const response = await this.fetchService.fetch(API_URL + 'game/availability/' + game.id, {
             method: 'GET',
             headers: {
-                contentType: 'application/json',
+                'Content-Type': 'application/json',
             },
         });
         if (!response.ok) {

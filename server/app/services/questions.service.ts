@@ -14,20 +14,23 @@ export class QuestionsService {
 
     async sortAllQuestions(): Promise<Question[]> {
         const questions: Question[] = await this.getAllQuestions();
-        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(b.lastModification).getTime() - new Date(a.lastModification).getTime());
+        const sortedQuestions: Question[] = questions.sort((a, b) => new Date(a.lastModification).getTime() - new Date(b.lastModification).getTime());
         return sortedQuestions;
     }
 
-    async addQuestion(question: Question): Promise<void> {
+    async addQuestion(question: Question): Promise<boolean> {
         const questions: Question[] = await this.getAllQuestions();
         if (questions.find((q) => q.id === question.id)) {
             questions.splice(
                 questions.findIndex((q) => q.id === question.id),
                 1,
             );
+        } else if (questions.find((q) => q.text === question.text)) {
+            return false;
         }
         questions.push(question);
         await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
+        return true;
     }
 
     async deleteQuestionByID(id: string): Promise<boolean> {

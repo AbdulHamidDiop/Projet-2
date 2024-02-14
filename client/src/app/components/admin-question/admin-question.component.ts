@@ -13,6 +13,7 @@ export class AdminQuestionComponent {
     @Input() question: Question;
     @Input() index?: number;
     @Input() editable?: boolean = false;
+    @Input() showModificationDate?: boolean;
     @Output() saveRequest = new EventEmitter<Question>();
     @Output() deleteRequest = new EventEmitter<number>();
 

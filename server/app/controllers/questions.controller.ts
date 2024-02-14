@@ -69,8 +69,11 @@ export class QuestionsController {
          *
          */
         this.router.post('/add', async (req: Request, res: Response) => {
-            await this.questionsService.addQuestion(req.body);
-            res.status(StatusCodes.CREATED);
+            if (await this.questionsService.addQuestion(req.body)) {
+                res.status(StatusCodes.CREATED);
+            } else {
+                res.status(StatusCodes.BAD_REQUEST);
+            }
             res.send();
         });
 
