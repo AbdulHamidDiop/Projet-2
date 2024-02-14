@@ -50,7 +50,7 @@ export class QuestionsService {
         });
         if (!response.ok) {
             if (response.status === StatusCodes.BAD_REQUEST) {
-                window.alert("Votre question n'a pas été ajoutée car elle existe déjà");
+                window.alert("Votre question n'a pas été ajoutée à la banque de questions car elle existe déjà");
                 return false;
             }
             throw new Error(`Error: ${response.status}`);
