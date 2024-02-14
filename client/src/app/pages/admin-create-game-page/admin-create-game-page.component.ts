@@ -44,7 +44,7 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
         this.cd.detectChanges();
     }
 
-    ngOnInit(): void {
+    async ngOnInit() {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });
@@ -57,7 +57,9 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
             duration: [null, [Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)]],
         });
 
-        this.route.paramMap.subscribe((params) => {
+        this.gameService.games = await this.gameService.getAllGames();
+
+        this.route.paramMap.subscribe(async (params) => {
             const gameId = params.get('id');
             if (gameId) {
                 this.loadGameData(gameId);
