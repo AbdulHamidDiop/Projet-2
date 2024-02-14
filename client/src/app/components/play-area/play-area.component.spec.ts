@@ -13,6 +13,7 @@ import SpyObj = jasmine.SpyObj;
 
 const ONE_SECOND = 1000;
 const DEFAULT_POINTS = 10;
+const BONUS_MULTIPLIER = 1.2;
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
@@ -200,7 +201,7 @@ describe('PlayAreaComponent', () => {
         } as unknown as Question;
         component.score = 0;
         await component.updateScore();
-        expect(component.score).toBe(DEFAULT_POINTS);
+        expect(component.score).toBe(DEFAULT_POINTS * BONUS_MULTIPLIER);
         component.score = 0;
         component.question = {
             type: Type.QRL,

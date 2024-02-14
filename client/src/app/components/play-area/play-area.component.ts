@@ -161,6 +161,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.answer, this.question.id);
         if (isCorrectAnswer && this.question.points) {
             this.score += this.question.points;
+            if (this.inTestMode) {
+                this.score *= 1.2;
+                alert('Vous avez été le premier à répondre!');
+            }
         }
     }
 

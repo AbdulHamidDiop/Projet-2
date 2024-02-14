@@ -1,3 +1,5 @@
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
+/* eslint-disable max-lines */
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -17,13 +19,12 @@ import { Game, Question, Type } from '@common/game';
 import { Observable } from 'rxjs';
 import { AdminCreateGamePageComponent } from './admin-create-game-page.component';
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 async function addGameMock(): Promise<void> {
     return;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-let mockData: any = {};
+const mockData: any = {};
 
 async function arrayBufferMock(): Promise<ArrayBuffer> {
     const buffer = new ArrayBuffer(0);
@@ -233,7 +234,7 @@ describe('AdminCreateGamePageComponent', () => {
                     useValue: {
                         getGameByID: getGameByIdSpy,
                         addGame: addGameSpy,
-                        getAllGames: gameServiceSpy
+                        getAllGames: gameServiceSpy,
                     },
                 },
                 {
