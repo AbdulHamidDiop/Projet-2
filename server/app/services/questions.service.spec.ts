@@ -26,12 +26,12 @@ const FIRST_QUESTION = {
         },
     ],
     id: '00000000-1111-2222-test-000000000000',
-    lastModification: '2021-01-31T16:39:55.649Z',
+    lastModification: '2024-01-31T16:39:55.649Z',
 };
 
 const SECOND_QUESTION = {
     type: 'QCM',
-    text: 'Quelle est la différence entre NodeJS et Angular',
+    text: 'Quelle est la différence entre Python et C++',
     points: 20,
     addToBank: true,
     choices: [
@@ -49,7 +49,7 @@ const SECOND_QUESTION = {
         },
     ],
     id: '00000000-1111-2222-test-111111111111',
-    lastModification: '2024-01-31T16:39:55.649Z',
+    lastModification: '2022-01-31T16:39:55.649Z',
 };
 
 let QUESTIONS = JSON.stringify([FIRST_QUESTION]);
@@ -84,7 +84,8 @@ describe('Questions Service', () => {
     });
 
     it('should add a question to the database', async () => {
-        await questionsService.addQuestion(SECOND_QUESTION as unknown as Question);
+        const result = await questionsService.addQuestion(SECOND_QUESTION as unknown as Question);
+        expect(result).to.equal(true);
         expect(JSON.parse(QUESTIONS)).to.be.an('array');
         expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATA_LENGTH + 1);
         expect(JSON.parse(QUESTIONS)[DATA_LENGTH]).to.deep.equal(SECOND_QUESTION);
@@ -92,7 +93,17 @@ describe('Questions Service', () => {
         expect(writeFileStub.called);
     });
 
-    it('should get all questions sorted by newest first', async () => {
+    it('should not add a redundant question to the database', async () => {
+        const result = await questionsService.addQuestion({ ...SECOND_QUESTION, id: 'new_id' } as unknown as Question);
+        expect(result).to.equal(false);
+        expect(JSON.parse(QUESTIONS)).to.be.an('array');
+        expect(JSON.parse(QUESTIONS)).to.have.lengthOf(DATA_LENGTH + 1);
+        expect(JSON.parse(QUESTIONS)[DATA_LENGTH]).to.deep.equal(SECOND_QUESTION);
+        expect(readFileStub.notCalled);
+        expect(writeFileStub.notCalled);
+    });
+
+    it('should get all questions sorted by oldest first', async () => {
         const questions = await questionsService.sortAllQuestions();
         expect(questions)
             .to.be.an('array')

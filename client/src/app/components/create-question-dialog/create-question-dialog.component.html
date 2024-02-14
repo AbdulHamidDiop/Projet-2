@@ -24,7 +24,7 @@
                     <small>Veuillez entrer un multiple de 10 entre 10 et 100</small>
                 </div>
 
-                <mat-checkbox type="checkbox" formControlName="addToBank">ajouter à la banque </mat-checkbox>
+                <mat-checkbox *ngIf="!hideAddToBankOption" type="checkbox" formControlName="addToBank">ajouter à la banque </mat-checkbox>
                 <small>*Champs obligatoires</small>
             </mat-card>
 
