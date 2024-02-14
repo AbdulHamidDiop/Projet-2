@@ -311,7 +311,7 @@ describe('GameController', () => {
             });
     });
 
-    it('Should produce OK for a correct feedback', async () => {
+    it('Should produce 400 for incorrect feedback', async () => {
         const data = { questionID: fakeGame.questions[0].id, submittedAnswers: ['answer'] };
         return supertest(expressApp)
             .post('/api/game/feedback')
