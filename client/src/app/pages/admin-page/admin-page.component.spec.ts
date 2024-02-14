@@ -1,14 +1,91 @@
+/* eslint-disable max-lines */
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { FetchService } from '@app/services/fetch.service';
 import { GameService } from '@app/services/game.service';
 import { Game } from '@common/game';
 import { of } from 'rxjs';
 import { AdminPageComponent } from './admin-page.component';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let mockData: any = {};
+
+async function arrayBufferMock(): Promise<ArrayBuffer> {
+    const buffer = new ArrayBuffer(0);
+    return buffer;
+}
+
+async function blobMock(): Promise<Blob> {
+    const blob = new Blob();
+    return blob;
+}
+
+async function formDataMock(): Promise<FormData> {
+    const formData = new FormData();
+    return formData;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function jsonMock(): Promise<any> {
+    return mockData;
+}
+
+async function textMock(): Promise<string> {
+    return '';
+}
+
+const responseSetToOk = true;
+const response: Response = {
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    type: 'basic',
+    redirected: false,
+    statusText: '',
+    url: '',
+    clone: () => {
+        return new Response();
+    },
+    body: new ReadableStream<Uint8Array>(),
+    bodyUsed: false,
+    arrayBuffer: arrayBufferMock,
+    blob: blobMock,
+    formData: formDataMock,
+    json: jsonMock,
+    text: textMock,
+};
+const errorResponse: Response = {
+    ok: false,
+    status: 404,
+    type: 'basic',
+    headers: new Headers(),
+    redirected: false,
+    statusText: '',
+    url: '',
+    clone: () => {
+        return new Response();
+    },
+    body: new ReadableStream<Uint8Array>(),
+    bodyUsed: false,
+    arrayBuffer: arrayBufferMock,
+    blob: blobMock,
+    formData: formDataMock,
+    json: jsonMock,
+    text: textMock,
+};
+
+async function fetchMock(): Promise<Response> {
+    if (responseSetToOk) {
+        return response;
+    } else {
+        return errorResponse;
+    }
+}
 describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
     let fixture: ComponentFixture<AdminPageComponent>;
@@ -20,6 +97,14 @@ describe('AdminPageComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [AdminPageComponent, SidebarComponent, PlayAreaComponent],
+            providers: [
+                {
+                    provide: FetchService,
+                    useValue: {
+                        fetch: jasmine.createSpy().and.callFake(fetchMock),
+                    },
+                },
+            ],
         }).compileComponents();
     });
 
@@ -101,14 +186,15 @@ describe('AdminPageComponent', () => {
 
     it('should get games when authentificated', async () => {
         component.communicationService.sharedVariable$ = of(true);
-        const mockGame: Game = {
-            id: '1',
-            title: 'test',
-            questions: [],
-        };
-        spyOn(component.gameService, 'getAllGames').and.returnValue(Promise.resolve([mockGame]));
+        mockData = [
+            {
+                id: '1',
+                title: 'test',
+                questions: [],
+            },
+        ];
         await component.ngOnInit();
-        expect(component.games).toEqual([mockGame]);
+        expect(component.games).toEqual(mockData);
     });
 
     it('should navigate to createGame when onCreateButtonClick is called', () => {

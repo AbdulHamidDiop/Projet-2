@@ -65,8 +65,17 @@ describe('QuestionsController', () => {
     });
 
     it('Should add a question to db on valid post request to /add ', async () => {
-        questionService.addQuestion.resolves();
+        questionService.addQuestion.resolves(true);
         return supertest(expressApp).post('/api/questions/add').send(questionList[2]).set('Content', 'application/json').expect(StatusCodes.CREATED);
+    });
+
+    it('Should not add a question to db on invalid post request to /add ', async () => {
+        questionService.addQuestion.resolves(false);
+        return supertest(expressApp)
+            .post('/api/questions/add')
+            .send(questionList[2])
+            .set('Content', 'application/json')
+            .expect(StatusCodes.BAD_REQUEST);
     });
 
     it('Should add a question to db on valid post request to /edit ', async () => {

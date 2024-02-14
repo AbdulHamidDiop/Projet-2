@@ -158,7 +158,7 @@ describe('GameController', () => {
                 lastModification: '2024-01-25T16:09:35.649Z',
             },
         ],
-        isHidden: true,
+        isHidden: false,
     } as unknown as Game;
 
     let gamesService: SinonStubbedInstance<GamesService>;
@@ -311,7 +311,7 @@ describe('GameController', () => {
             });
     });
 
-    it('Should produce OK for a correct feedback', async () => {
+    it('Should produce 400 for incorrect feedback', async () => {
         const data = { questionID: fakeGame.questions[0].id, submittedAnswers: ['answer'] };
         return supertest(expressApp)
             .post('/api/game/feedback')
@@ -329,7 +329,7 @@ describe('GameController', () => {
             .get(`/api/game/availability/${fakeGame.id}`)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(fakeGame);
+                expect(response.body).to.deep.equal(true);
             });
     });
 });

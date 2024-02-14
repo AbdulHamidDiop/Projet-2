@@ -3,9 +3,8 @@ import { expect } from 'chai';
 import * as fs from 'fs';
 import { SinonStub, stub } from 'sinon';
 import { GamesService } from './games.service';
-// import { Z_UNKNOWN } from 'zlib';
 
-const DATALENGTH = 0;
+const DATA_LENGTH = 0;
 
 const FIRST_QUIZ = {
     id: '00000000-1111-2222-test-000000000000',
@@ -88,7 +87,7 @@ describe('Games Service', () => {
         await gamesService.addGame(quiz);
         expect(JSON.parse(QUIZ)).to.be.an('array');
         expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(JSON.parse(QUIZ)[DATALENGTH]).to.deep.equal(quiz);
+        expect(JSON.parse(QUIZ)[DATA_LENGTH]).to.deep.equal(quiz);
         expect(readFileStub.called);
         expect(writeFileStub.called);
     });
@@ -97,7 +96,7 @@ describe('Games Service', () => {
         await gamesService.addGame(FIRST_QUIZ as unknown as Game);
         expect(JSON.parse(QUIZ)).to.be.an('array');
         expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(JSON.parse(QUIZ)[DATALENGTH]).to.deep.equal(FIRST_QUIZ);
+        expect(JSON.parse(QUIZ)[DATA_LENGTH]).to.deep.equal(FIRST_QUIZ);
         expect(readFileStub.called);
         expect(writeFileStub.called);
     });

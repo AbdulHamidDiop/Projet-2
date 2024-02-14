@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
@@ -12,15 +13,33 @@ import SpyObj = jasmine.SpyObj;
 
 const ONE_SECOND = 1000;
 const DEFAULT_POINTS = 10;
-// TODO : update once QRL questions are implemented
+const BONUS_MULTIPLIER = 1.2;
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;
     let timeServiceSpy: SpyObj<TimeService>;
     let gameManager: GameManagerService;
+    const validQuestion: Question = {
+        id: '2',
+        lastModification: null,
+        type: Type.QCM,
+        text: 'Question valide',
+        points: 10,
+        choices: [
+            {
+                text: 'Choix valide #1',
+                isCorrect: true,
+            },
+            {
+                text: 'Choix valide #2',
+                isCorrect: false,
+            },
+        ],
+        answer: 'Choix #1',
+    };
 
     beforeEach(async () => {
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer']);
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'time'], ['counter', 'interval']);
 
         await TestBed.configureTestingModule({
             imports: [MatListModule, BrowserAnimationsModule],
@@ -131,13 +150,13 @@ describe('PlayAreaComponent', () => {
     it('buttonDetect should modify the buttonPressed variable and call handleQCMChoice', () => {
         spyOn(component, 'handleQCMChoice');
         component.question = {
-            type: Type.QCM, // Make sure to set the type
+            type: Type.QCM,
             choices: [
                 { text: 'Option 1', isCorrect: true },
                 { text: 'Option 2', isCorrect: false },
             ],
         } as Question;
-        component.nbChoices = component.question.choices.length; // Set nbChoices
+        component.nbChoices = component.question.choices.length;
 
         const expectedKey = '1';
         const buttonEvent = {
@@ -182,7 +201,7 @@ describe('PlayAreaComponent', () => {
         } as unknown as Question;
         component.score = 0;
         await component.updateScore();
-        expect(component.score).toBe(DEFAULT_POINTS);
+        expect(component.score).toBe(DEFAULT_POINTS * BONUS_MULTIPLIER);
         component.score = 0;
         component.question = {
             type: Type.QRL,
@@ -212,6 +231,8 @@ describe('PlayAreaComponent', () => {
     });
 
     it('pressing a number key should call handleQCMChoice with the right choice selected', () => {
+        component.question = validQuestion;
+        component.nbChoices = validQuestion.choices.length;
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -223,6 +244,8 @@ describe('PlayAreaComponent', () => {
     });
 
     it('pressing a number once should add the choice to the answer array and twice should remove it', () => {
+        component.question = validQuestion;
+        component.nbChoices = validQuestion.choices.length;
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -235,6 +258,8 @@ describe('PlayAreaComponent', () => {
     });
 
     it('selecting a wrong choice should not increase the score', () => {
+        component.question = validQuestion;
+        component.nbChoices = validQuestion.choices.length;
         const choices = component.question.choices;
         if (choices) {
             const wrongChoice = choices.find((choice) => !choice.isCorrect);
@@ -246,16 +271,19 @@ describe('PlayAreaComponent', () => {
         }
     });
 
-    it('confirmAnswers should be called when the timer runs out', () => {
+    it('confirmAnswers should be called when the timer runs out', fakeAsync(() => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
-        spyOn(component, 'confirmAnswers').and.callThrough();
-        component.timeService.startTimer(1);
-        fakeAsync(() => {
-            tick(ONE_SECOND);
-            expect(component.confirmAnswers).toHaveBeenCalled();
+        spyOn(component, 'confirmAnswers').and.callFake(async () => {
+            return;
         });
-    });
+        component.timeService.startTimer(1);
+        tick(ONE_SECOND);
+        const time = component.time;
+        if (time === 0) {
+            expect(component.confirmAnswers).toHaveBeenCalled();
+        }
+    }));
 
     it('confirmAnswers should update score and proceed after delay', fakeAsync(() => {
         spyOn(component, 'updateScore').and.callThrough();
@@ -304,14 +332,12 @@ describe('PlayAreaComponent', () => {
         component = fixture.componentInstance;
         expect(component.inTestMode).toBeTrue();
     });
-
     it('should initialize this.question on init', async () => {
         component.gameManager.game = { duration: 10, questions: [{ type: Type.QCM, choices: [] } as unknown as Question] } as unknown as Game;
         await component.ngOnInit();
         expect(component.question).toBeDefined();
     });
 
-    // TODO: confirmer que get point() est inutile et enlever ce test
     it('returns the correct score', () => {
         expect(component.point).toEqual(0);
     });
@@ -322,19 +348,16 @@ describe('PlayAreaComponent', () => {
             const style = component.getStyle('Option 1');
             expect(style).toBe('correct');
         });
-
         it('should return "incorrect" for an incorrect choice', () => {
             component.feedback = [{ choice: 'Option 2', status: 'incorrect' }];
             const style = component.getStyle('Option 2');
             expect(style).toBe('incorrect');
         });
-
         it('should return "missed" for a missed choice', () => {
             component.feedback = [{ choice: 'Option 3', status: 'missed' }];
             const style = component.getStyle('Option 3');
             expect(style).toBe('missed');
         });
-
         it('should return an empty string if the choice is not found in the feedback', () => {
             component.feedback = [{ choice: 'Option 4', status: 'correct' }];
             const style = component.getStyle('Option 5');

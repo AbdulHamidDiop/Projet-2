@@ -1,3 +1,5 @@
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
+/* eslint-disable max-lines */
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
@@ -11,14 +13,89 @@ import { AdminQuestionsBankComponent } from '@app/components/admin-questions-ban
 import { AppRoutingModule } from '@app/modules/app-routing.module';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { CommunicationService } from '@app/services/communication.service';
+import { FetchService } from '@app/services/fetch.service';
 import { GameService } from '@app/services/game.service';
 import { Game, Question, Type } from '@common/game';
 import { Observable } from 'rxjs';
 import { AdminCreateGamePageComponent } from './admin-create-game-page.component';
 
-// eslint-disable-next-line prefer-arrow/prefer-arrow-functions
 async function addGameMock(): Promise<void> {
     return;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const mockData: any = {};
+
+async function arrayBufferMock(): Promise<ArrayBuffer> {
+    const buffer = new ArrayBuffer(0);
+    return buffer;
+}
+
+async function blobMock(): Promise<Blob> {
+    const blob = new Blob();
+    return blob;
+}
+
+async function formDataMock(): Promise<FormData> {
+    const formData = new FormData();
+    return formData;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function jsonMock(): Promise<any> {
+    return mockData;
+}
+
+async function textMock(): Promise<string> {
+    return '';
+}
+
+const responseSetToOk = true;
+const response: Response = {
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    type: 'basic',
+    redirected: false,
+    statusText: '',
+    url: '',
+    clone: () => {
+        return new Response();
+    },
+    body: new ReadableStream<Uint8Array>(),
+    bodyUsed: false,
+    arrayBuffer: arrayBufferMock,
+    blob: blobMock,
+    formData: formDataMock,
+    json: jsonMock,
+    text: textMock,
+};
+const errorResponse: Response = {
+    ok: false,
+    status: 404,
+    type: 'basic',
+    headers: new Headers(),
+    redirected: false,
+    statusText: '',
+    url: '',
+    clone: () => {
+        return new Response();
+    },
+    body: new ReadableStream<Uint8Array>(),
+    bodyUsed: false,
+    arrayBuffer: arrayBufferMock,
+    blob: blobMock,
+    formData: formDataMock,
+    json: jsonMock,
+    text: textMock,
+};
+
+async function fetchMock(): Promise<Response> {
+    if (responseSetToOk) {
+        return response;
+    } else {
+        return errorResponse;
+    }
 }
 
 describe('AdminCreateGamePageComponent', () => {
@@ -133,12 +210,12 @@ describe('AdminCreateGamePageComponent', () => {
     };
     const getGameByIdSpy = jasmine.createSpy('getGameByID').and.returnValue(validGame);
     const addGameSpy = jasmine.createSpy('addGame').and.callFake(addGameMock);
+    const gameServiceSpy = jasmine.createSpy('getAllGames').and.returnValue([validGame]);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const observableParamMap: Observable<any> = new Observable((subscriber) => {
         subscriber.next({ get: () => false });
         subscriber.next({ get: () => '1234' });
     });
-    //    const paramMapSpy = jasmine.createSpy('paramMap').and.returnValue(observableParamMap);
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             imports: [
@@ -157,6 +234,7 @@ describe('AdminCreateGamePageComponent', () => {
                     useValue: {
                         getGameByID: getGameByIdSpy,
                         addGame: addGameSpy,
+                        getAllGames: gameServiceSpy,
                     },
                 },
                 {
@@ -177,22 +255,21 @@ describe('AdminCreateGamePageComponent', () => {
                         paramMap: observableParamMap,
                     },
                 },
-                /*
                 {
-                    provide: AdminQuestionsBankComponent,
+                    provide: FetchService,
                     useValue: {
-                        questionsBankList: jasmine.createSpy('questionsBankList').and.callThrough(),
+                        fetch: jasmine.createSpy().and.callFake(fetchMock),
                     },
-                },*/
+                },
             ],
         }).compileComponents();
     });
-    beforeEach(() => {
+    beforeEach(async () => {
         fixture = TestBed.createComponent(AdminCreateGamePageComponent);
         fixture = TestBed.createComponent(AdminCreateGamePageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-        component.ngOnInit();
+        await component.ngOnInit();
         component.ngAfterViewInit();
     });
     it('Should create new question game, copy relevant fields from form input', () => {

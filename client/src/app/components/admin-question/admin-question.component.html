@@ -1,4 +1,5 @@
-<mat-expansion-panel [ngClass]="{ container: true, 'question-type-qcm': question.type === 'QCM', 'question-type-qrl': question.type === 'QRL' }">
+<mat-expansion-panel
+    [ngClass]="{ container: true, 'question-type-qcm': question.type === 'QCM', 'question-type-qrl': question.type === 'QRL' }">
     <mat-expansion-panel-header>
         <mat-panel-title title="{{ question.text }}"> {{ index }} — {{ question.text }} </mat-panel-title>
         <mat-panel-description> {{ question.type }}‎ ‎ {{ question.points }} pts </mat-panel-description>
@@ -17,5 +18,9 @@
         <button mat-icon-button (click)="deleteQuestion(question)" name="delete-question" class="delete-button">
             <mat-icon class="delete-icon">delete</mat-icon>
         </button>
+    </div>
+
+    <div *ngIf="showModificationDate">
+        Dernière Modification : {{question.lastModification | date: 'short' }}
     </div>
 </mat-expansion-panel>

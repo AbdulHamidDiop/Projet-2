@@ -1,13 +1,89 @@
+/* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
+import { FetchService } from '@app/services/fetch.service';
 import { QuestionsService } from '@app/services/questions.service';
 import { Type } from '@common/game';
 import { of } from 'rxjs';
 import { QuestionsPageComponent } from './questions-page.component';
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let mockData: any = {};
+
+async function arrayBufferMock(): Promise<ArrayBuffer> {
+    const buffer = new ArrayBuffer(0);
+    return buffer;
+}
+
+async function blobMock(): Promise<Blob> {
+    const blob = new Blob();
+    return blob;
+}
+
+async function formDataMock(): Promise<FormData> {
+    const formData = new FormData();
+    return formData;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function jsonMock(): Promise<any> {
+    return mockData;
+}
+
+async function textMock(): Promise<string> {
+    return '';
+}
+
+const responseSetToOk = true;
+const response: Response = {
+    ok: true,
+    status: 200,
+    headers: new Headers(),
+    type: 'basic',
+    redirected: false,
+    statusText: '',
+    url: '',
+    clone: () => {
+        return new Response();
+    },
+    body: new ReadableStream<Uint8Array>(),
+    bodyUsed: false,
+    arrayBuffer: arrayBufferMock,
+    blob: blobMock,
+    formData: formDataMock,
+    json: jsonMock,
+    text: textMock,
+};
+const errorResponse: Response = {
+    ok: false,
+    status: 404,
+    type: 'basic',
+    headers: new Headers(),
+    redirected: false,
+    statusText: '',
+    url: '',
+    clone: () => {
+        return new Response();
+    },
+    body: new ReadableStream<Uint8Array>(),
+    bodyUsed: false,
+    arrayBuffer: arrayBufferMock,
+    blob: blobMock,
+    formData: formDataMock,
+    json: jsonMock,
+    text: textMock,
+};
+
+async function fetchMock(): Promise<Response> {
+    if (responseSetToOk) {
+        return response;
+    } else {
+        return errorResponse;
+    }
+}
 
 describe('QuestionsPageComponent', () => {
     let component: QuestionsPageComponent;
@@ -23,7 +99,17 @@ describe('QuestionsPageComponent', () => {
         TestBed.configureTestingModule({
             declarations: [QuestionsPageComponent],
             imports: [RouterTestingModule, HttpClientModule],
-            providers: [{ provide: MatDialog, useValue: mockDialog }, CommunicationService, QuestionsService],
+            providers: [
+                { provide: MatDialog, useValue: mockDialog },
+                {
+                    provide: FetchService,
+                    useValue: {
+                        fetch: jasmine.createSpy().and.callFake(fetchMock),
+                    },
+                },
+                CommunicationService,
+                QuestionsService,
+            ],
         }).compileComponents();
     });
 
@@ -57,9 +143,10 @@ describe('QuestionsPageComponent', () => {
     });
     it('should get questions when authentificated', async () => {
         component.communicationService.sharedVariable$ = of(true);
-        spyOn(component.questionsService, 'getAllQuestions').and.returnValue(Promise.resolve([mockQuestion]));
+
+        mockData = [mockQuestion];
         await component.ngOnInit();
-        expect(component.questions).toEqual([mockQuestion]);
+        expect(component.questions).toEqual(mockData);
     });
 
     it('should open the dialog', () => {

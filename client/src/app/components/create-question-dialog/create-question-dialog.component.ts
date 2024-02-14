@@ -1,7 +1,8 @@
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 import { QuestionsService } from '@app/services/questions.service';
 import { Choices, Question, Type } from '@common/game';
 import { v4 } from 'uuid';
@@ -17,27 +18,31 @@ const MAX_POINTS = 100;
     templateUrl: './create-question-dialog.component.html',
     styleUrls: ['./create-question-dialog.component.scss'],
 })
-export class CreateQuestionDialogComponent {
+export class CreateQuestionDialogComponent implements OnInit {
     questionForm: FormGroup;
     question: Question;
     id: string;
+    hideAddToBankOption = false;
 
     // eslint-disable-next-line max-params
     constructor(
         public fb: FormBuilder,
         public dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
         public questionsService: QuestionsService,
+        private router: Router,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
         this.initializeForm();
         this.handleQuestionTypeChanges(); // pour negliger choices si type = QRL
+        if (this.router.url === '/admin/questions') {
+            this.hideAddToBankOption = true;
+        }
     }
 
     get choices(): FormArray {
         return this.questionForm.get('choices') as FormArray;
     }
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnInit(): void {
         if (this.data && this.data.question) {
             this.populateForm(this.data.question);
@@ -82,16 +87,21 @@ export class CreateQuestionDialogComponent {
         this.choices.setValue(choicesArray);
     }
 
-    onSubmit(): void {
+    async onSubmit(): Promise<void> {
         if (this.questionForm.valid) {
             this.question = this.questionForm.value;
             this.question.id = this.id;
             this.question.lastModification = new Date();
-            this.dialogRef.close(this.question);
-
-            if (this.questionForm.get('addToBank')?.value) {
-                this.questionsService.addQuestion(this.question);
+            if (this.questionForm.get('addToBank')?.value || this.hideAddToBankOption) {
+                const res = await this.questionsService.addQuestion(this.question);
+                if (res) {
+                    this.dialogRef.close(this.question);
+                } else {
+                    this.dialogRef.close();
+                }
+                return;
             }
+            this.dialogRef.close(this.question);
         }
     }
 
@@ -105,7 +115,6 @@ export class CreateQuestionDialogComponent {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/member-ordering
     populateForm(questionData: Question): void {
         this.questionForm.patchValue({
             type: questionData.type,

@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
+import { StatusCodes } from 'http-status-codes';
 import { FetchService } from './fetch.service';
 
 @Injectable({
@@ -26,15 +28,6 @@ export class QuestionsService {
         }
     }
 
-    // getQuestionsFromGame(id: string) {
-    //     const questions = this.gameService.getGameQuestionsByID(id);
-    //     if (questions.length === 0) {
-    //         return;
-    //     } else {
-    //         this.questions = questions;
-    //     }
-    // }
-
     async getAllQuestions(): Promise<Question[]> {
         const response = await this.fetchService.fetch(API_URL + 'questions');
         if (!response.ok) {
@@ -47,25 +40,28 @@ export class QuestionsService {
         return questions;
     }
 
-    async addQuestion(question: Question): Promise<void> {
+    async addQuestion(question: Question): Promise<boolean> {
         const response = await this.fetchService.fetch(API_URL + 'questions/add', {
             method: 'POST',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(question),
         });
         if (!response.ok) {
+            if (response.status === StatusCodes.BAD_REQUEST) {
+                window.alert("Votre question n'a pas été ajoutée à la banque de questions car elle existe déjà");
+                return false;
+            }
             throw new Error(`Error: ${response.status}`);
         }
+        return true;
     }
 
     async editQuestion(question: Question): Promise<void> {
         const response = await this.fetchService.fetch(API_URL + 'questions/edit', {
             method: 'PUT',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(question),
@@ -102,7 +98,6 @@ export class QuestionsService {
             const response = await this.fetchService.fetch(API_URL + 'questions/check', {
                 method: 'POST',
                 headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ answer, id }),

@@ -18,10 +18,7 @@ export class MainPageComponent {
         readonly communicationService: CommunicationService,
         readonly router: Router,
         readonly questionsService: QuestionsService,
-    ) {
-        // Pourra être supprimé après la démo.
-        this.questionsService.getAllQuestions();
-    }
+    ) {}
 
     async verifyPassword() {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
