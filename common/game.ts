@@ -30,7 +30,7 @@ export interface Game {
 
 export interface Player {
     name: string;
-    username: string;
+    isHost: boolean;
     id: string;
     score: number;
     bonusCount: number;

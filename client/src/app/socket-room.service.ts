@@ -51,8 +51,8 @@ export class SocketRoomService {
     }
 
     // Function to leave a room
-    leaveRoom(room: string): void {
-        this.socket.emit('leaveRoom', room);
+    leaveRoom(): void {
+        this.socket.emit('leaveRoom', this.room);
     }
 
     // Function to disconnect from the server (optional)
