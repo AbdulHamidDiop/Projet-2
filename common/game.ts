@@ -27,3 +27,11 @@ export interface Game {
     isHidden?: boolean;
     unavailable?: boolean;
 }
+
+export interface Player {
+    name: string;
+    username: string;
+    id: string;
+    score: number;
+    bonusCount: number;
+}
