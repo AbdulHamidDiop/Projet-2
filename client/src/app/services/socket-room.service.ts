@@ -11,15 +11,21 @@ export class SocketRoomService {
     private socket: Socket;
     private url = 'http://localhost:3000'; // Your Socket.IO server URL
     private room: string = '0';
+    private name: string = 'admin';
 
     constructor() {
         // Connect to the Socket.IO server
         this.socket = io(this.url);
+        this.socket.on('disconnect', () => {
+            this.disconnect();
+        });
     }
 
     // Function to join a room
     joinRoom(): void {
-        this.socket.emit('joinRoom', this.room);
+        const room = this.room;
+        const name = this.name;
+        this.socket.emit('joinRoom', { room, name });
     }
 
     // La validation devra se faire du coté du serveur.
@@ -49,9 +55,17 @@ export class SocketRoomService {
         });
     }
 
-    kickPlayer(name: string) {
-        const room = this.room;
-        this.socket.emit('kickPlayer', { room, name });
+    kickPlayer(name: string, player: string) {
+        this.socket.emit('kickPlayer', { name, player });
+    }
+
+    kickSubscribe(): Observable<string> {
+        return new Observable((observer) => {
+            this.socket.on('kickPlayer', (response) => {
+                observer.next(response);
+            });
+            return () => this.socket.off('kickPlayer');
+        });
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

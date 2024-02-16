@@ -21,14 +21,14 @@ export class WaitingPageComponent {
         },
         {
             id: '1',
-            name: 'A',
+            name: 'B',
             isHost: false,
             score: 0,
             bonusCount: 0,
         },
         {
             id: '2',
-            name: 'A',
+            name: 'admin',
             isHost: false,
             score: 0,
             bonusCount: 0,
@@ -53,6 +53,12 @@ export class WaitingPageComponent {
                 alert('Room is unlocked');
             }
         });
+
+        this.socket.kickSubscribe().subscribe((response) => {
+            if (response === this.name) {
+                alert('Vous avez été exclu');
+            }
+        });
     }
 
     get player() {
@@ -67,7 +73,7 @@ export class WaitingPageComponent {
         this.socket.unlockRoom(this.name);
     }
 
-    kickPlayer(name: string) {
-        this.socket.kickPlayer(name);
+    kickPlayer(player: string) {
+        this.socket.kickPlayer(this.name, player);
     }
 }

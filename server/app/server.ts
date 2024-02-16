@@ -13,6 +13,7 @@ export class Server {
     private server: http.Server;
     private io: SocketIOServer;
 
+    private bannedNames: string[] = [''];
     constructor(private readonly application: Application) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -40,6 +41,14 @@ export class Server {
         this.io.on('connection', (socket: Socket) => {
             // eslint-disable-next-line no-console
             console.log('A user connected to socket');
+
+            socket.on('joinRoom', (message) => {
+                if (this.bannedNames.includes(message.name)) {
+                    // eslint-disable-next-line no-console
+                    console.log('User ' + message.name + ' is banned');
+                    socket.emit('disconnect');
+                }
+            });
             socket.on('disconnect', () => {
                 // eslint-disable-next-line no-console
                 console.log('User disconnected from socket');
@@ -70,6 +79,13 @@ export class Server {
                     socket.broadcast.emit('unlockRoom', true);
                 } else {
                     socket.emit('unlockRoom', false);
+                }
+            });
+
+            socket.on('kickPlayer', (message) => {
+                if (message.name === 'admin') {
+                    this.bannedNames.push(message.name);
+                    socket.broadcast.emit('kickPlayer', message.player);
                 }
             });
         });
