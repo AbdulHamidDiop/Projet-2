@@ -57,4 +57,22 @@ describe('SocketRoomService', () => {
         service.disconnect();
         expect(service.disconnect).toBeTruthy();
     });
+
+    it('Should have a lockRoom method', () => {
+        service.lockRoom().subscribe((response) => {
+            expect(response).toBeTruthy();
+        });
+        expect(service.lockRoom).toBeTruthy();
+    });
+    it('Should have an unlockRoom method', () => {
+        service.unlockRoom().subscribe((response) => {
+            expect(response).toBeTruthy();
+        });
+        expect(service.unlockRoom).toBeTruthy();
+    });
+
+    it('Should have a kickPlayer method', () => {
+        service.kickPlayer('');
+        expect(service.kickPlayer).toBeTruthy();
+    });
 });

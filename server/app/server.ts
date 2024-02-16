@@ -1,6 +1,8 @@
 import { Application } from '@app/app';
+import { CorsOptions } from 'cors';
 import * as http from 'http';
 import { AddressInfo } from 'net';
+import { Socket, Server as SocketIOServer } from 'socket.io';
 import { Service } from 'typedi';
 
 @Service()
@@ -9,7 +11,9 @@ export class Server {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     private static readonly baseDix: number = 10;
     private server: http.Server;
+    private io: SocketIOServer;
 
+    private bannedNames: string[] = [''];
     constructor(private readonly application: Application) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -24,6 +28,93 @@ export class Server {
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
+
+        // SocketIO
+        const corsOptions: CorsOptions = {
+            origin: ['http://localhost:4200'],
+        };
+        this.io = new SocketIOServer(this.server, { cors: corsOptions });
+        this.configureSocketIO();
+    }
+
+    private configureSocketIO(): void {
+        this.io.on('connection', (socket: Socket) => {
+            // eslint-disable-next-line no-console
+            console.log('A user connected to socket');
+
+            socket.on('joinRoom', (message) => {
+                if (this.bannedNames.includes(message.name)) {
+                    // eslint-disable-next-line no-console
+                    console.log('User ' + message.name + ' is banned');
+                    socket.emit('disconnect');
+                }
+            });
+            socket.on('createRoom', (room: string) => {
+                leaveAllRooms(socket);
+                socket.join(room);
+                console.log(`Room created ${room}`);
+            });
+
+            socket.on('joinRoom', (room: string) => {
+                leaveAllRooms(socket);
+                socket.join(room);
+                console.log(`Room joined ${room}`);
+            });
+
+            socket.on('message', (data: { room: string; message: string }) => {
+                this.io.to(data.room).emit('message', data.message);
+                console.log(`Message emitted ${data.message}`);
+            });
+
+            socket.on('disconnect', () => {
+                // eslint-disable-next-line no-console
+                console.log('User disconnected from socket');
+            });
+
+            socket.on('chatMessage', (message) => {
+                socket.broadcast.emit('chatMessage', message);
+                // eslint-disable-next-line no-console
+                console.log(message);
+            });
+
+            socket.on('lockRoom', (message) => {
+                // eslint-disable-next-line no-console
+                console.log(message);
+                if (message === 'admin') {
+                    socket.emit('lockRoom', true);
+                    socket.broadcast.emit('lockRoom', true);
+                } else {
+                    socket.emit('lockRoom', false);
+                }
+            });
+
+            socket.on('unlockRoom', (message) => {
+                // eslint-disable-next-line no-console
+                console.log(message);
+                if (message === 'admin') {
+                    socket.emit('unlockRoom', true);
+                    socket.broadcast.emit('unlockRoom', true);
+                } else {
+                    socket.emit('unlockRoom', false);
+                }
+            });
+
+            socket.on('kickPlayer', (message) => {
+                if (message.name === 'admin') {
+                    this.bannedNames.push(message.name);
+                    socket.broadcast.emit('kickPlayer', message.player);
+                }
+            });
+        });
+
+        const leaveAllRooms = (socket: Socket) => {
+            const rooms = Object.keys(socket.rooms);
+            rooms.forEach((room) => {
+                socket.leave(room);
+                // eslint-disable-next-line no-console
+                console.log(`Room left ${room}`);
+            });
+        };
     }
 
     private onError(error: NodeJS.ErrnoException): void {
