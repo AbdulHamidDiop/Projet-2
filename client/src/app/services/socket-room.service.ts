@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { io, Socket } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 @Injectable({
     providedIn: 'root',
@@ -10,7 +10,6 @@ export class SocketRoomService {
     private socket: Socket;
     private url = 'http://localhost:3000'; // Your Socket.IO server URL
     private room: string = '0';
-
     constructor() {
         // Connect to the Socket.IO server
         this.socket = io(this.url);
@@ -18,11 +17,13 @@ export class SocketRoomService {
 
     createRoom(room: string): void {
         this.socket.emit('createRoom', room);
+        this.room = room;
     }
 
     // Function to join a room
     joinRoom(room: string): void {
         this.socket.emit('joinRoom', room);
+        this.room = room;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -37,7 +38,8 @@ export class SocketRoomService {
     }
 
     // Function to send a message to the server
-    sendMessage(message: string, room: string): void {
+    sendMessage(message: string): void {
+        const room = this.room;
         this.socket.emit('message', { room, message });
     }
 
@@ -48,7 +50,6 @@ export class SocketRoomService {
             this.socket.on('message', (message) => {
                 observer.next(message);
             });
-            // Handle observable cleanup
             return () => this.socket.off('message');
         });
     }

@@ -42,17 +42,20 @@ export class Server {
             console.log('A user connected to socket');
 
             socket.on('createRoom', (room: string) => {
+                leaveAllRooms(socket);
                 socket.join(room);
                 console.log(`Room created ${room}`);
             });
 
             socket.on('joinRoom', (room: string) => {
+                leaveAllRooms(socket);
                 socket.join(room);
                 console.log(`Room joined ${room}`);
             });
 
-            socket.on('message', (room: string, message: string) => {
-                this.io.to(room).emit('message', message);
+            socket.on('message', (data: { room: string; message: string }) => {
+                this.io.to(data.room).emit('message', data.message);
+                console.log(`Message emitted ${data.message}`);
             });
 
             socket.on('disconnect', () => {
@@ -60,6 +63,14 @@ export class Server {
                 console.log('User disconnected from socket');
             });
         });
+
+        const leaveAllRooms = (socket: Socket) => {
+            const rooms = Object.keys(socket.rooms);
+            rooms.forEach((room) => {
+                socket.leave(room);
+                console.log(`Room left ${room}`);
+            });
+        };
     }
 
     private onError(error: NodeJS.ErrnoException): void {
