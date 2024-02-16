@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SocketRoomService } from '@app/socket-room.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -31,8 +31,8 @@ export class SidebarComponent {
     handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
         if (event.key === 'Enter') {
             this.messageHistory.push(this.currentMessage);
-            this.currentMessage = '';
             this.socket.sendChatMessage(this.currentMessage);
+            this.currentMessage = '';
         } else {
             this.currentMessage = input.value;
         }

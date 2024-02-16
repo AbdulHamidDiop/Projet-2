@@ -44,6 +44,12 @@ export class Server {
                 // eslint-disable-next-line no-console
                 console.log('User disconnected from socket');
             });
+
+            socket.on('chatMessage', (message) => {
+                socket.broadcast.emit('chatMessage', message);
+                // eslint-disable-next-line no-console
+                console.log(message);
+            });
         });
     }
 

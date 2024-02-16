@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { SocketRoomService } from '@app/socket-room.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
 
 @Component({

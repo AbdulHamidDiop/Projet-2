@@ -97,7 +97,7 @@ export class SocketRoomService {
     getChatMessages(): Observable<string> {
         return new Observable((observer) => {
             this.socket.on('chatMessage', (message) => {
-                observer.next(message);
+                observer.next(message.message);
             });
             // Handle observable cleanup
             return () => this.socket.off('chatMessage');
