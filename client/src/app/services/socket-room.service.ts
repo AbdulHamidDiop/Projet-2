@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Player } from '@common/game';
 import { Observable } from 'rxjs';
-import { io, Socket } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 @Injectable({
     providedIn: 'root',
@@ -92,7 +92,6 @@ export class SocketRoomService {
             this.socket.on('message', (message) => {
                 observer.next(message);
             });
-            // Handle observable cleanup
             return () => this.socket.off('message');
         });
     }

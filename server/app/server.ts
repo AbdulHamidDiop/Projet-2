@@ -49,6 +49,23 @@ export class Server {
                     socket.emit('disconnect');
                 }
             });
+            socket.on('createRoom', (room: string) => {
+                leaveAllRooms(socket);
+                socket.join(room);
+                console.log(`Room created ${room}`);
+            });
+
+            socket.on('joinRoom', (room: string) => {
+                leaveAllRooms(socket);
+                socket.join(room);
+                console.log(`Room joined ${room}`);
+            });
+
+            socket.on('message', (data: { room: string; message: string }) => {
+                this.io.to(data.room).emit('message', data.message);
+                console.log(`Message emitted ${data.message}`);
+            });
+
             socket.on('disconnect', () => {
                 // eslint-disable-next-line no-console
                 console.log('User disconnected from socket');
@@ -89,6 +106,15 @@ export class Server {
                 }
             });
         });
+
+        const leaveAllRooms = (socket: Socket) => {
+            const rooms = Object.keys(socket.rooms);
+            rooms.forEach((room) => {
+                socket.leave(room);
+                // eslint-disable-next-line no-console
+                console.log(`Room left ${room}`);
+            });
+        };
     }
 
     private onError(error: NodeJS.ErrnoException): void {
