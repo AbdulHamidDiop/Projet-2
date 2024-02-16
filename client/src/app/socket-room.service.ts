@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Player } from '@common/game';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
@@ -21,14 +22,40 @@ export class SocketRoomService {
         this.socket.emit('joinRoom', this.room);
     }
 
+    // La validation devra se faire du coté du serveur.
+    lockRoom(): Observable<boolean> {
+        this.socket.emit('lockRoom', this.room);
+        return new Observable((observer) => {
+            this.socket.on('lockRoom', (response) => {
+                observer.next(response);
+            });
+            return () => this.socket.off('lockRoom');
+        });
+    }
+
+    unlockRoom(): Observable<boolean> {
+        this.socket.emit('unlockRoom', this.room);
+        return new Observable((observer) => {
+            this.socket.on('unlockRoom', (response) => {
+                observer.next(response);
+            });
+            return () => this.socket.off('unlockRoom');
+        });
+    }
+
+    kickPlayer(name: string) {
+        const room = this.room;
+        this.socket.emit('kickPlayer', { room, name });
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    getPlayers(): Observable<any> {
+    getPlayers(): Observable<Player[]> {
         this.socket.emit('getPlayers', this.room);
         return new Observable((observer) => {
             this.socket.on('getPlayers', (players) => {
                 observer.next(players);
             });
-            return () => this.socket.off('message');
+            return () => this.socket.off('getPlayers');
         });
     }
 
@@ -60,5 +87,20 @@ export class SocketRoomService {
         if (this.socket) {
             this.socket.disconnect();
         }
+    }
+
+    sendChatMessage(message: string) {
+        const room = this.room;
+        this.socket.emit('chatMessage', { room, message });
+    }
+
+    getChatMessages(): Observable<string> {
+        return new Observable((observer) => {
+            this.socket.on('chatMessage', (message) => {
+                observer.next(message);
+            });
+            // Handle observable cleanup
+            return () => this.socket.off('chatMessage');
+        });
     }
 }
