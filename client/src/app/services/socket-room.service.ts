@@ -23,8 +23,11 @@ export class SocketRoomService {
     }
 
     // La validation devra se faire du coté du serveur.
-    lockRoom(): Observable<boolean> {
-        this.socket.emit('lockRoom', this.room);
+    lockRoom(name: string): void {
+        this.socket.emit('lockRoom', name);
+    }
+
+    lockSubscribe(): Observable<boolean> {
         return new Observable((observer) => {
             this.socket.on('lockRoom', (response) => {
                 observer.next(response);
@@ -33,8 +36,11 @@ export class SocketRoomService {
         });
     }
 
-    unlockRoom(): Observable<boolean> {
-        this.socket.emit('unlockRoom', this.room);
+    unlockRoom(name: string): void {
+        this.socket.emit('unlockRoom', name);
+    }
+
+    unlockSubscribe(): Observable<boolean> {
         return new Observable((observer) => {
             this.socket.on('unlockRoom', (response) => {
                 observer.next(response);

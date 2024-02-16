@@ -10,6 +10,7 @@ import { Player } from '@common/game';
 export class WaitingPageComponent {
     counter: number = 0;
     locked: boolean = false;
+    name: string = 'admin';
     players: Player[] = [
         {
             id: '0',
@@ -38,6 +39,20 @@ export class WaitingPageComponent {
             this.counter++;
             this.players = players;
         });
+
+        this.socket.lockSubscribe().subscribe((response) => {
+            if (response) {
+                this.locked = true;
+                alert('Room is locked');
+            }
+        });
+
+        this.socket.unlockSubscribe().subscribe((response) => {
+            if (response) {
+                this.locked = false;
+                alert('Room is unlocked');
+            }
+        });
     }
 
     get player() {
@@ -45,15 +60,11 @@ export class WaitingPageComponent {
     }
 
     lock() {
-        this.socket.lockRoom().subscribe((response) => {
-            this.locked = response;
-        });
+        this.socket.lockRoom(this.name);
     }
 
     unlock() {
-        this.socket.unlockRoom().subscribe((response) => {
-            this.locked = response;
-        });
+        this.socket.unlockRoom(this.name);
     }
 
     kickPlayer(name: string) {

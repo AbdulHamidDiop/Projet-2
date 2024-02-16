@@ -50,6 +50,28 @@ export class Server {
                 // eslint-disable-next-line no-console
                 console.log(message);
             });
+
+            socket.on('lockRoom', (message) => {
+                // eslint-disable-next-line no-console
+                console.log(message);
+                if (message === 'admin') {
+                    socket.emit('lockRoom', true);
+                    socket.broadcast.emit('lockRoom', true);
+                } else {
+                    socket.emit('lockRoom', false);
+                }
+            });
+
+            socket.on('unlockRoom', (message) => {
+                // eslint-disable-next-line no-console
+                console.log(message);
+                if (message === 'admin') {
+                    socket.emit('unlockRoom', true);
+                    socket.broadcast.emit('unlockRoom', true);
+                } else {
+                    socket.emit('unlockRoom', false);
+                }
+            });
         });
     }
 
