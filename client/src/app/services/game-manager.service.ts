@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { API_URL } from '@common/consts';
+import { Feedback } from '@common/feedback';
 import { Game, Question } from '@common/game';
-import { Feedback } from './../../../../common/feedback';
 import { FetchService } from './fetch.service';
 import { GameService } from './game.service';
 

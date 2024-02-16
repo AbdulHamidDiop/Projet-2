@@ -8,6 +8,8 @@ import { GameManagerService } from '@app/services/game-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Question, Type } from '@common/game';
+import { Player } from '@common/player';
+import { GameSocketService } from './../../services/game-socket.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -20,6 +22,7 @@ export const DEFAULT_TIMER = 25;
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements OnInit, OnDestroy {
+    user: Player;
     inTestMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
@@ -37,6 +40,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
+        public gameSocketService: GameSocketService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -46,6 +50,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.answer = [];
         if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;
+        }
+
+        if (!this.inTestMode) {
+            this.gameSocketService.onEvent('nextQuestion').subscribe(() => {
+                this.confirmAnswers();
+            });
         }
     }
 
@@ -130,13 +140,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
         return false;
     }
-
-    // TODO: SPRINT 2
-    // handleQRLAnswer(answer: string) {
-    //     if (answer === 'B') {
-    //         alert('La réponse correcte a été choisie');
-    //     }
-    // }
 
     async confirmAnswers() {
         this.disableChoices = true;
