@@ -40,6 +40,21 @@ export class Server {
         this.io.on('connection', (socket: Socket) => {
             // eslint-disable-next-line no-console
             console.log('A user connected to socket');
+
+            socket.on('createRoom', (room: string) => {
+                socket.join(room);
+                console.log(`Room created ${room}`);
+            });
+
+            socket.on('joinRoom', (room: string) => {
+                socket.join(room);
+                console.log(`Room joined ${room}`);
+            });
+
+            socket.on('message', (room: string, message: string) => {
+                this.io.to(room).emit('message', message);
+            });
+
             socket.on('disconnect', () => {
                 // eslint-disable-next-line no-console
                 console.log('User disconnected from socket');

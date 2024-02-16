@@ -2,10 +2,14 @@
 
 <main>
     <div class="container">
-        <section class="play-area-container">
+        <!-- <section class="play-area-container">
             <app-play-area class="play-area" tabindex="0"></app-play-area>
-        </section>
+        </section> 
         <app-sidebar id="sidebar"></app-sidebar>
+    -->
+
+        <input type="text" #roomInput placeholder="Enter room name" />
+        <button (click)="socketService.createRoom(roomInput.value)">Create Room</button>
     </div>
 </main>
 

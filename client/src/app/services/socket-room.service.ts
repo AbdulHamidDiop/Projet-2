@@ -16,9 +16,13 @@ export class SocketRoomService {
         this.socket = io(this.url);
     }
 
+    createRoom(room: string): void {
+        this.socket.emit('createRoom', room);
+    }
+
     // Function to join a room
-    joinRoom(): void {
-        this.socket.emit('joinRoom', this.room);
+    joinRoom(room: string): void {
+        this.socket.emit('joinRoom', room);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -33,8 +37,7 @@ export class SocketRoomService {
     }
 
     // Function to send a message to the server
-    sendMessage(message: string): void {
-        const room = this.room;
+    sendMessage(message: string, room: string): void {
         this.socket.emit('message', { room, message });
     }
 
