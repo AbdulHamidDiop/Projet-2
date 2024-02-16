@@ -1,6 +1,8 @@
 import { Application } from '@app/app';
+import { CorsOptions } from 'cors';
 import * as http from 'http';
 import { AddressInfo } from 'net';
+import { Socket, Server as SocketIOServer } from 'socket.io';
 import { Service } from 'typedi';
 
 @Service()
@@ -9,6 +11,7 @@ export class Server {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     private static readonly baseDix: number = 10;
     private server: http.Server;
+    private io: SocketIOServer;
 
     constructor(private readonly application: Application) {}
 
@@ -24,6 +27,24 @@ export class Server {
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
+
+        // SocketIO
+        const corsOptions: CorsOptions = {
+            origin: ['http://localhost:4200'],
+        };
+        this.io = new SocketIOServer(this.server, { cors: corsOptions });
+        this.configureSocketIO();
+    }
+
+    private configureSocketIO(): void {
+        this.io.on('connection', (socket: Socket) => {
+            // eslint-disable-next-line no-console
+            console.log('A user connected to socket');
+            socket.on('disconnect', () => {
+                // eslint-disable-next-line no-console
+                console.log('User disconnected from socket');
+            });
+        });
     }
 
     private onError(error: NodeJS.ErrnoException): void {
