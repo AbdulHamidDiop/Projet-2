@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { GAME_SOCKET_URL } from '@common/consts';
+import { SOCKET_URL } from '@common/consts';
 import { Observable } from 'rxjs';
 import { Socket, io } from 'socket.io-client';
 
@@ -40,8 +40,14 @@ export class GameSocketService {
     }
 
     // Example: End the game
-    endGame(): void {
+    notifyEndGame(): void {
         this.emit('endGame');
+    }
+
+    onEndGame(): Observable<void> {
+        return new Observable<void>((observer) => {
+            this.socket.on('endGame', () => observer.next());
+        });
     }
 
     // Example: Subscribe to game results
@@ -58,11 +64,11 @@ export class GameSocketService {
 
     private connect(): void {
         // Connect to the WebSocket server
-        this.socket = io(GAME_SOCKET_URL, {
+        this.socket = io(SOCKET_URL, {
             // Optional: add options here if needed
         });
 
         // Optional: Handle any global events or configurations here
-        this.socket.on('connect', () => console.log('Connected to game server'));
+        // this.socket.on('connect', () => console.log('Connected to game server'));
     }
 }

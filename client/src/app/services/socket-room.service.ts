@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { SOCKET_URL } from '@common/consts';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
@@ -8,7 +9,7 @@ import { io, Socket } from 'socket.io-client';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService {
     private socket: Socket;
-    private url = 'http://localhost:3000'; // Your Socket.IO server URL
+    private url = SOCKET_URL; // Your Socket.IO server URL
     private room: string = '0';
 
     constructor() {
@@ -53,6 +54,29 @@ export class SocketRoomService {
     // Function to leave a room
     leaveRoom(): void {
         this.socket.emit('leaveRoom', this.room);
+    }
+
+    // Host tells clients to move to the next question
+    notifyNextQuestion(): void {
+        this.sendMessage('nextQuestion');
+    }
+
+    // Listen for the 'nextQuestion' event
+    onNextQuestion(): Observable<void> {
+        return new Observable<void>((observer) => {
+            this.socket.on('nextQuestion', () => observer.next());
+        });
+    }
+
+    // Example: End the game
+    notifyEndGame(): void {
+        this.sendMessage('endGame');
+    }
+
+    onEndGame(): Observable<void> {
+        return new Observable<void>((observer) => {
+            this.socket.on('endGame', () => observer.next());
+        });
     }
 
     // Function to disconnect from the server (optional)

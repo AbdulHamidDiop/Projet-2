@@ -7,14 +7,14 @@ import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Question, Type } from '@common/game';
-import { Player } from '@common/player';
+import { Player, Question, Type } from '@common/game';
 import { GameSocketService } from './../../services/game-socket.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
 export const SHOW_FEEDBACK_DELAY = 3000;
 export const DEFAULT_TIMER = 25;
+export const BONUS_MULTIPLIER = 1.2;
 
 @Component({
     selector: 'app-play-area',
@@ -32,7 +32,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     score = 0;
 
     disableChoices = false;
-    showFeedback = false;
     feedback: Feedback[];
     private timer = DEFAULT_TIMER;
     private points = 0;
@@ -55,6 +54,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (!this.inTestMode) {
             this.gameSocketService.onEvent('nextQuestion').subscribe(() => {
                 this.confirmAnswers();
+            });
+
+            this.gameSocketService.onEvent('endGame').subscribe(() => {
+                this.endGame();
             });
         }
     }
@@ -129,6 +132,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 break;
             }
         }
+
         if (!choiceInList) {
             this.answer.push(answer);
         }
@@ -144,16 +148,22 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     async confirmAnswers() {
         this.disableChoices = true;
 
-        this.showFeedback = true;
         if (this.question.type === Type.QCM) {
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
         }
-        setTimeout(() => {
-            this.updateScore();
-            this.showFeedback = false;
-            this.disableChoices = false;
-            this.nextQuestion();
-        }, SHOW_FEEDBACK_DELAY);
+
+        if (this.inTestMode) {
+            setTimeout(() => {
+                this.countPointsAndNextQuestion();
+            }, SHOW_FEEDBACK_DELAY);
+        } else {
+        }
+    }
+
+    countPointsAndNextQuestion() {
+        this.updateScore();
+        this.disableChoices = false;
+        this.nextQuestion();
     }
 
     async updateScore() {
@@ -165,8 +175,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (isCorrectAnswer && this.question.points) {
             this.score += this.question.points;
             if (this.inTestMode) {
-                this.score *= 1.2;
-                alert('Vous avez été le premier à répondre!');
+                this.score *= BONUS_MULTIPLIER;
             }
         }
     }
@@ -186,13 +195,17 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.timeService.stopTimer();
                 this.score = 0;
                 this.answer = [];
-                this.router.navigate(['/createGame']);
+                this.router.navigate(this.inTestMode ? ['/createGame'] : ['/']);
             }
         });
     }
 
+    endGame() {
+        console.log('endGame');
+    }
+
     endGameTest() {
-        if (this.gameManager.endGame) {
+        if (this.gameManager.endGame && this.inTestMode) {
             this.router.navigate(['/createGame']);
         }
     }
