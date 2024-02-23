@@ -39,31 +39,23 @@ export class Server {
 
     private configureSocketIO(): void {
         this.io.on('connection', (socket: Socket) => {
-            // eslint-disable-next-line no-console
-            console.log('A user connected to socket');
-
             socket.on('joinRoom', (message) => {
                 if (this.bannedNames.includes(message.name)) {
-                    // eslint-disable-next-line no-console
-                    console.log('User ' + message.name + ' is banned');
                     socket.emit('disconnect');
                 }
             });
             socket.on('createRoom', (room: string) => {
                 leaveAllRooms(socket);
                 socket.join(room);
-                console.log(`Room created ${room}`);
             });
 
             socket.on('joinRoom', (room: string) => {
                 leaveAllRooms(socket);
                 socket.join(room);
-                console.log(`Room joined ${room}`);
             });
 
             socket.on('message', (data: { room: string; message: string }) => {
                 this.io.to(data.room).emit('message', data.message);
-                console.log(`Message emitted ${data.message}`);
             });
 
             socket.on('disconnect', () => {
@@ -73,8 +65,6 @@ export class Server {
 
             socket.on('chatMessage', (message) => {
                 socket.broadcast.emit('chatMessage', message);
-                // eslint-disable-next-line no-console
-                console.log(message);
             });
 
             socket.on('lockRoom', (message) => {
