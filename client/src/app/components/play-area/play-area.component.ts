@@ -5,10 +5,10 @@ import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
-import { GameSocketService } from './../../services/game-socket.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -22,7 +22,7 @@ export const BONUS_MULTIPLIER = 1.2;
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements OnInit, OnDestroy {
-    user: Player;
+    user: Player = {} as Player;
     inTestMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
@@ -39,7 +39,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
-        public gameSocketService: GameSocketService,
+        public gameSocketService: SocketRoomService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -52,12 +52,19 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
 
         if (!this.inTestMode) {
-            this.gameSocketService.onEvent('nextQuestion').subscribe(() => {
-                this.confirmAnswers();
-            });
-
-            this.gameSocketService.onEvent('endGame').subscribe(() => {
-                this.endGame();
+            this.gameSocketService.joinRoom();
+            this.gameSocketService.onEvent('message').subscribe(async (data: any) => {
+                if (data === 'nextQuestion') {
+                    await this.confirmAnswers();
+                    if (this.question.type === Type.QCM) {
+                        this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+                    }
+                    setTimeout(() => {
+                        this.countPointsAndNextQuestion();
+                    }, SHOW_FEEDBACK_DELAY);
+                }else if (data === 'endGame') {
+                    this.endGame();
+                }
             });
         }
     }
@@ -117,7 +124,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
-        this.timeService.stopTimer();
         this.timeService.startTimer(this.timer);
         this.cdr.detectChanges();
     }
@@ -147,16 +153,15 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async confirmAnswers() {
         this.disableChoices = true;
-
-        if (this.question.type === Type.QCM) {
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
-        }
+        this.timeService.stopTimer();
 
         if (this.inTestMode) {
+            if (this.question.type === Type.QCM) {
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            }
             setTimeout(() => {
                 this.countPointsAndNextQuestion();
             }, SHOW_FEEDBACK_DELAY);
-        } else {
         }
     }
 
@@ -164,6 +169,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.updateScore();
         this.disableChoices = false;
         this.nextQuestion();
+    }
+
+    notifyNextQuestion() {
+        this.gameSocketService.notifyNextQuestion();
+    }
+    notifyEndGame() {  
+        this.gameSocketService.notifyEndGame();
     }
 
     async updateScore() {
@@ -176,7 +188,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.score += this.question.points;
             if (this.inTestMode) {
                 this.score *= BONUS_MULTIPLIER;
+                this.user.bonusCount++;
             }
+            this.user.score = this.score;
         }
     }
 

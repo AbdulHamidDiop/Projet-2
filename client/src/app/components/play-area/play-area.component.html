@@ -33,6 +33,12 @@
                 <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
+                <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode" class="confirm-button">
+                    <h3 class="confirm-text">prochaine question</h3>
+                </button>
+                <button mat-button (click)="notifyEndGame()" [disabled]="inTestMode" class="confirm-button">
+                    <h3 class="confirm-text">terminer le jeu</h3>
+                </button>
             </mat-card-actions>
         </mat-card>
     </section>

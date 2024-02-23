@@ -79,6 +79,42 @@ export class SocketRoomService {
         });
     }
 
+    onEvent<T>(event: string): Observable<T> {
+        return new Observable<T>((observer) => {
+            this.socket.on(event, (data: T) => {
+                observer.next(data);
+            });
+        });
+    }
+
+    // Host tells clients to move to the next question
+    notifyNextQuestion(): void {
+        this.sendMessage('nextQuestion');
+    }
+
+    // // Listen for the 'nextQuestion' event
+    // onNextQuestion(): Observable<void> {
+    //     return new Observable<void>((observer) => {
+    //         this.socket.on('nextQuestion', () => observer.next());
+    //     });
+    // }
+
+    // Example: End the game
+    notifyEndGame(): void {
+        this.sendMessage('endGame');
+    }
+
+    onEndGame(): Observable<void> {
+        return new Observable<void>((observer) => {
+            this.socket.on('endGame', () => observer.next());
+        });
+    }
+
+    // Example: Subscribe to game results
+    onGameResults(): Observable<unknown> {
+        return this.onEvent<unknown>('gameResults');
+    }
+
     // Function to send a message to the server
     sendMessage(message: string): void {
         const room = this.room;

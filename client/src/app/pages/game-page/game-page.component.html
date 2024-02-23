@@ -9,10 +9,10 @@
     -->
 
         <input type="text" #roomCreateInput placeholder="Enter room name" />
-        <button (click)="socketService.createRoom(roomCreateInput.value)">Create Room</button>
+        <!-- <button (click)="socketService.createRoom(roomCreateInput.value)">Create Room</button> -->
 
         <input type="text" #roomJoinInput placeholder="Enter room name" />
-        <button (click)="socketService.joinRoom(roomJoinInput.value)">Join Room</button>
+        <!-- <button (click)="socketService.joinRoom(roomJoinInput.value)">Join Room</button> -->
 
         <input type="text" #messageInput placeholder="Enter message" />
         <button (click)="socketService.sendMessage(messageInput.value)">Send Message</button>

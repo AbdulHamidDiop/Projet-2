@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Application } from '@app/app';
 import { CorsOptions } from 'cors';
 import * as http from 'http';
@@ -55,10 +56,10 @@ export class Server {
                 console.log(`Room created ${room}`);
             });
 
-            socket.on('joinRoom', (room: string) => {
+            socket.on('joinRoom', (data: any) => {
                 leaveAllRooms(socket);
-                socket.join(room);
-                console.log(`Room joined ${room}`);
+                socket.join(data.room);
+                console.log(`Room joined ${data.room}`);
             });
 
             socket.on('message', (data: { room: string; message: string }) => {
