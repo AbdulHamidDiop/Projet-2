@@ -4,6 +4,7 @@ import { Game, Question } from '@common/game';
 import { Feedback } from './../../../../common/feedback';
 import { FetchService } from './fetch.service';
 import { GameService } from './game.service';
+import { PlayerService } from './player.service';
 
 @Injectable({
     providedIn: 'root', // SPRINT 2: might have to not be a singleton
@@ -16,6 +17,7 @@ export class GameManagerService {
     constructor(
         private gameService: GameService,
         private fetchService: FetchService,
+        private playerService: PlayerService,
     ) {}
 
     async initialize(gameID: string) {

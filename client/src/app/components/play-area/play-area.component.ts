@@ -7,7 +7,8 @@ import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Question, Type } from '@common/game';
+import { Question, Type, Player, Choices } from '@common/game';
+import { PlayerService } from '@app/services/player.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -28,6 +29,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     nbChoices: number;
     score = 0;
 
+    player: Player;
+
     disableChoices = false;
     showFeedback = false;
     feedback: Feedback[];
@@ -37,6 +40,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
+        public playerService: PlayerService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -122,6 +126,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (!choiceInList) {
             this.answer.push(answer);
         }
+
+        this.playerService.updatePlayerAnswers(this.player.id, this.question.id, this.answer);
     }
 
     isChoice(choice: string): boolean {
@@ -213,5 +219,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trackByFn(item: any) {
         return item.id;
+    }
+
+    sendChoice(choice: Choices, question: Question) {
+        this.playerService.sendPlayerChoice(choice, question);
     }
 }
