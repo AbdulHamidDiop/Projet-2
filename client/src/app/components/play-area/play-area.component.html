@@ -1,4 +1,5 @@
 <div id="grid-container">
+    <div class="wrapper"><app-sidebar class="sidebar"></app-sidebar></div>
     <section id="question-container">
         <mat-card *ngIf="shouldRender(this.question.text)">
             <mat-card-header>
@@ -22,8 +23,11 @@
         <br />
         <mat-card>
             <mat-card-header>
-                <mat-card-title>
-                    <p>Score du joueur : {{ this.playerScore }}</p>
+                <mat-card-title class="column-container">
+                    <p>Votre score : {{ this.playerScore }}</p>
+                    <div *ngIf="showPoints" class="points-animation">
+                        <p class="points-text">+{{ question.points }}</p>
+                    </div>
                 </mat-card-title>
             </mat-card-header>
             <mat-card-actions align="end">
@@ -33,7 +37,7 @@
                 <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
-                <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode" class="confirm-button">
+                <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode || gameManager.endGame" class="confirm-button">
                     <h3 class="confirm-text">prochaine question</h3>
                 </button>
                 <button mat-button (click)="notifyEndGame()" [disabled]="inTestMode" class="confirm-button">

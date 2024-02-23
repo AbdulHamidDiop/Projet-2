@@ -31,6 +31,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     nbChoices: number;
     score = 0;
 
+    showPoints: boolean = false;
     disableChoices = false;
     feedback: Feedback[];
     private timer = DEFAULT_TIMER;
@@ -53,16 +54,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         if (!this.inTestMode) {
             this.gameSocketService.joinRoom();
-            this.gameSocketService.onEvent('message').subscribe(async (data: any) => {
+            this.gameSocketService.onEvent('message').subscribe(async (data: unknown) => {
                 if (data === 'nextQuestion') {
                     await this.confirmAnswers();
                     if (this.question.type === Type.QCM) {
                         this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
                     }
-                    setTimeout(() => {
-                        this.countPointsAndNextQuestion();
-                    }, SHOW_FEEDBACK_DELAY);
-                }else if (data === 'endGame') {
+                    this.countPointsAndNextQuestion();
+                } else if (data === 'endGame') {
                     this.endGame();
                 }
             });
@@ -159,22 +158,22 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
-            setTimeout(() => {
-                this.countPointsAndNextQuestion();
-            }, SHOW_FEEDBACK_DELAY);
+            this.countPointsAndNextQuestion();
         }
     }
 
     countPointsAndNextQuestion() {
         this.updateScore();
         this.disableChoices = false;
-        this.nextQuestion();
+        setTimeout(() => {
+            this.nextQuestion();
+        }, SHOW_FEEDBACK_DELAY);
     }
 
     notifyNextQuestion() {
         this.gameSocketService.notifyNextQuestion();
     }
-    notifyEndGame() {  
+    notifyEndGame() {
         this.gameSocketService.notifyEndGame();
     }
 
@@ -185,11 +184,17 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
         const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.answer, this.question.id);
         if (isCorrectAnswer && this.question.points) {
+            this.showPoints = true;
+            setTimeout(() => {
+                this.showPoints = false;
+            }, SHOW_FEEDBACK_DELAY);
+
             this.score += this.question.points;
             if (this.inTestMode) {
                 this.score *= BONUS_MULTIPLIER;
                 this.user.bonusCount++;
             }
+
             this.user.score = this.score;
         }
     }
