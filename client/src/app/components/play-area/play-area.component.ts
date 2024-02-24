@@ -153,7 +153,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async confirmAnswers() {
-        console.log('confirmAnswers');
         this.disableChoices = true;
         this.timeService.stopTimer();
 

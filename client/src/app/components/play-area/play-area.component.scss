@@ -13,25 +13,6 @@ app-countdown-modal {
     z-index: 100;
 }
 
-mat-selection-list {
-    .mat-list-option {
-        // Override styles for disabled state
-        &.mat-list-item-disabled {
-            opacity: 1 !important; // Maintain full opacity
-            color: inherit !important; // Keep the text color the same as when it's enabled
-
-            // If background or other styles change, reset them here as well
-            background-color: inherit !important;
-
-            // You can also target child elements specifically if needed
-            span,
-            mat-icon {
-                color: inherit !important;
-            }
-        }
-    }
-}
-
 /* Header styles */
 .wrapper {
     display: flex;
