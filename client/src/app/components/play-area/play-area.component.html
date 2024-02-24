@@ -47,7 +47,7 @@
     </section>
 
     <br />
-    <mat-selection-list #choices [attr.aria-disabled]="disableChoices ? 'true' : null">
+    <mat-selection-list #choices [disabled]="disableChoices">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
             <mat-list-item
                 (click)="!disableChoices && handleQCMChoice(choice.text)"
