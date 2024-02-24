@@ -9,6 +9,9 @@ li {
     margin: 0;
     padding: 0;
 }
+app-countdown-modal {
+    z-index: 100;
+}
 
 /* Header styles */
 .wrapper {

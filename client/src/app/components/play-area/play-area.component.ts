@@ -32,9 +32,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     score = 0;
 
     showPoints: boolean = false;
+    showCountDown: boolean = false;
+    countDownKey: number = Date.now(); // to force change dete/ctiosn
     disableChoices = false;
     feedback: Feedback[];
-    private timer = DEFAULT_TIMER;
+    private timer: number;
     private points = 0;
     // eslint-disable-next-line max-params
     constructor(
@@ -46,7 +48,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         public router: Router,
         private route: ActivatedRoute,
     ) {
-        this.timeService.startTimer(this.timer);
         this.answer = [];
         if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;
@@ -103,6 +104,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             await this.gameManager.initialize(gameID);
         }
         this.timer = this.gameManager.game.duration ?? DEFAULT_TIMER;
+        this.timeService.startTimer(this.timer);
         this.question = this.gameManager.nextQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
     }
@@ -164,10 +166,18 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     countPointsAndNextQuestion() {
         this.updateScore();
-        this.disableChoices = false;
-        setTimeout(() => {
-            this.nextQuestion();
-        }, SHOW_FEEDBACK_DELAY);
+        setTimeout(
+            () => {
+                this.disableChoices = false;
+                this.nextQuestion();
+            },
+            this.inTestMode ? SHOW_FEEDBACK_DELAY : SHOW_FEEDBACK_DELAY * 2,
+        );
+        if (!this.inTestMode) {
+            setTimeout(() => {
+                this.openCountDownModal();
+            }, SHOW_FEEDBACK_DELAY);
+        }
     }
 
     notifyNextQuestion() {
@@ -243,6 +253,15 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (!feedbackItem) return '';
 
         return feedbackItem.status;
+    }
+
+    openCountDownModal(): void {
+        this.showCountDown = true;
+        this.countDownKey = Date.now();
+    }
+
+    onCountDownModalClosed(): void {
+        this.showCountDown = false;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

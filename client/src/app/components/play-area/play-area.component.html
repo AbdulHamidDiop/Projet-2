@@ -1,5 +1,4 @@
 <div id="grid-container">
-    <div class="wrapper"><app-sidebar class="sidebar"></app-sidebar></div>
     <section id="question-container">
         <mat-card *ngIf="shouldRender(this.question.text)">
             <mat-card-header>
@@ -65,3 +64,4 @@
         </div>
     </mat-selection-list>
 </div>
+<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"></app-countdown-modal>
