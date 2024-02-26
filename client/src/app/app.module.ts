@@ -28,6 +28,7 @@ import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
 import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
+import { StatsTestComponent } from './components/stats-test/stats-test.component';
 
 /**
  * Main module that is used in main.ts.
@@ -59,6 +60,7 @@ import { CountdownModalComponent } from './components/countdown-modal/countdown-
         ConfirmDialogComponent,
         NavBarComponent,
         CountdownModalComponent,
+        StatsTestComponent,
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],

@@ -1,11 +1,12 @@
 <mat-sidenav-container class="container">
     <br />
-    <div class="messages-container">
+    <div #chatContainer class="messages-container">
         <div *ngFor="let message of messages">
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>
-                        <p>{{ message }}</p>
+                        <small *ngIf="message.author && message.timeStamp">{{ message.author + ' ' + message.timeStamp }}</small>
+                        <p>{{ message.message }}</p>
                     </mat-card-title>
                 </mat-card-header>
             </mat-card>
@@ -21,7 +22,8 @@
                 matInput
                 (keyup)="$event.stopPropagation(); handleKeyboardPress($event, input)"
                 placeholder="Vous pouvez laisser un message ici"
-                [value]="currentMessage"
+                [value]="currentMessage.message ? currentMessage.message : ''"
+                [(ngModel)]="currentMessage.message"
             />
         </mat-form-field>
     </div>
