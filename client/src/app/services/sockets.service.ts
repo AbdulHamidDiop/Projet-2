@@ -12,14 +12,6 @@ export class SocketsService {
 
     // constructor() {}
 
-    connectNamespace(namespace: string): Socket | undefined {
-        if (!this.namespaces.has(namespace)) {
-            const namespaceSocket = io(`${this.baseUrl}/${namespace}`);
-            this.namespaces.set(namespace, namespaceSocket);
-        }
-        return this.namespaces.get(namespace);
-    }
-
     joinRoom(namespace: string, room: string): void {
         const namespaceSocket = this.connectNamespace(namespace);
         if (namespaceSocket) {
@@ -49,5 +41,13 @@ export class SocketsService {
             }
             return;
         });
+    }
+
+    private connectNamespace(namespace: string): Socket | undefined {
+        if (!this.namespaces.has(namespace)) {
+            const namespaceSocket = io(`${this.baseUrl}/${namespace}`);
+            this.namespaces.set(namespace, namespaceSocket);
+        }
+        return this.namespaces.get(namespace);
     }
 }
