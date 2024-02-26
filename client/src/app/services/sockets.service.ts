@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SOCKET_URL } from '@common/consts';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
-import { io, Socket } from 'socket.io-client';
+import { Socket, io } from 'socket.io-client';
 
 @Injectable({
     providedIn: 'root',

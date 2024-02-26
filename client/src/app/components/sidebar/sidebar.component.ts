@@ -32,7 +32,7 @@ export class SidebarComponent implements OnDestroy, OnInit {
     }
 
     async handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && this.currentMessage.message) {
             this.currentMessage.author = this.userName;
             this.currentMessage.timeStamp = new Date().toLocaleTimeString();
 
