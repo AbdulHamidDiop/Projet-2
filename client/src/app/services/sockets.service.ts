@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SOCKET_URL } from '@common/consts';
+import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
 
@@ -20,7 +21,7 @@ export class SocketsService {
     }
 
     // eslint-disable-next-line max-params
-    sendMessage(eventName: string, namespace: string, room: string, payload?: object): void {
+    sendMessage(eventName: Events, namespace: Namespaces, room: string, payload?: object): void {
         const namespaceSocket = this.connectNamespace(namespace);
         if (namespaceSocket) {
             namespaceSocket.emit(eventName, { room, ...payload });
