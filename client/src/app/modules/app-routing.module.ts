@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { StatsTestComponent } from '@app/components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from '@app/pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from '@app/pages/admin-page/questions-page/questions-page.component';
@@ -11,6 +12,7 @@ import { WaitingPageComponent } from '@app/pages/waiting-page/waiting-page.compo
 import { ResultsPageComponent } from '@app/pages/results-page/results-page.component';
 
 const routes: Routes = [
+    { path: 'stats-test', component: StatsTestComponent },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: MainPageComponent },
     { path: 'game/results', component: ResultsPageComponent },

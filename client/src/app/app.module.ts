@@ -26,6 +26,9 @@ import { CreateGamePageComponent } from './pages/create-game-page/create-game-pa
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
+import { SocketRoomService } from './services/socket-room.service';
+import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
+import { StatsTestComponent } from './components/stats-test/stats-test.component';
 import { ResultsPageComponent } from './results-page/results-page.component';
 
 /**
@@ -57,11 +60,13 @@ import { ResultsPageComponent } from './results-page/results-page.component';
         AdminQuestionsBankComponent,
         ConfirmDialogComponent,
         NavBarComponent,
+        CountdownModalComponent,
+        StatsTestComponent,
         ResultsPageComponent,
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
-    providers: [GameService, QuestionsService],
+    providers: [GameService, QuestionsService, SocketRoomService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}
