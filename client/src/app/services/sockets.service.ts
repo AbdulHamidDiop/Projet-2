@@ -10,8 +10,11 @@ import { Socket, io } from 'socket.io-client';
 export class SocketsService {
     private baseUrl: string = SOCKET_URL;
     private namespaces: Map<string, Socket> = new Map();
+    private baseSocket: Socket = io(this.baseUrl);
 
-    // constructor() {}
+    constructor() {
+        this.baseSocket.emit('joinRoom', { room: '0' });
+    }
 
     joinRoom(namespace: string, room: string): void {
         const namespaceSocket = this.connectNamespace(namespace);
@@ -22,9 +25,13 @@ export class SocketsService {
 
     // eslint-disable-next-line max-params
     sendMessage(eventName: Events, namespace: Namespaces, room: string, payload?: object): void {
-        const namespaceSocket = this.connectNamespace(namespace);
-        if (namespaceSocket) {
-            namespaceSocket.emit(eventName, { room, ...payload });
+        if (namespace !== Namespaces.GLOBAL_NAMESPACE) {
+            const namespaceSocket = this.connectNamespace(namespace);
+            if (namespaceSocket) {
+                namespaceSocket.emit(eventName, { room, ...payload });
+            }
+        } else {
+            this.baseSocket.emit(eventName, { room, ...payload });
         }
     }
 

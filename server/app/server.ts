@@ -14,7 +14,10 @@ export class Server {
     private server: http.Server;
     private io: SocketIOServer;
 
-    // private bannedNames: string[] = [''];
+    private liveRooms: string[] = [];
+    // private bannedNamesInRoom: Map<string, string[]> = new Map();
+    // private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
+    // private lockedRooms: string[] = [];
 
     constructor(private readonly application: Application) {}
 
@@ -37,6 +40,16 @@ export class Server {
 
         this.configureStaticNamespaces();
         this.configureDynamicNamespaces();
+
+        this.io.on(Events.CREATE_ROOM, (room: string) => {
+            console.log(`Room created: ${room}`);
+            this.liveRooms.push(room);
+        });
+
+        this.io.on(Events.DELETE_ROOM, (room: string) => {
+            console.log(`Room deleted: ${room}`);
+            this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
+        });
     }
 
     private configureStaticNamespaces(): void {
@@ -46,14 +59,9 @@ export class Server {
         const gameNamespace = this.io.of(`/${Namespaces.GAME}`);
 
         chatNamespace.on('connection', (socket) => {
-            console.log('A user connected to the chatMessages namespace');
-
             // Listener for joining a room within the chatMessages namespace
-            socket.on(Events.JOIN_ROOM, ({ room }) => {
-                console.log(`Joining room: ${room}`);
-                socket.join(room);
-            });
-
+            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            console.log('A user connected to the chatMessages namespace');
             // Listener for messages sent within a room of the chatMessages namespace
             socket.on(Events.CHAT_MESSAGE, (data) => {
                 console.log(`Message received for room ${data.room}:`, data);
@@ -67,14 +75,11 @@ export class Server {
         });
 
         waitingRoomNamespace.on('connection', (socket) => {
-            console.log('A user connected to the waitingRoom namespace');
-
+            if (!this.setupDefaultJoinRoomEvent(socket)) return;
             socket.on(Events.JOIN_ROOM, ({ room, username }) => {
-                console.log(`Joining room: ${room}`);
-                socket.join(room);
-
                 socket.to(room).emit(Events.WAITING_ROOM_NOTIFICATION, `${username} a rejoint la salle d'attente`);
             });
+            console.log('A user connected to the waitingRoom namespace');
 
             socket.on('disconnect', () => {
                 console.log('User disconnected from waitingRoom namespace');
@@ -82,12 +87,8 @@ export class Server {
         });
 
         gameStatsNamespace.on('connection', (socket) => {
+            if (!this.setupDefaultJoinRoomEvent(socket)) return;
             console.log('A user connected to the gameStats namespace');
-
-            socket.on(Events.JOIN_ROOM, ({ room }) => {
-                console.log(`Joining room: ${room}`);
-                socket.join(room);
-            });
 
             socket.on(Events.QCM_STATS, (data) => {
                 console.log(`Stats received for room ${data.room}:`, data);
@@ -105,19 +106,15 @@ export class Server {
         });
 
         gameNamespace.on('connection', (socket) => {
+            if (!this.setupDefaultJoinRoomEvent(socket)) return;
             console.log('A user connected to the game namespace');
-
-            socket.on(Events.JOIN_ROOM, ({ room }) => {
-                console.log(`Joining room: ${room}`);
-                socket.join(room);
-            });
 
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
                 console.log(`Moving to the next question in room: ${room}`);
                 gameNamespace.in(room).emit(Events.NEXT_QUESTION);
             });
 
-            socket.on(Events.END_GAME, ({ room }) => {
+            socket.on(Events.END_GAME, ({ room }: { room: string }) => {
                 console.log(`Ending the game in room: ${room}`);
                 gameNamespace.in(room).emit(Events.END_GAME);
             });
@@ -126,6 +123,18 @@ export class Server {
                 console.log('User disconnected from game namespace');
             });
         });
+    }
+
+    private setupDefaultJoinRoomEvent(socket: Socket) {
+        let roomJoined = false;
+        socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
+            if (!room || !this.liveRooms.includes(room)) return;
+
+            socket.join(room);
+            roomJoined = true;
+            console.log(`Socket ${socket.id} joined room: ${room}`);
+        });
+        return roomJoined;
     }
 
     private configureDynamicNamespaces(): void {

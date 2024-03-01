@@ -36,6 +36,9 @@
                 <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
+                <button mat-button (click)="createRoom()" [disabled]="inTestMode || gameManager.endGame" class="confirm-button">
+                    <h3 class="confirm-text">createRoom</h3>
+                </button>
                 <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode || gameManager.endGame" class="confirm-button">
                     <h3 class="confirm-text">prochaine question</h3>
                 </button>

@@ -204,10 +204,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
 
+    createRoom() {
+        this.gameSocketService.sendMessage(Events.CREATE_ROOM, nsp.GLOBAL_NAMESPACE, this.socketRoom);
+    }
     notifyNextQuestion() {
         this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME, this.socketRoom);
     }
     notifyEndGame() {
+        this.gameSocketService.sendMessage('leaveRoom' as Events, nsp.GAME, this.socketRoom);
         this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME, this.socketRoom);
     }
 

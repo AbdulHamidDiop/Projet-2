@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 })
 export class StatsTestComponent implements OnDestroy {
     nbChoices: number[] = [0, 0, 0, 0];
-    socketRoom: string = '1';
+    socketRoom: string = '0';
     private qcmStatsSubscription: Subscription;
     private qrlStatsSubscription: Subscription;
 

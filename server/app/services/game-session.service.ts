@@ -3,12 +3,12 @@ import { Game } from '@common/game';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
 
-const QUIZ_PATH = './assets/quiz-example.json';
+const SESSIONS_PATH = './assets/quiz-example.json';
 
 @Service()
-export class GamesService {
+export class GameSessionService {
     async getAllGames(): Promise<Game[]> {
-        const data: string = await fs.readFile(QUIZ_PATH, 'utf8');
+        const data: string = await fs.readFile(SESSIONS_PATH, 'utf8');
         const games: Game[] = JSON.parse(data);
         return games;
     }
@@ -22,7 +22,7 @@ export class GamesService {
             );
         }
         games.push(game);
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(games, null, 2), 'utf8');
+        await fs.writeFile(SESSIONS_PATH, JSON.stringify(games, null, 2), 'utf8');
     }
 
     async getGameByID(id: string): Promise<Game> {
@@ -46,7 +46,7 @@ export class GamesService {
             }
         });
         if (hasChanged) {
-            await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
+            await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
             return hasChanged;
         } else {
             return false;
@@ -64,7 +64,7 @@ export class GamesService {
             return true;
         });
         if (gameFound) {
-            await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
+            await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
         }
         return gameFound;
     }
