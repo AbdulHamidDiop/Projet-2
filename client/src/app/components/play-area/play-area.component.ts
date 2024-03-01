@@ -8,7 +8,7 @@ import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketsService } from '@app/services/sockets.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Player, Question, Type, Player, Choices } from '@common/game';
+import { Player, Question, Type, Choices } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -35,8 +35,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     answer: string[] = [];
     nbChoices: number;
     score = 0;
-
-    player: Player;
 
     player: Player;
 

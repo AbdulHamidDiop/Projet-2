@@ -49,15 +49,7 @@
           <div class="histograms">
             <!-- Affichage de l'histogramme actuel -->
             <div class="histogram">
-                <h3>{{ game.questions[currentHistogramIndex].text }}</h3>
-                <div class="choices">
-                <div *ngFor="let choice of game.questions[currentHistogramIndex].choices" class="choice" [class.correct]="choice.isCorrect" [class.incorrect]="!choice.isCorrect">
-                    <!-- Affichage du choix et du nombre de sélections -->
-                    <p>{{ choice.text }} - Sélections: {{ choice.numberAnswered }}</p>
-                    <!-- Affichage d'une barre pour représenter le nombre de sélections -->
-                    <div class="bar" [style.width]="calculateBarWidth(choice.numberAnswered)"></div>
-                </div>
-                </div>
+              <canvas baseChart [data]="barChartData" [options]="barChartOptions" [type]="'bar'"> </canvas>
             </div>
           </div>
           <!-- Boutons pour afficher l'histogramme précédent et suivant -->

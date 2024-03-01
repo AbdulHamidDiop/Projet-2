@@ -3,10 +3,9 @@ import { Choices, Player, Question } from '@common/game';
 import { API_URL } from '@common/consts';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root',
 })
 export class PlayerService {
-
     async getAllPlayers(): Promise<Player[]> {
         const response = await fetch(API_URL + '/players');
         return await response.json();

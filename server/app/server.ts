@@ -49,7 +49,7 @@ export class Server {
             console.log('A user connected to the chatMessages namespace');
 
             // Listener for joining a room within the chatMessages namespace
-            socket.on(Events.JOIN_ROOM, ({ room }) => {
+            socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
                 console.log(`Joining room: ${room}`);
                 socket.join(room);
             });
@@ -84,7 +84,7 @@ export class Server {
         gameStatsNamespace.on('connection', (socket) => {
             console.log('A user connected to the gameStats namespace');
 
-            socket.on(Events.JOIN_ROOM, ({ room }) => {
+            socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
                 console.log(`Joining room: ${room}`);
                 socket.join(room);
             });
