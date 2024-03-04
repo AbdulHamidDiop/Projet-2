@@ -45,17 +45,6 @@ export class SidebarComponent implements OnDestroy, OnInit {
         }
     }
 
-    ngOnInit(): void {
-        this.messageHistory[0] = { message: 'Bienvenue dans le jeu QCM du projet LOG2990' } as ChatMessage;
-        this.messageHistory[1] = {
-            message: 'Vous pouvez aussi utiliser les touches du clavier pour sélectionner une réponse, et la touche Entrée pour confirmer',
-        } as ChatMessage;
-        this.messageHistory[2] = { message: 'Vous pouvez laisser un message ici' } as ChatMessage;
-        this.messageHistory[3] = {
-            message: 'Vous êtes dans la room 0, les messages écrits ici seront envoyés aux autres personnes dans la room',
-        } as ChatMessage;
-    }
-
     autoScroll(): void {
         setTimeout(() => {
             try {
@@ -63,7 +52,11 @@ export class SidebarComponent implements OnDestroy, OnInit {
             } catch (err) {
                 return;
             }
-        }, 0);
+        }, 0); // Le scroll peut être fait en CSS.
+    }
+
+    ngOnInit(): void {
+        this.messageHistory = [];
     }
 
     ngOnDestroy(): void {
