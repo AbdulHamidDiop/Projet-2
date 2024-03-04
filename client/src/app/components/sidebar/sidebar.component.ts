@@ -31,6 +31,7 @@ export class SidebarComponent implements OnDestroy {
             this.messageHistory = chatHistory;
             this.autoScroll();
         });
+        this.socketsService.sendMessage(Events.CHAT_HISTORY, nsp.CHAT_MESSAGES, this.socketRoom);
     }
 
     get messages() {

@@ -12,10 +12,6 @@ export class SocketsService {
     private baseSocket: Socket = io(this.baseUrl);
     private namespaces: Map<string, Socket> = new Map();
 
-    constructor() {
-        this.sendMessage(Events.CHAT_HISTORY, Namespaces.CHAT_MESSAGES, '0');
-    }
-
     createGameSession(room: string): void {
         this.baseSocket.emit(Events.CREATE_ROOM, room);
     }
