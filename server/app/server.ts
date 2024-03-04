@@ -1,3 +1,4 @@
+import { ChatMessage } from '@common/message';
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { Events, Namespaces } from '@common/sockets';
@@ -15,6 +16,7 @@ export class Server {
     private io: SocketIOServer;
 
     private liveRooms: string[] = ['0']; // room par defaut pour developpement
+    private chatHistories: Map<string, ChatMessage[]> = new Map();
     // private bannedNamesInRoom: Map<string, string[]> = new Map();
     // private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
     // private lockedRooms: string[] = [];
@@ -74,10 +76,22 @@ export class Server {
             // Listener for joining a room within the chatMessages namespace
             this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the chatMessages namespace');
+
             // Listener for messages sent within a room of the chatMessages namespace
             socket.on(Events.CHAT_MESSAGE, (data) => {
                 console.log(`Message received for room ${data.room}:`, data);
                 socket.to(data.room).emit(Events.CHAT_MESSAGE, data);
+
+                const chatMessage: ChatMessage = { author: data.author, message: data.message, timeStamp: data.timeStamp };
+                if (!this.chatHistories.has(data.room)) this.chatHistories.set(data.room, [chatMessage]);
+                else this.chatHistories.set(data.room, this.chatHistories.get(data.room).concat(chatMessage));
+            });
+
+            // Listener for chat history requests
+            socket.on(Events.CHAT_HISTORY, (data) => {
+                console.log(`Chat history requested for room: ${data.room}`);
+                const chatHistory = this.chatHistories.get(data.room) || [];
+                socket.emit(Events.CHAT_HISTORY, chatHistory);
             });
 
             // Handling user disconnection
@@ -143,7 +157,7 @@ export class Server {
 
             socket.join(room);
             console.log(`Socket ${socket.id} joined room: ${room}`);
-            console.log(this.liveRooms);
+            console.log(`liveRooms: ${this.liveRooms}`);
         });
     }
 

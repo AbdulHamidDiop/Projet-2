@@ -9,12 +9,12 @@ import { Socket, io } from 'socket.io-client';
 })
 export class SocketsService {
     private baseUrl: string = SOCKET_URL;
-    private namespaces: Map<string, Socket> = new Map();
     private baseSocket: Socket = io(this.baseUrl);
+    private namespaces: Map<string, Socket> = new Map();
 
-    // constructor() {
-    //     this.createGameSession('0');
-    // }
+    constructor() {
+        this.sendMessage(Events.CHAT_HISTORY, Namespaces.CHAT_MESSAGES, '0');
+    }
 
     createGameSession(room: string): void {
         this.baseSocket.emit(Events.CREATE_ROOM, room);
