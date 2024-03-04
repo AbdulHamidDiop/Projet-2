@@ -14,7 +14,7 @@ export class Server {
     private server: http.Server;
     private io: SocketIOServer;
 
-    private liveRooms: string[] = [];
+    private liveRooms: string[] = ['0']; // room par defaut pour developpement
     // private bannedNamesInRoom: Map<string, string[]> = new Map();
     // private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
     // private lockedRooms: string[] = [];
@@ -38,17 +38,29 @@ export class Server {
         const corsOptions: CorsOptions = { origin: ['http://localhost:4200'] };
         this.io = new SocketIOServer(this.server, { cors: corsOptions });
 
+        this.configureGlobalNamespace();
         this.configureStaticNamespaces();
         this.configureDynamicNamespaces();
+    }
 
-        this.io.on(Events.CREATE_ROOM, (room: string) => {
-            console.log(`Room created: ${room}`);
-            this.liveRooms.push(room);
-        });
+    private configureGlobalNamespace(): void {
+        this.io.on('connection', (socket: Socket) => {
+            console.log('A user connected to the global namespace');
 
-        this.io.on(Events.DELETE_ROOM, (room: string) => {
-            console.log(`Room deleted: ${room}`);
-            this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
+            socket.on(Events.CREATE_ROOM, (room: string) => {
+                if (this.liveRooms.includes(room)) return;
+                console.log(`Room created: ${room}`);
+                this.liveRooms.push(room);
+            });
+
+            socket.on(Events.DELETE_ROOM, (room: string) => {
+                console.log(`Room deleted: ${room}`);
+                this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('User disconnected from global namespace');
+            });
         });
     }
 
@@ -60,7 +72,7 @@ export class Server {
 
         chatNamespace.on('connection', (socket) => {
             // Listener for joining a room within the chatMessages namespace
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the chatMessages namespace');
             // Listener for messages sent within a room of the chatMessages namespace
             socket.on(Events.CHAT_MESSAGE, (data) => {
@@ -75,7 +87,7 @@ export class Server {
         });
 
         waitingRoomNamespace.on('connection', (socket) => {
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.JOIN_ROOM, ({ room, username }) => {
                 socket.to(room).emit(Events.WAITING_ROOM_NOTIFICATION, `${username} a rejoint la salle d'attente`);
             });
@@ -87,7 +99,7 @@ export class Server {
         });
 
         gameStatsNamespace.on('connection', (socket) => {
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the gameStats namespace');
 
             socket.on(Events.QCM_STATS, (data) => {
@@ -106,7 +118,7 @@ export class Server {
         });
 
         gameNamespace.on('connection', (socket) => {
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the game namespace');
 
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
@@ -126,15 +138,13 @@ export class Server {
     }
 
     private setupDefaultJoinRoomEvent(socket: Socket) {
-        let roomJoined = false;
         socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
             if (!room || !this.liveRooms.includes(room)) return;
 
             socket.join(room);
-            roomJoined = true;
             console.log(`Socket ${socket.id} joined room: ${room}`);
+            console.log(this.liveRooms);
         });
-        return roomJoined;
     }
 
     private configureDynamicNamespaces(): void {

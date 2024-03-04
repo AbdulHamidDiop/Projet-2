@@ -12,8 +12,16 @@ export class SocketsService {
     private namespaces: Map<string, Socket> = new Map();
     private baseSocket: Socket = io(this.baseUrl);
 
-    constructor() {
-        this.baseSocket.emit('joinRoom', { room: '0' });
+    // constructor() {
+    //     this.createGameSession('0');
+    // }
+
+    createGameSession(room: string): void {
+        this.baseSocket.emit(Events.CREATE_ROOM, room);
+    }
+
+    deleteGameSession(room: string): void {
+        this.baseSocket.emit(Events.DELETE_ROOM, room);
     }
 
     joinRoom(namespace: string, room: string): void {
