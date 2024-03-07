@@ -1,7 +1,8 @@
+import { ChatMessage } from '@common/message';
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { Player } from '@common/game';
-import { Events, LOBBY, Namespaces } from '@common/sockets';
+import { Events, Namespaces } from '@common/sockets';
 import { CorsOptions } from 'cors';
 import * as http from 'http';
 import { AddressInfo } from 'net';
@@ -14,6 +15,9 @@ export class Server {
     private static readonly baseDix: number = 10;
     private server: http.Server;
     private io: SocketIOServer;
+
+    private liveRooms: string[] = ['0']; // room par defaut pour developpement
+    private chatHistories: Map<string, ChatMessage[]> = new Map();
     // private bannedNamesInRoom: Map<string, string[]> = new Map();
     // private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
     // private lockedRooms: string[] = [];
@@ -43,17 +47,29 @@ export class Server {
         const corsOptions: CorsOptions = { origin: ['http://localhost:4200'] };
         this.io = new SocketIOServer(this.server, { cors: corsOptions });
 
+        this.configureGlobalNamespace();
         this.configureStaticNamespaces();
         this.configureDynamicNamespaces();
+    }
 
-        this.io.on(Events.CREATE_ROOM, (room: string) => {
-            console.log(`Room created: ${room}`);
-            this.liveRooms.push(room);
-        });
+    private configureGlobalNamespace(): void {
+        this.io.on('connection', (socket: Socket) => {
+            console.log('A user connected to the global namespace');
 
-        this.io.on(Events.DELETE_ROOM, (room: string) => {
-            console.log(`Room deleted: ${room}`);
-            this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
+            socket.on(Events.CREATE_ROOM, (room: string) => {
+                if (this.liveRooms.includes(room)) return;
+                console.log(`Room created: ${room}`);
+                this.liveRooms.push(room);
+            });
+
+            socket.on(Events.DELETE_ROOM, (room: string) => {
+                console.log(`Room deleted: ${room}`);
+                this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
+            });
+
+            socket.on('disconnect', () => {
+                console.log('User disconnected from global namespace');
+            });
         });
     }
 
@@ -87,22 +103,26 @@ export class Server {
         });
 
         chatNamespace.on('connection', (socket) => {
-            if (this.socketIdRoom.get(socket.id) !== undefined) {
-                socket.join(this.socketIdRoom.get(socket.id));
-            }
-            if (!this.setupDefaultJoinRoomEvent(socket))
-                // Listener for joining a room within the chatMessages namespace
-                return;
+            // Listener for joining a room within the chatMessages namespace
+            this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the chatMessages namespace');
+
             // Listener for messages sent within a room of the chatMessages namespace
 
             socket.on(Events.CHAT_MESSAGE, (data) => {
-                if (this.socketIdRoom.get(socket.id) !== undefined) {
-                    const rooms = this.socketIdRoom.get(socket.id);
-                    for (const chatRoom of rooms) {
-                        socket.to(chatRoom).emit(Events.CHAT_MESSAGE, data);
-                    }
-                }
+                console.log(`Message received for room ${data.room}:`, data);
+                socket.to(data.room).emit(Events.CHAT_MESSAGE, data);
+
+                const chatMessage: ChatMessage = { author: data.author, message: data.message, timeStamp: data.timeStamp };
+                if (!this.chatHistories.has(data.room)) this.chatHistories.set(data.room, [chatMessage]);
+                else this.chatHistories.set(data.room, this.chatHistories.get(data.room).concat(chatMessage));
+            });
+
+            // Listener for chat history requests
+            socket.on(Events.CHAT_HISTORY, (data) => {
+                console.log(`Chat history requested for room: ${data.room}`);
+                const chatHistory = this.chatHistories.get(data.room) || [];
+                socket.emit(Events.CHAT_HISTORY, chatHistory);
             });
 
             // Handling user disconnection
@@ -112,10 +132,7 @@ export class Server {
         });
 
         waitingRoomNamespace.on('connection', (socket) => {
-            if (this.socketIdRoom.get(socket.id) !== undefined) {
-                socket.join(this.socketIdRoom.get(socket.id));
-            }
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.JOIN_ROOM, ({ room, username }) => {
                 socket.to(room).emit(Events.WAITING_ROOM_NOTIFICATION, `${username} a rejoint la salle d'attente`);
             });
@@ -203,10 +220,7 @@ export class Server {
         });
 
         gameStatsNamespace.on('connection', (socket) => {
-            if (this.socketIdRoom.get(socket.id) !== undefined) {
-                socket.join(this.socketIdRoom.get(socket.id));
-            }
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the gameStats namespace');
 
             socket.on(Events.QCM_STATS, (data) => {
@@ -225,10 +239,7 @@ export class Server {
         });
 
         gameNamespace.on('connection', (socket) => {
-            if (this.socketIdRoom.get(socket.id) !== undefined) {
-                socket.join(this.socketIdRoom.get(socket.id));
-            }
-            if (!this.setupDefaultJoinRoomEvent(socket)) return;
+            this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the game namespace');
 
             socket.on(Events.CREATE_ROOM, () => {
@@ -263,10 +274,13 @@ export class Server {
     }
 
     private setupDefaultJoinRoomEvent(socket: Socket) {
-        // Rejoindre une room devrait se faire suite à un input de l'utilisateur,
-        // En attendant, le socket rejoint un room par défaut.
-        socket.join(LOBBY);
-        return true;
+        socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
+            if (!room || !this.liveRooms.includes(room)) return;
+
+            socket.join(room);
+            console.log(`Socket ${socket.id} joined room: ${room}`);
+            console.log(`liveRooms: ${this.liveRooms}`);
+        });
     }
 
     private configureDynamicNamespaces(): void {

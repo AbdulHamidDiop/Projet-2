@@ -9,11 +9,15 @@ import { Socket, io } from 'socket.io-client';
 })
 export class SocketsService {
     private baseUrl: string = SOCKET_URL;
-    private namespaces: Map<string, Socket> = new Map();
     private baseSocket: Socket = io(this.baseUrl);
+    private namespaces: Map<string, Socket> = new Map();
 
-    constructor() {
-        this.baseSocket.emit('joinRoom', { room: '0' });
+    createGameSession(room: string): void {
+        this.baseSocket.emit(Events.CREATE_ROOM, room);
+    }
+
+    deleteGameSession(room: string): void {
+        this.baseSocket.emit(Events.DELETE_ROOM, room);
     }
 
     joinRoom(namespace: string, room: string): void {
