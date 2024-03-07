@@ -32,6 +32,12 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
+<<<<<<< HEAD
+=======
+import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
+import { StatsTestComponent } from './components/stats-test/stats-test.component';
+import { ResultsPageComponent } from './pages/results-page/results-page.component';
+>>>>>>> b5137ae17f81701db92f630db1409f65099f90ae
 
 /**
  * Main module that is used in main.ts.
@@ -64,9 +70,13 @@ import { SocketRoomService } from './services/socket-room.service';
         NavBarComponent,
         CountdownModalComponent,
         StatsTestComponent,
+<<<<<<< HEAD
         SelectRoomComponent,
         SelectUsernameComponent,
         PlayerAndAdminPanelComponent,
+=======
+        ResultsPageComponent,
+>>>>>>> b5137ae17f81701db92f630db1409f65099f90ae
     ],
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [GameService, QuestionsService, SocketRoomService],

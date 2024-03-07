@@ -9,12 +9,14 @@ import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { WaitingPageComponent } from '@app/pages/waiting-page/waiting-page.component';
+import { ResultsPageComponent } from '@app/pages/results-page/results-page.component';
 
 const routes: Routes = [
     { path: 'stats-test', component: StatsTestComponent },
     { path: '', redirectTo: '/home', pathMatch: 'full' },
     { path: 'home', component: MainPageComponent },
     { path: 'game/:id', component: GamePageComponent },
+    { path: 'game/:id/results', component: ResultsPageComponent },
     { path: 'createGame', component: CreateGamePageComponent },
     { path: 'admin', component: AdminPageComponent },
     { path: 'admin/questions', component: QuestionsPageComponent },

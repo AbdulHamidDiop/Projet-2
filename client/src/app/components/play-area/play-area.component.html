@@ -50,7 +50,7 @@
     <mat-selection-list #choices [disabled]="disableChoices">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
             <mat-list-item
-                (click)="!disableChoices && handleQCMChoice(choice.text)"
+                (click)="!disableChoices && handleQCMChoice(choice.text); sendChoice(choice, question)"
                 (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
                 (keyup)="!disableChoices && $event.stopPropagation()"
                 *ngIf="shouldRender(choice.text)"

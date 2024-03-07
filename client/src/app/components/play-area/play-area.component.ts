@@ -8,10 +8,11 @@ import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Player, Question, Type } from '@common/game';
+import { Player, Question, Type, Choices } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
+import { PlayerService } from '@app/services/player.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -35,6 +36,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     nbChoices: number;
     score = 0;
 
+    player: Player;
+
     showPoints: boolean = false;
     showCountDown: boolean = false;
     countDownKey: number = Date.now(); // to force change dete/ctiosn
@@ -52,7 +55,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
+<<<<<<< HEAD
         public gameSocketService: SocketRoomService,
+=======
+        public gameSocketService: SocketsService,
+        public playerService: PlayerService,
+>>>>>>> b5137ae17f81701db92f630db1409f65099f90ae
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -291,5 +299,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trackByFn(item: any) {
         return item.id;
+    }
+
+    sendChoice(choice: Choices, question: Question) {
+        this.playerService.sendPlayerChoice(choice, question);
     }
 }
