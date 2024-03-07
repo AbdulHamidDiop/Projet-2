@@ -11,24 +11,12 @@ import { Socket, io } from 'socket.io-client';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService {
     private socket: Socket;
-    private chatMessageSocket: Socket;
-    private createGameSocket: Socket;
-    private waitingRoomSocket: Socket;
-    private gameSocket: Socket;
     private url = 'http://localhost:3000'; // Your Socket.IO server URL
     private room: string = '0';
+    private namespaces: Map<string, Socket> = new Map();
 
     constructor() {
         this.socket = io(this.url);
-        this.chatMessageSocket = io(this.url + '/' + Namespaces.CHAT_MESSAGES);
-        this.createGameSocket = io(this.url + '/' + Namespaces.CREATE_GAME);
-        this.waitingRoomSocket = io(this.url + '/' + Namespaces.WAITING_ROOM);
-        this.gameSocket = io(this.url + '/' + Namespaces.GAME);
-
-        alert(this.chatMessageSocket.id);
-        alert(this.createGameSocket.id);
-        alert(this.waitingRoomSocket.id);
-        alert(this.gameSocket.id);
     }
 
     get connected() {
@@ -36,7 +24,7 @@ export class SocketRoomService {
     }
 
     createRoom(gameId: string) {
-        this.socket.emit('createRoom', { id: gameId });
+        this.socket.emit(Events.CREATE_ROOM, { id: gameId });
     }
     // Function to join a room
     joinRoom(roomId: string) {
@@ -106,8 +94,8 @@ export class SocketRoomService {
         });
     }
 
-    kickPlayer(name: string, player: string) {
-        this.socket.emit(Events.KICK_PLAYER, { name, player });
+    kickPlayer(playerName: string) {
+        this.socket.emit(Events.KICK_PLAYER, { playerName });
     }
 
     kickSubscribe(): Observable<string> {
@@ -128,9 +116,7 @@ export class SocketRoomService {
         });
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     getPlayers(): Observable<Player[]> {
-        this.socket.emit(Events.GET_PLAYERS, this.room);
         return new Observable((observer) => {
             this.socket.on(Events.GET_PLAYERS, (players) => {
                 observer.next(players);
@@ -140,7 +126,6 @@ export class SocketRoomService {
     }
 
     getProfile(): Observable<Player> {
-        this.socket.emit(Events.GET_PLAYER_PROFILE);
         return new Observable((observer) => {
             this.socket.on(Events.GET_PLAYER_PROFILE, (player) => {
                 observer.next(player);
@@ -163,18 +148,16 @@ export class SocketRoomService {
         }
     }
 
-    sendChatMessage(message: string) {
-        const room = this.room;
-        const messageFix: ChatMessage = { message, author: 'User', timeStamp: '' };
-        this.chatMessageSocket.emit(Events.CHAT_MESSAGE, { room, messageFix });
+    sendChatMessage(message: ChatMessage) {
+        this.socket.emit(Events.CHAT_MESSAGE, message);
     }
 
-    getChatMessages(): Observable<string> {
+    getChatMessages(): Observable<ChatMessage> {
         return new Observable((observer) => {
-            this.chatMessageSocket.on(Events.CHAT_MESSAGE, (message) => {
-                observer.next(message.message);
+            this.socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
+                observer.next(message);
             });
-            return () => this.chatMessageSocket.off(Events.CHAT_MESSAGE);
+            return () => this.socket.off(Events.CHAT_MESSAGE);
         });
     }
 
@@ -189,5 +172,46 @@ export class SocketRoomService {
             });
             return () => this.socket.off(Events.START_GAME);
         });
+    }
+
+    joinRoomInNamespace(namespace: string, room: string): void {
+        const namespaceSocket = this.connectNamespace(namespace);
+        if (namespaceSocket) {
+            namespaceSocket.emit('joinRoom', { room });
+        }
+    }
+
+    // eslint-disable-next-line max-params
+    sendMessage(eventName: Events, namespace: Namespaces, room: string, payload?: object): void {
+        if (namespace !== Namespaces.GLOBAL_NAMESPACE) {
+            const namespaceSocket = this.connectNamespace(namespace);
+            if (namespaceSocket) {
+                namespaceSocket.emit(eventName, { room, ...payload });
+            }
+        } else {
+            this.socket.emit(eventName, { room, ...payload });
+        }
+    }
+
+    listenForMessages(namespace: string, eventName: string): Observable<unknown> {
+        const namespaceSocket = this.connectNamespace(namespace);
+        return new Observable((observer) => {
+            if (namespaceSocket) {
+                const messageHandler = (message: unknown) => observer.next(message);
+                namespaceSocket.on(eventName, messageHandler);
+                return () => {
+                    namespaceSocket.off(eventName, messageHandler);
+                };
+            }
+            return;
+        });
+    }
+
+    private connectNamespace(namespace: string): Socket | undefined {
+        if (!this.namespaces.has(namespace)) {
+            const namespaceSocket = io(`${this.url}/${namespace}`);
+            this.namespaces.set(namespace, namespaceSocket);
+        }
+        return this.namespaces.get(namespace);
     }
 }

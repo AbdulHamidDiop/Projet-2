@@ -1,0 +1,21 @@
+<section class="main-container">
+    <mat-card>
+        <h2>Nom d'utilisateur : {{ player.name }}</h2>
+        <h2>Jeu choisi : {{ game.title }}</h2>
+        <h2 *ngIf="this.player.isHost">Paramètres de la partie</h2>
+        <mat-card-actions *ngIf="player.isHost" align="end">
+            <button mat-button (click)="startGame()">Commencer la partie</button>
+            <button mat-button (click)="lock()">Verrouiller</button>
+            <button mat-button (click)="unlock()">Déverrouiller</button>
+        </mat-card-actions>
+    </mat-card>
+    <h2 *ngIf="players.length > 0">Utilisateurs connectés</h2>
+    <mat-card *ngFor="let play of players" class="main">
+        <mat-card-title>
+            <p>Joueur : {{ play.name }}</p>
+        </mat-card-title>
+        <mat-card-actions align="end">
+            <button *ngIf="this.player.isHost" mat-button (click)="kickPlayer(play.name)">Exclure</button>
+        </mat-card-actions>
+    </mat-card>
+</section>

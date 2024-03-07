@@ -5,7 +5,7 @@ import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
-import { SocketsService } from '@app/services/sockets.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
@@ -52,7 +52,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
-        public gameSocketService: SocketsService,
+        public gameSocketService: SocketRoomService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -64,8 +64,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
 
         if (!this.inTestMode) {
-            this.gameSocketService.joinRoom(nsp.GAME, this.socketRoom);
-
             this.nextQuestionSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
                 await this.confirmAnswers();
                 if (this.question.type === Type.QCM) {
@@ -207,8 +205,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     notifyNextQuestion() {
         this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME, this.socketRoom);
     }
+
     notifyEndGame() {
-        this.gameSocketService.sendMessage('leaveRoom' as Events, nsp.GAME, this.socketRoom);
+        this.gameSocketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME, this.socketRoom);
         this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME, this.socketRoom);
     }
 

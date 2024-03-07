@@ -2,7 +2,7 @@ import { ChatMessage } from '@common/message';
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { Player } from '@common/game';
-import { Events, Namespaces } from '@common/sockets';
+import { Events, LOBBY, Namespaces } from '@common/sockets';
 import { CorsOptions } from 'cors';
 import * as http from 'http';
 import { AddressInfo } from 'net';
@@ -16,11 +16,8 @@ export class Server {
     private server: http.Server;
     private io: SocketIOServer;
 
-    private liveRooms: string[] = ['0']; // room par defaut pour developpement
     private chatHistories: Map<string, ChatMessage[]> = new Map();
-    // private bannedNamesInRoom: Map<string, string[]> = new Map();
-    // private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
-    // private lockedRooms: string[] = [];
+    private roomGameId: Map<string, string> = new Map();
     private socketIdRoom: Map<string, string> = new Map(); // Gauche : socketId, droite : room.
     private liveRooms: string[] = [];
     private bannedNamesInRoom: Map<string, string[]> = new Map();
@@ -47,6 +44,8 @@ export class Server {
         const corsOptions: CorsOptions = { origin: ['http://localhost:4200'] };
         this.io = new SocketIOServer(this.server, { cors: corsOptions });
 
+        this.liveRooms.push(LOBBY);
+        this.chatHistories.set(LOBBY, []);
         this.configureGlobalNamespace();
         this.configureStaticNamespaces();
         this.configureDynamicNamespaces();
@@ -56,31 +55,9 @@ export class Server {
         this.io.on('connection', (socket: Socket) => {
             console.log('A user connected to the global namespace');
 
-            socket.on(Events.CREATE_ROOM, (room: string) => {
-                if (this.liveRooms.includes(room)) return;
-                console.log(`Room created: ${room}`);
-                this.liveRooms.push(room);
-            });
+            socket.join(LOBBY);
+            this.socketIdRoom.set(socket.id, LOBBY);
 
-            socket.on(Events.DELETE_ROOM, (room: string) => {
-                console.log(`Room deleted: ${room}`);
-                this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
-            });
-
-            socket.on('disconnect', () => {
-                console.log('User disconnected from global namespace');
-            });
-        });
-    }
-
-    private configureStaticNamespaces(): void {
-        const chatNamespace = this.io.of(`/${Namespaces.CHAT_MESSAGES}`);
-        const waitingRoomNamespace = this.io.of(`/${Namespaces.WAITING_ROOM}`);
-        const gameStatsNamespace = this.io.of(`/${Namespaces.GAME_STATS}`);
-        const gameNamespace = this.io.of(`/${Namespaces.GAME}`);
-        const createGameNamespace = this.io.of(`/${Namespaces.CREATE_GAME}`);
-
-        createGameNamespace.on('connection', (socket) => {
             socket.on(Events.CREATE_ROOM, ({ id }) => {
                 let room = this.makeRoomId();
                 while (this.liveRooms.includes(room)) {
@@ -94,47 +71,68 @@ export class Server {
                 this.playerSocketId.set(socket.id, player);
                 this.mapOfPlayersInRoom.set(room, []);
                 this.bannedNamesInRoom.set(room, []);
+                this.chatHistories.set(room, []);
+                this.roomGameId.set(room, id);
                 socket.emit(Events.JOIN_ROOM);
                 socket.emit(Events.GET_GAME_ID, id);
-                socket.emit(Events.CHAT_MESSAGE, { message: 'Vous avez rejoint la salle ' + room, room }); // Sert pour les tests.
-
-                console.log('Created room ' + room);
-            });
-        });
-
-        chatNamespace.on('connection', (socket) => {
-            // Listener for joining a room within the chatMessages namespace
-            this.setupDefaultJoinRoomEvent(socket);
-            console.log('A user connected to the chatMessages namespace');
-
-            // Listener for messages sent within a room of the chatMessages namespace
-
-            socket.on(Events.CHAT_MESSAGE, (data) => {
-                console.log(`Message received for room ${data.room}:`, data);
-                socket.to(data.room).emit(Events.CHAT_MESSAGE, data);
-
-                const chatMessage: ChatMessage = { author: data.author, message: data.message, timeStamp: data.timeStamp };
-                if (!this.chatHistories.has(data.room)) this.chatHistories.set(data.room, [chatMessage]);
-                else this.chatHistories.set(data.room, this.chatHistories.get(data.room).concat(chatMessage));
+                socket.emit(Events.GET_PLAYER_PROFILE, player);
+                socket.emit(Events.GET_PLAYERS, []);
+                const message: ChatMessage = {
+                    message: 'La salle ' + room + ' a été crée',
+                    author: 'Système',
+                    timeStamp: new Date().toLocaleTimeString(),
+                };
+                socket.emit(Events.CHAT_MESSAGE, message); // Sert pour les tests.
             });
 
-            // Listener for chat history requests
-            socket.on(Events.CHAT_HISTORY, (data) => {
-                console.log(`Chat history requested for room: ${data.room}`);
-                const chatHistory = this.chatHistories.get(data.room) || [];
-                socket.emit(Events.CHAT_HISTORY, chatHistory);
+            socket.on(Events.JOIN_ROOM, ({ room }) => {
+                if (this.lockedRooms.includes(room)) {
+                    socket.emit(Events.LOCK_ROOM, true);
+                } else if (this.liveRooms.includes(room)) {
+                    console.info(room);
+                    socket.join(room);
+                    this.socketIdRoom.set(socket.id, room);
+                    const playerProfile: Player = { id: '', name: 'Player', isHost: false, score: 0, bonusCount: 0 };
+                    this.playerSocketId.set(socket.id, playerProfile);
+                    socket.emit(Events.JOIN_ROOM);
+                    const playerList = this.mapOfPlayersInRoom.get(room);
+                    socket.emit(Events.GET_PLAYERS, playerList);
+                }
             });
 
-            // Handling user disconnection
-            socket.on('disconnect', () => {
-                console.log('User disconnected from chatMessages namespace');
+            socket.on(Events.DELETE_ROOM, (room: string) => {
+                console.log(`Room deleted: ${room}`);
+                this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
             });
-        });
+            /*
+            socket.on(Events.LEAVE_ROOM, () => {
+                const player = this.playerSocketId.get(socket.id);
+                const room = this.socketIdRoom.get(socket.id);
+                if (player !== undefined && room !== undefined) {
+                    const players = this.mapOfPlayersInRoom.get(room).filter((value) => {
+                        return value.name !== player.name;
+                    });
+                    this.mapOfPlayersInRoom.set(room, players);
+                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                }
+            });*/
 
-        waitingRoomNamespace.on('connection', (socket) => {
-            this.setupDefaultJoinRoomEvent(socket);
-            socket.on(Events.JOIN_ROOM, ({ room, username }) => {
-                socket.to(room).emit(Events.WAITING_ROOM_NOTIFICATION, `${username} a rejoint la salle d'attente`);
+            socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
+                const room = this.socketIdRoom.get(socket.id);
+                if (room !== undefined && this.chatHistories.get(room) !== undefined) {
+                    socket.to(room).emit(Events.CHAT_MESSAGE, message);
+                    this.chatHistories.get(room).push(message);
+                }
+            });
+
+            socket.on(Events.CHAT_HISTORY, () => {
+                const room = this.socketIdRoom.get(socket.id);
+                if (room !== undefined) {
+                    const chatHistory = this.chatHistories.get(room);
+                    if (chatHistory !== undefined) {
+                        socket.emit(Events.CHAT_HISTORY, chatHistory);
+                    }
+                }
             });
 
             socket.on(Events.SET_PLAYER_NAME, (name) => {
@@ -142,16 +140,22 @@ export class Server {
                     const room = this.socketIdRoom.get(socket.id);
                     const player = this.playerSocketId.get(socket.id);
                     const playerList = this.mapOfPlayersInRoom.get(room);
+                    const gameId = this.roomGameId.get(room);
                     if (
                         playerList.some((playerInRoom) => {
                             return playerInRoom.name === name;
                         })
                     ) {
                         socket.emit(Events.NAME_NOT_AVAILABLE);
+                    } else if (this.bannedNamesInRoom.get(room).includes(name)) {
+                        socket.emit(Events.KICK_PLAYER, name);
                     } else {
                         player.name = name;
+                        socket.emit(Events.GET_PLAYER_PROFILE, player);
                         playerList.push(player);
                         socket.emit(Events.GET_PLAYERS, playerList);
+                        socket.to(room).emit(Events.GET_PLAYERS, playerList);
+                        socket.emit(Events.GET_GAME_ID, gameId);
                     }
                 }
             });
@@ -167,12 +171,12 @@ export class Server {
                 if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                     const player = this.playerSocketId.get(socket.id);
                     if (player.isHost) {
-                        const waitingRoom = this.socketIdRoom.get(socket.id);
-                        if (this.lockedRooms.includes(waitingRoom)) {
-                            socket.to(waitingRoom).emit(Events.LOCK_ROOM, true);
+                        const room = this.socketIdRoom.get(socket.id);
+                        if (this.lockedRooms.includes(room)) {
+                            socket.emit(Events.LOCK_ROOM, true);
                         } else {
-                            this.lockedRooms.push(waitingRoom);
-                            socket.to(waitingRoom).emit(Events.LOCK_ROOM, true);
+                            this.lockedRooms.push(room);
+                            socket.to(room).to(socket.id).emit(Events.LOCK_ROOM, true);
                         }
                     }
                 }
@@ -182,34 +186,67 @@ export class Server {
                 if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                     const player = this.playerSocketId.get(socket.id);
                     if (player.isHost) {
-                        const waitingRoom = this.socketIdRoom.get(socket.id);
+                        const room = this.socketIdRoom.get(socket.id);
                         this.lockedRooms = this.lockedRooms.filter((lockedRoom) => {
-                            return lockedRoom !== waitingRoom;
+                            return lockedRoom !== room;
                         });
-                        socket.to(waitingRoom).emit(Events.UNLOCK_ROOM, true);
+                        socket.to(room).to(socket.id).emit(Events.UNLOCK_ROOM, true);
                     }
                 }
             });
 
-            socket.on(Events.KICK_PLAYER, (message) => {
+            socket.on(Events.KICK_PLAYER, ({ playerName }) => {
                 if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
-                    const player = this.playerSocketId.get(socket.id);
-                    const waitingRoom = this.socketIdRoom.get(socket.id);
-                    if (player.isHost) {
-                        if (this.bannedNamesInRoom.get(waitingRoom).includes(message.name)) {
-                            const playerList = this.mapOfPlayersInRoom.get(waitingRoom);
-                            socket.to(waitingRoom).emit(Events.KICK_PLAYER, message.player);
-                            socket.to(waitingRoom).emit(Events.GET_PLAYERS, playerList);
-                        } else {
-                            this.bannedNamesInRoom.get(waitingRoom).push(message.name);
-                            socket.to(waitingRoom).emit(Events.KICK_PLAYER, message.player);
-                            const playerList = this.mapOfPlayersInRoom.get(waitingRoom).filter((playerInRoom) => {
-                                return playerInRoom.name !== message.player;
-                            });
-                            this.mapOfPlayersInRoom.set(waitingRoom, playerList);
+                    const host = this.playerSocketId.get(socket.id);
+                    const room = this.socketIdRoom.get(socket.id);
+                    if (host.isHost) {
+                        const socketIdOfPlayerToKick: string[] = [];
+                        for (const key of this.playerSocketId.keys()) {
+                            if (this.playerSocketId.get(key).name === playerName && this.socketIdRoom.get(key) === room) {
+                                socketIdOfPlayerToKick.push(key);
+                            }
                         }
+                        console.log(socketIdOfPlayerToKick);
+                        socket.to(socketIdOfPlayerToKick).emit(Events.KICK_PLAYER);
+                        const playerList = this.mapOfPlayersInRoom.get(room).filter((playerInRoom) => {
+                            return playerInRoom.name !== playerName;
+                        });
+                        this.mapOfPlayersInRoom.set(room, playerList);
+                        socket.to(room).emit(Events.GET_PLAYERS, playerList);
+                        this.bannedNamesInRoom.get(room).push(playerName);
                     }
                 }
+            });
+
+            socket.on(Events.START_GAME, () => {
+                if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
+                    const host = this.playerSocketId.get(socket.id);
+                    const room = this.socketIdRoom.get(socket.id);
+                    const gameId = this.roomGameId.get(room);
+                    const players = this.mapOfPlayersInRoom.get(room);
+                    if (host.isHost && players.length > 0) {
+                        socket.to(room).to(socket.id).emit(Events.GET_GAME_ID, gameId);
+                        socket.to(room).emit(Events.START_GAME);
+                        socket.emit(Events.START_GAME);
+                    }
+                }
+            });
+
+            socket.on('disconnect', () => {
+                console.log('User disconnected from global namespace');
+            });
+        });
+    }
+
+    private configureStaticNamespaces(): void {
+        const waitingRoomNamespace = this.io.of(`/${Namespaces.WAITING_ROOM}`);
+        const gameStatsNamespace = this.io.of(`/${Namespaces.GAME_STATS}`);
+        const gameNamespace = this.io.of(`/${Namespaces.GAME}`);
+
+        waitingRoomNamespace.on('connection', (socket) => {
+            this.setupDefaultJoinRoomEvent(socket);
+            socket.on(Events.JOIN_ROOM, ({ room, username }) => {
+                socket.to(room).emit(Events.WAITING_ROOM_NOTIFICATION, `${username} a rejoint la salle d'attente`);
             });
 
             console.log('A user connected to the waitingRoom namespace');
@@ -241,21 +278,6 @@ export class Server {
         gameNamespace.on('connection', (socket) => {
             this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the game namespace');
-
-            socket.on(Events.CREATE_ROOM, () => {
-                let room = this.makeRoomId();
-                while (this.liveRooms.includes(room)) {
-                    room = this.makeRoomId();
-                }
-                socket.join(room);
-                this.liveRooms.push(room);
-                const player: Player = { name: 'Organisateur', score: 0, isHost: true, id: '', bonusCount: 0 };
-                this.playerSocketId.set(socket.id, player);
-                this.socketIdRoom.set(socket.id, room);
-                this.mapOfPlayersInRoom.set(room, []);
-                this.bannedNamesInRoom.set(room, []);
-                console.log('Created room ' + room);
-            });
 
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
                 console.log(`Moving to the next question in room: ${room}`);

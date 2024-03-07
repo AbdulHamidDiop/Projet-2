@@ -4,7 +4,6 @@ export enum Namespaces {
     GAME_STATS = 'gameStats',
     GAME = 'game',
     GLOBAL_NAMESPACE = 'global',
-    CREATE_GAME = 'createGame',
 }
 
 export enum Events {
