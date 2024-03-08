@@ -70,7 +70,7 @@ export class Server {
                 this.socketIdRoom.set(socket.id, room);
                 this.playerSocketId.set(socket.id, player);
                 this.mapOfPlayersInRoom.set(room, []);
-                this.bannedNamesInRoom.set(room, []);
+                this.bannedNamesInRoom.set(room, ['organisateur']); // Le nom organisateur est banni dans toute les rooms.
                 this.chatHistories.set(room, []);
                 this.roomGameId.set(room, id);
                 socket.emit(Events.JOIN_ROOM);
@@ -90,13 +90,11 @@ export class Server {
                     socket.emit(Events.LOCK_ROOM, true);
                 } else if (this.liveRooms.includes(room)) {
                     console.info(room);
-                    socket.join(room);
                     this.socketIdRoom.set(socket.id, room);
                     const playerProfile: Player = { id: '', name: 'Player', isHost: false, score: 0, bonusCount: 0 };
                     this.playerSocketId.set(socket.id, playerProfile);
-                    socket.emit(Events.JOIN_ROOM);
-                    const playerList = this.mapOfPlayersInRoom.get(room);
-                    socket.emit(Events.GET_PLAYERS, playerList);
+                    socket.emit(Events.JOIN_ROOM); // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
+                    // Le socket rejoint le room après avoir envoyé son nom et que celui-ci est validé.
                 }
             });
 
@@ -104,18 +102,39 @@ export class Server {
                 console.log(`Room deleted: ${room}`);
                 this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
             });
-            /*
+
             socket.on(Events.LEAVE_ROOM, () => {
-                const player = this.playerSocketId.get(socket.id);
-                const room = this.socketIdRoom.get(socket.id);
-                if (player !== undefined && room !== undefined) {
-                    const players = this.mapOfPlayersInRoom.get(room).filter((value) => {
-                        return value.name !== player.name;
-                    });
-                    this.mapOfPlayersInRoom.set(room, players);
-                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
+                    const player = this.playerSocketId.get(socket.id);
+                    const room = this.socketIdRoom.get(socket.id);
+                    if (player.isHost) {
+                        this.bannedNamesInRoom.delete(room);
+                        this.liveRooms = this.liveRooms.filter((liveRoom) => {
+                            return liveRoom !== room;
+                        });
+                        this.mapOfPlayersInRoom.delete(room);
+                        this.lockedRooms = this.lockedRooms.filter((lockedRoom) => {
+                            return lockedRoom !== room;
+                        });
+                        this.roomGameId.delete(room);
+                        for (const key of this.socketIdRoom.keys()) {
+                            if (this.socketIdRoom.get(key) === room) {
+                                this.socketIdRoom.set(key, LOBBY);
+                            }
+                        }
+                        this.chatHistories.delete(room);
+                        socket.emit(Events.LEAVE_ROOM);
+                        socket.to(room).emit(Events.LEAVE_ROOM);
+                    } else {
+                        const players = this.mapOfPlayersInRoom.get(room).filter((value) => {
+                            return value.name !== player.name;
+                        });
+                        this.mapOfPlayersInRoom.set(room, players);
+                        socket.to(room).emit(Events.GET_PLAYERS, players);
+                        socket.emit(Events.LEAVE_ROOM);
+                    }
                 }
-            });*/
+            });
 
             socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
                 const room = this.socketIdRoom.get(socket.id);
@@ -149,7 +168,12 @@ export class Server {
                         socket.emit(Events.NAME_NOT_AVAILABLE);
                     } else if (this.bannedNamesInRoom.get(room).includes(name)) {
                         socket.emit(Events.KICK_PLAYER, name);
+                    } else if (this.lockedRooms.includes(room)) {
+                        socket.emit(Events.LOCK_ROOM);
+                        this.socketIdRoom.set(socket.id, LOBBY);
+                        socket.emit(Events.LEAVE_ROOM);
                     } else {
+                        socket.join(room);
                         player.name = name;
                         socket.emit(Events.GET_PLAYER_PROFILE, player);
                         playerList.push(player);
@@ -176,7 +200,7 @@ export class Server {
                             socket.emit(Events.LOCK_ROOM, true);
                         } else {
                             this.lockedRooms.push(room);
-                            socket.to(room).to(socket.id).emit(Events.LOCK_ROOM, true);
+                            socket.to(room).to(socket.id).emit(Events.LOCK_ROOM);
                         }
                     }
                 }
@@ -190,7 +214,7 @@ export class Server {
                         this.lockedRooms = this.lockedRooms.filter((lockedRoom) => {
                             return lockedRoom !== room;
                         });
-                        socket.to(room).to(socket.id).emit(Events.UNLOCK_ROOM, true);
+                        socket.emit(Events.UNLOCK_ROOM);
                     }
                 }
             });
@@ -222,12 +246,14 @@ export class Server {
                 if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                     const host = this.playerSocketId.get(socket.id);
                     const room = this.socketIdRoom.get(socket.id);
-                    const gameId = this.roomGameId.get(room);
                     const players = this.mapOfPlayersInRoom.get(room);
                     if (host.isHost && players.length > 0) {
-                        socket.to(room).to(socket.id).emit(Events.GET_GAME_ID, gameId);
-                        socket.to(room).emit(Events.START_GAME);
-                        socket.emit(Events.START_GAME);
+                        if (this.lockedRooms.includes(room)) {
+                            socket.to(room).emit(Events.START_GAME);
+                            socket.emit(Events.START_GAME);
+                        } else {
+                            socket.emit(Events.UNLOCK_ROOM);
+                        }
                     }
                 }
             });

@@ -10,6 +10,12 @@ export class SelectUsernameComponent {
     constructor(private socket: SocketRoomService) {}
 
     sendUsername(input: HTMLInputElement) {
-        this.socket.sendPlayerName(input.value);
+        const regex = /^[a-zA-Z]+$/;
+        if (regex.test(input.value) && input.value.length > 1) {
+            const username = input.value.toLowerCase();
+            this.socket.sendPlayerName(username);
+        } else {
+            alert("Le nom entré n'est pas valide");
+        }
     }
 }

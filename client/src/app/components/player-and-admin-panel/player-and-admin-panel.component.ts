@@ -8,9 +8,9 @@ import { Game, Player } from '@common/game';
     styleUrls: ['./player-and-admin-panel.component.scss'],
 })
 export class PlayerAndAdminPanelComponent {
-    @Input() player: Player;
-    @Input() game: Game;
-    @Input() players: Player[];
+    @Input() player: Player = {} as Player;
+    @Input() game: Game = {} as Game;
+    @Input() players: Player[] = [];
 
     constructor(private socket: SocketRoomService) {}
 
@@ -32,5 +32,9 @@ export class PlayerAndAdminPanelComponent {
 
     kickPlayer(playerName: string) {
         this.socket.kickPlayer(playerName);
+    }
+
+    leaveRoom() {
+        this.socket.leaveRoom();
     }
 }

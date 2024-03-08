@@ -13,7 +13,7 @@ export class TimeService {
     get time() {
         return this.counter;
     }
-    private set time(newTime: number) {
+    set time(newTime: number) {
         this.counter = newTime;
     }
 

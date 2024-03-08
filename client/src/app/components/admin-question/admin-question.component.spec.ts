@@ -1,31 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
-import { Question, Type } from '@common/game';
-import { Observable } from 'rxjs';
+import { Question } from '@common/game';
+import { validQuestion } from '@common/test-interfaces';
+import { Observable, of } from 'rxjs';
 import { AdminQuestionComponent } from './admin-question.component';
-
-const validQuestion: Question = {
-    id: '2',
-    lastModification: null,
-    type: Type.QCM,
-    text: 'Question valide',
-    points: 10,
-    choices: [
-        {
-            text: 'Choix valide #1',
-            isCorrect: true,
-        },
-        {
-            text: 'Choix valide #2',
-            isCorrect: false,
-        },
-    ],
-    answer: 'Choix #1',
-};
+import SpyObj = jasmine.SpyObj;
 
 describe('AdminQuestionComponent', () => {
     let component: AdminQuestionComponent;
@@ -35,20 +19,24 @@ describe('AdminQuestionComponent', () => {
     });
     const editQuestionSpy = jasmine.createSpy('editQuestion').and.callThrough();
     const deleteQuestionSpy = jasmine.createSpy('deleteQuestion').and.callThrough();
-    const openDialogSpy = jasmine.createSpy('open').and.callFake(() => {
-        return { afterClosed: () => observableQuestion };
-    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let openDialogSpy: SpyObj<MatDialog>;
 
     beforeEach(async () => {
+        openDialogSpy = jasmine.createSpyObj('MatDialogRef', ['open']);
+        openDialogSpy.open.and.returnValue({
+            afterClosed: () => {
+                return of({} as any);
+            },
+        } as MatDialogRef<any, any>);
+
         TestBed.configureTestingModule({
             imports: [AppMaterialModule, BrowserAnimationsModule],
             declarations: [AdminQuestionComponent],
             providers: [
                 {
                     provide: MatDialog,
-                    useValue: {
-                        open: openDialogSpy,
-                    },
+                    useValue: openDialogSpy,
                 },
                 {
                     provide: QuestionsService,
@@ -80,7 +68,7 @@ describe('AdminQuestionComponent', () => {
 
     it('System should call MatDialog.open when pressing button to edit question', () => {
         component.openDialog();
-        expect(openDialogSpy).toHaveBeenCalled();
+        expect(openDialogSpy.open).toHaveBeenCalled();
     });
 
     it('System should call questionService.editQuestion when pressing button to edit question', () => {

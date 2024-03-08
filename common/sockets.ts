@@ -28,6 +28,7 @@ export enum Events {
     GET_PLAYER_PROFILE = 'playerProfile',
     START_GAME = 'startGame',
     NAME_NOT_AVAILABLE = 'nameNotAvailable',
+    GAME_RESULTS = 'gameResults',
 }
 
 export const LOBBY = '0';

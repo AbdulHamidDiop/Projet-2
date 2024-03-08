@@ -31,7 +31,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 // import { MatTabsModule } from '@angular/material/tabs';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 const modules = [
     // MatAutocompleteModule,
@@ -77,6 +76,6 @@ const modules = [
 @NgModule({
     imports: [...modules],
     exports: [...modules],
-    providers: [provideCharts(withDefaultRegisterables())],
+    providers: [],
 })
 export class AppMaterialModule {}

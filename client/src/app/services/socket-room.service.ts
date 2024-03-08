@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Player } from '@common/game';
+import { Game, Player, Question } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
-import { Socket, io } from 'socket.io-client';
+import { Socket } from 'socket.io-client';
+import { IoService } from './ioservice.service';
 
 @Injectable({
     providedIn: 'root',
@@ -15,8 +16,8 @@ export class SocketRoomService {
     private room: string = '0';
     private namespaces: Map<string, Socket> = new Map();
 
-    constructor() {
-        this.socket = io(this.url);
+    constructor(private io: IoService) {
+        this.socket = io.io(this.url);
     }
 
     get connected() {
@@ -26,7 +27,7 @@ export class SocketRoomService {
     createRoom(gameId: string) {
         this.socket.emit(Events.CREATE_ROOM, { id: gameId });
     }
-    // Function to join a room
+
     joinRoom(roomId: string) {
         this.socket.emit(Events.JOIN_ROOM, { room: roomId });
     }
@@ -36,7 +37,6 @@ export class SocketRoomService {
             this.socket.on(Events.JOIN_ROOM, () => {
                 observer.next();
             });
-            return () => this.socket.off(Events.JOIN_ROOM);
         });
     }
 
@@ -45,7 +45,6 @@ export class SocketRoomService {
             this.socket.on(Events.GET_GAME_ID, (id) => {
                 observer.next(id);
             });
-            return () => this.socket.off(Events.GET_GAME_ID);
         });
     }
 
@@ -59,7 +58,6 @@ export class SocketRoomService {
             this.socket.on(Events.LOCK_ROOM, (response) => {
                 observer.next(response);
             });
-            return () => this.socket.off(Events.LOCK_ROOM);
         });
     }
 
@@ -68,7 +66,6 @@ export class SocketRoomService {
             this.socket.on(Events.LOCK_ROOM, (response) => {
                 observer.next(response);
             });
-            return () => this.socket.off(Events.LOCK_ROOM);
         });
     }
 
@@ -81,7 +78,6 @@ export class SocketRoomService {
             this.socket.on(Events.UNLOCK_ROOM, (response) => {
                 observer.next(response);
             });
-            return () => this.socket.off(Events.UNLOCK_ROOM);
         });
     }
 
@@ -90,7 +86,14 @@ export class SocketRoomService {
             this.socket.on(Events.CREATE_ROOM, (response) => {
                 observer.next(response);
             });
-            return () => this.socket.off(Events.CREATE_ROOM);
+        });
+    }
+
+    leaveRoomSubscribe(): Observable<void> {
+        return new Observable((observer) => {
+            this.socket.on(Events.LEAVE_ROOM, () => {
+                observer.next();
+            });
         });
     }
 
@@ -103,7 +106,6 @@ export class SocketRoomService {
             this.socket.on(Events.KICK_PLAYER, (response) => {
                 observer.next(response);
             });
-            return () => this.socket.off(Events.KICK_PLAYER);
         });
     }
 
@@ -112,7 +114,6 @@ export class SocketRoomService {
             this.socket.on('disconnect', () => {
                 observer.next();
             });
-            return () => this.socket.off('disconnect');
         });
     }
 
@@ -121,7 +122,6 @@ export class SocketRoomService {
             this.socket.on(Events.GET_PLAYERS, (players) => {
                 observer.next(players);
             });
-            return () => this.socket.off(Events.GET_PLAYERS);
         });
     }
 
@@ -130,7 +130,6 @@ export class SocketRoomService {
             this.socket.on(Events.GET_PLAYER_PROFILE, (player) => {
                 observer.next(player);
             });
-            return () => this.socket.off(Events.GET_PLAYER_PROFILE);
         });
     }
 
@@ -157,7 +156,6 @@ export class SocketRoomService {
             this.socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
                 observer.next(message);
             });
-            return () => this.socket.off(Events.CHAT_MESSAGE);
         });
     }
 
@@ -170,14 +168,39 @@ export class SocketRoomService {
             this.socket.on(Events.START_GAME, () => {
                 observer.next();
             });
-            return () => this.socket.off(Events.START_GAME);
+        });
+    }
+
+    notifyNextQuestion(): void {
+        this.socket.emit(Events.NEXT_QUESTION);
+    }
+
+    onNextQuestion(): Observable<Question> {
+        return new Observable((observer) => {
+            this.socket.on(Events.NEXT_QUESTION, () => observer.next());
+        });
+    }
+
+    notifyEndGame(): void {
+        this.socket.emit(Events.END_GAME);
+    }
+
+    onEndGame(): Observable<void> {
+        return new Observable((observer) => {
+            this.socket.on(Events.END_GAME, () => observer.next());
+        });
+    }
+
+    onGameResults(): Observable<Game> {
+        return new Observable((observer) => {
+            this.socket.on(Events.GAME_RESULTS, (results) => observer.next(results));
         });
     }
 
     joinRoomInNamespace(namespace: string, room: string): void {
         const namespaceSocket = this.connectNamespace(namespace);
         if (namespaceSocket) {
-            namespaceSocket.emit('joinRoom', { room });
+            namespaceSocket.emit(Events.JOIN_ROOM, { room });
         }
     }
 
@@ -188,30 +211,20 @@ export class SocketRoomService {
             if (namespaceSocket) {
                 namespaceSocket.emit(eventName, { room, ...payload });
             }
-        } else {
-            this.socket.emit(eventName, { room, ...payload });
         }
     }
 
     listenForMessages(namespace: string, eventName: string): Observable<unknown> {
         const namespaceSocket = this.connectNamespace(namespace);
         return new Observable((observer) => {
-            if (namespaceSocket) {
-                const messageHandler = (message: unknown) => observer.next(message);
-                namespaceSocket.on(eventName, messageHandler);
-                return () => {
-                    namespaceSocket.off(eventName, messageHandler);
-                };
-            }
-            return;
+            const messageHandler = (message: unknown) => observer.next(message);
+            namespaceSocket.on(eventName, messageHandler);
         });
     }
 
-    private connectNamespace(namespace: string): Socket | undefined {
-        if (!this.namespaces.has(namespace)) {
-            const namespaceSocket = io(`${this.url}/${namespace}`);
-            this.namespaces.set(namespace, namespaceSocket);
-        }
-        return this.namespaces.get(namespace);
+    private connectNamespace(namespace: string): Socket {
+        const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
+        this.namespaces.set(namespace, namespaceSocket);
+        return namespaceSocket;
     }
 }

@@ -28,7 +28,15 @@ export class WaitingPageComponent {
         });
 
         this.socket.unlockSubscribe().subscribe(() => {
-            alert("La salle d'attente est déverouillée.");
+            alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
+        });
+
+        this.socket.leaveRoomSubscribe().subscribe(() => {
+            this.fullView = false;
+            this.roomIdEntryView = true;
+            this.usernameEntryView = false;
+            this.playerPanelView = false;
+            this.fullView = true;
         });
 
         this.socket.roomJoinSubscribe().subscribe(() => {
@@ -45,6 +53,8 @@ export class WaitingPageComponent {
             this.game = this.gameService.getGameByID(id);
         });
 
+        this.gameStartSubscribe();
+
         this.socket.getPlayers().subscribe((players) => {
             this.players = players;
         });
@@ -56,11 +66,6 @@ export class WaitingPageComponent {
             this.usernameEntryView = false;
             this.playerPanelView = true;
             this.fullView = true;
-        });
-
-        this.socket.gameStartSubscribe().subscribe(() => {
-            alert('Le jeu commence maintenant.');
-            this.router.navigate(['/game/' + this.game.id]);
         });
 
         this.socket.kickSubscribe().subscribe(() => {
@@ -76,5 +81,16 @@ export class WaitingPageComponent {
     // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy() {
         this.socket.leaveRoom();
+    }
+
+    gameStartSubscribe() {
+        this.socket.gameStartSubscribe().subscribe(() => {
+            alert('Le jeu commence maintenant.');
+            if (this.player.isHost) {
+                this.router.navigate(['/game/' + this.game.id + '/results']);
+            } else {
+                this.router.navigate(['/game/' + this.game.id]);
+            }
+        });
     }
 }

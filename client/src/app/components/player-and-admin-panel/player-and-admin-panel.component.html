@@ -1,5 +1,9 @@
 <section class="main-container">
     <mat-card>
+        <mat-card-actions align="start">
+            <button mat-button (click)="leaveRoom()">Quitter la salle d'attente</button>
+        </mat-card-actions>
+        <br />
         <h2>Nom d'utilisateur : {{ player.name }}</h2>
         <h2>Jeu choisi : {{ game.title }}</h2>
         <h2 *ngIf="this.player.isHost">Paramètres de la partie</h2>
