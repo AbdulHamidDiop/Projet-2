@@ -5,7 +5,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
-import { Question, Type } from '@common/game';
+import { Choices, Question, Type } from '@common/game';
+import { validQuestion } from '@common/test-interfaces';
 import { Observable } from 'rxjs';
 import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
@@ -18,24 +19,6 @@ const addQuestionSpy = jasmine.createSpy('getAllQuestions').and.callFake(addQues
 describe('CreateQuestionDialogComponent', () => {
     let component: CreateQuestionDialogComponent;
     let fixture: ComponentFixture<CreateQuestionDialogComponent>;
-    const validQuestion: Question = {
-        id: '2',
-        type: Type.QCM,
-        text: 'Question valide',
-        points: 10,
-        lastModification: null,
-        choices: [
-            {
-                text: 'Choix valide #1',
-                isCorrect: true,
-            },
-            {
-                text: 'Choix valide #2',
-                isCorrect: false,
-            },
-        ],
-        answer: 'Choix #1',
-    };
     const validQuestionForm = {
         question: validQuestion,
     };
@@ -168,16 +151,16 @@ describe('CreateQuestionDialogComponent', () => {
         component.populateForm(question);
         expect(component.questionForm.valid).toBeTruthy();
 
-        question.choices = [{ text: 'Valid text', isCorrect: true }];
+        question.choices = [{ text: 'Valid text', isCorrect: true } as Choices];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
 
         question.choices = [
-            { text: 'Valid text', isCorrect: true },
-            { text: 'Valid text', isCorrect: false },
-            { text: 'Valid text', isCorrect: true },
-            { text: 'Valid text', isCorrect: true },
-            { text: 'Valid text', isCorrect: true },
+            { text: 'Valid text', isCorrect: true } as Choices,
+            { text: 'Valid text', isCorrect: false } as Choices,
+            { text: 'Valid text', isCorrect: true } as Choices,
+            { text: 'Valid text', isCorrect: true } as Choices,
+            { text: 'Valid text', isCorrect: true } as Choices,
         ];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
@@ -185,10 +168,7 @@ describe('CreateQuestionDialogComponent', () => {
 
     it('Should copy choices from question and their correctness', () => {
         const question: Question = { ...validQuestion };
-        question.choices = [
-            { text: '1', isCorrect: true },
-            { text: '2', isCorrect: false },
-        ];
+        question.choices = [{ text: '1', isCorrect: true } as Choices, { text: '2', isCorrect: false } as Choices];
         component.populateForm(question);
         component.onSubmit();
         expect(component.choices.at(0).value.text).toBe('1');
@@ -199,17 +179,11 @@ describe('CreateQuestionDialogComponent', () => {
 
     it('Should ask for at least one correct or incorrect choices per question.', () => {
         const question: Question = { ...validQuestion };
-        question.choices = [
-            { text: 'Valid text', isCorrect: true },
-            { text: 'Valid text', isCorrect: true },
-        ];
+        question.choices = [{ text: 'Valid text', isCorrect: true } as Choices, { text: 'Valid text', isCorrect: true } as Choices];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
 
-        question.choices = [
-            { text: 'Valid text', isCorrect: false },
-            { text: 'Valid text', isCorrect: false },
-        ];
+        question.choices = [{ text: 'Valid text', isCorrect: false } as Choices, { text: 'Valid text', isCorrect: false } as Choices];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
     });

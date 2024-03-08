@@ -1,24 +1,31 @@
-import { TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
 import { Game, GameService } from '@app/services/game.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { firstValueFrom, of } from 'rxjs';
 import { GameListComponent } from './game-list.component';
 
 describe('GameListComponent', () => {
     let component: GameListComponent;
     let gameService: jasmine.SpyObj<GameService>;
-
+    let socketMock: jasmine.SpyObj<SocketRoomService>;
+    let fixture: ComponentFixture<GameListComponent>;
     beforeEach(async () => {
-        const gameServiceSpy = jasmine.createSpyObj('GameService', ['getAllGames', 'selectGame', 'getSelectedGame', 'checkHiddenOrDeleted']);
-
+        gameService = jasmine.createSpyObj('GameService', ['getAllGames', 'selectGame', 'getSelectedGame', 'checkHiddenOrDeleted']);
+        gameService.selectGame.and.returnValue();
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['createRoom']);
+        socketMock.createRoom.and.returnValue();
         await TestBed.configureTestingModule({
-            providers: [{ provide: GameService, useValue: gameServiceSpy }],
+            providers: [
+                { provide: GameService, useValue: gameService },
+                { provide: SocketRoomService, useValue: socketMock },
+            ],
         }).compileComponents();
-
-        gameService = TestBed.inject(GameService) as jasmine.SpyObj<GameService>;
     });
 
     beforeEach(() => {
-        component = new GameListComponent(gameService);
+        fixture = TestBed.createComponent(GameListComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
     });
 
     it('should create', () => {
@@ -41,11 +48,11 @@ describe('GameListComponent', () => {
     });
 
     describe('selectGame', () => {
-        it('should call gameService.selectGame with the provided game', async () => {
+        it('should call gameService.selectGame with the provided game', fakeAsync(() => {
             const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
-            await component.selectGame(game);
+            component.selectGame(game);
             expect(gameService.selectGame).toHaveBeenCalledWith(game);
-        });
+        }));
     });
 
     describe('getSelectedGame', () => {

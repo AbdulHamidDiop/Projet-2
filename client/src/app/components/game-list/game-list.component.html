@@ -29,7 +29,7 @@
                         Tester le jeu
                     </button>
 
-                    <button mat-fab extended color="primary" routerLink="/waiting">Lancer une partie</button>
+                    <button mat-fab (click)="launchGame(game)" extended color="primary">Lancer une partie</button>
                 </div>
             </div>
             <ng-template #unavailableMessage>

@@ -8,3 +8,5 @@ export interface ChatMessage {
     message: string;
     timeStamp: string;
 }
+
+export const MAX_MESSAGE_LENGTH = 200; // 200 caractères.

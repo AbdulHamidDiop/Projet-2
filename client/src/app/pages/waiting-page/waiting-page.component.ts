@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Player } from '@common/game';
+import { Game, Player } from '@common/game';
 
 @Component({
     selector: 'app-waiting-page',
@@ -8,72 +11,86 @@ import { Player } from '@common/game';
     styleUrls: ['./waiting-page.component.scss'],
 })
 export class WaitingPageComponent {
-    counter: number = 0;
-    locked: boolean = false;
-    name: string = 'admin';
-    players: Player[] = [
-        {
-            id: '0',
-            name: 'A',
-            isHost: false,
-            score: 0,
-            bonusCount: 0,
-        },
-        {
-            id: '1',
-            name: 'B',
-            isHost: false,
-            score: 0,
-            bonusCount: 0,
-        },
-        {
-            id: '2',
-            name: 'admin',
-            isHost: false,
-            score: 0,
-            bonusCount: 0,
-        },
-    ];
-    constructor(private socket: SocketRoomService) {
+    fullView: boolean = true;
+    roomIdEntryView: boolean = true;
+    usernameEntryView: boolean = false;
+    playerPanelView: boolean = false;
+    player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
+    game: Game = {} as Game;
+    players: Player[] = [];
+    constructor(
+        private gameService: GameService,
+        private socket: SocketRoomService,
+        readonly router: Router,
+    ) {
+        this.socket.roomLockedSubscribe().subscribe(() => {
+            alert("La salle d'attente est verrouillée.");
+        });
+
+        this.socket.unlockSubscribe().subscribe(() => {
+            alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
+        });
+
+        this.socket.leaveRoomSubscribe().subscribe(() => {
+            this.fullView = false;
+            this.roomIdEntryView = true;
+            this.usernameEntryView = false;
+            this.playerPanelView = false;
+            this.fullView = true;
+        });
+
+        this.socket.roomJoinSubscribe().subscribe(() => {
+            if (this.roomIdEntryView) {
+                this.fullView = false;
+                this.roomIdEntryView = false;
+                this.usernameEntryView = true;
+                this.playerPanelView = false;
+                this.fullView = true;
+            }
+        });
+
+        this.socket.getGameId().subscribe((id) => {
+            this.game = this.gameService.getGameByID(id);
+        });
+
+        this.gameStartSubscribe();
+
         this.socket.getPlayers().subscribe((players) => {
-            this.counter++;
             this.players = players;
         });
 
-        this.socket.lockSubscribe().subscribe((response) => {
-            if (response) {
-                this.locked = true;
-                alert('Room is locked');
-            }
+        this.socket.getProfile().subscribe((player) => {
+            this.player = player;
+            this.fullView = false;
+            this.roomIdEntryView = false;
+            this.usernameEntryView = false;
+            this.playerPanelView = true;
+            this.fullView = true;
         });
 
-        this.socket.unlockSubscribe().subscribe((response) => {
-            if (response) {
-                this.locked = false;
-                alert('Room is unlocked');
-            }
+        this.socket.kickSubscribe().subscribe(() => {
+            alert('Votre nom est banni.');
+            this.router.navigate(['/waiting']);
         });
 
-        this.socket.kickSubscribe().subscribe((response) => {
-            if (response === this.name) {
-                alert('Vous avez été exclu');
-            }
+        this.socket.disconnectSubscribe().subscribe(() => {
+            this.router.navigate(['/waiting']);
         });
     }
 
-    get player() {
-        return this.players;
+    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
+    ngOnDestroy() {
+        this.socket.leaveRoom();
     }
 
-    lock() {
-        this.socket.lockRoom(this.name);
-    }
-
-    unlock() {
-        this.socket.unlockRoom(this.name);
-    }
-
-    kickPlayer(player: string) {
-        this.socket.kickPlayer(this.name, player);
+    gameStartSubscribe() {
+        this.socket.gameStartSubscribe().subscribe(() => {
+            alert('Le jeu commence maintenant.');
+            if (this.player.isHost) {
+                this.router.navigate(['/game/' + this.game.id + '/results']);
+            } else {
+                this.router.navigate(['/game/' + this.game.id]);
+            }
+        });
     }
 }
