@@ -188,7 +188,6 @@ export class SocketEvents {
                             socketIdOfPlayerToKick.push(key);
                         }
                     }
-                    console.log(socketIdOfPlayerToKick);
                     socket.to(socketIdOfPlayerToKick).emit(Events.KICK_PLAYER);
                     const playerList = this.mapOfPlayersInRoom.get(room).filter((playerInRoom) => {
                         return playerInRoom.name !== playerName;
