@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Game, GameService } from '@app/services/game.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 
 @Component({
     selector: 'app-game-list',
@@ -8,7 +10,11 @@ import { Game, GameService } from '@app/services/game.service';
 })
 export class GameListComponent implements OnInit {
     games: Game[];
-    constructor(public gameService: GameService) {}
+    constructor(
+        public gameService: GameService,
+        public router: Router,
+        public socket: SocketRoomService,
+    ) {}
 
     async ngOnInit() {
         this.games = await this.gameService.getAllGames();
@@ -28,5 +34,10 @@ export class GameListComponent implements OnInit {
         if (!(await this.gameService.checkHiddenOrDeleted(game))) {
             game.unavailable = true;
         }
+    }
+
+    launchGame(game: Game) {
+        this.socket.createRoom(game.id);
+        this.router.navigate(['/waiting']);
     }
 }

@@ -31,12 +31,14 @@ export class SidebarComponent implements OnDestroy, OnInit {
         return this.messageHistory;
     }
 
-    async handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
-        if (event.key === 'Enter' && this.currentMessage.message) {
-            this.currentMessage.author = this.userName;
+    handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
+        if (event.key === 'Enter' && input.value.length >= MAX_MESSAGE_LENGTH) {
+            alert('Le message dépasse la taille maximale permise.');
+        } else if (event.key === 'Enter') {
+            this.currentMessage.message = input.value;
+            this.currentMessage.author = this.player.name;
             this.currentMessage.timeStamp = new Date().toLocaleTimeString();
-
-            this.socketsService.sendMessage(Events.CHAT_MESSAGE, nsp.CHAT_MESSAGES, this.socketRoom, this.currentMessage);
+            this.socketsService.sendChatMessage(this.currentMessage);
             this.messageHistory.push(this.currentMessage);
             this.currentMessage = {} as ChatMessage;
             this.autoScroll();

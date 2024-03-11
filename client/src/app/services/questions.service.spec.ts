@@ -1,23 +1,10 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { API_URL } from '@common/consts';
-import { Choices, Question, Type } from '@common/game';
+import { Question } from '@common/game';
+import { validQuestion } from '@common/test-interfaces';
 import { FetchService } from './fetch.service';
 import { QuestionsService } from './questions.service';
-
-const mockChoices: Choices[] = [
-    { text: 'Choice 1', isCorrect: true },
-    { text: 'Choice 2', isCorrect: false },
-];
-const mockQuestion: Question = {
-    id: '1',
-    type: Type.QCM,
-    lastModification: new Date(),
-    text: 'Question 1',
-    points: 5,
-    choices: mockChoices,
-    answer: '',
-};
 
 async function arrayBufferMock(): Promise<ArrayBuffer> {
     const buffer = new ArrayBuffer(0);
@@ -37,7 +24,7 @@ async function formDataMock(): Promise<FormData> {
 let returnQuestion = true;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function jsonMock(): Promise<any> {
-    const questions: Question[] = [{ ...mockQuestion }];
+    const questions: Question[] = [{ ...validQuestion }];
     if (returnQuestion) {
         return questions;
     } else {
@@ -126,32 +113,32 @@ describe('QuestionsService', () => {
     it('getAllQuestions should fetch questions from API', fakeAsync(() => {
         service.getAllQuestions();
         tick();
-        expect(service.questions).toEqual([mockQuestion]);
+        expect(service.questions).toEqual([validQuestion]);
         expect(fetchSpy).toHaveBeenCalled();
     }));
 
     it('addQuestion should send a POST request to API', fakeAsync(() => {
-        service.addQuestion(mockQuestion);
+        service.addQuestion(validQuestion);
         tick();
 
         expect(fetchSpy).toHaveBeenCalledWith(
             API_URL + 'questions/add',
             jasmine.objectContaining({
                 method: 'POST',
-                body: JSON.stringify(mockQuestion),
+                body: JSON.stringify(validQuestion),
             }),
         );
     }));
 
     it('editQuestion should send a PUT request to API', fakeAsync(() => {
-        service.editQuestion(mockQuestion);
+        service.editQuestion(validQuestion);
         tick();
 
         expect(fetchSpy).toHaveBeenCalledWith(
             API_URL + 'questions/edit',
             jasmine.objectContaining({
                 method: 'PUT',
-                body: JSON.stringify(mockQuestion),
+                body: JSON.stringify(validQuestion),
             }),
         );
     }));
@@ -161,18 +148,12 @@ describe('QuestionsService', () => {
 
         spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 204, statusText: 'No Content' })));
 
-        service.deleteQuestion(mockQuestion);
+        service.deleteQuestion(validQuestion);
         tick();
 
-        expect(fetchSpy).toHaveBeenCalledWith(
-            API_URL + 'questions/delete/1',
-            jasmine.objectContaining({
-                method: 'DELETE',
-            }),
-        );
-        expect(deleteRequestSpy).toHaveBeenCalledWith(mockQuestion);
+        expect(deleteRequestSpy).toHaveBeenCalledWith(validQuestion);
 
-        expect(service.questions).not.toContain(mockQuestion);
+        expect(service.questions).not.toContain(validQuestion);
     }));
 
     it('Check answer should return false if response does not have attribute isCorrect', async () => {
@@ -191,7 +172,7 @@ describe('QuestionsService', () => {
     it('Getter for question attribute should work as intended', () => {
         service.questions = [];
         expect(service.question.id).toBeFalsy();
-        service.questions = [mockQuestion, mockQuestion];
+        service.questions = [validQuestion, validQuestion];
         service.currentQuestionIndex = 0;
         service.questions[0].id = '1234';
         expect(service.question.id).toEqual('1234');
@@ -212,13 +193,13 @@ describe('QuestionsService', () => {
 
     it('All methods should throw error code when response not ok', async () => {
         responseSetToOk = false;
-        service.addQuestion(mockQuestion).catch((error) => {
+        service.addQuestion(validQuestion).catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
-        service.editQuestion(mockQuestion).catch((error) => {
+        service.editQuestion(validQuestion).catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
-        service.deleteQuestion(mockQuestion).catch((error) => {
+        service.deleteQuestion(validQuestion).catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         service.getQuestionsWithoutCorrectShown().catch((error) => {

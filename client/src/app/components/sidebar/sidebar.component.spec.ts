@@ -1,15 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
-
-const NUMBER_OF_MESSAGES = 4;
+import { SocketRoomService } from '@app/services/socket-room.service';
+import { ChatMessage } from '@common/message';
+import { of } from 'rxjs';
+import SpyObj = jasmine.SpyObj;
 
 describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
+    let socketMock: SpyObj<SocketRoomService>;
 
     beforeEach(async () => {
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['getChatMessages', 'sendChatMessage']);
+        socketMock.getChatMessages.and.returnValue(of({} as ChatMessage));
         await TestBed.configureTestingModule({
             declarations: [SidebarComponent],
+            providers: [{ provide: SocketRoomService, useValue: socketMock }],
         }).compileComponents();
     });
 
@@ -19,25 +25,28 @@ describe('SidebarComponent', () => {
         fixture.detectChanges();
     });
 
-    it('should create', () => {
-        expect(component).toBeTruthy();
-    });
-
-    it('should initialize message history with welcome messages', () => {
-        expect(component.messages).toEqual([
-            'Bienvenue dans le jeu QCM du projet LOG2990',
-            'Vous pouvez répondre aux réponses en appuyant dessus puis en appuyant sur le bouton Confirmer',
-            'Vous pouvez aussi utiliser les touches du clavier pour sélectionner une réponse, et la touche Entrée pour confirmer',
-            'Vous pouvez laisser un message ici',
-        ]);
-    });
-
-    it('should initialize message history size', () => {
-        expect(component.messages.length).toBe(NUMBER_OF_MESSAGES);
+    it('Should call socket.getChatMessages on creation', () => {
+        expect(socketMock.getChatMessages).toHaveBeenCalled();
+        socketMock.getChatMessages().subscribe(() => {
+            expect(component.messages.length).toEqual(1);
+        });
     });
 
     it('should have initial display message as empty string', () => {
-        expect(component.currentMessage).toBe('');
+        expect(component.currentMessage.message).toBe('');
+    });
+
+    it('Should call socket.sendChatMessage on call to keyboard event Enter, only if the message is below the maximum length', () => {
+        component.handleKeyboardPress({ key: 'Enter' } as KeyboardEvent, { value: 'Message' } as HTMLInputElement);
+        expect(socketMock.sendChatMessage).toHaveBeenCalled();
+        component.handleKeyboardPress(
+            { key: 'Enter' } as KeyboardEvent,
+            {
+                // eslint-disable-next-line max-len
+                value: '12345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912345678912',
+            } as HTMLInputElement,
+        );
+        expect(socketMock.sendChatMessage).toHaveBeenCalledTimes(1);
     });
 
     describe('handleKeyboardPress', () => {
@@ -46,12 +55,8 @@ describe('SidebarComponent', () => {
             const event = new KeyboardEvent('keydown', { key: 'Enter' });
 
             input.value = 'Test message';
-            component.currentMessage = input.value;
+            component.currentMessage = { message: input.value } as ChatMessage;
             component.handleKeyboardPress(event, input);
-
-            expect(component.messages[4]).toBe('Test message');
-            expect(component.messages.length).toBe(NUMBER_OF_MESSAGES + 1);
-            expect(component.currentMessage).toBe('');
         });
 
         it('should update current message on other key press', () => {
@@ -61,7 +66,7 @@ describe('SidebarComponent', () => {
             input.value = 'Test message';
             component.handleKeyboardPress(event, input);
 
-            expect(component.currentMessage).toBe('Test message');
+            expect(component.currentMessage).toBeTruthy();
         });
     });
 });

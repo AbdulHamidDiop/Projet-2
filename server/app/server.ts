@@ -1,12 +1,13 @@
 import { ChatMessage } from '@common/message';
 /* eslint-disable no-console */
 import { Application } from '@app/app';
-import { Events, Namespaces } from '@common/sockets';
+import { Events, LOBBY, Namespaces } from '@common/sockets';
 import { CorsOptions } from 'cors';
 import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import { Service } from 'typedi';
+import { SocketEvents } from './services/socket-events.service';
 
 @Service()
 export class Server {
@@ -14,14 +15,13 @@ export class Server {
     private static readonly baseDix: number = 10;
     private server: http.Server;
     private io: SocketIOServer;
-
-    private liveRooms: string[] = ['0']; // room par defaut pour developpement
     private chatHistories: Map<string, ChatMessage[]> = new Map();
-    // private bannedNamesInRoom: Map<string, string[]> = new Map();
-    // private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
-    // private lockedRooms: string[] = [];
+    private liveRooms: string[] = [];
 
-    constructor(private readonly application: Application) {}
+    constructor(
+        private readonly application: Application,
+        private socketEvents: SocketEvents,
+    ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
         const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
@@ -30,35 +30,24 @@ export class Server {
 
     init(): void {
         this.application.app.set('port', Server.appPort);
-
         this.server = http.createServer(this.application.app);
-
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
-
         const corsOptions: CorsOptions = { origin: ['http://localhost:4200'] };
         this.io = new SocketIOServer(this.server, { cors: corsOptions });
-
+        this.liveRooms.push(LOBBY);
+        this.chatHistories.set(LOBBY, []);
         this.configureGlobalNamespace();
         this.configureStaticNamespaces();
-        this.configureDynamicNamespaces();
     }
-
     private configureGlobalNamespace(): void {
         this.io.on('connection', (socket: Socket) => {
             console.log('A user connected to the global namespace');
 
-            socket.on(Events.CREATE_ROOM, (room: string) => {
-                if (this.liveRooms.includes(room)) return;
-                console.log(`Room created: ${room}`);
-                this.liveRooms.push(room);
-            });
+            socket.join(LOBBY);
 
-            socket.on(Events.DELETE_ROOM, (room: string) => {
-                console.log(`Room deleted: ${room}`);
-                this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
-            });
+            this.socketEvents.listenForEvents(socket);
 
             socket.on('disconnect', () => {
                 console.log('User disconnected from global namespace');
@@ -67,44 +56,15 @@ export class Server {
     }
 
     private configureStaticNamespaces(): void {
-        const chatNamespace = this.io.of(`/${Namespaces.CHAT_MESSAGES}`);
         const waitingRoomNamespace = this.io.of(`/${Namespaces.WAITING_ROOM}`);
         const gameStatsNamespace = this.io.of(`/${Namespaces.GAME_STATS}`);
         const gameNamespace = this.io.of(`/${Namespaces.GAME}`);
-
-        chatNamespace.on('connection', (socket) => {
-            // Listener for joining a room within the chatMessages namespace
-            this.setupDefaultJoinRoomEvent(socket);
-            console.log('A user connected to the chatMessages namespace');
-
-            // Listener for messages sent within a room of the chatMessages namespace
-            socket.on(Events.CHAT_MESSAGE, (data) => {
-                console.log(`Message received for room ${data.room}:`, data);
-                socket.to(data.room).emit(Events.CHAT_MESSAGE, data);
-
-                const chatMessage: ChatMessage = { author: data.author, message: data.message, timeStamp: data.timeStamp };
-                if (!this.chatHistories.has(data.room)) this.chatHistories.set(data.room, [chatMessage]);
-                else this.chatHistories.set(data.room, this.chatHistories.get(data.room).concat(chatMessage));
-            });
-
-            // Listener for chat history requests
-            socket.on(Events.CHAT_HISTORY, (data) => {
-                console.log(`Chat history requested for room: ${data.room}`);
-                const chatHistory = this.chatHistories.get(data.room) || [];
-                socket.emit(Events.CHAT_HISTORY, chatHistory);
-            });
-
-            // Handling user disconnection
-            socket.on('disconnect', () => {
-                console.log('User disconnected from chatMessages namespace');
-            });
-        });
-
         waitingRoomNamespace.on('connection', (socket) => {
             this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.JOIN_ROOM, ({ room, username }) => {
                 socket.to(room).emit(Events.WAITING_ROOM_NOTIFICATION, `${username} a rejoint la salle d'attente`);
             });
+
             console.log('A user connected to the waitingRoom namespace');
 
             socket.on('disconnect', () => {
@@ -161,32 +121,8 @@ export class Server {
         });
     }
 
-    private configureDynamicNamespaces(): void {
-        // Listen for connections to any namespace
-        this.io.of(/^\/\w+$/).on('connection', (socket: Socket) => {
-            const namespace = socket.nsp.name;
-            console.log(`A user connected to namespace: ${namespace}`);
-
-            // Directly handle room joining here
-            socket.on('joinRoom', ({ room }) => {
-                if (room) {
-                    socket.join(room);
-                    console.log(`Socket ${socket.id} joined room: ${room} in namespace: ${namespace}`);
-                }
-            });
-
-            // Handle messages within the namespace, for a specific room
-            socket.on('message', (data: { room: string; payload: unknown }) => {
-                const { room, payload } = data;
-                socket.nsp.to(room).emit('message', payload);
-                console.log(`Message sent to room: ${room} in namespace: ${namespace}`, payload);
-            });
-        });
-    }
-
     private onError(error: NodeJS.ErrnoException): void {
         if (error.syscall !== 'listen') throw error;
-
         const bind: string = typeof Server.appPort === 'string' ? 'Pipe ' + Server.appPort : 'Port ' + Server.appPort;
         switch (error.code) {
             case 'EACCES':
@@ -201,7 +137,6 @@ export class Server {
                 throw error;
         }
     }
-
     private onListening(): void {
         const addr = this.server.address() as AddressInfo;
         const bind: string = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
