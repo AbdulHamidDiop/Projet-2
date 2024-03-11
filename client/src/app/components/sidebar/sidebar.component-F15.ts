@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { SocketsService } from '@app/services/sockets.service';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
@@ -9,22 +9,29 @@ import { Subscription } from 'rxjs';
     templateUrl: './sidebar.component.html',
     styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent implements OnDestroy, OnInit {
+export class SidebarComponent implements OnDestroy {
     @ViewChild('chatContainer') private chatContainer: ElementRef;
     socketRoom = '0';
     userName = 'user';
     currentMessage: ChatMessage = {} as ChatMessage;
     private messageHistory: ChatMessage[] = [];
     private chatMessagesSubscription: Subscription;
+    private chatHistorySubscription: Subscription;
 
     constructor(private socketsService: SocketsService) {
-        this.ngOnInit();
         this.socketsService.joinRoom(nsp.CHAT_MESSAGES, this.socketRoom);
         this.chatMessagesSubscription = this.socketsService.listenForMessages(nsp.CHAT_MESSAGES, Events.CHAT_MESSAGE).subscribe((data: unknown) => {
             const message = data as ChatMessage;
             this.messageHistory.push(message);
             this.autoScroll();
         });
+
+        this.chatHistorySubscription = this.socketsService.listenForMessages(nsp.CHAT_MESSAGES, Events.CHAT_HISTORY).subscribe((data: unknown) => {
+            const chatHistory = data as ChatMessage[];
+            this.messageHistory = chatHistory;
+            this.autoScroll();
+        });
+        this.socketsService.sendMessage(Events.CHAT_HISTORY, nsp.CHAT_MESSAGES, this.socketRoom);
     }
 
     get messages() {
@@ -45,17 +52,6 @@ export class SidebarComponent implements OnDestroy, OnInit {
         }
     }
 
-    ngOnInit(): void {
-        this.messageHistory[0] = { message: 'Bienvenue dans le jeu QCM du projet LOG2990' } as ChatMessage;
-        this.messageHistory[1] = {
-            message: 'Vous pouvez aussi utiliser les touches du clavier pour sélectionner une réponse, et la touche Entrée pour confirmer',
-        } as ChatMessage;
-        this.messageHistory[2] = { message: 'Vous pouvez laisser un message ici' } as ChatMessage;
-        this.messageHistory[3] = {
-            message: 'Vous êtes dans la room 0, les messages écrits ici seront envoyés aux autres personnes dans la room',
-        } as ChatMessage;
-    }
-
     autoScroll(): void {
         setTimeout(() => {
             try {
@@ -68,5 +64,6 @@ export class SidebarComponent implements OnDestroy, OnInit {
 
     ngOnDestroy(): void {
         this.chatMessagesSubscription.unsubscribe();
+        this.chatHistorySubscription.unsubscribe();
     }
 }
