@@ -6,18 +6,32 @@ import { Service } from 'typedi';
 
 @Service()
 export class SocketEvents {
-    private chatHistories: Map<string, ChatMessage[]> = new Map();
-    private roomGameId: Map<string, string> = new Map();
-    private socketIdRoom: Map<string, string> = new Map(); // Gauche : socketId, droite : room.
-    private liveRooms: string[] = [];
-    private bannedNamesInRoom: Map<string, string[]> = new Map();
-    private mapOfPlayersInRoom: Map<string, Player[]> = new Map();
-    private lockedRooms: string[] = [''];
-    private playerSocketId: Map<string, Player> = new Map();
+    chatHistories: Map<string, ChatMessage[]> = new Map();
+    roomGameId: Map<string, string> = new Map();
+    socketIdRoom: Map<string, string> = new Map(); // Gauche : socketId, droite : room.
+    liveRooms: string[] = [];
+    bannedNamesInRoom: Map<string, string[]> = new Map();
+    mapOfPlayersInRoom: Map<string, Player[]> = new Map();
+    lockedRooms: string[] = [''];
+    playerSocketId: Map<string, Player> = new Map();
 
+    constructor() {
+        this.liveRooms.push(LOBBY);
+    }
     listenForEvents(socket: Socket) {
         this.socketIdRoom.set(socket.id, LOBBY);
-
+        this.listenForCreateRoomEvent(socket);
+        this.listenForChatMessageEvent(socket);
+        this.listenForSetPlayerNameEvent(socket);
+        this.listenForGetPlayerProfileEvent(socket);
+        this.listenForLockRoomEvent(socket);
+        this.listenForUnlockRoomEvent(socket);
+        this.listenForKickPlayerEvent(socket);
+        this.listenForStartGameEvent(socket);
+        this.listenForLeaveRoomEvent(socket);
+        this.listenForDeleteRoomEvent(socket);
+    }
+    listenForCreateRoomEvent(socket: Socket) {
         socket.on(Events.CREATE_ROOM, ({ id }) => {
             let room = this.makeRoomId();
             while (this.liveRooms.includes(room)) {
@@ -44,7 +58,8 @@ export class SocketEvents {
             };
             socket.emit(Events.CHAT_MESSAGE, message); // Sert pour les tests.
         });
-
+    }
+    listenForJoinRoomEvent(socket: Socket) {
         socket.on(Events.JOIN_ROOM, ({ room }) => {
             if (this.lockedRooms.includes(room)) {
                 socket.emit(Events.LOCK_ROOM, true);
@@ -56,11 +71,13 @@ export class SocketEvents {
                 // Le socket rejoint le room après avoir envoyé son nom et que celui-ci est validé.
             }
         });
-
+    }
+    listenForDeleteRoomEvent(socket: Socket) {
         socket.on(Events.DELETE_ROOM, (room: string) => {
             this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
         });
-
+    }
+    listenForLeaveRoomEvent(socket: Socket) {
         socket.on(Events.LEAVE_ROOM, () => {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const player = this.playerSocketId.get(socket.id);
@@ -93,7 +110,8 @@ export class SocketEvents {
                 }
             }
         });
-
+    }
+    listenForChatMessageEvent(socket: Socket) {
         socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
             const room = this.socketIdRoom.get(socket.id);
             if (room !== undefined && this.chatHistories.get(room) !== undefined) {
@@ -111,8 +129,9 @@ export class SocketEvents {
                 }
             }
         });
-
-        socket.on(Events.SET_PLAYER_NAME, (name) => {
+    }
+    listenForSetPlayerNameEvent(socket: Socket) {
+        socket.on(Events.SET_PLAYER_NAME, ({ name }) => {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const room = this.socketIdRoom.get(socket.id);
                 const player = this.playerSocketId.get(socket.id);
@@ -141,14 +160,16 @@ export class SocketEvents {
                 }
             }
         });
-
+    }
+    listenForGetPlayerProfileEvent(socket: Socket) {
         socket.on(Events.GET_PLAYER_PROFILE, () => {
             const player = this.playerSocketId.get(socket.id);
             if (player !== undefined) {
                 socket.emit(Events.GET_PLAYER_PROFILE, player);
             }
         });
-
+    }
+    listenForLockRoomEvent(socket: Socket) {
         socket.on(Events.LOCK_ROOM, () => {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const player = this.playerSocketId.get(socket.id);
@@ -163,7 +184,8 @@ export class SocketEvents {
                 }
             }
         });
-
+    }
+    listenForUnlockRoomEvent(socket: Socket) {
         socket.on(Events.UNLOCK_ROOM, () => {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const player = this.playerSocketId.get(socket.id);
@@ -176,7 +198,8 @@ export class SocketEvents {
                 }
             }
         });
-
+    }
+    listenForKickPlayerEvent(socket: Socket) {
         socket.on(Events.KICK_PLAYER, ({ playerName }) => {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const host = this.playerSocketId.get(socket.id);
@@ -198,13 +221,14 @@ export class SocketEvents {
                 }
             }
         });
-
+    }
+    listenForStartGameEvent(socket: Socket) {
         socket.on(Events.START_GAME, () => {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const host = this.playerSocketId.get(socket.id);
                 const room = this.socketIdRoom.get(socket.id);
                 const players = this.mapOfPlayersInRoom.get(room);
-                if (host.isHost && players.length > 0) {
+                if (host && host.isHost && players.length > 0) {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
                         socket.emit(Events.START_GAME);
@@ -216,7 +240,7 @@ export class SocketEvents {
         });
     }
 
-    private makeRoomId(): string {
+    makeRoomId(): string {
         const digits = '123456789';
         const ID_LENGTH = 4;
         const indices: number[] = [];
@@ -230,22 +254,10 @@ export class SocketEvents {
         }
         return id;
     }
-    private socketInRoom(socket: Socket): boolean {
-        if (this.socketIdRoom.get(socket.id) === undefined) {
-            return false;
-        } else if (this.playerSocketId.get(socket.id) === undefined) {
-            return false;
-        } else {
-            return true;
-        }
+    socketInRoom(socket: Socket): boolean {
+        return this.socketIdRoom.get(socket.id) !== undefined;
     }
-    private roomCreated(room: string): boolean {
-        if (this.mapOfPlayersInRoom.get(room) === undefined) {
-            return false;
-        } else if (this.bannedNamesInRoom.get(room) === undefined) {
-            return false;
-        } else {
-            return this.liveRooms.includes(room);
-        }
+    roomCreated(room: string): boolean {
+        return this.liveRooms.includes(room);
     }
 }
