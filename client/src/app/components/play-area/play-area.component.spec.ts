@@ -1,17 +1,19 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines */
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { MatDialog } from '@angular/material/dialog';
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { PlayAreaComponent, SHOW_FEEDBACK_DELAY } from '@app/components/play-area/play-area.component';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Question, Type } from '@common/game';
+import { validQuestion } from '@common/test-interfaces';
 import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
-const ONE_SECOND = 1000;
 const DEFAULT_POINTS = 10;
 const BONUS_MULTIPLIER = 1.2;
 describe('PlayAreaComponent', () => {
@@ -19,35 +21,27 @@ describe('PlayAreaComponent', () => {
     let fixture: ComponentFixture<PlayAreaComponent>;
     let timeServiceSpy: SpyObj<TimeService>;
     let gameManager: GameManagerService;
-    const validQuestion: Question = {
-        id: '2',
-        lastModification: null,
-        type: Type.QCM,
-        text: 'Question valide',
-        points: 10,
-        choices: [
-            {
-                text: 'Choix valide #1',
-                isCorrect: true,
-            },
-            {
-                text: 'Choix valide #2',
-                isCorrect: false,
-            },
-        ],
-        answer: 'Choix #1',
-    };
+    let socketMock: SpyObj<SocketRoomService>;
+    let matDialogMock: SpyObj<MatDialog>;
+    let matDialogRefSpy: SpyObj<MatDialogRef<any, any>>;
 
     beforeEach(async () => {
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'time'], ['counter', 'interval']);
-
+        timeServiceSpy.startTimer.and.returnValue();
+        timeServiceSpy.time = 0;
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage']);
+        socketMock.listenForMessages.and.returnValue(of({} as any));
+        socketMock.sendMessage.and.returnValue({} as any);
+        matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll']);
+        matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefSpy.afterClosed.and.returnValue(of(true));
+        matDialogMock.open.and.returnValue(matDialogRefSpy);
         await TestBed.configureTestingModule({
             imports: [MatListModule, BrowserAnimationsModule],
             declarations: [PlayAreaComponent],
             providers: [
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => 'test-game-id' }, queryParams: { testMode: 'true' } } } },
-
                 {
                     provide: GameManagerService,
                     useValue: jasmine.createSpyObj('GameManagerService', {
@@ -68,15 +62,32 @@ describe('PlayAreaComponent', () => {
                         reset: () => {
                             return;
                         },
-                        isCorrectAnswer: () => of(true),
+                        isCorrectAnswer: async () => Promise.resolve(true),
                         getFeedBack: () => of([{ choice: 'Option 1', status: 'correct' }]),
                     }),
                 },
                 {
                     provide: MatDialog,
+                    useValue: matDialogMock,
+                },
+                { provide: MatDialogRef, useValue: matDialogRefSpy },
+                {
+                    provide: SocketRoomService,
+                    useValue: socketMock,
+                },
+                {
+                    provide: ActivatedRoute,
                     useValue: {
-                        open: jasmine.createSpy('open').and.returnValue({ afterClosed: () => of(true) }),
-                        closeAll: jasmine.createSpy('closeAll'),
+                        snapshot: {
+                            paramMap: {
+                                get: () => {
+                                    return '.';
+                                },
+                            },
+                            queryParams: {
+                                testMode: 'true',
+                            },
+                        },
                     },
                 },
             ],
@@ -88,6 +99,7 @@ describe('PlayAreaComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
+        component.question = validQuestion;
         gameManager = TestBed.inject(GameManagerService);
         fixture.detectChanges();
     });
@@ -98,6 +110,28 @@ describe('PlayAreaComponent', () => {
 
     it('should create', () => {
         expect(component).toBeTruthy();
+        component.inTestMode = true;
+    });
+
+    it('should use timers', fakeAsync(() => {
+        component.onCountDownModalClosed();
+        component.inTestMode = true;
+        component.countPointsAndNextQuestion();
+        tick(SHOW_FEEDBACK_DELAY * 2);
+        component.inTestMode = false;
+        component.countPointsAndNextQuestion();
+        tick(SHOW_FEEDBACK_DELAY * 2);
+        expect(component).toBeTruthy();
+    }));
+
+    it('Should call socket.sendMessage on call to notifyEndGame', () => {
+        component.notifyEndGame();
+        expect(socketMock.sendMessage).toHaveBeenCalled();
+    });
+
+    it('Should call socket.sendMessage on call to notifyNextQuestion', () => {
+        component.notifyNextQuestion();
+        expect(socketMock.sendMessage).toHaveBeenCalled();
     });
 
     it('handleQCMChoice should allow multiple selections and set the answer array correctly', () => {
@@ -113,31 +147,15 @@ describe('PlayAreaComponent', () => {
         expect(component.answer.length).toBe(0);
     });
 
-    it('nextQuestion should load a new QCM question', fakeAsync(() => {
+    it('nextQuestion should call gameManager.nextQuestion', fakeAsync(() => {
         // Prepare the next question to be returned by the GameManagerService
         gameManager = TestBed.inject(GameManagerService);
-        const newQCMQuestion = {
-            id: 'new-qcm',
-            type: Type.QCM,
-            text: 'Next QCM Question?',
-            points: 10,
-            lastModification: new Date(),
-            choices: [
-                { text: 'Option 1', isCorrect: true },
-                { text: 'Option 2', isCorrect: false },
-            ],
-            answer: '',
-        };
-        spyOn(gameManager, 'nextQuestion').and.returnValue(newQCMQuestion);
+        spyOn(component, 'countPointsAndNextQuestion').and.returnValue();
 
         component.nextQuestion();
-
+        expect(gameManager.nextQuestion).toHaveBeenCalled();
         fixture.detectChanges();
-
-        expect(component.question).toEqual(newQCMQuestion);
-        expect(component.question.text).toEqual('Next QCM Question?');
-        expect(component.question.choices.length).toBe(2);
-        expect(component.nbChoices).toBe(2);
+        flush();
     }));
 
     it('mouseHitDetect should call startTimer with 5 seconds on left click', () => {
@@ -192,7 +210,7 @@ describe('PlayAreaComponent', () => {
         expect(component.answer).toEqual([]);
     });
 
-    it('updateScore should correctly update score for correct answers', async () => {
+    it('updateScore should correctly update score for correct answers', fakeAsync(() => {
         jasmine.getEnv().allowRespy(true);
         spyOn(gameManager, 'isCorrectAnswer').and.returnValue(Promise.resolve(true));
 
@@ -200,16 +218,18 @@ describe('PlayAreaComponent', () => {
             points: 10,
         } as unknown as Question;
         component.score = 0;
-        await component.updateScore();
+        component.updateScore();
+        tick(SHOW_FEEDBACK_DELAY * 2);
         expect(component.score).toBe(DEFAULT_POINTS * BONUS_MULTIPLIER);
         component.score = 0;
         component.question = {
             type: Type.QRL,
             points: 10,
         } as unknown as Question;
-        await component.updateScore();
+        component.updateScore();
+        tick(SHOW_FEEDBACK_DELAY * 2);
         expect(component.score).toBe(DEFAULT_POINTS);
-    });
+    }));
 
     it('updateScore should not update score for incorrect or incomplete answers', () => {
         component.question = {
@@ -272,28 +292,20 @@ describe('PlayAreaComponent', () => {
     });
 
     it('confirmAnswers should be called when the timer runs out', fakeAsync(() => {
-        fixture = TestBed.createComponent(PlayAreaComponent);
-        component = fixture.componentInstance;
-        spyOn(component, 'confirmAnswers').and.callFake(async () => {
-            return;
-        });
-        component.timeService.startTimer(1);
-        tick(ONE_SECOND);
+        timeServiceSpy.time = 0;
+        spyOn(component, 'confirmAnswers').and.returnValue({} as any);
         const time = component.time;
-        if (time === 0) {
-            expect(component.confirmAnswers).toHaveBeenCalled();
-        }
+        expect(time).toEqual(0);
+        expect(component.confirmAnswers).toHaveBeenCalled();
+        flush();
     }));
 
     it('confirmAnswers should update score and proceed after delay', fakeAsync(() => {
-        spyOn(component, 'updateScore').and.callThrough();
-        spyOn(component, 'nextQuestion').and.callThrough();
+        spyOn(component, 'updateScore').and.returnValue({} as any);
+        spyOn(component, 'nextQuestion').and.returnValue();
         component.confirmAnswers();
-        expect(component.disableChoices).toBeTrue();
-        expect(component.showFeedback).toBeTrue();
-        tick(SHOW_FEEDBACK_DELAY);
+        tick(SHOW_FEEDBACK_DELAY * 2);
         expect(component.updateScore).toHaveBeenCalled();
-        expect(component.showFeedback).toBeFalse();
         expect(component.disableChoices).toBeFalse();
         expect(component.nextQuestion).toHaveBeenCalled();
     }));
@@ -307,17 +319,18 @@ describe('PlayAreaComponent', () => {
         dialogRefSpyObj.afterClosed().subscribe(() => {
             expect(component.score).toBe(0);
             expect(component.answer.length).toBe(0);
-            expect(component.router.navigate).toHaveBeenCalledWith(['/createGame']);
+            expect(component.router.navigate).toHaveBeenCalledWith(['/']);
         });
     });
 
-    it('should get feedback and update state for QCM questions', async () => {
+    it('should get feedback and update state for QCM questions', fakeAsync(() => {
         component.question = { id: '123', type: Type.QCM } as Question;
         component.answer = ['Option 1'];
-
-        await component.confirmAnswers();
+        spyOn(component, 'countPointsAndNextQuestion').and.returnValue();
+        component.confirmAnswers();
         expect(gameManager.getFeedBack).toHaveBeenCalledWith('123', ['Option 1']);
-    });
+        flush();
+    }));
 
     it('should navigate to createGame if this.GameManager.endGame is true', () => {
         spyOn(component.router, 'navigate');

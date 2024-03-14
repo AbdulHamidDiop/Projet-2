@@ -22,6 +22,9 @@ import { CreateQuestionDialogComponent } from './components/create-question-dial
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { PlayerAndAdminPanelComponent } from './components/player-and-admin-panel/player-and-admin-panel.component';
+import { SelectRoomComponent } from './components/select-room/select-room.component';
+import { SelectUsernameComponent } from './components/select-username/select-username.component';
 import { StatsTestComponent } from './components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
@@ -66,8 +69,13 @@ import { SocketRoomService } from './services/socket-room.service';
         StatsTestComponent,
         ResultsPageComponent,
         BarChartComponent,
+        CountdownModalComponent,
+        StatsTestComponent,
+        SelectRoomComponent,
+        SelectUsernameComponent,
+        PlayerAndAdminPanelComponent,
+        ResultsPageComponent,
     ],
-    // eslint-disable-next-line prettier/prettier
     imports: [
         AppMaterialModule,
         AppRoutingModule,
@@ -78,7 +86,7 @@ import { SocketRoomService } from './services/socket-room.service';
         HttpClientModule,
         NgChartsModule,
     ],
-    providers: [GameService, QuestionsService, SocketRoomService],
+    providers: [GameService, QuestionsService, SocketRoomService, SocketRoomService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

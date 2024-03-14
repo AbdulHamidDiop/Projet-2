@@ -10,7 +10,7 @@ import { Question } from '@common/game';
     styleUrls: ['./admin-question.component.scss'],
 })
 export class AdminQuestionComponent {
-    @Input() question: Question;
+    @Input() question: Question = {} as Question;
     @Input() index?: number;
     @Input() editable?: boolean = false;
     @Input() showModificationDate?: boolean;
@@ -24,7 +24,7 @@ export class AdminQuestionComponent {
     ) {}
 
     openDialog(): void {
-        const questionData: Question = this.question ? this.question : ({} as Question);
+        const questionData: Question = this.question;
         const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {
             data: { question: questionData },
         });

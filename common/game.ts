@@ -1,6 +1,8 @@
 export interface Choices {
     text: string;
     isCorrect: boolean;
+    numberAnswered: number;
+    index: number;
 }
 
 export enum Type {
@@ -26,4 +28,21 @@ export interface Game {
     questions: Question[];
     isHidden?: boolean;
     unavailable?: boolean;
+}
+
+export interface Player {
+    name: string;
+    isHost: boolean;
+    id: string;
+    score: number;
+    bonusCount: number;
+}
+
+
+export interface Player {
+    name: string;
+    isHost: boolean;
+    id: string;
+    score: number;
+    bonusCount: number;
 }

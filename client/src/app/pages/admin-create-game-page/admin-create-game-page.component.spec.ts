@@ -16,6 +16,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { FetchService } from '@app/services/fetch.service';
 import { GameService } from '@app/services/game.service';
 import { Game, Question, Type } from '@common/game';
+import { validGame, validQuestion } from '@common/test-interfaces';
 import { Observable } from 'rxjs';
 import { AdminCreateGamePageComponent } from './admin-create-game-page.component';
 
@@ -101,24 +102,6 @@ async function fetchMock(): Promise<Response> {
 describe('AdminCreateGamePageComponent', () => {
     let component: AdminCreateGamePageComponent;
     let fixture: ComponentFixture<AdminCreateGamePageComponent>;
-    const validQuestion: Question = {
-        id: '2',
-        lastModification: null,
-        type: Type.QCM,
-        text: 'Question valide',
-        points: 10,
-        choices: [
-            {
-                text: 'Choix valide #1',
-                isCorrect: true,
-            },
-            {
-                text: 'Choix valide #2',
-                isCorrect: false,
-            },
-        ],
-        answer: 'Choix #1',
-    };
 
     const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
         subscriber.next([validQuestion]);
@@ -127,87 +110,6 @@ describe('AdminCreateGamePageComponent', () => {
     const openDialogSpy = jasmine.createSpy('open').and.callFake(() => {
         return { afterClosed: () => observableQuestion };
     });
-    const validGame: Game = {
-        id: '0',
-        lastModification: new Date(),
-        title: 'Jeu standard',
-        description: 'Description valide',
-        duration: 10,
-        questions: [
-            {
-                id: '2',
-                type: Type.QCM,
-                text: 'Question valide',
-                points: 10,
-                choices: [
-                    {
-                        text: 'Choix valide #1',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Choix valide #2',
-                        isCorrect: false,
-                    },
-                ],
-                lastModification: null,
-                answer: 'Choix #1',
-            },
-            {
-                id: '1',
-                type: Type.QCM,
-                text: 'Question valide',
-                points: 10,
-                choices: [
-                    {
-                        text: 'Choix valide #1',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Choix valide #2',
-                        isCorrect: false,
-                    },
-                ],
-                lastModification: null,
-                answer: 'Choix #1',
-            },
-            {
-                id: '0',
-                type: Type.QCM,
-                text: 'Question valide',
-                points: 10,
-                choices: [
-                    {
-                        text: 'Choix valide #1',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Choix valide #2',
-                        isCorrect: false,
-                    },
-                ],
-                lastModification: null,
-                answer: 'Choix #1',
-            },
-            {
-                id: '3',
-                type: Type.QCM,
-                text: 'Question valide',
-                points: 10,
-                choices: [
-                    {
-                        text: 'Choix valide #1',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Choix valide #2',
-                        isCorrect: false,
-                    },
-                ],
-                lastModification: null,
-                answer: 'Choix #1',
-            },
-        ],
-    };
     const getGameByIdSpy = jasmine.createSpy('getGameByID').and.returnValue(validGame);
     const addGameSpy = jasmine.createSpy('addGame').and.callFake(addGameMock);
     const gameServiceSpy = jasmine.createSpy('getAllGames').and.returnValue([validGame]);

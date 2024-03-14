@@ -1,17 +1,12 @@
-<body>
-    <div class="scene">
-        <div class="cube-wrapper">
-            <div class="cube">
-                <div class="cube-faces">
-                    <div class="cube-face shadow"></div>
-                    <div class="cube-face bottom"></div>
-                    <div class="cube-face top"></div>
-                    <div class="cube-face left"></div>
-                    <div class="cube-face right"></div>
-                    <div class="cube-face back"></div>
-                    <div class="cube-face front"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+<app-nav-bar></app-nav-bar>
+<main *ngIf="this.fullView">
+    <app-select-room *ngIf="this.roomIdEntryView"></app-select-room>
+    <app-select-username *ngIf="this.usernameEntryView"></app-select-username>
+    <app-player-and-admin-panel
+        *ngIf="this.playerPanelView"
+        [players]="this.players"
+        [player]="this.player"
+        [game]="this.game"
+    ></app-player-and-admin-panel>
+    <app-sidebar *ngIf="this.playerPanelView" [player]="this.player" id="sidebar"></app-sidebar>
+</main>

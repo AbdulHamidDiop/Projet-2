@@ -1,7 +1,7 @@
+import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
-import { Feedback } from './../../../common/feedback';
 
 const QUIZ_PATH = './assets/quiz-example.json';
 

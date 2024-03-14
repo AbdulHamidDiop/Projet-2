@@ -9,6 +9,9 @@ li {
     margin: 0;
     padding: 0;
 }
+app-countdown-modal {
+    z-index: 100;
+}
 
 /* Header styles */
 .wrapper {
@@ -49,12 +52,10 @@ li {
     color: #fff;
 }
 
-/* Main content styles */
-// main {
-//     padding: 20px;
-//     margin-left: 250px;
-//     min-height: 88%;
-// }
+.column-container {
+    display: flex;
+    flex-direction: row;
+}
 
 .confirm-button {
     background-color: #26a243;
@@ -95,6 +96,24 @@ li {
 
 .selected {
     background-color: #e0e0e0;
+}
+
+.points-text {
+    margin-left: 10px;
+    font-style: oblique;
+}
+
+.points-animation {
+    animation: fadeOut 3s forwards;
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
 }
 
 /* Footer styles */
