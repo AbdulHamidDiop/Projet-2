@@ -16,7 +16,6 @@ import { Events, Namespaces } from '@common/sockets';
 export class HostGameViewComponent implements OnInit {
     game: Game;
     currentQuestion: Question;
-    countdown: number;
     players: Player[];
     stats: QCMStats[];
     statisticsData: BarChartQuestionStats[] = [];
@@ -40,7 +39,7 @@ export class HostGameViewComponent implements OnInit {
             await this.gameManagerService.initialize(gameID);
         }
         this.currentQuestion = this.gameManagerService.nextQuestion();
-        this.countdown = this.timeService.time;
+        // this.countdown = this.timeService.time;
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             console.log('Je m appel gabriel');
@@ -59,6 +58,9 @@ export class HostGameViewComponent implements OnInit {
     //     label: string;
     // }
 
+    get time(): number {
+        return this.timeService.time;
+    }
     updateData(stat: QCMStats): void {
         const index = this.statisticsData.findIndex((questionStat) => questionStat.questionID === stat.questionId);
         if (index >= 0) {

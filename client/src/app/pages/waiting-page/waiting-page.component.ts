@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
+import { Events, Namespaces as nsp } from '@common/sockets';
 
 @Component({
     selector: 'app-waiting-page',
@@ -87,6 +88,9 @@ export class WaitingPageComponent {
         this.socket.gameStartSubscribe().subscribe(() => {
             // alert('Le jeu commence maintenant.');
             if (this.player.isHost) {
+                setTimeout(() => {
+                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                }, 1);
                 this.router.navigate(['/hostView/' + this.game.id]);
             } else {
                 this.router.navigate(['/game/' + this.game.id]);

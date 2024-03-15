@@ -30,6 +30,13 @@ export class GameManagerService {
         this.endGame = false;
     }
 
+    firstQuestion(): Question {
+        if (this.game && this.game.questions[0]) {
+            return this.game.questions[0];
+        }
+        return {} as Question;
+    }
+
     nextQuestion(): Question {
         if (this.game) {
             if (this.currentQuestionIndex + 1 === this.game.questions.length) {
