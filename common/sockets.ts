@@ -28,6 +28,7 @@ export enum Events {
     START_GAME = 'startGame',
     NAME_NOT_AVAILABLE = 'nameNotAvailable',
     GAME_RESULTS = 'gameResults',
+    CHAT_HISTORY = 'chatHistory',
 }
 
 export const LOBBY = '0';
