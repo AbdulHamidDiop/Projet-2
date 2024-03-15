@@ -20,6 +20,7 @@ import { CountdownModalComponent } from './components/countdown-modal/countdown-
 import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
+import { HostGameViewComponent } from './components/host-game-view/host-game-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { PlayerAndAdminPanelComponent } from './components/player-and-admin-panel/player-and-admin-panel.component';
 import { SelectRoomComponent } from './components/select-room/select-room.component';
@@ -65,6 +66,7 @@ import { SocketRoomService } from './services/socket-room.service';
         NavBarComponent,
         CountdownModalComponent,
         StatsTestComponent,
+        HostGameViewComponent,
         ResultsPageComponent,
         BarChartComponent,
         CountdownModalComponent,

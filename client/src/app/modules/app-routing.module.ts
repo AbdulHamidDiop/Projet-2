@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { HostGameViewComponent } from '@app/components/host-game-view/host-game-view.component';
 import { StatsTestComponent } from '@app/components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from '@app/pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from '@app/pages/admin-page/admin-page.component';
@@ -16,6 +17,7 @@ const routes: Routes = [
     { path: 'home', component: WaitingPageComponent },
     { path: 'password', component: MainPageComponent },
     { path: 'game/:id', component: GamePageComponent },
+    { path: 'hostView/:id', component: HostGameViewComponent },
     { path: 'game/:id/results', component: ResultsPageComponent },
     { path: 'results', component: ResultsPageComponent },
     { path: 'createGame', component: CreateGamePageComponent },
