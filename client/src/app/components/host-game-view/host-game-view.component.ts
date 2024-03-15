@@ -18,7 +18,7 @@ export class HostGameViewComponent implements OnInit {
     currentQuestion: Question;
     countdown: number;
     players: Player[];
-    stats: QCMStats[];
+    stats: QCMStats[] = [];
 
     constructor(
         public gameManagerService: GameManagerService,

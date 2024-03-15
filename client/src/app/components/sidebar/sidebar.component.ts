@@ -4,6 +4,7 @@ import { Player } from '@common/game';
 import { ChatMessage, MAX_MESSAGE_LENGTH } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
+import { PlayerService } from './../../services/player.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -18,7 +19,11 @@ export class SidebarComponent implements OnDestroy, OnInit {
     private chatMessagesSubscription: Subscription;
     private chatHistorySubscription: Subscription;
 
-    constructor(private socketsService: SocketRoomService) {
+    constructor(
+        private socketsService: SocketRoomService,
+        private playerService: PlayerService,
+    ) {
+        this.player = this.playerService.player;
         this.socketsService.getChatMessages().subscribe(async (message) => {
             if (message.author === 'room') {
                 this.socketsService.room = message.message;
