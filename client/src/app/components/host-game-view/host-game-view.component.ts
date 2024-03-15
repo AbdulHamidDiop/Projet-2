@@ -18,24 +18,20 @@ export class HostGameViewComponent implements OnInit {
     currentQuestion: Question;
     countdown: number;
     players: Player[];
-    stats: QCMStats[] = [];
+    stats: QCMStats[];
+    statisticsData: { questionID: string; data: { data: number[]; text: string }[] }[] = [];
 
     constructor(
         public gameManagerService: GameManagerService,
-        // public playArea: PlayAreaComponent,
         readonly timeService: TimeService,
         private route: ActivatedRoute,
         private socketService: SocketRoomService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
-            console.log('John');
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {
-            console.log(stat);
-            this.stats.push(stat);
-        });
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {});
     }
 
     async ngOnInit(): Promise<void> {
@@ -46,5 +42,28 @@ export class HostGameViewComponent implements OnInit {
         this.currentQuestion = this.gameManagerService.nextQuestion();
         this.countdown = this.timeService.time;
         console.log(this.currentQuestion);
+    }
+
+    updateData(stat: QCMStats): void {
+        for (const stats of this.statisticsData) {
+            if (stats.questionID === stat.questionId) {
+                if (stat.selected) {
+                    stats.data[stat.choiceIndex - 1].data[0]++;
+                } else {
+                    stats.data[stat.choiceIndex - 1].data[0]--;
+                }
+                return;
+            }
+        }
+        const emptyStats = {
+            questionId: (String = stat.questionId),
+            data: { data: number[]; text: string }[],
+        };
+        for (let i = 1; i <= stat.choiceAmount; i++) {
+            emptyStats.data.push({
+                data: [0],
+                text: i.toString(),
+            });
+        }
     }
 }
