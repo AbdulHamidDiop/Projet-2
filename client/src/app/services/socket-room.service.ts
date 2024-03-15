@@ -172,7 +172,7 @@ export class SocketRoomService {
     }
 
     notifyNextQuestion(): void {
-        this.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+        this.socket.emit(Events.NEXT_QUESTION);
     }
 
     onNextQuestion(): Observable<Question> {
@@ -197,17 +197,16 @@ export class SocketRoomService {
         });
     }
 
-    joinRoomInNamespace(namespace: string): void {
+    joinRoomInNamespace(namespace: string, room: string): void {
         const namespaceSocket = this.connectNamespace(namespace);
-        const room = this.room;
         if (namespaceSocket) {
             namespaceSocket.emit(Events.JOIN_ROOM, { room });
         }
     }
 
-    joinAllNamespaces(): void {
+    joinAllNamespaces(room: string): void {
         for (const namespace of Object.values(Namespaces)) {
-            this.joinRoomInNamespace(namespace);
+            this.joinRoomInNamespace(namespace, room);
         }
     }
 

@@ -16,6 +16,6 @@ export class SelectRoomComponent {
         }
         this.socket.joinRoom(input.value);
         this.socket.room = input.value;
-        this.socket.joinAllNamespaces();
+        this.socket.joinAllNamespaces(input.value);
     }
 }
