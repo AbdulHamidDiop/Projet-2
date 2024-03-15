@@ -5,6 +5,7 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Player, Question } from '@common/game';
 import { QCMStats } from '@common/game-stats';
+import { Events, Namespaces } from '@common/sockets';
 // import { PlayAreaComponent } from '../play-area/play-area.component';
 
 @Component({
@@ -30,9 +31,10 @@ export class HostGameViewComponent implements OnInit {
             this.players = players;
             console.log('John');
         });
-        this.socketService.getStats().subscribe((stat: QCMStats) => {
-            this.stats.push(stat);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {
             console.log(stat);
+            this.stats.push(stat);
         });
     }
 
