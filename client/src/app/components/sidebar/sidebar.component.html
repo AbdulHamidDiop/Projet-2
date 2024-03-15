@@ -2,7 +2,7 @@
     <br />
     <h2 *ngIf="this.player.isHost">Organisateur</h2>
     <h2 *ngIf="!this.player.isHost">Joueur {{ player.name }}</h2>
-    <div #chatContainer class="messages-container" class="scrollable-content">
+    <div #chatContainer class="messages-container scrollable-content">
         <div *ngFor="let message of messages">
             <mat-card>
                 <mat-card-header>

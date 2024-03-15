@@ -34,8 +34,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     nbChoices: number;
     score = 0;
 
-    player: Player;
-
     showPoints: boolean = false;
     showCountDown: boolean = false;
     countDownKey: number = Date.now(); // to force change dete/ctiosn
@@ -64,15 +62,19 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.inTestMode = true;
         }
 
-        this.nextQuestionSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
-            await this.confirmAnswers();
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
-            this.countPointsAndNextQuestion();
-        });
+        if (!this.inTestMode) {
+            this.nextQuestionSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
+                await this.confirmAnswers();
+                if (this.question.type === Type.QCM) {
+                    this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+                }
+                this.countPointsAndNextQuestion();
+            });
 
-        this.endGameSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
-            this.endGame();
-        });
+            this.endGameSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
+                this.endGame();
+            });
+        }
     }
 
     // Devra être changé plus tard.
@@ -109,7 +111,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (gameID) {
             await this.gameManager.initialize(gameID);
         }
-        this.timer = this.gameManager.game.duration as number;
+        this.timer = this.gameManager.game.duration ?? DEFAULT_TIMER;
         this.timeService.startTimer(this.timer);
         this.question = this.gameManager.nextQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
@@ -165,7 +167,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     isChoice(choice: string): boolean {
-        return this.answer.includes(choice);
+        if (this.answer.includes(choice)) {
+            return true;
+        }
+        return false;
     }
 
     async confirmAnswers() {
@@ -173,7 +178,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.timeService.stopTimer();
 
         if (this.inTestMode) {
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.question.type === Type.QCM) {
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            }
             this.countPointsAndNextQuestion();
         }
     }
@@ -197,9 +204,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     notifyNextQuestion() {
         this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
     }
-
     notifyEndGame() {
-        this.gameSocketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
+        this.gameSocketService.sendMessage('leaveRoom' as Events, nsp.GAME);
         this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
@@ -240,7 +246,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.timeService.stopTimer();
                 this.score = 0;
                 this.answer = [];
-                this.router.navigate(['/']);
+                this.router.navigate(this.inTestMode ? ['/createGame'] : ['/']);
             }
         });
     }
@@ -255,6 +261,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
 
+    // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
             this.timeService.stopTimer();

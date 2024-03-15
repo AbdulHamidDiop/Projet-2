@@ -172,7 +172,7 @@ export class SocketRoomService {
     }
 
     notifyNextQuestion(): void {
-        this.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+        this.socket.emit(Events.NEXT_QUESTION);
     }
 
     onNextQuestion(): Observable<Question> {
@@ -197,9 +197,8 @@ export class SocketRoomService {
         });
     }
 
-    joinRoomInNamespace(namespace: string): void {
+    joinRoomInNamespace(namespace: string, room: string): void {
         const namespaceSocket = this.connectNamespace(namespace);
-        const room = this.room;
         if (namespaceSocket) {
             namespaceSocket.emit(Events.JOIN_ROOM, { room });
         }
@@ -207,7 +206,7 @@ export class SocketRoomService {
 
     joinAllNamespaces(): void {
         for (const namespace of Object.values(Namespaces)) {
-            this.joinRoomInNamespace(namespace);
+            this.joinRoomInNamespace(namespace, this.room);
         }
     }
 
@@ -215,8 +214,9 @@ export class SocketRoomService {
     sendMessage(eventName: Events, namespace: Namespaces, payload?: object): void {
         if (namespace !== Namespaces.GLOBAL_NAMESPACE) {
             const namespaceSocket = this.connectNamespace(namespace);
+            const room = this.room;
             if (namespaceSocket) {
-                namespaceSocket.emit(eventName, { room: this.room, ...payload });
+                namespaceSocket.emit(eventName, { room, ...payload });
             }
         }
     }
@@ -224,14 +224,24 @@ export class SocketRoomService {
     listenForMessages(namespace: string, eventName: string): Observable<unknown> {
         const namespaceSocket = this.connectNamespace(namespace);
         return new Observable((observer) => {
-            const messageHandler = (message: unknown) => observer.next(message);
-            namespaceSocket.on(eventName, messageHandler);
+            if (namespaceSocket) {
+                const messageHandler = (message: unknown) => observer.next(message);
+                namespaceSocket.on(eventName, messageHandler);
+
+                // Cleanup
+                return () => {
+                    namespaceSocket.off(eventName, messageHandler);
+                };
+            }
+            return;
         });
     }
 
-    private connectNamespace(namespace: string): Socket {
-        const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
-        this.namespaces.set(namespace, namespaceSocket);
-        return namespaceSocket;
+    private connectNamespace(namespace: string): Socket | undefined {
+        if (!this.namespaces.has(namespace)) {
+            const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
+            this.namespaces.set(namespace, namespaceSocket);
+        }
+        return this.namespaces.get(namespace);
     }
 }

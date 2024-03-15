@@ -43,6 +43,13 @@ export class SocketEvents {
                 timeStamp: new Date().toLocaleTimeString(),
             };
             socket.emit(Events.CHAT_MESSAGE, message); // Sert pour les tests.
+
+            const roomMessage: ChatMessage = {
+                author: 'room',
+                message: room,
+                timeStamp: new Date().toLocaleTimeString(),
+            };
+            socket.emit(Events.CHAT_MESSAGE, roomMessage); // pour recuperer le nom de la room, à changer pour QA
         });
 
         socket.on(Events.JOIN_ROOM, ({ room }) => {

@@ -22,37 +22,29 @@
         <br />
         <mat-card>
             <mat-card-header>
-                <mat-card-title class="column-container">
-                    <p>Votre score : {{ this.playerScore }}</p>
-                    <div *ngIf="showPoints" class="points-animation">
-                        <p class="points-text">+{{ question.points }}</p>
-                    </div>
+                <mat-card-title>
+                    <p>Nom du joueur : organisateur</p>
+                    <p>Score du joueur : {{ this.playerScore }}</p>
                 </mat-card-title>
             </mat-card-header>
             <mat-card-actions align="end">
-                <button mat-button (click)="handleAbort()">
-                    <h3 class="abort-button">Abandonner</h3>
+                <button mat-button routerLink="/createGame">
+                    <h3>Abandonner</h3>
                 </button>
-                <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
-                    <h3 class="confirm-text">Confirmer</h3>
-                </button>
-                <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode || gameManager.endGame" class="confirm-button">
-                    <h3 class="confirm-text">prochaine question</h3>
-                </button>
-                <button mat-button (click)="notifyEndGame()" [disabled]="inTestMode" class="confirm-button">
-                    <h3 class="confirm-text">terminer le jeu</h3>
+                <button mat-button (click)="updateScore()">
+                    <h3>Confirmer</h3>
                 </button>
             </mat-card-actions>
         </mat-card>
     </section>
 
     <br />
-    <mat-selection-list #choices [disabled]="disableChoices">
-        <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
+    <mat-selection-list #choices>
+        <div *ngFor="let choice of question.choices; let index = index">
             <mat-list-item
-                (click)="!disableChoices && handleQCMChoice(choice.text)"
-                (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
-                (keyup)="!disableChoices && $event.stopPropagation()"
+                (click)="handleQCMChoice(choice.text, choice.isCorrect)"
+                (keydown)="$event.stopPropagation(); buttonDetect($event)"
+                (keyup)="$event.stopPropagation()"
                 *ngIf="shouldRender(choice.text)"
             >
                 <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
@@ -64,4 +56,3 @@
         </div>
     </mat-selection-list>
 </div>
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"></app-countdown-modal>
