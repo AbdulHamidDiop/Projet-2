@@ -11,7 +11,6 @@ import { AppReactiveFormsModule } from '@app/modules/reactive-forms.module';
 import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { NgChartsModule } from 'ng2-charts';
 import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
@@ -48,7 +47,6 @@ import { SocketRoomService } from './services/socket-room.service';
         GamePageComponent,
         CreateGamePageComponent,
         MainPageComponent,
-        MaterialPageComponent,
         AdminPageComponent,
         AdminCreateGamePageComponent,
         CreateQuestionDialogComponent,
@@ -86,7 +84,7 @@ import { SocketRoomService } from './services/socket-room.service';
         HttpClientModule,
         NgChartsModule,
     ],
-    providers: [GameService, QuestionsService, SocketRoomService, SocketRoomService],
+    providers: [GameService, QuestionsService, SocketRoomService],
     bootstrap: [AppComponent],
 })
 export class AppModule {}

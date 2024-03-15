@@ -7,7 +7,6 @@ import { QuestionsPageComponent } from '@app/pages/admin-page/questions-page/que
 import { CreateGamePageComponent } from '@app/pages/create-game-page/create-game-page.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
 import { ResultsPageComponent } from '@app/pages/results-page/results-page.component';
 import { WaitingPageComponent } from '@app/pages/waiting-page/waiting-page.component';
 
@@ -24,7 +23,6 @@ const routes: Routes = [
     { path: 'admin/questions', component: QuestionsPageComponent },
     { path: 'admin/createGame', component: AdminCreateGamePageComponent },
     { path: 'admin/createGame/:id', component: AdminCreateGamePageComponent },
-    { path: 'material', component: MaterialPageComponent },
     { path: 'waiting', redirectTo: '/home' },
     { path: '**', redirectTo: '/home' },
 ];

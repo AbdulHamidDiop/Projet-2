@@ -11,9 +11,9 @@ import { IoService } from './ioservice.service';
 })
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService {
+    room: string;
     private socket: Socket;
     private url = 'http://localhost:3000'; // Your Socket.IO server URL
-    private room: string = '0';
     private namespaces: Map<string, Socket> = new Map();
 
     constructor(private io: IoService) {
@@ -148,7 +148,7 @@ export class SocketRoomService {
     }
 
     sendChatMessage(message: ChatMessage) {
-        this.socket.emit(Events.CHAT_MESSAGE, message);
+        this.sendMessage(Events.CHAT_MESSAGE, Namespaces.CHAT_MESSAGES, message);
     }
 
     getChatMessages(): Observable<ChatMessage> {
@@ -172,7 +172,7 @@ export class SocketRoomService {
     }
 
     notifyNextQuestion(): void {
-        this.socket.emit(Events.NEXT_QUESTION);
+        this.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
     }
 
     onNextQuestion(): Observable<Question> {
@@ -197,19 +197,26 @@ export class SocketRoomService {
         });
     }
 
-    joinRoomInNamespace(namespace: string, room: string): void {
+    joinRoomInNamespace(namespace: string): void {
         const namespaceSocket = this.connectNamespace(namespace);
+        const room = this.room;
         if (namespaceSocket) {
             namespaceSocket.emit(Events.JOIN_ROOM, { room });
         }
     }
 
+    joinAllNamespaces(): void {
+        for (const namespace of Object.values(Namespaces)) {
+            this.joinRoomInNamespace(namespace);
+        }
+    }
+
     // eslint-disable-next-line max-params
-    sendMessage(eventName: Events, namespace: Namespaces, room: string, payload?: object): void {
+    sendMessage(eventName: Events, namespace: Namespaces, payload?: object): void {
         if (namespace !== Namespaces.GLOBAL_NAMESPACE) {
             const namespaceSocket = this.connectNamespace(namespace);
             if (namespaceSocket) {
-                namespaceSocket.emit(eventName, { room, ...payload });
+                namespaceSocket.emit(eventName, { room: this.room, ...payload });
             }
         }
     }

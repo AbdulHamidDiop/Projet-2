@@ -25,7 +25,6 @@ export const BONUS_MULTIPLIER = 1.2;
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements OnInit, OnDestroy {
-    socketRoom: string = '0';
     user: Player = {} as Player;
     inTestMode: boolean = false;
     buttonPressed = '';
@@ -160,9 +159,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qcmstat = {
             questionId: this.question.id,
             choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
+            choiceAmount: this.nbChoices,
             selected: !choiceInList,
         };
-        this.gameSocketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.socketRoom, this.qcmstat);
+        this.gameSocketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmstat);
     }
 
     isChoice(choice: string): boolean {
@@ -196,12 +196,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     notifyNextQuestion() {
-        this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME, this.socketRoom);
+        this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
     }
 
     notifyEndGame() {
-        this.gameSocketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME, this.socketRoom);
-        this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME, this.socketRoom);
+        this.gameSocketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
+        this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
     async updateScore() {
@@ -256,7 +256,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
 
-    // TODO : déplacer ceci dans un service de gestion de la souris!
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
             this.timeService.stopTimer();

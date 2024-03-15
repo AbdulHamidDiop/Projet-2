@@ -17,6 +17,14 @@ export class BarChartComponent {
     barChartData: ChartConfiguration<'bar'>['data'] = {
         // labels: [this.labels],
         // datasets: this.datasets,
+        // {'Question 1' :
+        // [
+        //     { data: [2], label: 'Choix 1', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
+        //     { data: [1], label: 'Choix 2', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
+        //     { data: [1], label: 'Choix 3', backgroundColor: 'rgba(0, 255, 0, 0.6)' },
+        //     { data: [1], label: 'Choix 4', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
+        // ],}
+
         labels: ['Question 1'],
         datasets: [
             { data: [2], label: 'Choix 1', backgroundColor: 'rgba(255, 0, 0, 0.6)' },

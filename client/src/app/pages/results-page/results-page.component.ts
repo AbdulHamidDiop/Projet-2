@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-// import { SocketRoomService } from '@app/services/socket-room.service';
-// import { SocketsService } from '@app/services/sockets.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Question } from '@common/game';
+import { QCMStats } from '@common/game-stats';
+import { ChatMessage } from '@common/message';
 import { Player } from '@common/player';
+import { Events, Namespaces } from '@common/sockets';
 
 @Component({
     selector: 'app-results-page',
@@ -14,12 +16,11 @@ export class ResultsPageComponent implements OnInit {
     game: Game;
     players: Player[] = [];
     chatMessages: string[] = [];
-    statisticsData: { data: number[]; label: string }[] = [];
+    statisticsData: QCMStats[] = [];
     currentHistogramIndex: number = 0;
 
     constructor(
-        // private socketsService: SocketsService,
-        // private socketRoomService: SocketRoomService,
+        private socketsService: SocketRoomService,
         public router: Router,
     ) {}
 
@@ -70,14 +71,24 @@ export class ResultsPageComponent implements OnInit {
         return maxNumberAnswered;
     }
 
+    // private updateChoiceCounts(data: { room: string; questionId: string; choiceAmount: number; choiceIndex: number; selected: boolean }): void {
+    //     const key = `${data.questionId}`;
+    //     if (key) {
+    //         if (!this.choiceCounts[key]) {
+    //             this.choiceCounts[key] = new Array(data.choiceAmount).fill(0);
+    //         }
+    //         if (data.selected) {
+    //             this.choiceCounts[key][data.choiceIndex] = (this.choiceCounts[key][data.choiceIndex] || 0) + 1;
+    //         } else {
+    //             this.choiceCounts[key][data.choiceIndex] = (this.choiceCounts[key][data.choiceIndex] || 0) - 1;
+    //         }
+    //     }
+    // }
+
     private connectToServer(): void {
-        // Rejoindre la room et écouter les événements nécessaires
-        // const namespace = 'yourNamespace';
-        // const room = 'O';
-        // this.socketsService.joinRoom(namespace, room);
-        // Écouter les informations des joueurs
+        this.socketsService.joinRoom('0');
         // this.socketsService
-        // .listenForMessages(namespace, 'playerInfo')
+        // .listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS)
         // .pipe(
         //     filter((data): data is Player[] => Array.isArray(data) && data.every((item) => 'name' in item && 'score' in item)),
         //     map((data) => data as Player[]),
@@ -86,13 +97,19 @@ export class ResultsPageComponent implements OnInit {
         //     this.players = players;
         //     this.sortPlayers();
         // });
-        // // Écouter les QCMSTATS
-        // this.socketsService.listenForMessages(namespace, 'QCMSTATS').subscribe((stats) => {
-        //     this.statisticsData.push(stats);
-        // });
-        // Écouter les messages du chat
-        // this.socketRoomService.getChatMessages().subscribe((message: string) => {
-        //     this.chatMessages.push(message);
-        // });
+        // Écouter les QCMSTATS
+        this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe({
+            next: (stats: unknown) => {
+                console.log(stats);
+                this.statisticsData.push(stats as QCMStats);
+            },
+            error: (error) => {
+                console.error('Error receiving QCM_STATS:', error);
+            },
+        });
+
+        this.socketsService.getChatMessages().subscribe((message: ChatMessage) => {
+            this.chatMessages.push(message.message);
+        });
     }
 }
