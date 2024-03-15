@@ -21,6 +21,8 @@ export class SocketEvents {
     listenForEvents(socket: Socket) {
         this.socketIdRoom.set(socket.id, LOBBY);
         this.listenForCreateRoomEvent(socket);
+        this.listenForDeleteRoomEvent(socket);
+        this.listenForJoinRoomEvent(socket);
         this.listenForChatMessageEvent(socket);
         this.listenForSetPlayerNameEvent(socket);
         this.listenForGetPlayerProfileEvent(socket);
@@ -28,8 +30,7 @@ export class SocketEvents {
         this.listenForUnlockRoomEvent(socket);
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
-        this.listenForLeaveRoomEvent(socket);
-        this.listenForDeleteRoomEvent(socket);
+        //        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
         socket.on(Events.CREATE_ROOM, ({ id }) => {
