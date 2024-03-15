@@ -24,11 +24,11 @@ export class WaitingPageComponent {
         readonly router: Router,
     ) {
         this.socket.roomLockedSubscribe().subscribe(() => {
-            alert("La salle d'attente est verrouillée.");
+            // alert("La salle d'attente est verrouillée.");
         });
 
         this.socket.unlockSubscribe().subscribe(() => {
-            alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
+            // alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
         });
 
         this.socket.leaveRoomSubscribe().subscribe(() => {
@@ -85,7 +85,7 @@ export class WaitingPageComponent {
 
     gameStartSubscribe() {
         this.socket.gameStartSubscribe().subscribe(() => {
-            alert('Le jeu commence maintenant.');
+            // alert('Le jeu commence maintenant.');
             if (this.player.isHost) {
                 this.router.navigate(['/hostView/' + this.game.id]);
             } else {

@@ -1,38 +1,22 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { BarChartChoiceStats } from '@common/game-stats';
 import { ChartConfiguration } from 'chart.js';
 
 @Component({
     selector: 'app-bar-chart',
     templateUrl: './bar-chart.component.html',
     styleUrls: ['./bar-chart.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BarChartComponent {
-    // @Input() labels: string = '';
-    // @Input() datasets: { data: number[]; label: string }[] = [];
+export class BarChartComponent implements OnInit {
+    @Input() labels: string = '';
+    @Input() datasets: BarChartChoiceStats[] = [];
     title = 'ng2-charts-demo';
 
     barChartLegend = false;
     barChartPlugins = [];
 
-    barChartData: ChartConfiguration<'bar'>['data'] = {
-        // labels: [this.labels],
-        // datasets: this.datasets,
-        // {'Question 1' :
-        // [
-        //     { data: [2], label: 'Choix 1', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
-        //     { data: [1], label: 'Choix 2', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
-        //     { data: [1], label: 'Choix 3', backgroundColor: 'rgba(0, 255, 0, 0.6)' },
-        //     { data: [1], label: 'Choix 4', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
-        // ],}
-
-        labels: ['Question 1'],
-        datasets: [
-            { data: [2], label: 'Choix 1', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
-            { data: [1], label: 'Choix 2', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
-            { data: [1], label: 'Choix 3', backgroundColor: 'rgba(0, 255, 0, 0.6)' },
-            { data: [1], label: 'Choix 4', backgroundColor: 'rgba(255, 0, 0, 0.6)' },
-        ],
-    };
+    barChartData: ChartConfiguration<'bar'>['data'];
 
     barChartOptions: ChartConfiguration<'bar'>['options'] = {
         responsive: true,
@@ -53,7 +37,19 @@ export class BarChartComponent {
         },
     };
 
-    constructor() {
-        console.log('constructed');
+    ngOnInit(): void {
+        // Initialize the chart data after inputs are received
+        this.barChartData = {
+            labels: [this.labels],
+            datasets: this.datasets,
+        };
+    }
+
+    ngOnChanges(changes: SimpleChanges): void {
+        // Check if the input properties have changed and are not undefined
+        this.barChartData = {
+            labels: [this.labels],
+            datasets: this.datasets,
+        };
     }
 }

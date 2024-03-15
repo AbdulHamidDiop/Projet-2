@@ -4,7 +4,7 @@ import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Player, Question } from '@common/game';
-import { QCMStats } from '@common/game-stats';
+import { BarChartQuestionStats, QCMStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
 // import { PlayAreaComponent } from '../play-area/play-area.component';
 
@@ -19,7 +19,8 @@ export class HostGameViewComponent implements OnInit {
     countdown: number;
     players: Player[];
     stats: QCMStats[];
-    statisticsData: { questionID: string; data: { data: number[]; text: string }[] }[] = [];
+    statisticsData: BarChartQuestionStats[] = [];
+    questionIndex: number = 0;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -31,7 +32,6 @@ export class HostGameViewComponent implements OnInit {
             this.players = players;
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {});
     }
 
     async ngOnInit(): Promise<void> {
@@ -41,29 +41,52 @@ export class HostGameViewComponent implements OnInit {
         }
         this.currentQuestion = this.gameManagerService.nextQuestion();
         this.countdown = this.timeService.time;
-        console.log(this.currentQuestion);
+
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
+            console.log('Je m appel gabriel');
+            this.updateData(stat as QCMStats);
+            console.log(this.statisticsData);
+        });
     }
 
+    // export interface BarChartQuestionStats {
+    //     questionID: string;
+    //     data: BarChartChoiceStats[];
+    // }
+
+    // export interface BarChartChoiceStats {
+    //     data: number[];
+    //     label: string;
+    // }
+
     updateData(stat: QCMStats): void {
-        for (const stats of this.statisticsData) {
-            if (stats.questionID === stat.questionId) {
-                if (stat.selected) {
-                    stats.data[stat.choiceIndex - 1].data[0]++;
-                } else {
-                    stats.data[stat.choiceIndex - 1].data[0]--;
-                }
-                return;
+        const index = this.statisticsData.findIndex((questionStat) => questionStat.questionID === stat.questionId);
+        if (index >= 0) {
+            if (stat.selected) {
+                this.statisticsData[index].data[stat.choiceIndex].data[0]++;
             }
-        }
-        const emptyStats = {
-            questionId: (String = stat.questionId),
-            data: { data: number[]; text: string }[],
-        };
-        for (let i = 1; i <= stat.choiceAmount; i++) {
-            emptyStats.data.push({
-                data: [0],
-                text: i.toString(),
-            });
+            if (!stat.selected) {
+                this.statisticsData[index].data[stat.choiceIndex].data[0]--;
+            }
+        } else {
+            const barChartStat: BarChartQuestionStats = {
+                questionID: stat.questionId,
+                data: [],
+            };
+            for (let i = 1; i <= stat.choiceAmount; i++) {
+                if (i - 1 === stat.choiceIndex) {
+                    barChartStat.data.push({
+                        data: [1],
+                        label: i.toString(),
+                    });
+                } else {
+                    barChartStat.data.push({
+                        data: [0],
+                        label: i.toString(),
+                    });
+                }
+            }
+            this.statisticsData.push(barChartStat);
         }
     }
 }
