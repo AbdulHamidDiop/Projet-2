@@ -18,19 +18,18 @@ export class HostGameViewComponent implements OnInit {
     currentQuestion: Question;
     players: Player[];
     stats: QCMStats[];
+    statisticsData: { questionID: string; data: { data: number[]; text: string }[] }[] = [];
 
     private timer: number;
 
     constructor(
         public gameManagerService: GameManagerService,
-        // public playArea: PlayAreaComponent,
         readonly timeService: TimeService,
         private route: ActivatedRoute,
         private socketService: SocketRoomService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
-            console.log('John');
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {
@@ -54,5 +53,27 @@ export class HostGameViewComponent implements OnInit {
 
     get time(): number {
         return this.timeService.time;
+    }
+    updateData(stat: QCMStats): void {
+        for (const stats of this.statisticsData) {
+            if (stats.questionID === stat.questionId) {
+                if (stat.selected) {
+                    stats.data[stat.choiceIndex - 1].data[0]++;
+                } else {
+                    stats.data[stat.choiceIndex - 1].data[0]--;
+                }
+                return;
+            }
+        }
+        // const emptyStats = {
+        //     questionId: (String = stat.questionId),
+        //     data: { data: number[]; text: string }[],
+        // };
+        // for (let i = 1; i <= stat.choiceAmount; i++) {
+        //     emptyStats.data.push({
+        //         data: [0],
+        //         text: i.toString(),
+        //     });
+        // }
     }
 }

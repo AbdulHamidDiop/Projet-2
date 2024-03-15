@@ -12,6 +12,7 @@ import { Player, Question, Type } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
+import { PlayerService } from './../../services/player.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -25,7 +26,7 @@ export const BONUS_MULTIPLIER = 1.2;
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements OnInit, OnDestroy {
-    user: Player = {} as Player;
+    player: Player;
     inTestMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
@@ -34,31 +35,35 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     nbChoices: number;
     score = 0;
 
-    player: Player;
-
     showPoints: boolean = false;
     showCountDown: boolean = false;
     countDownKey: number = Date.now(); // to force change dete/ctiosn
     disableChoices = false;
     feedback: Feedback[];
     qcmstat: QCMStats;
+    bonusGiven = false;
+    gotBonus = false;
 
     private timer: number;
     private points = 0;
 
     private nextQuestionSubscription: Subscription;
     private endGameSubscription: Subscription;
+    private bonusSubscription: Subscription;
+    private bonusGivenSubscription: Subscription;
 
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
         public gameSocketService: SocketRoomService,
+        private playerService: PlayerService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
         private route: ActivatedRoute,
     ) {
+        this.player = this.playerService.player;
         this.answer = [];
         if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;
@@ -77,6 +82,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.endGameSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
             this.endGame();
+        });
+
+        this.bonusSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
+            this.gotBonus = true;
+        });
+
+        this.bonusGivenSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
+            this.bonusGiven = true;
         });
     }
 
@@ -121,12 +134,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.timeService.stopTimer();
         this.gameManager.reset();
 
-        if (this.nextQuestionSubscription) {
-            this.nextQuestionSubscription.unsubscribe();
-        }
-        if (this.endGameSubscription) {
-            this.endGameSubscription.unsubscribe();
-        }
+        this.nextQuestionSubscription.unsubscribe();
+        this.endGameSubscription.unsubscribe();
+        this.bonusSubscription.unsubscribe();
+        this.bonusGivenSubscription.unsubscribe();
     }
 
     shouldRender(text: string) {
@@ -162,6 +173,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qcmstat = {
             questionId: this.question.id,
             choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
+            correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? -1,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
         };
@@ -207,6 +219,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
+    onFinalAnswer() {
+        if (!this.bonusGiven) {
+            this.gameSocketService.sendMessage(Events.FINAL_ANSWER, nsp.GAME);
+        }
+    }
     async updateScore() {
         if (this.question.type === Type.QRL) {
             this.score += this.question.points;
@@ -220,12 +237,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }, SHOW_FEEDBACK_DELAY);
 
             this.score += this.question.points;
-            if (this.inTestMode) {
+            if (this.inTestMode || this.gotBonus) {
                 this.score *= BONUS_MULTIPLIER;
-                this.user.bonusCount++;
+                this.player.bonusCount++;
             }
 
-            this.user.score = this.score;
+            this.player.score = this.score;
+            this.bonusGiven = false;
+            this.gotBonus = false;
         }
     }
 
@@ -268,7 +287,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     getStyle(choiceText: string): string {
         if (!this.feedback) return '';
-        const feedbackItem = this.feedback.find((f) => f.choice === choiceText);
+        const feedbackItem = this.feedback?.find((f) => f.choice === choiceText);
         if (!feedbackItem) return '';
 
         return feedbackItem.status;

@@ -2,6 +2,7 @@ export interface QCMStats {
     questionId: string;
     choiceAmount: number;
     choiceIndex: number;
+    correctIndex: number;
     selected: boolean;
 }
 
