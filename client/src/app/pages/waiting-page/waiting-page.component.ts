@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
+import { Events, Namespaces as nsp } from '@common/sockets';
 
 @Component({
     selector: 'app-waiting-page',
@@ -24,11 +25,11 @@ export class WaitingPageComponent {
         readonly router: Router,
     ) {
         this.socket.roomLockedSubscribe().subscribe(() => {
-            alert("La salle d'attente est verrouillée.");
+            //alert("La salle d'attente est verrouillée.");
         });
 
         this.socket.unlockSubscribe().subscribe(() => {
-            alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
+            //alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
         });
 
         this.socket.leaveRoomSubscribe().subscribe(() => {
@@ -85,8 +86,11 @@ export class WaitingPageComponent {
 
     gameStartSubscribe() {
         this.socket.gameStartSubscribe().subscribe(() => {
-            alert('Le jeu commence maintenant.');
+            //alert('Le jeu commence maintenant.');
             if (this.player.isHost) {
+                setTimeout(() => {
+                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                }, 1);
                 this.router.navigate(['/hostView/' + this.game.id]);
             } else {
                 this.router.navigate(['/game/' + this.game.id]);

@@ -70,6 +70,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.countPointsAndNextQuestion();
         });
 
+        this.gameSocketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.gameManager.game.duration as number;
+            this.timeService.startTimer(this.timer);
+        });
+
         this.endGameSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
             this.endGame();
         });
@@ -109,8 +114,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (gameID) {
             await this.gameManager.initialize(gameID);
         }
-        this.timer = this.gameManager.game.duration as number;
-        this.timeService.startTimer(this.timer);
         this.question = this.gameManager.nextQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
     }
@@ -138,7 +141,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
-        this.timeService.startTimer(this.timer);
+        this.gameSocketService.sendMessage(Events.START_TIMER, nsp.GAME);
         this.cdr.detectChanges();
     }
 

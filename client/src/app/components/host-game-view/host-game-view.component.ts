@@ -16,9 +16,10 @@ import { Events, Namespaces } from '@common/sockets';
 export class HostGameViewComponent implements OnInit {
     game: Game;
     currentQuestion: Question;
-    countdown: number;
     players: Player[];
     stats: QCMStats[];
+
+    private timer: number;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -36,6 +37,10 @@ export class HostGameViewComponent implements OnInit {
             console.log(stat);
             this.stats.push(stat);
         });
+        this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.gameManagerService.game.duration as number;
+            this.timeService.startTimer(this.timer);
+        });
     }
 
     async ngOnInit(): Promise<void> {
@@ -43,8 +48,11 @@ export class HostGameViewComponent implements OnInit {
         if (gameID) {
             await this.gameManagerService.initialize(gameID);
         }
-        this.currentQuestion = this.gameManagerService.nextQuestion();
-        this.countdown = this.timeService.time;
+        this.currentQuestion = this.gameManagerService.firstQuestion();
         console.log(this.currentQuestion);
+    }
+
+    get time(): number {
+        return this.timeService.time;
     }
 }

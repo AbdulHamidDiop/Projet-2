@@ -136,6 +136,11 @@ export class Server {
                 gameNamespace.in(room).emit(Events.END_GAME);
             });
 
+            socket.on(Events.START_TIMER, ({ room }) => {
+                console.log(`Start timer in room: ${room}`);
+                gameNamespace.in(room).emit(Events.START_TIMER);
+            })
+
             socket.on('disconnect', () => {
                 console.log('User disconnected from game namespace');
             });
