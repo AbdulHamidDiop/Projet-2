@@ -136,11 +136,11 @@ export class Server {
                 gameNamespace.in(room).emit(Events.END_GAME);
             });
 
-            socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
-                console.log(`Final answer received in room: ${room}`);
-                socket.emit(Events.BONUS);
-                socket.to(room).emit(Events.BONUS_GIVEN);
-            });
+                socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
+                    console.log(`Final answer received in room: ${room}`);
+                    socket.emit(Events.BONUS);
+                    socket.to(room).emit(Events.BONUS_GIVEN);
+                });
 
             socket.on('disconnect', () => {
                 console.log('User disconnected from game namespace');
