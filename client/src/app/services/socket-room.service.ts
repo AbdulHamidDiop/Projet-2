@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Game, Player, Question } from '@common/game';
+import { QCMStats } from '@common/game-stats';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
@@ -243,6 +244,14 @@ export class SocketRoomService {
                 };
             }
             return;
+        });
+    }
+
+    getStats(): Observable<QCMStats> {
+        return new Observable((observer) => {
+            this.socket.on(Events.QCM_STATS, (stat) => {
+                observer.next(stat);
+            });
         });
     }
 
