@@ -1,0 +1,16 @@
+mat-card {
+    box-shadow: none !important;
+}
+
+.main-container {
+    overflow: auto;
+    flex: 1 1 auto;
+    max-width: 50%;
+    min-width: 500px;
+    margin-top: 50px;
+}
+
+.main {
+    display: grid;
+    outline: none;
+}

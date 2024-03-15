@@ -1,44 +1,12 @@
-<body>
-    <app-sidebar class="side" id="sidebar2"></app-sidebar>
-
-    <section class="main">
-        <div *ngFor="let play of players">
-            <mat-card>
-                <mat-card-header>
-                    <mat-card-title>
-                        <p>Name : {{ play.name }} Host : {{ play.isHost }} Score: {{ play.score }}</p>
-                    </mat-card-title>
-                </mat-card-header>
-                <mat-card-actions align="end">
-                    <button mat-button (click)="kickPlayer(play.name)">Exclure</button>
-                </mat-card-actions>
-            </mat-card>
-        </div>
-        {{ counter }}
-        <mat-card>
-            <mat-card-actions align="start">
-                <button mat-button (click)="lock()">Verrouiller</button>
-                <button mat-button (click)="unlock()">Déverrouiller</button>
-            </mat-card-actions>
-        </mat-card>
-    </section>
-    <!-- 
-    <section class="main">
-        <div class="scene">
-            <div class="cube-wrapper">
-                <div class="cube">
-                    <div class="cube-faces">
-                        <div class="cube-face shadow"></div>
-                        <div class="cube-face bottom"></div>
-                        <div class="cube-face top"></div>
-                        <div class="cube-face left"></div>
-                        <div class="cube-face right"></div>
-                        <div class="cube-face back"></div>
-                        <div class="cube-face front"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-        -->
-</body>
+<app-nav-bar></app-nav-bar>
+<main *ngIf="this.fullView">
+    <app-select-room *ngIf="this.roomIdEntryView"></app-select-room>
+    <app-select-username *ngIf="this.usernameEntryView"></app-select-username>
+    <app-player-and-admin-panel
+        *ngIf="this.playerPanelView"
+        [players]="this.players"
+        [player]="this.player"
+        [game]="this.game"
+    ></app-player-and-admin-panel>
+    <app-sidebar *ngIf="this.playerPanelView" [player]="this.player" id="sidebar"></app-sidebar>
+</main>

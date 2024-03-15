@@ -3,29 +3,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question, Type } from '@common/game';
+import { validQuestion } from '@common/test-interfaces';
 import { AdminQuestionsBankComponent } from './admin-questions-bank.component';
 
 describe('AdminQuestionsBankComponent', () => {
     let component: AdminQuestionsBankComponent;
     let fixture: ComponentFixture<AdminQuestionsBankComponent>;
-    const validQuestion: Question = {
-        id: '2',
-        type: Type.QCM,
-        text: 'Question valide',
-        points: 10,
-        lastModification: null,
-        choices: [
-            {
-                text: 'Choix valide #1',
-                isCorrect: true,
-            },
-            {
-                text: 'Choix valide #2',
-                isCorrect: false,
-            },
-        ],
-        answer: 'Choix #1',
-    };
     // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async function getAllQuestionsMock(): Promise<Question[]> {
         return [validQuestion];

@@ -1,11 +1,14 @@
 <mat-sidenav-container class="container">
     <br />
-    <div class="handle-scrolling">
+    <h2 *ngIf="this.player.isHost">Organisateur</h2>
+    <h2 *ngIf="!this.player.isHost">Joueur {{ player.name }}</h2>
+    <div #chatContainer class="messages-container" class="scrollable-content">
         <div *ngFor="let message of messages">
             <mat-card>
                 <mat-card-header>
                     <mat-card-title>
-                        <p>{{ message }}</p>
+                        <small>{{ message.author + ' ' + message.timeStamp }}</small>
+                        <p>{{ message.message }}</p>
                     </mat-card-title>
                 </mat-card-header>
             </mat-card>
@@ -16,8 +19,13 @@
     <div>
         <mat-form-field class="example-full-width">
             <mat-label>Clavardage</mat-label>
-            <input #input matInput (keyup)="$event.stopPropagation(); handleKeyboardPress($event, input)"
-                placeholder="Vous pouvez laisser un message ici" [value]="currentMessage" />
+            <input
+                #input
+                matInput
+                (keyup)="$event.stopPropagation(); handleKeyboardPress($event, input)"
+                placeholder="Vous pouvez laisser un message ici, appuyer sur entrée pour envoyer le message."
+                [value]="currentMessage.message"
+            />
         </mat-form-field>
     </div>
 </mat-sidenav-container>

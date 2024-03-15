@@ -15,14 +15,20 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
 import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { PlayerAndAdminPanelComponent } from './components/player-and-admin-panel/player-and-admin-panel.component';
+import { SelectRoomComponent } from './components/select-room/select-room.component';
+import { SelectUsernameComponent } from './components/select-username/select-username.component';
+import { StatsTestComponent } from './components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
 import { CreateGamePageComponent } from './pages/create-game-page/create-game-page.component';
+import { ResultsPageComponent } from './pages/results-page/results-page.component';
 import { WaitingPageComponent } from './pages/waiting-page/waiting-page.component';
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
@@ -57,8 +63,13 @@ import { SocketRoomService } from './services/socket-room.service';
         AdminQuestionsBankComponent,
         ConfirmDialogComponent,
         NavBarComponent,
+        CountdownModalComponent,
+        StatsTestComponent,
+        SelectRoomComponent,
+        SelectUsernameComponent,
+        PlayerAndAdminPanelComponent,
+        ResultsPageComponent,
     ],
-    // eslint-disable-next-line prettier/prettier
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
     providers: [GameService, QuestionsService, SocketRoomService],
     bootstrap: [AppComponent],

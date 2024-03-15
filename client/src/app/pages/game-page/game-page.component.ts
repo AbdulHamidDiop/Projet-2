@@ -11,8 +11,6 @@ export class GamePageComponent implements OnInit {
     constructor(public socketService: SocketRoomService) {}
 
     ngOnInit() {
-        this.socketService.onMessage().subscribe((message) => {
-            this.messages.push(message);
-        });
+        this.messages = [];
     }
 }

@@ -8,12 +8,12 @@ export class TimeService {
     private interval: number | undefined;
     private readonly tick = 1000;
 
-    private counter = 0;
+    private counter: number;
 
     get time() {
         return this.counter;
     }
-    private set time(newTime: number) {
+    set time(newTime: number) {
         this.counter = newTime;
     }
 

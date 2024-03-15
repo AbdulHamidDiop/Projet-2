@@ -17,6 +17,8 @@ export class Application {
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
+    // Les paramètres sont nécessaires pour configurer les routes.
+    // eslint-disable-next-line max-params
     constructor(
         private readonly dateController: DateController,
         private readonly adminController: AdminController,

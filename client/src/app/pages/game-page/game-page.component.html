@@ -2,26 +2,10 @@
 
 <main>
     <div class="container">
-        <!-- <section class="play-area-container">
+        <section class="play-area-container">
             <app-play-area class="play-area" tabindex="0"></app-play-area>
-        </section> 
+        </section>
         <app-sidebar id="sidebar"></app-sidebar>
-    -->
-
-        <input type="text" #roomCreateInput placeholder="Enter room name" />
-        <button (click)="socketService.createRoom(roomCreateInput.value)">Create Room</button>
-
-        <input type="text" #roomJoinInput placeholder="Enter room name" />
-        <button (click)="socketService.joinRoom(roomJoinInput.value)">Join Room</button>
-
-        <input type="text" #messageInput placeholder="Enter message" />
-        <button (click)="socketService.sendMessage(messageInput.value)">Send Message</button>
-        Messages :
-        <ul>
-            <div *ngFor="let message of messages">
-                <li>{{ message }}</li>
-            </div>
-        </ul>
     </div>
 </main>
 
