@@ -55,15 +55,15 @@ export class HostGameViewComponent implements OnInit {
                 return;
             }
         }
-        const emptyStats = {
-            questionId: (String = stat.questionId),
-            data: { data: number[]; text: string }[],
-        };
-        for (let i = 1; i <= stat.choiceAmount; i++) {
-            emptyStats.data.push({
-                data: [0],
-                text: i.toString(),
-            });
-        }
+        // const emptyStats = {
+        //     questionId: (String = stat.questionId),
+        //     data: { data: number[]; text: string }[],
+        // };
+        // for (let i = 1; i <= stat.choiceAmount; i++) {
+        //     emptyStats.data.push({
+        //         data: [0],
+        //         text: i.toString(),
+        //     });
+        // }
     }
 }
