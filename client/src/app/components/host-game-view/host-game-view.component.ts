@@ -22,20 +22,15 @@ export class HostGameViewComponent implements OnInit {
 
     constructor(
         public gameManagerService: GameManagerService,
-        // public playArea: PlayAreaComponent,
         readonly timeService: TimeService,
         private route: ActivatedRoute,
         private socketService: SocketRoomService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
-            console.log('John');
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {
-            console.log(stat);
-            this.stats.push(stat);
-        });
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: any) => {});
     }
 
     async ngOnInit(): Promise<void> {
