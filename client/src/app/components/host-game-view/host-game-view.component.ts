@@ -19,6 +19,7 @@ export class HostGameViewComponent implements OnInit {
     countdown: number;
     players: Player[];
     stats: QCMStats[];
+    statisticsData: { questionID: string; data: { data: number[]; text: string }[] }[] = [];
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -46,5 +47,28 @@ export class HostGameViewComponent implements OnInit {
         this.currentQuestion = this.gameManagerService.nextQuestion();
         this.countdown = this.timeService.time;
         console.log(this.currentQuestion);
+    }
+
+    updateData(stat: QCMStats): void {
+        for (const stats of this.statisticsData) {
+            if (stats.questionID === stat.questionId) {
+                if (stat.selected) {
+                    stats.data[stat.choiceIndex - 1].data[0]++;
+                } else {
+                    stats.data[stat.choiceIndex - 1].data[0]--;
+                }
+                return;
+            }
+        }
+        const emptyStats = {
+            questionId: (String = stat.questionId),
+            data: { data: number[]; text: string }[],
+        };
+        for (let i = 1; i <= stat.choiceAmount; i++) {
+            emptyStats.data.push({
+                data: [0],
+                text: i.toString(),
+            });
+        }
     }
 }
