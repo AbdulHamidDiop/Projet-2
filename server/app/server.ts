@@ -68,6 +68,7 @@ export class Server {
 
             // Listener for messages sent within a room of the chatMessages namespace
             socket.on(Events.CHAT_MESSAGE, (data) => {
+                console.log(this.liveRooms);
                 console.log(`Message received for room ${data.room}:`, data);
                 socket.to(data.room).emit(Events.CHAT_MESSAGE, data);
 
