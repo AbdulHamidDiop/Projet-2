@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
-import { ChatMessage, Game, Player, Question } from '@common/game';
+import { Game, Player, Question } from '@common/game';
+import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
-import { Observable, from } from 'rxjs';
-import { catchError, switchMap } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
 import { IoService } from './ioservice.service';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 @Injectable({
     providedIn: 'root',
@@ -198,31 +197,27 @@ export class SocketRoomService {
         });
     }
 
-    joinRoomInNamespace(namespace: string, room: string): Observable<void> {
-        return this.ensureNamespaceConnected(namespace).pipe(
-            switchMap((socket: Socket) => {
-                return new Observable<void>((observer) => {
-                    socket.emit(Events.JOIN_ROOM, { room }, (response: unknown) => {
-                        if (response.success) {
-                            observer.next();
-                            observer.complete();
-                        } else {
-                            observer.error(new Error('Failed to join room'));
-                        }
-                    });
+    async joinRoomInNamespace(namespace: string, room: string): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const namespaceSocket = this.connectNamespace(namespace);
+            if (namespaceSocket) {
+                namespaceSocket.emit(Events.JOIN_ROOM, { room }, (response: unknown) => {
+                    if (response && (response as { success: boolean }).success) {
+                        resolve();
+                    } else {
+                        reject(new Error('Failed to join room'));
+                    }
                 });
-            }),
-            catchError((error) => {
-                console.error(`Error joining room in namespace ${namespace}`, error);
-                throw error;
-            }),
-        );
+            } else {
+                reject(new Error('Namespace socket is undefined'));
+            }
+        });
     }
 
-    joinAllNamespaces(room: string): Observable<void> {
-        this.room = room; // Store the room globally within the service for later use.
-        const joinObservables = Object.values(Namespaces).map((namespace) => this.joinRoomInNamespace(namespace, room));
-        return from(joinObservables).pipe(switchMap((obs) => obs)); // Execute all join operations.
+    async joinAllNamespaces(room: string): Promise<void[]> {
+        this.room = room;
+        const promises = Object.values(Namespaces).map(async (namespace) => this.joinRoomInNamespace(namespace, room));
+        return Promise.all(promises);
     }
 
     sendMessage(eventName: Events, namespace: Namespaces, payload?: object): void {
@@ -238,31 +233,24 @@ export class SocketRoomService {
     listenForMessages(namespace: string, eventName: string): Observable<unknown> {
         const namespaceSocket = this.connectNamespace(namespace);
         return new Observable((observer) => {
-            const messageHandler = (message: unknown) => observer.next(message);
-            namespaceSocket.on(eventName, messageHandler);
+            if (namespaceSocket) {
+                const messageHandler = (message: unknown) => observer.next(message);
+                namespaceSocket.on(eventName, messageHandler);
+
+                // Cleanup
+                return () => {
+                    namespaceSocket.off(eventName, messageHandler);
+                };
+            }
+            return;
         });
     }
 
-    private connectNamespace(namespace: string): Socket {
-        const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
-        this.namespaces.set(namespace, namespaceSocket);
-        return namespaceSocket;
-    }
-
-    private ensureNamespaceConnected(namespace: string): Observable<Socket> {
+    private connectNamespace(namespace: string): Socket | undefined {
         if (!this.namespaces.has(namespace)) {
-            const connectionObservable = new Observable<Socket>((observer) => {
-                const socket = this.io.io(`${this.url}/${namespace}`);
-                socket.on('connect', () => {
-                    observer.next(socket);
-                    observer.complete();
-                });
-                socket.on('connect_error', (error) => {
-                    observer.error(error);
-                });
-            });
-            this.namespaces.set(namespace, connectionObservable as unknown);
+            const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
+            this.namespaces.set(namespace, namespaceSocket);
         }
-        return this.namespaces.get(namespace) as unknown as Observable<Socket<DefaultEventsMap, DefaultEventsMap>>;
+        return this.namespaces.get(namespace);
     }
 }

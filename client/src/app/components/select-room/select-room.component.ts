@@ -9,17 +9,19 @@ const MAX_CHARACTERS = 4;
 })
 export class SelectRoomComponent {
     constructor(private socket: SocketRoomService) {}
-    joinRoom(input: HTMLInputElement) {
-        const roomId = input.value;
+    async joinRoom(input: HTMLInputElement) {
         input.value = input.value.replace(/\D/g, '');
         if (input.value.length > MAX_CHARACTERS) {
             input.value = input.value.slice(0, MAX_CHARACTERS);
         }
-        this.socket.joinRoom(roomId);
-        this.socket.room = roomId;
-        this.socket.joinAllNamespaces(roomId).subscribe({
-            next: () => console.log(`Successfully joined ${roomId} in all namespaces`),
-            error: (error) => console.error(`Error joining ${roomId} in all namespaces`, error),
-        });
+        this.socket.joinRoom(input.value);
+        this.socket.room = input.value;
+        try {
+            await this.socket.joinAllNamespaces(input.value);
+            // Proceed to the next step after successful connection and room joining
+        } catch (error) {
+            console.error('Failed to join room in all namespaces', error);
+            // Handle error (e.g., show error message to the user)
+        }
     }
 }
