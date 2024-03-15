@@ -56,9 +56,39 @@ export class Server {
     }
 
     private configureStaticNamespaces(): void {
+        const chatNamespace = this.io.of(`/${Namespaces.CHAT_MESSAGES}`);
         const waitingRoomNamespace = this.io.of(`/${Namespaces.WAITING_ROOM}`);
         const gameStatsNamespace = this.io.of(`/${Namespaces.GAME_STATS}`);
         const gameNamespace = this.io.of(`/${Namespaces.GAME}`);
+
+        chatNamespace.on('connection', (socket) => {
+            // Listener for joining a room within the chatMessages namespace
+            this.setupDefaultJoinRoomEvent(socket);
+            console.log('A user connected to the chatMessages namespace');
+
+            // Listener for messages sent within a room of the chatMessages namespace
+            socket.on(Events.CHAT_MESSAGE, (data) => {
+                console.log(`Message received for room ${data.room}:`, data);
+                socket.to(data.room).emit(Events.CHAT_MESSAGE, data);
+
+                const chatMessage: ChatMessage = { author: data.author, message: data.message, timeStamp: data.timeStamp };
+                if (!this.chatHistories.has(data.room)) this.chatHistories.set(data.room, [chatMessage]);
+                else this.chatHistories.set(data.room, this.chatHistories.get(data.room).concat(chatMessage));
+            });
+
+            // Listener for chat history requests
+            socket.on(Events.CHAT_HISTORY, (data) => {
+                console.log(`Chat history requested for room: ${data.room}`);
+                const chatHistory = this.chatHistories.get(data.room) || [];
+                socket.emit(Events.CHAT_HISTORY, chatHistory);
+            });
+
+            // Handling user disconnection
+            socket.on('disconnect', () => {
+                console.log('User disconnected from chatMessages namespace');
+            });
+        });
+
         waitingRoomNamespace.on('connection', (socket) => {
             this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.JOIN_ROOM, ({ room, username }) => {
@@ -113,7 +143,7 @@ export class Server {
 
     private setupDefaultJoinRoomEvent(socket: Socket) {
         socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
-            if (!room || !this.liveRooms.includes(room)) return;
+            // if (!room || !this.liveRooms.includes(room)) return;
 
             socket.join(room);
             console.log(`Socket ${socket.id} joined room: ${room}`);
