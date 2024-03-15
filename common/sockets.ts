@@ -12,7 +12,6 @@ export enum Events {
     JOIN_ROOM = 'joinRoom',
     CONNECTION = 'connection',
     CHAT_MESSAGE = 'chatMessage',
-    CHAT_HISTORY = 'chatHistory',
     WAITING_ROOM_NOTIFICATION = 'waitingRoomNotification',
     QCM_STATS = 'qcmStats',
     QRL_STATS = 'qrlStats',
