@@ -138,7 +138,7 @@ export class SocketRoomService {
     }
 
     sendPlayerName(name: string): void {
-        this.socket.emit(Events.SET_PLAYER_NAME, name);
+        this.socket.emit(Events.SET_PLAYER_NAME, { name });
     }
 
     disconnect(): void {
@@ -172,7 +172,7 @@ export class SocketRoomService {
     }
 
     notifyNextQuestion(): void {
-        this.socket.emit(Events.NEXT_QUESTION);
+        this.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
     }
 
     onNextQuestion(): Observable<Question> {

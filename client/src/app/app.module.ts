@@ -11,14 +11,16 @@ import { AppReactiveFormsModule } from '@app/modules/reactive-forms.module';
 import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
-import { MaterialPageComponent } from '@app/pages/material-page/material-page.component';
+import { NgChartsModule } from 'ng2-charts';
 import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
+import { BarChartComponent } from './components/bar-chart/bar-chart.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
 import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
 import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
+import { HostGameViewComponent } from './components/host-game-view/host-game-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { PlayerAndAdminPanelComponent } from './components/player-and-admin-panel/player-and-admin-panel.component';
 import { SelectRoomComponent } from './components/select-room/select-room.component';
@@ -46,7 +48,6 @@ import { SocketRoomService } from './services/socket-room.service';
         GamePageComponent,
         CreateGamePageComponent,
         MainPageComponent,
-        MaterialPageComponent,
         AdminPageComponent,
         AdminCreateGamePageComponent,
         CreateQuestionDialogComponent,
@@ -65,12 +66,26 @@ import { SocketRoomService } from './services/socket-room.service';
         NavBarComponent,
         CountdownModalComponent,
         StatsTestComponent,
+        HostGameViewComponent,
+        ResultsPageComponent,
+        BarChartComponent,
+        CountdownModalComponent,
+        StatsTestComponent,
         SelectRoomComponent,
         SelectUsernameComponent,
         PlayerAndAdminPanelComponent,
         ResultsPageComponent,
     ],
-    imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
+    imports: [
+        AppMaterialModule,
+        AppRoutingModule,
+        AppReactiveFormsModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        NgChartsModule,
+    ],
     providers: [GameService, QuestionsService, SocketRoomService],
     bootstrap: [AppComponent],
 })

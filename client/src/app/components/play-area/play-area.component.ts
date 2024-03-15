@@ -159,6 +159,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qcmstat = {
             questionId: this.question.id,
             choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
+            choiceAmount: this.nbChoices,
             selected: !choiceInList,
         };
         this.gameSocketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmstat);

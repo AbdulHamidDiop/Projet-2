@@ -1,3 +1,69 @@
-<main>
-    <app-sidebar></app-sidebar>
-</main>
+<div class="results-page">
+    <!-- Affichage des joueurs sur le podium (3 premiers joueurs avec le plus de points) -->
+    <div class="podium">
+        <h2>Podium</h2>
+        <ng-container *ngIf="false">
+            <div class="podium-players">
+                <!-- Affichage du premier joueur sur le podium -->
+                <div class="podium-player">
+                    <h3>1er place</h3>
+                    <p>{{ players[0].name }} - Score: {{ players[0].score }}</p>
+                </div>
+                <!-- Affichage du deuxième joueur sur le podium -->
+                <div class="podium-player">
+                    <h3>2e place</h3>
+                    <p>{{ players[1].name }} - Score: {{ players[1].score }}</p>
+                </div>
+                <!-- Affichage du troisième joueur sur le podium -->
+                <div class="podium-player">
+                    <h3>3e place</h3>
+                    <p>{{ players[2].name }} - Score: {{ players[2].score }}</p>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+    <!-- Affichage de la liste des joueurs -->
+    <div class="players-list">
+        <h2>Liste des joueurs</h2>
+        <ul>
+            <li *ngFor="let player of players">
+                {{ player.name }} - Score: {{ player.score }} - Bonus: <span class="bonus-count">{{ player.bonusCount }}</span>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Zone de clavardage a relier a la vraie zone de clavardage-->
+    <div class="chat-area">
+        <h2>Clavardage</h2>
+        <ul>
+            <li *ngFor="let message of chatMessages">
+                {{ message }}
+            </li>
+        </ul>
+    </div>
+
+    <div class="results-page">
+        <!-- Affichage des histogrammes -->
+        <div class="histogram-area">
+            <h2>Histogrammes</h2>
+            <div class="histograms">
+                <!-- Affichage de l'histogramme actuel -->
+                <div class="histogram">
+                    <!-- [labels]="game.questions[currentHistogramIndex].text" [datasets]="statisticsData" -->
+                    <app-bar-chart></app-bar-chart>
+                </div>
+            </div>
+            <!-- Boutons pour afficher l'histogramme précédent et suivant -->
+            <div class="controls">
+                <button (click)="showPreviousHistogram()">Précédent</button>
+                <button (click)="showNextHistogram()">Suivant</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton pour revenir à la vue initiale -->
+    <div class="return-button">
+        <button (click)="returnToInitialView()">Retour à la page principale</button>
+    </div>
+</div>
