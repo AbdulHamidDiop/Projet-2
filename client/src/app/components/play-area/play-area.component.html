@@ -36,7 +36,8 @@
                 <button mat-button (click)="confirmAnswers()" [disabled]="disableChoices" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
-                <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode || gameManager.endGame" class="confirm-button">
+                <button mat-button (click)="notifyNextQuestion()" [disabled]="inTestMode || gameManager.endGame"
+                    class="confirm-button">
                     <h3 class="confirm-text">prochaine question</h3>
                 </button>
                 <button mat-button (click)="notifyEndGame()" [disabled]="inTestMode" class="confirm-button">
@@ -49,12 +50,9 @@
     <br />
     <mat-selection-list #choices [disabled]="disableChoices">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
-            <mat-list-item
-                (click)="!disableChoices && handleQCMChoice(choice.text)"
+            <mat-list-item (click)="!disableChoices && handleQCMChoice(choice.text)"
                 (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
-                (keyup)="!disableChoices && $event.stopPropagation()"
-                *ngIf="shouldRender(choice.text)"
-            >
+                (keyup)="!disableChoices && $event.stopPropagation()" *ngIf="shouldRender(choice.text)">
                 <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
                     <span>
                         Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>

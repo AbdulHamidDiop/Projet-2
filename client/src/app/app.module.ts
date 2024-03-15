@@ -15,10 +15,13 @@ import { MaterialPageComponent } from '@app/pages/material-page/material-page.co
 import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
 import { ConfirmDialogComponent } from './components/confirm-dialog/confirm-dialog.component';
+import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
 import { CreateQuestionDialogComponent } from './components/create-question-dialog/create-question-dialog.component';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
+import { HostGameViewComponent } from './components/host-game-view/host-game-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
+import { StatsTestComponent } from './components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
@@ -27,8 +30,6 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
-import { CountdownModalComponent } from './components/countdown-modal/countdown-modal.component';
-import { StatsTestComponent } from './components/stats-test/stats-test.component';
 
 /**
  * Main module that is used in main.ts.
@@ -61,6 +62,7 @@ import { StatsTestComponent } from './components/stats-test/stats-test.component
         NavBarComponent,
         CountdownModalComponent,
         StatsTestComponent,
+        HostGameViewComponent,
     ],
     // eslint-disable-next-line prettier/prettier
     imports: [AppMaterialModule, AppRoutingModule, AppReactiveFormsModule, BrowserAnimationsModule, BrowserModule, FormsModule, HttpClientModule],
