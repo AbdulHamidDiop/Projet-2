@@ -240,6 +240,8 @@ export class SocketEvents {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
                         socket.emit(Events.START_GAME);
+                        socket.to(room).emit(Events.GET_PLAYERS, players);
+                        socket.emit(Events.GET_PLAYERS, players);
                     } else {
                         socket.emit(Events.UNLOCK_ROOM);
                     }

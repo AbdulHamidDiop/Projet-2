@@ -109,7 +109,7 @@ export class Server {
 
             socket.on(Events.QCM_STATS, (data) => {
                 console.log(`Stats received for room ${data.room}:`, data);
-                gameStatsNamespace.to(data.room).emit(Events.QCM_STATS, data);
+                socket.to(data.room).emit(Events.QCM_STATS, data);
             });
 
             socket.on(Events.QRL_STATS, (data) => {

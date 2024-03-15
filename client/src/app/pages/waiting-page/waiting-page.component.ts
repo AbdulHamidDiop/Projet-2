@@ -87,7 +87,7 @@ export class WaitingPageComponent {
         this.socket.gameStartSubscribe().subscribe(() => {
             alert('Le jeu commence maintenant.');
             if (this.player.isHost) {
-                this.router.navigate(['/game/' + this.game.id + '/results']);
+                this.router.navigate(['/hostView/' + this.game.id]);
             } else {
                 this.router.navigate(['/game/' + this.game.id]);
             }

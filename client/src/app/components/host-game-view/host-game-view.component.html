@@ -2,8 +2,6 @@
 
 <main>
     <mat-grid-list cols="4" rowHeight="50vh">
-
-
         <mat-grid-tile [colspan]="3" [rowspan]="1" [style.background]="'lightblue'">
             <div id="grid-container">
                 <section id="question-container">
@@ -43,22 +41,22 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="2" [style.background]="'green'">
-            <app-sidebar>
-            </app-sidebar>
+            <app-sidebar> </app-sidebar>
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="1" [style.background]="'yellow'">
             <h1>Liste des joueurs</h1>
+            <div *ngFor="let player of players">
+                <p>{{ player.name }}</p>
+                <p>Score : {{ player.score }}</p>
+            </div>
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="2" [rowspan]="1" [style.background]="'violet'">
             <h1>Zone Statistiques</h1>
         </mat-grid-tile>
-
-
     </mat-grid-list>
 </main>
-
 
 <footer class="footer-item">
     <h4 class="team-name">Équipe 312</h4>

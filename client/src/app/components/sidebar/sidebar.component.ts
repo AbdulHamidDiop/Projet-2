@@ -22,6 +22,7 @@ export class SidebarComponent implements OnDestroy, OnInit {
         this.socketsService.getChatMessages().subscribe(async (message) => {
             if (message.author === 'room') {
                 this.socketsService.room = message.message;
+                console.log(message.message);
                 try {
                     await this.socketsService.joinAllNamespaces(message.message);
                     // Proceed to the next step after successful connection and room joining

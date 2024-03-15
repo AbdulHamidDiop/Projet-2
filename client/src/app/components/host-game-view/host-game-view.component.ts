@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
-import { Game, Question } from '@common/game';
+import { Game, Player, Question } from '@common/game';
+import { QCMStats } from '@common/game-stats';
+import { Events, Namespaces } from '@common/sockets';
 // import { PlayAreaComponent } from '../play-area/play-area.component';
 
 @Component({
@@ -14,13 +17,24 @@ export class HostGameViewComponent implements OnInit {
     game: Game;
     currentQuestion: Question;
     countdown: number;
+    players: Player[];
+    stats: QCMStats[];
 
     constructor(
         public gameManagerService: GameManagerService,
         // public playArea: PlayAreaComponent,
         readonly timeService: TimeService,
         private route: ActivatedRoute,
-    ) {}
+        private socketService: SocketRoomService,
+    ) {
+        this.socketService.getPlayers().subscribe((players: Player[]) => {
+            this.players = players;
+        });
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
+            this.stats.push(stat as QCMStats);
+            console.log(stat);
+        });
+    }
 
     async ngOnInit(): Promise<void> {
         const gameID = this.route.snapshot.paramMap.get('id');
