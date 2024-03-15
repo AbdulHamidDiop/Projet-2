@@ -138,7 +138,7 @@ export class SocketRoomService {
     }
 
     sendPlayerName(name: string): void {
-        this.socket.emit(Events.SET_PLAYER_NAME, name);
+        this.socket.emit(Events.SET_PLAYER_NAME, { name });
     }
 
     disconnect(): void {
