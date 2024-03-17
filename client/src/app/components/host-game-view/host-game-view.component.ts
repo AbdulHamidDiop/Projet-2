@@ -29,6 +29,10 @@ export class HostGameViewComponent implements OnInit {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
         });
+        this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.gameManagerService.game.duration as number;
+            this.timeService.startTimer(this.timer);
+        });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
 
@@ -47,7 +51,7 @@ export class HostGameViewComponent implements OnInit {
     }
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
-        this.currentQuestion = this.gameManagerService.nextQuestion();
+        this.currentQuestion = this.gameManagerService.firstQuestion();
         // this.countdown = this.timeService.time;
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {

@@ -55,16 +55,9 @@
         <mat-grid-tile [colspan]="2" [rowspan]="1" [style.background]="'violet'">
             <h1>Zone Statistiques</h1>
             <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                <app-bar-chart [labels]="currentQuestion.text" [datasets]="statisticsData[questionIndex].data"></app-bar-chart>
+                <app-bar-chart [labels]="currentQuestion.text"
+                    [datasets]="statisticsData[questionIndex].data"></app-bar-chart>
             </ng-container>
         </mat-grid-tile>
     </mat-grid-list>
 </main>
-
-<footer class="footer-item">
-    <h4 class="team-name">Équipe 312</h4>
-    <p>
-        <span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
-        <span>Youva</span>
-    </p>
-</footer>
