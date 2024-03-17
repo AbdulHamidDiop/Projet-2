@@ -215,15 +215,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
 
-    notifyNextQuestion() {
-        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
-    }
-
-    notifyEndGame() {
-        this.socketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
-        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
-    }
-
     onFinalAnswer() {
         if (!this.bonusGiven) {
             this.socketService.sendMessage(Events.FINAL_ANSWER, nsp.GAME);

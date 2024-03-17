@@ -4,7 +4,7 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Player, Question } from '@common/game';
 import { BarChartQuestionStats, QCMStats } from '@common/game-stats';
-import { Events, Namespaces } from '@common/sockets';
+import { Events, Namespaces as nsp } from '@common/sockets';
 // import { PlayAreaComponent } from '../play-area/play-area.component';
 
 @Component({
@@ -29,7 +29,7 @@ export class HostGameViewComponent implements OnInit {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+        this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManagerService.game.duration as number;
             this.timeService.startTimer(this.timer);
         });
@@ -51,10 +51,11 @@ export class HostGameViewComponent implements OnInit {
     }
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
-        this.currentQuestion = this.gameManagerService.firstQuestion();
+        this.currentQuestion = this.gameManagerService.nextQuestion();
+
         // this.countdown = this.timeService.time;
 
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
+        this.socketService.listenForMessages(nsp.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             console.log('Je m appel gabriel');
             this.updateData(stat as QCMStats);
             console.log(this.statisticsData);
@@ -100,5 +101,15 @@ export class HostGameViewComponent implements OnInit {
             }
             this.statisticsData.push(barChartStat);
         }
+    }
+
+    notifyNextQuestion() {
+        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
+        this.currentQuestion = this.gameManagerService.nextQuestion();
+    }
+
+    notifyEndGame() {
+        this.socketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
+        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 }
