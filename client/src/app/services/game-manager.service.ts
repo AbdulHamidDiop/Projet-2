@@ -3,23 +3,25 @@ import { API_URL } from '@common/consts';
 import { Feedback } from '@common/feedback';
 import { Game, Question } from '@common/game';
 import { FetchService } from './fetch.service';
-import { GameService } from './game.service';
+import { GameSessionService } from './game-session.service';
 
 @Injectable({
     providedIn: 'root', // SPRINT 2: might have to not be a singleton
 })
 export class GameManagerService {
     game: Game;
+    gamePin: string;
     currentQuestionIndex: number = 0;
     endGame: boolean = false;
 
     constructor(
-        private gameService: GameService,
+        private gameSessionService: GameSessionService,
         private fetchService: FetchService,
     ) {}
 
-    async initialize(gameID: string) {
-        const game = await this.gameService.getQuestionsWithoutCorrectShown(gameID);
+    async initialize(pin: string) {
+        this.gamePin = pin;
+        const game = await this.gameSessionService.getQuestionsWithoutCorrectShown(pin);
         if (game) {
             this.game = game;
         }
@@ -50,17 +52,17 @@ export class GameManagerService {
     }
 
     async isCorrectAnswer(answer: string[], questionID: string): Promise<boolean> {
-        return await this.gameService.checkAnswer(answer, this.game.id, questionID);
+        return await this.gameSessionService.checkAnswer(answer, this.gamePin, questionID);
     }
 
     async getFeedBack(questionId: string, answer: string[]): Promise<Feedback[]> {
-        const response = await this.fetchService.fetch(API_URL + 'game/feedback', {
+        const response = await this.fetchService.fetch(API_URL + 'gameSession/feedback', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ gameID: this.game.id, questionID: questionId, submittedAnswers: answer }),
+            body: JSON.stringify({ sessionPin: this.gamePin, questionID: questionId, submittedAnswers: answer }),
         });
         const feedback = await response.json();
         return feedback;

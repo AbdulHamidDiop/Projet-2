@@ -25,8 +25,8 @@ export class SocketRoomService {
         return this.socket.connected;
     }
 
-    createRoom(gameId: string) {
-        this.socket.emit(Events.CREATE_ROOM, { id: gameId });
+    createRoom(game: Game) {
+        this.socket.emit(Events.CREATE_ROOM, { game });
     }
 
     joinRoom(roomId: string) {
