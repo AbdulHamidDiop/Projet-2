@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { GameSessionService } from '@app/services/game-session.service';
 import { Game, GameService } from '@app/services/game.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { PlayerService } from './../../services/player.service';
 
 @Component({
     selector: 'app-game-list',
@@ -11,11 +12,13 @@ import { PlayerService } from './../../services/player.service';
 })
 export class GameListComponent implements OnInit {
     games: Game[];
+    // eslint-disable-next-line max-params
     constructor(
         public gameService: GameService,
+        public gameSessionService: GameSessionService,
         public router: Router,
         public socket: SocketRoomService,
-        private PlayerService: PlayerService,
+        private playerService: PlayerService,
     ) {}
 
     async ngOnInit() {
@@ -39,9 +42,13 @@ export class GameListComponent implements OnInit {
     }
 
     launchGame(game: Game) {
-        this.PlayerService.player.isHost = true;
-        this.PlayerService.player.name = 'Organisateur';
-        this.socket.createRoom(game.id);
+        this.playerService.player.isHost = true;
+        this.playerService.player.name = 'Organisateur';
+        this.socket.createRoom(game);
         this.router.navigate(['/waiting']);
+    }
+
+    async launchTestGame(game: Game) {
+        await this.gameSessionService.createSession(game.id, game);
     }
 }

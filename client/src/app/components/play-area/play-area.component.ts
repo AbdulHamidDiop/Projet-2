@@ -19,6 +19,7 @@ export const DEFAULT_HEIGHT = 200;
 export const SHOW_FEEDBACK_DELAY = 3000;
 export const DEFAULT_TIMER = 25;
 export const BONUS_MULTIPLIER = 1.2;
+const ERROR_INDEX = -1;
 
 @Component({
     selector: 'app-play-area',
@@ -56,7 +57,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     constructor(
         readonly timeService: TimeService,
         public gameManager: GameManagerService,
-        public gameSocketService: SocketRoomService,
+        public socketService: SocketRoomService,
         private playerService: PlayerService,
         private cdr: ChangeDetectorRef,
         public abortDialog: MatDialog,
@@ -69,26 +70,26 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.inTestMode = true;
         }
 
-        this.nextQuestionSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
+        this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers();
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             this.countPointsAndNextQuestion();
         });
 
-        this.gameSocketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
+        this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManager.game.duration as number;
             this.timeService.startTimer(this.timer);
         });
 
-        this.endGameSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
+        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
             this.endGame();
         });
 
-        this.bonusSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
+        this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
             this.gotBonus = true;
         });
 
-        this.bonusGivenSubscription = this.gameSocketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
+        this.bonusGivenSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
             this.bonusGiven = true;
         });
     }
@@ -106,6 +107,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     get playerScore(): number {
         return this.score;
     }
+
     @HostListener('keydown', ['$event'])
     buttonDetect(event: KeyboardEvent) {
         this.buttonPressed = event.key;
@@ -124,9 +126,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         const gameID = this.route.snapshot.paramMap.get('id');
-        if (gameID) {
+        if (this.inTestMode && gameID) {
             await this.gameManager.initialize(gameID);
+        } else {
+            await this.gameManager.initialize(this.socketService.room);
         }
+
         this.question = this.gameManager.nextQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
     }
@@ -152,7 +157,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
-        this.gameSocketService.sendMessage(Events.START_TIMER, nsp.GAME);
+        this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
         this.cdr.detectChanges();
     }
 
@@ -173,10 +178,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qcmstat = {
             questionId: this.question.id,
             choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
+            correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
         };
-        this.gameSocketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmstat);
+        this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmstat);
     }
 
     isChoice(choice: string): boolean {
@@ -210,17 +216,17 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     notifyNextQuestion() {
-        this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
+        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
     }
 
     notifyEndGame() {
-        this.gameSocketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
-        this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME);
+        this.socketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
+        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
     onFinalAnswer() {
         if (!this.bonusGiven) {
-            this.gameSocketService.sendMessage(Events.FINAL_ANSWER, nsp.GAME);
+            this.socketService.sendMessage(Events.FINAL_ANSWER, nsp.GAME);
         }
     }
     async updateScore() {

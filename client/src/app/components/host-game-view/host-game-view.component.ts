@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -16,6 +15,7 @@ import { Events, Namespaces } from '@common/sockets';
 })
 export class HostGameViewComponent implements OnInit {
     game: Game;
+    timer: number;
     currentQuestion: Question;
     players: Player[];
     stats: QCMStats[];
@@ -27,7 +27,6 @@ export class HostGameViewComponent implements OnInit {
     constructor(
         public gameManagerService: GameManagerService,
         readonly timeService: TimeService,
-        private route: ActivatedRoute,
         private socketService: SocketRoomService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
@@ -40,6 +39,19 @@ export class HostGameViewComponent implements OnInit {
         return this.timeService.time;
     }
 
+    // export interface BarChartQuestionStats {
+    //     questionID: string;
+    //     data: BarChartChoiceStats[];
+    // }
+
+    // export interface BarChartChoiceStats {
+    //     data: number[];
+    //     label: string;
+    // }
+
+    get time(): number {
+        return this.timeService.time;
+    }
     async ngOnInit(): Promise<void> {
         const gameID = this.route.snapshot.paramMap.get('id');
         if (gameID) {

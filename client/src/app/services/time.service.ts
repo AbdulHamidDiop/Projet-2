@@ -43,6 +43,7 @@ export class TimeService {
             this.startTimer(this.counter);
         }
     }
+
     activatePanicMode() {
         if (this.counter >= 10 && !this.isPanicModeActivated) {
             // Vérifie si le temps restant est suffisant et si le mode panique n'est pas déjà activé

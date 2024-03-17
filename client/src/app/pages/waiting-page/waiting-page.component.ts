@@ -90,7 +90,7 @@ export class WaitingPageComponent {
             if (this.player.isHost) {
                 setTimeout(() => {
                     this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
-                }, 1);
+                }, 1000);
                 this.router.navigate(['/hostView/' + this.game.id]);
             } else {
                 this.router.navigate(['/game/' + this.game.id]);
