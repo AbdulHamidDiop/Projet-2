@@ -8,6 +8,7 @@ export interface QCMStats {
 export interface BarChartChoiceStats {
     data: number[];
     label: string;
+    backgroundColor: string;
 }
 
 export interface BarChartQuestionStats {

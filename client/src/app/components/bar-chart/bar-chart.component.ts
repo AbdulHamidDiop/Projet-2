@@ -1,12 +1,13 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats } from '@common/game-stats';
+import { Events, Namespaces } from '@common/sockets';
 import { ChartConfiguration } from 'chart.js';
 
 @Component({
     selector: 'app-bar-chart',
     templateUrl: './bar-chart.component.html',
     styleUrls: ['./bar-chart.component.scss'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BarChartComponent implements OnInit {
     @Input() labels: string = '';
@@ -37,16 +38,17 @@ export class BarChartComponent implements OnInit {
         },
     };
 
+    constructor(private socketService: SocketRoomService) {}
+
     ngOnInit(): void {
-        // Initialize the chart data after inputs are received
-        this.barChartData = {
-            labels: [this.labels],
-            datasets: this.datasets,
-        };
+        this.updateData();
+
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe(() => {
+            this.updateData();
+        });
     }
 
-    ngOnChanges(changes: SimpleChanges): void {
-        // Check if the input properties have changed and are not undefined
+    updateData(): void {
         this.barChartData = {
             labels: [this.labels],
             datasets: this.datasets,

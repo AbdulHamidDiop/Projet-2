@@ -2,7 +2,7 @@
 
 <main>
     <mat-grid-list cols="4" rowHeight="50vh">
-        <mat-grid-tile [colspan]="3" [rowspan]="1" [style.background]="'lightblue'">
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div id="grid-container">
                 <section id="question-container">
                     <mat-card *ngIf="currentQuestion">
@@ -40,22 +40,19 @@
             <!-- <app-play-area></app-play-area> -->
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="1" [rowspan]="2" [style.background]="'green'">
+        <mat-grid-tile [colspan]="1" [rowspan]="2">
             <app-sidebar> </app-sidebar>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="1" [rowspan]="1" [style.background]="'yellow'">
-            <h1>Liste des joueurs</h1>
+        <mat-grid-tile [colspan]="1" [rowspan]="1">
             <div *ngFor="let player of players">
-                <p>{{ player.name }}</p>
-                <p>Score : {{ player.score }}</p>
+                <p>{{ player.name }} : {{ player.score }} points</p>
             </div>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="2" [rowspan]="1" [style.background]="'violet'">
-            <h1>Zone Statistiques</h1>
+        <mat-grid-tile [colspan]="2" [rowspan]="1">
             <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                <app-bar-chart [labels]="currentQuestion.text" [datasets]="statisticsData[questionIndex].data"></app-bar-chart>
+                <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
             </ng-container>
         </mat-grid-tile>
     </mat-grid-list>
