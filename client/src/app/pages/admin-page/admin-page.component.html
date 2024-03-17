@@ -1,26 +1,23 @@
-<app-nav-bar></app-nav-bar>
-
 <main>
     <h1 class="header-item">Page Administrateur</h1>
     <div class="grid-container-admin-page">
         <div class="grid-area-game-list">
             <div class="scroll-box">
-                <app-game-card
-                    *ngFor="let game of games"
-                    [game]="game"
-                    (deleteEvent)="onDeleteGame($event)"
-                    (checkEvent)="onCheckGame($event)"
-                ></app-game-card>
+                <app-game-card *ngFor="let game of games" [game]="game" (deleteEvent)="onDeleteGame($event)"
+                    (checkEvent)="onCheckGame($event)"></app-game-card>
             </div>
         </div>
         <div class="grid-area-add-game">
             <mat-card>
                 <mat-card-header>
-                    <mat-card-title><h3>Créer un jeu</h3></mat-card-title>
+                    <mat-card-title>
+                        <h3>Créer un jeu</h3>
+                    </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <p>
-                        Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un qui(ck)zz complétement
+                        Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un
+                        qui(ck)zz complétement
                         personnalisé.
                     </p>
                 </mat-card-content>
@@ -32,10 +29,13 @@
         <div class="grid-area-question-bank">
             <mat-card>
                 <mat-card-header>
-                    <mat-card-title><h3>Banque de questions</h3></mat-card-title>
+                    <mat-card-title>
+                        <h3>Banque de questions</h3>
+                    </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                    <p>Parcourez, modifiez et ajoutez des questions à la banque de quiz qui est partagée par tous les utilisateurs qui(ck)zz.</p>
+                    <p>Parcourez, modifiez et ajoutez des questions à la banque de quiz qui est partagée par tous les
+                        utilisateurs qui(ck)zz.</p>
                 </mat-card-content>
                 <mat-card-actions>
                     <button mat-button (click)="onQuestionsButtonClick()"><mat-icon>launch</mat-icon></button>
@@ -60,11 +60,3 @@
         </div>
     </div>
 </main>
-
-<footer class="footer-item">
-    <h4 class="team-name">Équipe 312</h4>
-    <p>
-        <span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
-        <span>Youva</span>
-    </p>
-</footer>
