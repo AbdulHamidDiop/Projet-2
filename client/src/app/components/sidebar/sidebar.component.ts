@@ -4,6 +4,7 @@ import { Player } from '@common/game';
 import { ChatMessage, MAX_MESSAGE_LENGTH } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
+import { PlayerService } from './../../services/player.service';
 
 @Component({
     selector: 'app-sidebar',
@@ -18,17 +19,18 @@ export class SidebarComponent implements OnDestroy, OnInit {
     private chatMessagesSubscription: Subscription;
     private chatHistorySubscription: Subscription;
 
-    constructor(private socketsService: SocketRoomService) {
+    constructor(
+        private socketsService: SocketRoomService,
+        private playerService: PlayerService,
+    ) {
+        this.player = this.playerService.player;
         this.socketsService.getChatMessages().subscribe(async (message) => {
             if (message.author === 'room') {
                 this.socketsService.room = message.message;
-                console.log(message.message);
                 try {
                     await this.socketsService.joinAllNamespaces(message.message);
-                    // Proceed to the next step after successful connection and room joining
                 } catch (error) {
-                    console.error('Failed to join room in all namespaces', error);
-                    // Handle error (e.g., show error message to the user)
+                    return;
                 }
                 return;
             }
@@ -45,7 +47,6 @@ export class SidebarComponent implements OnDestroy, OnInit {
         this.chatMessagesSubscription = this.socketsService.listenForMessages(nsp.CHAT_MESSAGES, Events.CHAT_MESSAGE).subscribe((data: unknown) => {
             const message = data as ChatMessage;
             this.messageHistory.push(message);
-            console.log('messageHistory', this.messageHistory);
             this.autoScroll();
         });
         // this.socketsService.sendMessage(Events.CHAT_HISTORY, nsp.CHAT_MESSAGES);

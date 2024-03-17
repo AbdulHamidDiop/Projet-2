@@ -15,6 +15,9 @@ export enum Events {
     WAITING_ROOM_NOTIFICATION = 'waitingRoomNotification',
     QCM_STATS = 'qcmStats',
     QRL_STATS = 'qrlStats',
+    FINAL_ANSWER = 'finalAnswer',
+    BONUS = 'bonus',
+    BONUS_GIVEN = 'bonusGiven',
     NEXT_QUESTION = 'nextQuestion',
     END_GAME = 'endGame',
     KICK_PLAYER = 'kickPlayer',
@@ -29,6 +32,7 @@ export enum Events {
     NAME_NOT_AVAILABLE = 'nameNotAvailable',
     GAME_RESULTS = 'gameResults',
     CHAT_HISTORY = 'chatHistory',
+    START_TIMER = 'startTimer'
 }
 
 export const LOBBY = '0';

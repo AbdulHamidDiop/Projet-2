@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Game, Player, Question } from '@common/game';
+import { QCMStats } from '@common/game-stats';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
@@ -24,8 +25,8 @@ export class SocketRoomService {
         return this.socket.connected;
     }
 
-    createRoom(gameId: string) {
-        this.socket.emit(Events.CREATE_ROOM, { id: gameId });
+    createRoom(game: Game) {
+        this.socket.emit(Events.CREATE_ROOM, { game });
     }
 
     joinRoom(roomId: string) {
@@ -243,6 +244,14 @@ export class SocketRoomService {
                 };
             }
             return;
+        });
+    }
+
+    getStats(): Observable<QCMStats> {
+        return new Observable((observer) => {
+            this.socket.on(Events.QCM_STATS, (stat) => {
+                observer.next(stat);
+            });
         });
     }
 

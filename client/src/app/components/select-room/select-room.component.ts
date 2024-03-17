@@ -10,10 +10,6 @@ const MAX_CHARACTERS = 4;
 export class SelectRoomComponent {
     constructor(private socket: SocketRoomService) {}
     async joinRoom(input: HTMLInputElement) {
-        input.value = input.value.replace(/\D/g, '');
-        if (input.value.length > MAX_CHARACTERS) {
-            input.value = input.value.slice(0, MAX_CHARACTERS);
-        }
         this.socket.joinRoom(input.value);
         this.socket.room = input.value;
         try {
@@ -24,4 +20,12 @@ export class SelectRoomComponent {
             // Handle error (e.g., show error message to the user)
         }
     }
+
+    restrictInput(event: any) {
+        const input = event.target as HTMLInputElement;
+        input.value = input.value.replace(/\D/g, '');
+        if (input.value.length > 4) {
+          input.value = input.value.slice(0, MAX_CHARACTERS);
+        }
+      }
 }

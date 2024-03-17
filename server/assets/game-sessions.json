@@ -1,10 +1,6 @@
 [
     {
         "pin": "0000",
-        "isLocked": false,
-
-        "players": [],
-
         "quiz": {
             "id": "46277881345",
             "lastModification": "2024-02-01T15:04:41.171Z",

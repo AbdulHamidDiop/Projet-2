@@ -5,7 +5,7 @@
         <mat-grid-tile [colspan]="3" [rowspan]="1" [style.background]="'lightblue'">
             <div id="grid-container">
                 <section id="question-container">
-                    <mat-card>
+                    <mat-card *ngIf="currentQuestion">
                         <mat-card-header>
                             <mat-card-title>
                                 <h2>Question en cours</h2>
@@ -20,7 +20,7 @@
                             </button>
                             <br />
                             <button mat-button [disabled]="true">
-                                <h4>{{ countdown }}s</h4>
+                                <h4>{{ time }}s</h4>
                             </button>
                         </mat-card-actions>
                     </mat-card>
@@ -54,6 +54,9 @@
 
         <mat-grid-tile [colspan]="2" [rowspan]="1" [style.background]="'violet'">
             <h1>Zone Statistiques</h1>
+            <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
+                <app-bar-chart [labels]="currentQuestion.text" [datasets]="statisticsData[questionIndex].data"></app-bar-chart>
+            </ng-container>
         </mat-grid-tile>
     </mat-grid-list>
 </main>

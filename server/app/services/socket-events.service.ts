@@ -1,4 +1,5 @@
-import { Player } from '@common/game';
+import { GameSessionService } from '@app/services/game-session.service';
+import { Game, Player } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
@@ -15,7 +16,7 @@ export class SocketEvents {
     lockedRooms: string[] = [''];
     playerSocketId: Map<string, Player> = new Map();
 
-    constructor() {
+    constructor(private gameSessionService: GameSessionService) {
         this.liveRooms.push(LOBBY);
     }
     listenForEvents(socket: Socket) {
@@ -33,11 +34,13 @@ export class SocketEvents {
         //        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
-        socket.on(Events.CREATE_ROOM, ({ id }) => {
+        socket.on(Events.CREATE_ROOM, async ({ game }: { game: Game }) => {
+            const id = game.id;
             let room = this.makeRoomId();
             while (this.liveRooms.includes(room)) {
                 room = this.makeRoomId();
             }
+            await this.gameSessionService.createSession(room, game);
             // leaveAllRooms(socket); À ajouter plus tard.
             socket.join(room);
             const player: Player = { name: 'Organisateur', score: 0, isHost: true, id: '', bonusCount: 0 };
@@ -64,7 +67,7 @@ export class SocketEvents {
                 message: room,
                 timeStamp: new Date().toLocaleTimeString(),
             };
-            socket.emit(Events.CHAT_MESSAGE, roomMessage); // pour recuperer le nom de la room, à changer pour QA
+            socket.emit(Events.CHAT_MESSAGE, roomMessage);
         });
     }
     listenForJoinRoomEvent(socket: Socket) {
