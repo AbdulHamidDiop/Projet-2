@@ -12,4 +12,23 @@ export class PlayerService {
         score: 0,
         bonusCount: 0,
     };
+
+    playersInGame: Player[];
+
+    setGamePlayers(players: Player[]): void {
+        this.playersInGame = players;
+    }
+
+    addGamePlayers(player: Player): void {
+        const index = this.playersInGame.findIndex((pl) => pl.name === player.name);
+        if (index >= 0) {
+            this.playersInGame[index] = player;
+        } else {
+            this.playersInGame.push(player);
+        }
+    }
+
+    resetGamePlayers(): void {
+        this.playersInGame = [];
+    }
 }

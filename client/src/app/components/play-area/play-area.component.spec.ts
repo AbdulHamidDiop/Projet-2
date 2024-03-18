@@ -15,7 +15,7 @@ import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
 const DEFAULT_POINTS = 10;
-const BONUS_MULTIPLIER = 1.2;
+const BONUS_MULTIPLIER = 0.2;
 describe('PlayAreaComponent', () => {
     let component: PlayAreaComponent;
     let fixture: ComponentFixture<PlayAreaComponent>;

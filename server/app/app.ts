@@ -8,8 +8,8 @@ import { StatusCodes } from 'http-status-codes';
 // import swaggerJSDoc from 'swagger-jsdoc';
 // import swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
-import { GameController } from './controllers/game.controller';
 import { GameSessionController } from './controllers/game-session.controller';
+import { GameController } from './controllers/game.controller';
 import { QuestionsController } from './controllers/questions.controller';
 
 @Service()
