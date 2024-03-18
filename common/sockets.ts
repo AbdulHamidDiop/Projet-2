@@ -36,6 +36,7 @@ export enum Events {
     CHAT_HISTORY = 'chatHistory',
     START_TIMER = 'startTimer',
     UPDATE_CHART = 'updateChart',
+    UPDATE_PLAYER = 'updateScore',
 }
 
 export const LOBBY = '0';

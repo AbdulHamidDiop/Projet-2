@@ -263,6 +263,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.bonusGiven = false;
             this.gotBonus = false;
         }
+        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
+        console.log(1);
     }
 
     handleAbort(): void {

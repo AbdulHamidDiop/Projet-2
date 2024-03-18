@@ -59,6 +59,12 @@ export class HostGameViewComponent implements OnInit {
         this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
             this.openResultsPage();
         });
+
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
+            console.log('hahahahhahaha');
+            const { room, ...player } = playerWithRoom as Player & { room: string };
+            this.updatePlayers(player as Player);
+        });
     }
 
     async updateBarChartData(stat: QCMStats): Promise<void> {
@@ -104,5 +110,14 @@ export class HostGameViewComponent implements OnInit {
             this.router.navigate(['/game', gameId, 'results']);
         }
         this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
+    }
+
+    updatePlayers(player: Player): void {
+        const index = this.players.findIndex((pl) => pl.name === player.name);
+        if (index >= 0) {
+            this.players[index] = player;
+        } else {
+            this.players.push(player);
+        }
     }
 }
