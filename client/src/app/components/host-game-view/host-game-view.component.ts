@@ -61,7 +61,6 @@ export class HostGameViewComponent implements OnInit {
         });
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
-            console.log('hahahahhahaha');
             const { room, ...player } = playerWithRoom as Player & { room: string };
             this.updatePlayers(player as Player);
         });
@@ -103,6 +102,8 @@ export class HostGameViewComponent implements OnInit {
         this.currentQuestion = this.gameManagerService.nextQuestion();
         this.questionIndex++;
     }
+
+    showResultsButton(): void {}
 
     openResultsPage(): void {
         const gameId = this.route.snapshot.paramMap.get('id');

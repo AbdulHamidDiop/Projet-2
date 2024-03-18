@@ -37,6 +37,7 @@ export enum Events {
     START_TIMER = 'startTimer',
     UPDATE_CHART = 'updateChart',
     UPDATE_PLAYER = 'updateScore',
+    OPEN_RESULTS = 'openResults',
 }
 
 export const LOBBY = '0';

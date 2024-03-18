@@ -76,7 +76,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers();
-            this.countPointsAndNextQuestion();
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
         });
 
@@ -85,8 +84,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.timeService.startTimer(this.timer);
         });
 
-        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
-            this.endGame();
+        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.OPEN_RESULTS).subscribe(() => {
+            this.goToResults();
         });
 
         this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
@@ -264,7 +263,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.gotBonus = false;
         }
         this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
-        console.log(1);
     }
 
     handleAbort(): void {
@@ -293,7 +291,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
     }
 
-    endGame() {
+    goToResults() {
         this.router.navigate(['results'], { relativeTo: this.route });
     }
 
