@@ -145,7 +145,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     async ngOnInit() {
         this.timeService.timerEnded.subscribe(async () => {
             await this.confirmAnswers();
-          });
+        });
         const gameID = this.route.snapshot.paramMap.get('id');
         if (this.inTestMode && gameID) {
             await this.gameManager.initialize(gameID);
@@ -180,7 +180,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
-        //this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
+        // this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
         this.cdr.detectChanges();
     }
 
@@ -214,7 +214,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async confirmAnswers() {
         this.disableChoices = true;
-        //this.timeService.stopTimer();
+        // this.timeService.stopTimer();
 
         if (this.inTestMode) {
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -223,7 +223,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async countPointsAndNextQuestion() {
-        //this.openCountDownModal();
+        // this.openCountDownModal();
         await this.updateScore();
         setTimeout(
             () => {
