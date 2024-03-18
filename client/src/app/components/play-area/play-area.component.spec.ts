@@ -150,7 +150,7 @@ describe('PlayAreaComponent', () => {
     it('nextQuestion should call gameManager.nextQuestion', fakeAsync(() => {
         // Prepare the next question to be returned by the GameManagerService
         gameManager = TestBed.inject(GameManagerService);
-        spyOn(component, 'countPointsAndNextQuestion').and.returnValue();
+        spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
 
         component.nextQuestion();
         expect(gameManager.nextQuestion).toHaveBeenCalled();
