@@ -1,0 +1,8 @@
+<div class="container">
+    <li mat-raised-button color="primary" (click)="toggleAdmin()">Admin</li>
+    <div *ngIf="showAdminInput" class="admin-input-container">
+        <input matInput type="password" placeholder="Entrez le mot de passe" [(ngModel)]="userInput">
+        <button class="button" (click)="onButtonClick()">Administrer les jeux</button>
+        <mat-error *ngIf="passwordError" class="error">Le mot de passe est <strong>incorrect</strong></mat-error>
+    </div>
+</div>

@@ -31,8 +31,11 @@
                         <button mat-button>
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
-                        <button mat-button>
+                        <button mat-button (click)="notifyNextQuestion()" class="confirm-button">
                             <h3 class="confirm-text">prochaine question</h3>
+                        </button>
+                        <button mat-button (click)="notifyEndGame()" class="confirm-button">
+                            <h3 class="confirm-text">terminer le jeu</h3>
                         </button>
                     </mat-card-actions>
                 </section>
@@ -57,11 +60,3 @@
         </mat-grid-tile>
     </mat-grid-list>
 </main>
-
-<footer class="footer-item">
-    <h4 class="team-name">Équipe 312</h4>
-    <p>
-        <span>Abdul</span>, <span>Alex</span>, <span>Gabriel</span>, <span>Félix</span>, <span>Rayane</span>,
-        <span>Youva</span>
-    </p>
-</footer>

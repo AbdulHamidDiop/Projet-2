@@ -1,0 +1,47 @@
+.container {
+    position: relative;
+    overflow: hidden;
+}
+
+.admin-input-container {
+    width: 20px;
+    margin-top: 5px;
+    transition: transform 0.5s ease-in-out;
+}
+
+.admin-input-container.show {
+    transform: translateX(0);
+}
+
+.button {
+    margin-top: 10px;
+    margin-right: 10px;
+    text-align: center;
+    border: none;
+    padding: 10px 20px;
+    background-color: #007bff; /* Bleu */
+    color: white;
+    cursor: pointer;
+    border-radius: 5px; /* Coins arrondis */
+    transition: background-color 0.3s ease;
+}
+
+.button:hover {
+    background-color: #0056b3; /* Bleu foncé au survol */
+}
+
+input {
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.error {
+    min-width: 20vh;
+}

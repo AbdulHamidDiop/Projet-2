@@ -40,7 +40,7 @@ export class GameSessionService {
         if (gameSession) {
             return gameSession.game;
         }
-        throw new Error('Game not found' + pin);
+        return undefined;
     }
 
     async getQuestionsWithoutCorrectShown(pin: string): Promise<Game> {
@@ -55,7 +55,7 @@ export class GameSessionService {
             });
             return game;
         }
-        throw new Error('Game not found');
+        return game;
     }
 
     async isCorrectAnswer(answer: string[], pin: string, questionID: string): Promise<boolean> {
@@ -79,7 +79,7 @@ export class GameSessionService {
         const question = game.questions.find((q) => q.id === questionId);
 
         if (!question) {
-            throw new Error('Question not found');
+            return [];
         }
 
         const feedback: Feedback[] = question.choices.map((choice) => {

@@ -12,6 +12,7 @@ import { AppComponent } from '@app/pages/app/app.component';
 import { GamePageComponent } from '@app/pages/game-page/game-page.component';
 import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { NgChartsModule } from 'ng2-charts';
+import { AdminButtonComponent } from './components/admin-button/admin-button.component';
 import { AdminQuestionComponent } from './components/admin-question/admin-question.component';
 import { AdminQuestionsBankComponent } from './components/admin-questions-bank/admin-questions-bank.component';
 import { BarChartComponent } from './components/bar-chart/bar-chart.component';
@@ -35,6 +36,7 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
+import { FooterComponent } from './components/footer/footer.component';
 
 /**
  * Main module that is used in main.ts.
@@ -75,6 +77,8 @@ import { SocketRoomService } from './services/socket-room.service';
         SelectUsernameComponent,
         PlayerAndAdminPanelComponent,
         ResultsPageComponent,
+        AdminButtonComponent,
+        FooterComponent,
     ],
     imports: [
         AppMaterialModule,
