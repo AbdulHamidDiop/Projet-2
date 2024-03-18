@@ -14,18 +14,16 @@ export class SelectRoomComponent {
         this.socket.room = input.value;
         try {
             await this.socket.joinAllNamespaces(input.value);
-            // Proceed to the next step after successful connection and room joining
         } catch (error) {
-            console.error('Failed to join room in all namespaces', error);
-            // Handle error (e.g., show error message to the user)
+            return;
         }
     }
 
     restrictInput(event: any) {
         const input = event.target as HTMLInputElement;
         input.value = input.value.replace(/\D/g, '');
-        if (input.value.length > 4) {
-          input.value = input.value.slice(0, MAX_CHARACTERS);
+        if (input.value.length > MAX_CHARACTERS) {
+            input.value = input.value.slice(0, MAX_CHARACTERS);
         }
-      }
+    }
 }

@@ -16,6 +16,7 @@ import { Events, Namespaces } from '@common/sockets';
 })
 export class HostGameViewComponent implements OnInit {
     game: Game;
+    timer: number;
     currentQuestion: Question;
     players: Player[];
     stats: QCMStats[];
@@ -41,11 +42,19 @@ export class HostGameViewComponent implements OnInit {
         return this.timeService.time;
     }
 
+    // export interface BarChartQuestionStats {
+    //     questionID: string;
+    //     data: BarChartChoiceStats[];
+    // }
+
+    // export interface BarChartChoiceStats {
+    //     data: number[];
+    //     label: string;
+    // }
+
     async ngOnInit(): Promise<void> {
-        const gameID = this.route.snapshot.paramMap.get('id');
-        if (gameID) {
-            await this.gameManagerService.initialize(gameID);
-        }
+        await this.gameManagerService.initialize(this.socketService.room);
+
         this.currentQuestion = this.gameManagerService.firstQuestion();
         this.countdown = this.timeService.time;
 

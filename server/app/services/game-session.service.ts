@@ -1,92 +1,65 @@
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
+import { GameSession } from '@common/game-session';
 import * as fs from 'fs/promises';
 import { Service } from 'typedi';
 
-const SESSIONS_PATH = './assets/quiz-example.json';
+const SESSIONS_PATH = './assets/game-sessions.json';
 
 @Service()
 export class GameSessionService {
-    async getAllGames(): Promise<Game[]> {
+    async getAllSessions(): Promise<GameSession[]> {
         const data: string = await fs.readFile(SESSIONS_PATH, 'utf8');
-        const games: Game[] = JSON.parse(data);
-        return games;
+        return JSON.parse(data);
     }
 
-    async addGame(game: Game): Promise<void> {
-        const games: Game[] = await this.getAllGames();
-        if (games.find((g) => g.id === game.id)) {
-            games.splice(
-                games.findIndex((g) => g.id === game.id),
-                1,
-            );
+    async getSessionByPin(pin: string): Promise<GameSession | undefined> {
+        const sessions: GameSession[] = await this.getAllSessions();
+        return sessions.find((session) => session.pin === pin);
+    }
+
+    async createSession(pin: string, game: Game): Promise<GameSession> {
+        const session: GameSession = { pin, game };
+        const sessions: GameSession[] = await this.getAllSessions();
+        if (sessions.find((s) => s.pin === pin)) {
+            return session;
         }
-        games.push(game);
-        await fs.writeFile(SESSIONS_PATH, JSON.stringify(games, null, 2), 'utf8');
+        sessions.push(session);
+        await fs.writeFile(SESSIONS_PATH, JSON.stringify(sessions, null, 2), 'utf8');
+        return session;
     }
 
-    async getGameByID(id: string): Promise<Game> {
-        const games: Game[] = await this.getAllGames();
-        const game = games.find((g) => g.id === id);
-        if (!game) {
-            return null;
+    async deleteSession(pin: string): Promise<void> {
+        const sessions: GameSession[] = await this.getAllSessions();
+        const updatedSessions = sessions.filter((session) => session.pin !== pin);
+        await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedSessions, null, 2), 'utf8');
+    }
+
+    async getGameByPin(pin: string): Promise<Game> {
+        const gameSession = await this.getSessionByPin(pin);
+        if (gameSession) {
+            return gameSession.game;
+        }
+        return undefined;
+    }
+
+    async getQuestionsWithoutCorrectShown(pin: string): Promise<Game> {
+        const game: Game = await this.getGameByPin(pin);
+        if (game) {
+            game.questions.forEach((question) => {
+                if (question.choices) {
+                    question.choices.forEach((choice) => {
+                        delete choice.isCorrect;
+                    });
+                }
+            });
+            return game;
         }
         return game;
     }
 
-    async toggleGameHidden(id: string): Promise<boolean> {
-        let hasChanged = false;
-        const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.map((game) => {
-            if (game.id === id) {
-                hasChanged = true;
-                return { ...game, lastModification: new Date(), isHidden: !game.isHidden };
-            } else {
-                return game;
-            }
-        });
-        if (hasChanged) {
-            await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-            return hasChanged;
-        } else {
-            return false;
-        }
-    }
-
-    async deleteGameByID(id: string): Promise<boolean> {
-        let gameFound = false;
-        const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.filter((game) => {
-            if (game.id === id) {
-                gameFound = true;
-                return false;
-            }
-            return true;
-        });
-        if (gameFound) {
-            await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-        }
-        return gameFound;
-    }
-
-    async getQuestionsWithoutCorrectShown(id: string): Promise<Game> {
-        const game: Game = await this.getGameByID(id);
-        const questionsWithoutCorrect = game.questions.map((question) => {
-            if (question.choices) {
-                const choicesWithoutCorrect = question.choices.map((choice) => {
-                    const choiceWithoutCorrect = { ...choice };
-                    delete choiceWithoutCorrect.isCorrect;
-                    return choiceWithoutCorrect;
-                });
-                return { ...question, choices: choicesWithoutCorrect };
-            }
-            return question;
-        });
-        return { ...game, questions: questionsWithoutCorrect };
-    }
-
-    async isCorrectAnswer(answer: string[], gameID: string, questionID: string): Promise<boolean> {
-        const game: Game = await this.getGameByID(gameID);
+    async isCorrectAnswer(answer: string[], pin: string, questionID: string): Promise<boolean> {
+        const game: Game = await this.getGameByPin(pin);
         if (!game) {
             return false;
         }
@@ -101,12 +74,12 @@ export class GameSessionService {
         return true;
     }
 
-    async generateFeedback(gameID: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
-        const game = await this.getGameByID(gameID);
+    async generateFeedback(pin: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
+        const game = await this.getGameByPin(pin);
         const question = game.questions.find((q) => q.id === questionId);
 
         if (!question) {
-            throw new Error('Question not found');
+            return [];
         }
 
         const feedback: Feedback[] = question.choices.map((choice) => {

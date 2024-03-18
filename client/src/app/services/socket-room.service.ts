@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
+import { PlayerService } from '@app/services/player.service';
 import { Game, Player, Question } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { ChatMessage } from '@common/message';
@@ -11,22 +12,26 @@ import { IoService } from './ioservice.service';
     providedIn: 'root',
 })
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
-export class SocketRoomService {
+export class SocketRoomService implements OnDestroy {
     room: string;
     private socket: Socket;
     private url = 'http://localhost:3000'; // Your Socket.IO server URL
     private namespaces: Map<string, Socket> = new Map();
 
-    constructor(private io: IoService) {
+    constructor(
+        private io: IoService,
+        private playerService: PlayerService,
+    ) {
         this.socket = io.io(this.url);
+        window.addEventListener('beforeunload', this.handleUnload.bind(this));
     }
 
     get connected() {
         return this.socket.connected;
     }
 
-    createRoom(gameId: string) {
-        this.socket.emit(Events.CREATE_ROOM, { id: gameId });
+    createRoom(game: Game) {
+        this.socket.emit(Events.CREATE_ROOM, { game });
     }
 
     joinRoom(roomId: string) {
@@ -253,6 +258,16 @@ export class SocketRoomService {
                 observer.next(stat);
             });
         });
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('beforeunload', this.handleUnload.bind(this));
+    }
+
+    private handleUnload(): void {
+        if (this.playerService.player.name === 'Organisateur') {
+            this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
+        }
     }
 
     private connectNamespace(namespace: string): Socket | undefined {

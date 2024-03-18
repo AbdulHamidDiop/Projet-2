@@ -1,0 +1,22 @@
+/* Footer styles */
+.footer-item {
+    background: #503bb8;
+    color: white;
+    padding: 10px;
+    border-top: 1px solid #555;
+    text-align: center;
+}
+
+.footer-item h4 {
+    margin-top: 0.25em;
+    margin-bottom: 0.25em;
+    color: #28a745; /* Vert */
+}
+
+.footer-item p span:nth-child(even) {
+    color: #ffc107; /* Jaune */
+}
+
+.footer-item p span:nth-child(odd) {
+    color: #17a2b8; /* Bleu cyan */
+}
