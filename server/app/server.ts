@@ -129,6 +129,10 @@ export class Server {
                 gameStatsNamespace.to(data.room).emit(Events.GAME_RESULTS, data);
             });
 
+            socket.on(Events.UPDATE_CHART, (data) => {
+                gameStatsNamespace.to(data.room).emit(Events.UPDATE_CHART);
+            });
+
             socket.on('disconnect', () => {
                 console.log('User disconnected from gameStats namespace');
             });

@@ -42,16 +42,6 @@ export class HostGameViewComponent implements OnInit {
         return this.timeService.time;
     }
 
-    // export interface BarChartQuestionStats {
-    //     questionID: string;
-    //     data: BarChartChoiceStats[];
-    // }
-
-    // export interface BarChartChoiceStats {
-    //     data: number[];
-    //     label: string;
-    // }
-
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
 
@@ -77,7 +67,7 @@ export class HostGameViewComponent implements OnInit {
             if (stat.selected) {
                 this.statisticsData[index].data[stat.choiceIndex].data[0]++;
             }
-            if (!stat.selected) {
+            if (!stat.selected && this.statisticsData[index].data[stat.choiceIndex].data[0] > 0) {
                 this.statisticsData[index].data[stat.choiceIndex].data[0]--;
             }
             this.barChartData = this.statisticsData[this.questionIndex].data;

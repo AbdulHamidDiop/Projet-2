@@ -47,7 +47,6 @@ export class ResultsPageComponent implements OnInit {
     showNextHistogram(): void {
         if (this.currentHistogramIndex < this.statisticsData.length - 1) {
             this.currentHistogramIndex++;
-            console.log(this.statisticsData[this.currentHistogramIndex].data);
             this.updateChart();
         }
     }
@@ -55,40 +54,16 @@ export class ResultsPageComponent implements OnInit {
     showPreviousHistogram(): void {
         if (this.currentHistogramIndex > 0) {
             this.currentHistogramIndex--;
-            console.log(this.statisticsData[this.currentHistogramIndex].data);
             this.updateChart();
         }
     }
 
     private updateChart(): void {
         this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
+        this.socketsService.sendMessage(Events.UPDATE_CHART, Namespaces.GAME_STATS);
     }
 
-    // private updateChoiceCounts(data: { room: string; questionId: string; choiceAmount: number; choiceIndex: number; selected: boolean }): void {
-    //     const key = `${data.questionId}`;
-    //     if (key) {
-    //         if (!this.choiceCounts[key]) {
-    //             this.choiceCounts[key] = new Array(data.choiceAmount).fill(0);
-    //         }
-    //         if (data.selected) {
-    //             this.choiceCounts[key][data.choiceIndex] = (this.choiceCounts[key][data.choiceIndex] || 0) + 1;
-    //         } else {
-    //             this.choiceCounts[key][data.choiceIndex] = (this.choiceCounts[key][data.choiceIndex] || 0) - 1;
-    //         }
-    //     }
-    // }
-
     private connectToServer(): void {
-        // this.socketsService
-        // .listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS)
-        // .pipe(
-        //     filter((data): data is Player[] => Array.isArray(data) && data.every((item) => 'name' in item && 'score' in item)),
-        //     map((data) => data as Player[]),
-        // )
-        // .subscribe((players: Player[]) => {
-        //     this.players = players;
-        //     this.sortPlayers();
-        // });
         // Écouter les QCMSTATS
         this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GAME_RESULTS).subscribe({
             next: (stats: unknown) => {
@@ -101,10 +76,6 @@ export class ResultsPageComponent implements OnInit {
                 }
                 this.statisticsData = statisticsData;
                 this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
-                console.log(this.statisticsData);
-            },
-            error: (error) => {
-                console.error('Error receiving QCM_STATS:', error);
             },
         });
 
