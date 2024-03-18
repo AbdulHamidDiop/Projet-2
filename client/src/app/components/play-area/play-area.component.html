@@ -33,8 +33,12 @@
                 <button mat-button (click)="handleAbort()">
                     <h3 class="abort-button">Abandonner</h3>
                 </button>
-                <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="disableChoices"
-                    class="confirm-button">
+                <button
+                    mat-button
+                    (click)="confirmAnswers(); onFinalAnswer(); notifyNextQuestion()"
+                    [disabled]="disableChoices"
+                    class="confirm-button"
+                >
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>
@@ -44,9 +48,12 @@
     <br />
     <mat-selection-list #choices [disabled]="disableChoices">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFn">
-            <mat-list-item (click)="!disableChoices && handleQCMChoice(choice.text)"
+            <mat-list-item
+                (click)="!disableChoices && handleQCMChoice(choice.text)"
                 (keydown)="!disableChoices && $event.stopPropagation(); !disableChoices && buttonDetect($event)"
-                (keyup)="!disableChoices && $event.stopPropagation()" *ngIf="shouldRender(choice.text)">
+                (keyup)="!disableChoices && $event.stopPropagation()"
+                *ngIf="shouldRender(choice.text)"
+            >
                 <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
                     <span>
                         Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>

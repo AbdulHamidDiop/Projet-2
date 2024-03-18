@@ -96,6 +96,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.timeService.stopTimer();
         });
 
+        this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.timeService.stopTimer();
+        });
+
         this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
             this.endGame();
         });
@@ -152,8 +156,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         } else {
             await this.gameManager.initialize(this.socketService.room);
         }
-
-        this.question = this.gameManager.nextQuestion();
+        this.question = this.gameManager.firstQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
     }
     ngOnDestroy() {
@@ -239,6 +242,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
 
+    notifyNextQuestion() {
+        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
+    }
+
+    notifyEndGame() {
+        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
+    }
+
     onFinalAnswer() {
         if (!this.bonusGiven) {
             this.socketService.sendMessage(Events.FINAL_ANSWER, nsp.GAME);
@@ -266,6 +277,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.bonusGiven = false;
             this.gotBonus = false;
         }
+        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
     }
 
     handleAbort(): void {
@@ -295,7 +307,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     endGame() {
-        this.router.navigate(['/']);
+        this.router.navigate(['results'], { relativeTo: this.route });
     }
 
     endGameTest() {

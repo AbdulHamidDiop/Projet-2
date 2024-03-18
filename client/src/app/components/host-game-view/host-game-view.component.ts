@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -31,6 +32,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     constructor(
         public gameManagerService: GameManagerService,
         readonly timeService: TimeService,
+        private route: ActivatedRoute,
+        private router: Router,
         private socketService: SocketRoomService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
@@ -65,16 +68,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         return this.timeService.time;
     }
 
-    // export interface BarChartQuestionStats {
-    //     questionID: string;
-    //     data: BarChartChoiceStats[];
-    // }
-
-    // export interface BarChartChoiceStats {
-    //     data: number[];
-    //     label: string;
-    // }
-
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
 
@@ -87,6 +80,24 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.timeService.timerEnded.subscribe(() => {
             this.notifyNextQuestion();
         });
+
+        this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
+            this.openResultsPage();
+        });
+
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
+            const { room, ...player } = playerWithRoom as Player & { room: string };
+            this.updatePlayers(player as Player);
+        });
+
+        this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
+            this.openResultsPage();
+        });
+
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
+            const { room, ...player } = playerWithRoom as Player & { room: string };
+            this.updatePlayers(player as Player);
+        });
     }
 
     async updateBarChartData(stat: QCMStats): Promise<void> {
@@ -95,7 +106,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             if (stat.selected) {
                 this.statisticsData[index].data[stat.choiceIndex].data[0]++;
             }
-            if (!stat.selected) {
+            if (!stat.selected && this.statisticsData[index].data[stat.choiceIndex].data[0] > 0) {
                 this.statisticsData[index].data[stat.choiceIndex].data[0]--;
             }
             this.barChartData = this.statisticsData[this.questionIndex].data;
@@ -154,6 +165,12 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
         }, SHOW_FEEDBACK_DELAY);
     }
+
+    openResultsPage(): void {
+        const gameId = this.route.snapshot.paramMap.get('id');
+        if (gameId) {
+            this.router.navigate(['/game', gameId, 'results']);
+        }
 
     ngOnDestroy() {
         this.timeService.stopTimer();
