@@ -138,6 +138,11 @@ export class Server {
                 gameStatsNamespace.to(data.room).emit(Events.UPDATE_PLAYER, data);
             });
 
+            socket.on(Events.GET_PLAYERS, (data) => {
+                console.log(data);
+                gameStatsNamespace.to(data.room).emit(Events.GET_PLAYERS, data);
+            });
+
             socket.on('disconnect', () => {
                 console.log('User disconnected from gameStats namespace');
             });
