@@ -167,7 +167,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             if (newQuestion && newQuestion.type === 'QCM') {
                 this.nbChoices = this.question.choices.length;
             }
-            this.gameSocketService.sendMessage(Events.START_TIMER, nsp.GAME);
+            this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
+            this.notifyNextQuestion();
         } else {
             this.notifyEndGame();
         }
@@ -205,6 +206,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     async confirmAnswers() {
         this.disableChoices = true;
         this.timeService.stopTimer();
+        this.countPointsAndNextQuestion();
 
         if (this.inTestMode) {
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -229,11 +231,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     notifyNextQuestion() {
-        this.gameSocketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
+        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
     }
 
     notifyEndGame() {
-        this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME);
+        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
     onFinalAnswer() {

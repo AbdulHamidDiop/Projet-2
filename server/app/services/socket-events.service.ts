@@ -93,7 +93,7 @@ export class SocketEvents {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const player = this.playerSocketId.get(socket.id);
                 const room = this.socketIdRoom.get(socket.id);
-                if (/* player.isHost*/ true) {
+                if (player.isHost) {
                     this.bannedNamesInRoom.delete(room);
                     this.liveRooms = this.liveRooms.filter((liveRoom) => {
                         return liveRoom !== room;
