@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
@@ -12,6 +13,7 @@ export class SelectUsernameComponent {
     constructor(
         private socket: SocketRoomService,
         private playerService: PlayerService,
+        private snackBar: MatSnackBar,
     ) {}
 
     sendUsername(input: HTMLInputElement) {
@@ -29,7 +31,10 @@ export class SelectUsernameComponent {
 
             this.socket.sendChatMessage(message);
         } else {
-            alert("Le nom entré n'est pas valide");
+            this.snackBar.open('Le nom entré est invalide', 'fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
         }
     }
 }

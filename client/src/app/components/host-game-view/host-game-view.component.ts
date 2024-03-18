@@ -52,6 +52,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             }, SHOW_FEEDBACK_DELAY);
             setTimeout(
                 () => {
+                    this.questionIndex++;
                     this.currentQuestion = this.gameManagerService.nextQuestion();
                     if (this.gameManagerService.endGame) {
                         this.onLastQuestion = true;
@@ -171,6 +172,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         if (gameId) {
             this.router.navigate(['/game', gameId, 'results']);
         }
+        this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
+    }
+
+    updatePlayers(player: Player): void {
+        const index = this.players.findIndex((pl) => pl.name === player.name);
+        if (index >= 0) {
+            this.players[index] = player;
+        } else {
+            this.players.push(player);
+        }
+    }
 
     ngOnDestroy() {
         this.timeService.stopTimer();

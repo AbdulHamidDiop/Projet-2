@@ -6,6 +6,7 @@ import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
@@ -14,7 +15,6 @@ import { QCMStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
-import { PlayerService } from '@app/services/player.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -240,14 +240,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
         }
-    }
-
-    notifyNextQuestion() {
-        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
-    }
-
-    notifyEndGame() {
-        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
     onFinalAnswer() {
