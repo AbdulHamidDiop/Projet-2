@@ -32,10 +32,6 @@ export class HostGameViewComponent implements OnInit {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
         });
-        this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.gameManagerService.game.duration as number;
-            this.timeService.startTimer(this.timer);
-        });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
 
@@ -53,12 +49,10 @@ export class HostGameViewComponent implements OnInit {
     //     label: string;
     // }
 
-    get time(): number {
-        return this.timeService.time;
-    }
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
-        this.currentQuestion = this.gameManagerService.nextQuestion();
+
+        this.currentQuestion = this.gameManagerService.firstQuestion();
         this.countdown = this.timeService.time;
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
@@ -108,12 +102,12 @@ export class HostGameViewComponent implements OnInit {
     }
 
     notifyNextQuestion() {
-        this.socketService.sendMessage(Events.NEXT_QUESTION, nsp.GAME);
+        this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
         this.currentQuestion = this.gameManagerService.nextQuestion();
     }
 
     notifyEndGame() {
-        this.socketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
-        this.socketService.sendMessage(Events.END_GAME, nsp.GAME);
+        this.socketService.sendMessage(Events.LEAVE_ROOM, Namespaces.GAME);
+        this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
     }
 }
