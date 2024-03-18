@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
@@ -10,6 +11,7 @@ import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
 import { QCMStats } from '@common/game-stats';
+import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
 import { PlayerService } from './../../services/player.service';
@@ -50,6 +52,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     private nextQuestionSubscription: Subscription;
     private endGameSubscription: Subscription;
+    private abortGameSubscription: Subscription;
     private bonusSubscription: Subscription;
     private bonusGivenSubscription: Subscription;
 
@@ -63,6 +66,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         public abortDialog: MatDialog,
         public router: Router,
         private route: ActivatedRoute,
+        private snackBar: MatSnackBar,
     ) {
         this.player = this.playerService.player;
         this.answer = [];
@@ -91,6 +95,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.bonusGivenSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
             this.bonusGiven = true;
+        });
+
+        this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
+            this.snackBar.open("L'organisateur a mis fin à la partie ", 'Fermer');
+            this.router.navigate(['/']);
         });
     }
 
@@ -259,6 +268,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.timeService.stopTimer();
                 this.score = 0;
                 this.answer = [];
+                const chatMessage: ChatMessage = {
+                    author: sysmsg.AUTHOR,
+                    message: this.player.name + ' ' + sysmsg.PLAYER_LEFT,
+                    timeStamp: new Date().toLocaleTimeString(),
+                };
+                this.socketService.sendChatMessage(chatMessage);
                 this.router.navigate(['/']);
             }
         });

@@ -37,6 +37,14 @@ mat-card.scrollable-content {
     }*/
 }
 
+.author {
+    background-color: rgba(135, 207, 235, 0.504);
+}
+
+.system {
+    background-color: rgba(250, 128, 114, 0.416);
+}
+
 /* Customizing the scrollbar for .messages-container */
 /*.messages-container::-webkit-scrollbar {
     width: 8px;

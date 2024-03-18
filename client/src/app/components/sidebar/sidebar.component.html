@@ -4,7 +4,7 @@
     <h2 *ngIf="!this.player.isHost">Joueur {{ player.name }}</h2>
     <div #chatContainer class="messages-container scrollable-content">
         <div *ngFor="let message of messages">
-            <mat-card>
+            <mat-card [ngClass]="{ author: message.author === player.name, system: message.author === 'Système' }">
                 <mat-card-header>
                     <mat-card-title>
                         <small>{{ message.author + ' ' + message.timeStamp }}</small>
