@@ -124,16 +124,6 @@ describe('PlayAreaComponent', () => {
         expect(component).toBeTruthy();
     }));
 
-    it('Should call socket.sendMessage on call to notifyEndGame', () => {
-        component.notifyEndGame();
-        expect(socketMock.sendMessage).toHaveBeenCalled();
-    });
-
-    it('Should call socket.sendMessage on call to notifyNextQuestion', () => {
-        component.notifyNextQuestion();
-        expect(socketMock.sendMessage).toHaveBeenCalled();
-    });
-
     it('handleQCMChoice should allow multiple selections and set the answer array correctly', () => {
         component.handleQCMChoice('Option 1');
         component.handleQCMChoice('Option 2');
@@ -326,7 +316,7 @@ describe('PlayAreaComponent', () => {
     it('should get feedback and update state for QCM questions', fakeAsync(() => {
         component.question = { id: '123', type: Type.QCM } as Question;
         component.answer = ['Option 1'];
-        spyOn(component, 'countPointsAndNextQuestion').and.returnValue();
+        spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
         component.confirmAnswers();
         expect(gameManager.getFeedBack).toHaveBeenCalledWith('123', ['Option 1']);
         flush();

@@ -6,6 +6,7 @@ import { Socket } from 'socket.io-client';
 import { IoService } from './ioservice.service';
 import { SocketRoomService } from './socket-room.service';
 import SpyObj = jasmine.SpyObj;
+import { Game } from './game.service';
 
 describe('SocketRoomService', () => {
     let service: SocketRoomService;
@@ -41,7 +42,7 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to createRoom', () => {
-        service.createRoom('');
+        service.createRoom('' as unknown as Game);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 
@@ -198,7 +199,7 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to sendMessage', () => {
-        service.sendMessage('' as Events, '' as Namespaces, '', {});
+        service.sendMessage('' as Events, '' as Namespaces, '' as unknown as object);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 
