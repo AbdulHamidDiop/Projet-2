@@ -14,7 +14,7 @@ import { QCMStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
-import { PlayerService } from './../../services/player.service';
+import { PlayerService } from '@app/services/player.service';
 
 export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
@@ -295,7 +295,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     endGame() {
-        this.router.navigate(['/endGame']);
+        this.router.navigate(['/']);
     }
 
     endGameTest() {

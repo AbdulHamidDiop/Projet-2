@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -16,7 +16,7 @@ const SHOW_FEEDBACK_DELAY = 3000;
     templateUrl: './host-game-view.component.html',
     styleUrls: ['./host-game-view.component.scss'],
 })
-export class HostGameViewComponent implements OnInit {
+export class HostGameViewComponent implements OnInit, OnDestroy {
     game: Game;
     timer: number;
     currentQuestion: Question;
@@ -26,6 +26,7 @@ export class HostGameViewComponent implements OnInit {
     barChartData: BarChartChoiceStats[] = [];
     questionIndex: number = 0;
     showCountDown: boolean = false;
+    onLastQuestion: boolean = false;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -46,11 +47,16 @@ export class HostGameViewComponent implements OnInit {
             setTimeout(() => {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
-            setTimeout(() => {
-                this.currentQuestion = this.gameManagerService.nextQuestion();
-                this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
-            }, 2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
-           
+            setTimeout(
+                () => {
+                    this.currentQuestion = this.gameManagerService.nextQuestion();
+                    if (this.gameManagerService.endGame) {
+                        this.onLastQuestion = true;
+                    }
+                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+                },
+                2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY,
+            );
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
@@ -80,7 +86,7 @@ export class HostGameViewComponent implements OnInit {
 
         this.timeService.timerEnded.subscribe(() => {
             this.notifyNextQuestion();
-          });
+        });
     }
 
     async updateBarChartData(stat: QCMStats): Promise<void> {
@@ -127,7 +133,12 @@ export class HostGameViewComponent implements OnInit {
 
     notifyNextQuestion() {
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
-        this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+        if (this.gameManagerService.endGame) {
+            this.showResults();
+            this.onLastQuestion = true;
+        } else if (!this.gameManagerService.endGame) {
+            this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+        }
     }
 
     openCountDownModal(): void {
@@ -138,7 +149,14 @@ export class HostGameViewComponent implements OnInit {
         this.showCountDown = false;
     }
     notifyEndGame() {
-        this.socketService.sendMessage(Events.LEAVE_ROOM, Namespaces.GAME);
-        this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
+        this.showResults();
+        setTimeout(() => {
+            this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
+        }, SHOW_FEEDBACK_DELAY);
+    }
+
+    ngOnDestroy() {
+        this.timeService.stopTimer();
+        this.gameManagerService.reset();
     }
 }
