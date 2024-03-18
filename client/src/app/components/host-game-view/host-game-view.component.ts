@@ -8,6 +8,9 @@ import { BarChartChoiceStats, BarChartQuestionStats, QCMStats } from '@common/ga
 import { Events, Namespaces } from '@common/sockets';
 // import { PlayAreaComponent } from '../play-area/play-area.component';
 
+const START_TIMER_DELAY = 500;
+const SHOW_FEEDBACK_DELAY = 3000;
+
 @Component({
     selector: 'app-host-game-view',
     templateUrl: './host-game-view.component.html',
@@ -22,7 +25,7 @@ export class HostGameViewComponent implements OnInit {
     statisticsData: BarChartQuestionStats[] = [];
     barChartData: BarChartChoiceStats[] = [];
     questionIndex: number = 0;
-    countdown: number;
+    showCountDown: boolean = false;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -31,6 +34,23 @@ export class HostGameViewComponent implements OnInit {
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.players = players;
+        });
+        this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.gameManagerService.game.duration as number;
+            this.timeService.startTimer(this.timer);
+        });
+        this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.timeService.stopTimer();
+        });
+        this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
+            setTimeout(() => {
+                this.openCountDownModal();
+            }, SHOW_FEEDBACK_DELAY);
+            setTimeout(() => {
+                this.currentQuestion = this.gameManagerService.nextQuestion();
+                this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+            }, 2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+           
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
@@ -53,15 +73,14 @@ export class HostGameViewComponent implements OnInit {
         await this.gameManagerService.initialize(this.socketService.room);
 
         this.currentQuestion = this.gameManagerService.firstQuestion();
-        this.countdown = this.timeService.time;
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
         });
 
-        this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
-            this.nextQuestion();
-        });
+        this.timeService.timerEnded.subscribe(() => {
+            this.notifyNextQuestion();
+          });
     }
 
     async updateBarChartData(stat: QCMStats): Promise<void> {
@@ -97,15 +116,27 @@ export class HostGameViewComponent implements OnInit {
     }
 
     nextQuestion(): void {
-        this.currentQuestion = this.gameManagerService.nextQuestion();
         this.questionIndex++;
+        this.currentQuestion = this.gameManagerService.nextQuestion();
+    }
+
+    showResults(): void {
+        this.socketService.sendMessage(Events.SHOW_RESULTS, Namespaces.GAME);
+        this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
     }
 
     notifyNextQuestion() {
+        this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
         this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
-        this.currentQuestion = this.gameManagerService.nextQuestion();
     }
 
+    openCountDownModal(): void {
+        this.showCountDown = true;
+    }
+
+    onCountDownModalClosed(): void {
+        this.showCountDown = false;
+    }
     notifyEndGame() {
         this.socketService.sendMessage(Events.LEAVE_ROOM, Namespaces.GAME);
         this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);

@@ -31,6 +31,9 @@
                         <button mat-button>
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
+                        <button mat-button (click)="showResults()" class="confirm-button">
+                            <h3 class="confirm-text">montrer les résultats</h3>
+                        </button>
                         <button mat-button (click)="notifyNextQuestion()" class="confirm-button">
                             <h3 class="confirm-text">prochaine question</h3>
                         </button>
@@ -68,3 +71,4 @@
         <span>Youva</span>
     </p>
 </footer>
+<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"></app-countdown-modal>

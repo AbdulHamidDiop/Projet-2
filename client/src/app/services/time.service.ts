@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root',
@@ -10,6 +10,7 @@ export class TimeService {
     private readonly panicTick = 250; // Nouvelle vitesse pour le mode panique
     private isPanicModeActivated: boolean = false;
     private pauseFlag: boolean = false;
+    timerEnded: EventEmitter<void> = new EventEmitter<void>();
 
     private counter: number;
 
@@ -28,6 +29,7 @@ export class TimeService {
                 this.time--;
             } else {
                 this.stopTimer();
+                this.timerEnded.emit();
             }
         }, this.tick);
     }

@@ -34,7 +34,9 @@ export enum Events {
     NAME_NOT_AVAILABLE = 'nameNotAvailable',
     GAME_RESULTS = 'gameResults',
     CHAT_HISTORY = 'chatHistory',
-    START_TIMER = 'startTimer'
+    START_TIMER = 'startTimer',
+    STOP_TIMER = 'stopTimer',
+    SHOW_RESULTS = 'showResults'
 }
 
 export const LOBBY = '0';

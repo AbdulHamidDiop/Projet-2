@@ -51,6 +51,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private points = 0;
 
     private nextQuestionSubscription: Subscription;
+    private showResultsSubscription: Subscription;
     private endGameSubscription: Subscription;
     private abortGameSubscription: Subscription;
     private bonusSubscription: Subscription;
@@ -77,12 +78,22 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers();
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
-            this.countPointsAndNextQuestion();
+            await this.countPointsAndNextQuestion();
+        });
+
+        this.showResultsSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SHOW_RESULTS).subscribe(async () => {
+            await this.confirmAnswers();
+            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            await this.updateScore();
         });
 
         this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManager.game.duration as number;
             this.timeService.startTimer(this.timer);
+        });
+
+        this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.timeService.stopTimer();
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
@@ -103,9 +114,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
     }
 
-    // Devra être changé plus tard.
     get time(): number {
-        if (this.timeService.time === 0) this.confirmAnswers();
         return this.timeService.time;
     }
 
@@ -134,6 +143,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
+        this.timeService.timerEnded.subscribe(async () => {
+            await this.confirmAnswers();
+          });
         const gameID = this.route.snapshot.paramMap.get('id');
         if (this.inTestMode && gameID) {
             await this.gameManager.initialize(gameID);
@@ -153,6 +165,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusSubscription.unsubscribe();
         this.bonusGivenSubscription.unsubscribe();
         this.abortGameSubscription.unsubscribe();
+        this.showResultsSubscription.unsubscribe();
     }
 
     shouldRender(text: string) {
@@ -167,7 +180,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
-        this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
+        //this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
         this.cdr.detectChanges();
     }
 
@@ -201,7 +214,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async confirmAnswers() {
         this.disableChoices = true;
-        this.timeService.stopTimer();
+        //this.timeService.stopTimer();
 
         if (this.inTestMode) {
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -209,8 +222,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
 
-    countPointsAndNextQuestion() {
-        this.updateScore();
+    async countPointsAndNextQuestion() {
+        //this.openCountDownModal();
+        await this.updateScore();
         setTimeout(
             () => {
                 this.disableChoices = false;

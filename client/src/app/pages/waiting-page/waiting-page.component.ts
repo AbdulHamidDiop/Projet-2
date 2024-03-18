@@ -6,7 +6,7 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
 import { Events, Namespaces as nsp } from '@common/sockets';
 
-const START_TIMER_DELAY = 1000;
+const START_TIMER_DELAY = 500;
 
 @Component({
     selector: 'app-waiting-page',

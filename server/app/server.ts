@@ -133,6 +133,11 @@ export class Server {
             this.setupDefaultJoinRoomEvent(socket);
             console.log('A user connected to the game namespace');
 
+            socket.on(Events.SHOW_RESULTS, ({ room }) => {
+                console.log(`Showing results to the next question in room: ${room}`);
+                gameNamespace.in(room).emit(Events.SHOW_RESULTS);
+            });
+
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
                 console.log(`Moving to the next question in room: ${room}`);
                 gameNamespace.in(room).emit(Events.NEXT_QUESTION);
@@ -163,6 +168,10 @@ export class Server {
             socket.on(Events.START_TIMER, ({ room }) => {
                 console.log(`Start timer in room: ${room}`);
                 gameNamespace.in(room).emit(Events.START_TIMER);
+            });
+            socket.on(Events.STOP_TIMER, ({ room }) => {
+                console.log(`Stop timer in room: ${room}`);
+                gameNamespace.in(room).emit(Events.STOP_TIMER);
             });
             socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
                 console.log(`Final answer received in room: ${room}`);
