@@ -127,7 +127,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (gameID) {
             await this.gameManager.initialize(gameID);
         }
-        this.question = this.gameManager.nextQuestion();
+        this.question = this.gameManager.firstQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
     }
     ngOnDestroy() {
@@ -148,11 +148,15 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.answer = [];
         this.endGameTest();
         const newQuestion = this.gameManager.nextQuestion();
-        this.question = newQuestion;
-        if (newQuestion && newQuestion.type === 'QCM') {
-            this.nbChoices = this.question.choices.length;
+        if (this.question !== newQuestion) {
+            this.question = newQuestion;
+            if (newQuestion && newQuestion.type === 'QCM') {
+                this.nbChoices = this.question.choices.length;
+            }
+            this.gameSocketService.sendMessage(Events.START_TIMER, nsp.GAME);
+        } else {
+            this.notifyEndGame();
         }
-        this.gameSocketService.sendMessage(Events.START_TIMER, nsp.GAME);
         this.cdr.detectChanges();
     }
 
@@ -214,7 +218,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     notifyEndGame() {
-        this.gameSocketService.sendMessage(Events.LEAVE_ROOM, nsp.GAME);
         this.gameSocketService.sendMessage(Events.END_GAME, nsp.GAME);
     }
 
@@ -268,7 +271,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     endGame() {
-        this.router.navigate(['/endGame']);
+        this.router.navigate(['results'], { relativeTo: this.route });
     }
 
     endGameTest() {

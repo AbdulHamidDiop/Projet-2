@@ -43,7 +43,7 @@ export class GameManagerService {
                 this.endGame = true;
                 return this.game.questions[this.currentQuestionIndex];
             } else {
-                return this.game.questions[this.currentQuestionIndex++];
+                return this.game.questions[++this.currentQuestionIndex];
             }
         }
         return {} as Question;

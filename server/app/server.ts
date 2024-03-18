@@ -117,6 +117,11 @@ export class Server {
                 gameStatsNamespace.to(data.room).emit(Events.QRL_STATS, data);
             });
 
+            socket.on(Events.GAME_RESULTS, (data) => {
+                console.log(`Game results for room ${data.room}:`, data);
+                gameStatsNamespace.to(data.room).emit(Events.GAME_RESULTS, data);
+            });
+
             socket.on('disconnect', () => {
                 console.log('User disconnected from gameStats namespace');
             });
@@ -139,7 +144,7 @@ export class Server {
             socket.on(Events.START_TIMER, ({ room }) => {
                 console.log(`Start timer in room: ${room}`);
                 gameNamespace.in(room).emit(Events.START_TIMER);
-            })
+            });
             socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
                 console.log(`Final answer received in room: ${room}`);
                 socket.emit(Events.BONUS);

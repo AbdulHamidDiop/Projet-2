@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -28,6 +28,7 @@ export class HostGameViewComponent implements OnInit {
         public gameManagerService: GameManagerService,
         readonly timeService: TimeService,
         private route: ActivatedRoute,
+        private router: Router,
         private socketService: SocketRoomService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
@@ -54,6 +55,10 @@ export class HostGameViewComponent implements OnInit {
 
         this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
             this.nextQuestion();
+        });
+
+        this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
+            this.openResultsPage();
         });
     }
 
@@ -92,5 +97,13 @@ export class HostGameViewComponent implements OnInit {
     nextQuestion(): void {
         this.currentQuestion = this.gameManagerService.nextQuestion();
         this.questionIndex++;
+    }
+
+    openResultsPage(): void {
+        const gameId = this.route.snapshot.paramMap.get('id');
+        if (gameId) {
+            this.router.navigate(['/game', gameId, 'results']);
+        }
+        this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
     }
 }
