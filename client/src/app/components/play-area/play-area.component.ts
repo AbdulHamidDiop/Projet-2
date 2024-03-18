@@ -152,6 +152,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.endGameSubscription.unsubscribe();
         this.bonusSubscription.unsubscribe();
         this.bonusGivenSubscription.unsubscribe();
+        this.abortGameSubscription.unsubscribe();
     }
 
     shouldRender(text: string) {
