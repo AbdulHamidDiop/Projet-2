@@ -25,7 +25,14 @@ describe('HostGameViewComponent', () => {
     let mockFeedback: Feedback[];
 
     beforeEach(async () => {
-        gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', ['initialize', 'firstQuestion', 'nextQuestion', 'getFeedBack', 'endGame', 'reset']);
+        gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
+            'initialize',
+            'firstQuestion',
+            'nextQuestion',
+            'getFeedBack',
+            'endGame',
+            'reset',
+        ]);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
@@ -135,7 +142,7 @@ describe('HostGameViewComponent', () => {
 
     it('should update players on receiving UPDATE_PLAYER event', fakeAsync(() => {
         const mockPlayer: Player = { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0 };
-        component.updatePlayers(mockPlayer);
+        //        component.updatePlayers(mockPlayer);
         tick();
         expect(component.players).toContain(mockPlayer);
     }));

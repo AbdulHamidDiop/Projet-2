@@ -65,6 +65,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
     }
 
+    get players(): Player[] {
+        return this.playerService.playersInGame;
+    }
+
     get time(): number {
         return this.timeService.time;
     }

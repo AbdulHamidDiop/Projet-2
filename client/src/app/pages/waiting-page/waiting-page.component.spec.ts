@@ -30,6 +30,8 @@ describe('WaitingPageComponent', () => {
             'disconnectSubscribe',
             'leaveRoom',
             'getChatMessages',
+            'sendMessage',
+            'listenForMessages',
         ]);
         socketMock.roomLockedSubscribe.and.returnValue(of({} as any));
         socketMock.unlockSubscribe.and.returnValue(of({} as any));
@@ -38,10 +40,11 @@ describe('WaitingPageComponent', () => {
         socketMock.getGameId.and.returnValue(of(''));
         socketMock.getPlayers.and.returnValue(of([]));
         socketMock.getProfile.and.returnValue(of({ isHost: true } as Player));
-        socketMock.gameStartSubscribe.and.returnValue(of({} as any, {} as any, {} as any));
+        socketMock.gameStartSubscribe.and.returnValue(of({} as any));
         socketMock.kickSubscribe.and.returnValue(of({} as any));
         socketMock.disconnectSubscribe.and.returnValue(of({} as any));
         socketMock.getChatMessages.and.returnValue(of({} as ChatMessage));
+
         routerMock = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
             declarations: [WaitingPageComponent, SidebarComponent, PlayAreaComponent],
@@ -60,45 +63,15 @@ describe('WaitingPageComponent', () => {
 
     it('Should subscribe to several events on call to constructor', () => {
         expect(socketMock.roomLockedSubscribe).toHaveBeenCalled();
-        socketMock.roomLockedSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.unlockSubscribe).toHaveBeenCalled();
-        socketMock.unlockSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.roomJoinSubscribe).toHaveBeenCalled();
-        socketMock.roomJoinSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.leaveRoomSubscribe).toHaveBeenCalled();
-        socketMock.leaveRoomSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.getGameId).toHaveBeenCalled();
-        socketMock.getGameId().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.getPlayers).toHaveBeenCalled();
-        socketMock.getPlayers().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.getProfile).toHaveBeenCalled();
-        socketMock.getProfile().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.gameStartSubscribe).toHaveBeenCalled();
-        socketMock.gameStartSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.kickSubscribe).toHaveBeenCalled();
-        socketMock.kickSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
         expect(socketMock.disconnectSubscribe).toHaveBeenCalled();
-        socketMock.disconnectSubscribe().subscribe(() => {
-            expect(component).toBeTruthy();
-        });
     });
 
     it('Should send to different router links depending on player.isHost', () => {

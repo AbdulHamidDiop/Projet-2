@@ -24,7 +24,7 @@ export class ResultsPageComponent implements OnInit {
         private socketsService: SocketRoomService,
         private gameService: GameService,
         private route: ActivatedRoute,
-        private router: Router,
+        public router: Router,
     ) {}
 
     ngOnInit(): void {
