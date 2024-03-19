@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -20,10 +21,12 @@ export class WaitingPageComponent implements OnDestroy {
     player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
     game: Game = {} as Game;
     players: Player[] = [];
+    // eslint-disable-next-line max-params
     constructor(
         private gameService: GameService,
         private socket: SocketRoomService,
         readonly router: Router,
+        private snackBar: MatSnackBar,
     ) {
         this.socket.leaveRoomSubscribe().subscribe(() => {
             this.fullView = false;
@@ -63,11 +66,10 @@ export class WaitingPageComponent implements OnDestroy {
         });
 
         this.socket.kickSubscribe().subscribe(() => {
-            alert('Votre nom est banni.');
-            /*            this.snackBar.open('Votre nom est banni', 'Fermer', {
+            this.snackBar.open('Votre nom est banni', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
-            });*/
+            });
             this.router.navigate(['/waiting']);
         });
 

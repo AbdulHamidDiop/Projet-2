@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 
 @Component({
     selector: 'app-select-username',
@@ -21,8 +22,6 @@ export class SelectUsernameComponent {
             const username = input.value.toLowerCase();
             this.socket.sendPlayerName(username);
             this.playerService.player.name = username;
-            /* 
-            Les joueurs ont déja un feedback quand un joueur rejoint la partie.
 
             const message: ChatMessage = {
                 author: sysmsg.AUTHOR,
@@ -30,10 +29,11 @@ export class SelectUsernameComponent {
                 timeStamp: new Date().toLocaleTimeString(),
             };
 
-            this.socket.sendChatMessage(message);*/
+            this.socket.sendChatMessage(message);
         } else {
             this.snackBar.open('Le nom entré est invalide', 'fermer', {
                 verticalPosition: 'top',
+                duration: 5000,
             });
         }
     }
