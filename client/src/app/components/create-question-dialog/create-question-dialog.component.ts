@@ -6,12 +6,8 @@ import { Router } from '@angular/router';
 import { QuestionsService } from '@app/services/questions.service';
 import { Choices, Question, Type } from '@common/game';
 import { v4 } from 'uuid';
+import { MAX_CHOICES, MAX_POINTS, MIN_CHOICES, MIN_POINTS } from './const';
 import { hasIncorrectAndCorrectAnswer, multipleOfTenValidator } from './validator-functions';
-
-const MIN_CHOICES = 2;
-const MAX_CHOICES = 4;
-const MIN_POINTS = 10;
-const MAX_POINTS = 100;
 
 @Component({
     selector: 'app-create-question-dialog',
@@ -24,9 +20,8 @@ export class CreateQuestionDialogComponent implements OnInit {
     id: string;
     hideAddToBankOption = false;
 
-    // eslint-disable-next-line max-params
     constructor(
-        public fb: FormBuilder,
+        public formBuilder: FormBuilder,
         public dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
         public questionsService: QuestionsService,
         private router: Router,
@@ -57,7 +52,7 @@ export class CreateQuestionDialogComponent implements OnInit {
             if (value === Type.QCM) {
                 this.questionForm.setControl(
                     'choices',
-                    this.fb.array([], [Validators.minLength(MIN_CHOICES), Validators.maxLength(MAX_CHOICES), hasIncorrectAndCorrectAnswer]),
+                    this.formBuilder.array([], [Validators.minLength(MIN_CHOICES), Validators.maxLength(MAX_CHOICES), hasIncorrectAndCorrectAnswer]),
                 );
             } else {
                 this.choices.clear();
@@ -69,7 +64,7 @@ export class CreateQuestionDialogComponent implements OnInit {
     addChoice(): void {
         if (this.choices.length < MAX_CHOICES) {
             this.choices.push(
-                this.fb.group({
+                this.formBuilder.group({
                     text: ['', Validators.required],
                     isCorrect: [false],
                 }),
@@ -88,29 +83,28 @@ export class CreateQuestionDialogComponent implements OnInit {
     }
 
     async onSubmit(): Promise<void> {
-        if (this.questionForm.valid) {
-            this.question = this.questionForm.value;
-            this.question.id = this.id;
-            this.question.lastModification = new Date();
-            if (this.questionForm.get('addToBank')?.value || this.hideAddToBankOption) {
-                const res = await this.questionsService.addQuestion(this.question);
-                if (res) {
-                    this.dialogRef.close(this.question);
-                } else {
-                    this.dialogRef.close();
-                }
-                return;
-            }
-            this.dialogRef.close(this.question);
-        }
+        if (!this.questionForm.valid) return;
+
+        this.question = {
+            ...this.questionForm.value,
+            id: this.id,
+            lastModification: new Date(),
+        };
+
+        const addToBank = this.questionForm.get('addToBank')?.value || this.hideAddToBankOption;
+        const res = await this.questionsService.addQuestion(this.question);
+
+        if (addToBank && !res) return;
+
+        this.dialogRef.close(this.question);
     }
 
     initializeForm(): void {
-        this.questionForm = this.fb.group({
+        this.questionForm = this.formBuilder.group({
             type: ['', Validators.required],
             text: ['', Validators.required],
             points: ['', [Validators.required, Validators.min(MIN_POINTS), Validators.max(MAX_POINTS), multipleOfTenValidator]],
-            choices: this.fb.array([], [Validators.minLength(MIN_CHOICES), Validators.maxLength(MAX_CHOICES), hasIncorrectAndCorrectAnswer]),
+            choices: this.formBuilder.array([], [Validators.minLength(MIN_CHOICES), Validators.maxLength(MAX_CHOICES), hasIncorrectAndCorrectAnswer]),
             addToBank: [false],
         });
     }
@@ -122,16 +116,18 @@ export class CreateQuestionDialogComponent implements OnInit {
             points: questionData.points,
         });
 
+        const choicesArray = this.questionForm.get('choices') as FormArray;
         if (questionData.choices) {
-            const choicesArray = this.questionForm.get('choices') as FormArray;
             questionData.choices.forEach((choice) => {
-                choicesArray.push(
-                    this.fb.group({
-                        text: [choice.text, Validators.required],
-                        isCorrect: [choice.isCorrect],
-                    }),
-                );
+                choicesArray.push(this.createChoiceFormGroup(choice));
             });
         }
+    }
+
+    private createChoiceFormGroup(choice: Choices): FormGroup {
+        return this.formBuilder.group({
+            text: [choice.text, Validators.required],
+            isCorrect: [choice.isCorrect],
+        });
     }
 }

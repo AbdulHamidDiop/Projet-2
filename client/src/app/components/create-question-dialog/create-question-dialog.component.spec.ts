@@ -102,13 +102,13 @@ describe('CreateQuestionDialogComponent', () => {
             component.removeChoice(0);
         }
         component.choices.push(
-            component.fb.group({
+            component.formBuilder.group({
                 text: ['1', Validators.required],
                 isCorrect: [true],
             }),
         );
         component.choices.push(
-            component.fb.group({
+            component.formBuilder.group({
                 text: ['2', Validators.required],
                 isCorrect: [false],
             }),

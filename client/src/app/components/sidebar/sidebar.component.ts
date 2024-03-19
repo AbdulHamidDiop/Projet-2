@@ -21,8 +21,8 @@ export class SidebarComponent implements OnDestroy {
     private globalChatSubscription: Subscription;
 
     constructor(
-        public socketsService: SocketRoomService,
-        private playerService: PlayerService,
+        readonly socketsService: SocketRoomService,
+        readonly playerService: PlayerService,
     ) {
         this.player = this.playerService.player;
         this.globalChatSubscription = this.socketsService.getChatMessages().subscribe(async (message) => {

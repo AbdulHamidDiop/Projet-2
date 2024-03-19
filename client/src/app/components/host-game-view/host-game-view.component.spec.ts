@@ -30,7 +30,7 @@ describe('HostGameViewComponent', () => {
         gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
             'initialize',
             'firstQuestion',
-            'nextQuestion',
+            'goNextQuestion',
             'getFeedBack',
             'endGame',
             'reset',
@@ -236,8 +236,8 @@ describe('HostGameViewComponent', () => {
     }));
 
     it('should increment questionIndex and update currentQuestion on NEXT_QUESTION event', fakeAsync(() => {
-        gameManagerServiceSpy.nextQuestion.and.returnValue(mockQuestion);
-        component.nextQuestion();
+        gameManagerServiceSpy.goNextQuestion.and.returnValue(mockQuestion);
+        component.goNextQuestion();
         tick();
         expect(component.questionIndex).toBe(1);
         expect(component.currentQuestion).toEqual(mockQuestion);
