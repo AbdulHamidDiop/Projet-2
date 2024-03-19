@@ -115,4 +115,29 @@ describe('TimeService', () => {
         service.stopTimer();
         flush();
     }));
+
+    it('pauseTimer should pause and resume the timer', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(MS_SECOND * 2);
+        service.pauseTimer();
+        const timeAfterPause = service.time;
+        tick(MS_SECOND * 3);
+        expect(service.time).toEqual(timeAfterPause);
+        service.pauseTimer();
+        tick(MS_SECOND * 2);
+        expect(service.time).toEqual(timeAfterPause - 2);
+        discardPeriodicTasks();
+    }));
+
+    it('pauseTimer should resume the timer if it was paused', fakeAsync(() => {
+        service.startTimer(TIMEOUT);
+        tick(MS_SECOND * 2);
+        service.pauseTimer();
+        const timeAfterPause = service.time;
+        service['pauseFlag'] = true;
+        service.pauseTimer();
+        tick(MS_SECOND * 2);
+        expect(service.time).toEqual(timeAfterPause - 2);
+        discardPeriodicTasks();
+    }));
 });
