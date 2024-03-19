@@ -44,6 +44,7 @@ export class Server {
         this.configureGlobalNamespace();
         this.configureStaticNamespaces();
     }
+
     private configureGlobalNamespace(): void {
         this.io.on('connection', (socket: Socket) => {
             socket.join(LOBBY);
