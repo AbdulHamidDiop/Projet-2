@@ -257,17 +257,4 @@ describe('GameSessionController', () => {
                 expect(response.body).to.deep.equal(feedback);
             });
     });
-
-    //   this.router.post('/feedback', async (req, res) => {
-    //     const { sessionPin, questionID, submittedAnswers } = req.body;
-
-    //     if (!questionID || !submittedAnswers || !sessionPin) {
-    //         res.status(StatusCodes.BAD_REQUEST).json({ message: 'Question ID and submitted answers are required.' });
-    //     } else {
-    //         const feedback = await this.gameSessionService.generateFeedback(sessionPin, questionID, submittedAnswers);
-    //         res.status(StatusCodes.OK);
-    //         res.json(feedback);
-    //     }
-    //     res.send();
-    // });
 });
