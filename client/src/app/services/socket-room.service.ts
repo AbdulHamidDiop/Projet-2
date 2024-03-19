@@ -75,6 +75,14 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
+    nameAvailable(): Observable<void> {
+        return new Observable((observer) => {
+            this.socket.on(Events.NAME_NOT_AVAILABLE, () => {
+                observer.next();
+            });
+        });
+    }
+
     unlockRoom(): void {
         this.socket.emit(Events.UNLOCK_ROOM);
     }
