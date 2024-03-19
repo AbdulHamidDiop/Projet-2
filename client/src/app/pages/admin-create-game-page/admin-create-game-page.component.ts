@@ -28,7 +28,6 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     questions: Question[] = [];
     isAuthentificated: boolean;
 
-    // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         private fb: FormBuilder,
@@ -45,6 +44,10 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     }
 
     async ngOnInit() {
+        this.initializeComponent();
+    }
+
+    async initializeComponent() {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });

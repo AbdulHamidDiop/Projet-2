@@ -74,19 +74,19 @@ export class GameSessionController {
          * /api/gameSession/create/{pin}:
          *  post:
          *   description: Create a new game session
-         *  tags:
-         *  - GameSession
-         * parameters:
-         * - in: path
-         *  name: pin
-         * required: true
-         * description: The pin of the session to create
-         * schema:
-         * type: string
-         * example: "test"
+         *   tags:
+         *   - GameSession
+         *   parameters:
+         *   - in: path
+         *     name: pin
+         *     required: true
+         *     description: The pin of the session to create
+         *     schema:
+         *       type: string
+         *       example: "test"
          * requestBody:
          * required: true
-         **/
+         */
         this.router.post('/create/:pin', async (req: Request, res: Response) => {
             const game = req.body;
             const session = await this.gameSessionService.createSession(req.params.pin, game);

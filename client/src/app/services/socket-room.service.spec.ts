@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
+import { Game } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Socket } from 'socket.io-client';
 import { IoService } from './ioservice.service';
 import { SocketRoomService } from './socket-room.service';
 import SpyObj = jasmine.SpyObj;
-import { Game } from './game.service';
 
 describe('SocketRoomService', () => {
     let service: SocketRoomService;
@@ -42,7 +42,8 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to createRoom', () => {
-        service.createRoom('' as unknown as Game);
+        const gameTest: Game = { id: '1', title: 'Game 1', isHidden: false, questions: [] };
+        service.createRoom(gameTest);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 
@@ -199,7 +200,7 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to sendMessage', () => {
-        service.sendMessage('' as Events, '' as Namespaces, '' as unknown as object);
+        service.sendMessage('' as Events, '' as Namespaces);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 

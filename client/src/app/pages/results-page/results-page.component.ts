@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Game, GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage } from '@common/message';
@@ -12,6 +13,7 @@ import { Events, Namespaces } from '@common/sockets';
     styleUrls: ['./results-page.component.scss'],
 })
 export class ResultsPageComponent implements OnInit {
+    game: Game;
     players: Player[] = [];
     chatMessages: string[] = [];
     statisticsData: BarChartQuestionStats[] = [];
@@ -20,13 +22,18 @@ export class ResultsPageComponent implements OnInit {
 
     constructor(
         private socketsService: SocketRoomService,
+        private gameService: GameService,
+        private route: ActivatedRoute,
         public router: Router,
     ) {}
 
     ngOnInit(): void {
-        this.statisticsData = [];
-        this.currentHistogramIndex = 0;
-        this.chatMessages = ['Message 1', 'Message 2', 'Message 3'];
+        this.route.paramMap.subscribe((params) => {
+            const id = params.get('id');
+            if (id) {
+                this.game = this.gameService.getGameByID(id);
+            }
+        });
         this.connectToServer();
     }
 
@@ -64,6 +71,20 @@ export class ResultsPageComponent implements OnInit {
     }
 
     private connectToServer(): void {
+        this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_PLAYERS).subscribe({
+            next: (playersData: unknown) => {
+                const playersObj = playersData as { [key: string]: Player };
+                const players: Player[] = [];
+                for (const key in playersObj) {
+                    if (!isNaN(Number(key))) {
+                        players.push(playersObj[key]);
+                    }
+                }
+                this.players = players;
+                this.sortPlayers();
+            },
+        });
+
         // Écouter les QCMSTATS
         this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GAME_RESULTS).subscribe({
             next: (stats: unknown) => {

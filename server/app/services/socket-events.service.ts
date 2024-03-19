@@ -1,6 +1,6 @@
 import { GameSessionService } from '@app/services/game-session.service';
 import { Game, Player } from '@common/game';
-import { ChatMessage } from '@common/message';
+import { ChatMessage, GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
 import { Service } from 'typedi';
@@ -188,9 +188,15 @@ export class SocketEvents {
                     const room = this.socketIdRoom.get(socket.id);
                     if (this.lockedRooms.includes(room)) {
                         socket.emit(Events.LOCK_ROOM, true);
+                        const lockMessage: ChatMessage = { ...ROOM_LOCKED_MESSAGE };
+                        lockMessage.timeStamp = new Date().toLocaleTimeString();
+                        socket.emit(Events.CHAT_MESSAGE, lockMessage);
                     } else {
                         this.lockedRooms.push(room);
                         socket.to(room).to(socket.id).emit(Events.LOCK_ROOM);
+                        const lockMessage: ChatMessage = { ...ROOM_LOCKED_MESSAGE };
+                        lockMessage.timeStamp = new Date().toLocaleTimeString();
+                        socket.to(room).to(socket.id).emit(Events.CHAT_MESSAGE, lockMessage);
                     }
                 }
             }
@@ -206,6 +212,9 @@ export class SocketEvents {
                         return lockedRoom !== room;
                     });
                     socket.emit(Events.UNLOCK_ROOM);
+                    const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
+                    unlockMessage.timeStamp = new Date().toLocaleTimeString();
+                    socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });
@@ -242,6 +251,10 @@ export class SocketEvents {
                 if (host && host.isHost && players.length > 0) {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
+                        const gameStartMessage = { ...GAME_STARTED_MESSAGE };
+                        gameStartMessage.timeStamp = new Date().toLocaleTimeString();
+                        socket.emit(Events.CHAT_MESSAGE, gameStartMessage);
+                        socket.to(room).emit(Events.CHAT_MESSAGE, gameStartMessage);
                         socket.emit(Events.START_GAME);
                         socket.to(room).emit(Events.GET_PLAYERS, players);
                         socket.emit(Events.GET_PLAYERS, players);

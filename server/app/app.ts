@@ -5,21 +5,20 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
 import { StatusCodes } from 'http-status-codes';
-// import swaggerJSDoc from 'swagger-jsdoc';
-// import swaggerUi from 'swagger-ui-express';
+import swaggerJSDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
-import { GameController } from './controllers/game.controller';
 import { GameSessionController } from './controllers/game-session.controller';
+import { GameController } from './controllers/game.controller';
 import { QuestionsController } from './controllers/questions.controller';
 
 @Service()
 export class Application {
     app: express.Application;
     private readonly internalError: number = StatusCodes.INTERNAL_SERVER_ERROR;
-    // private readonly swaggerOptions: swaggerJSDoc.Options;
+    private readonly swaggerOptions: swaggerJSDoc.Options;
 
     // Les paramètres sont nécessaires pour configurer les routes.
-    // eslint-disable-next-line max-params
     constructor(
         private readonly dateController: DateController,
         private readonly adminController: AdminController,
@@ -29,16 +28,16 @@ export class Application {
     ) {
         this.app = express();
 
-        // this.swaggerOptions = {
-        //     swaggerDefinition: {
-        //         openapi: '3.0.0',
-        //         info: {
-        //             title: 'Cadriciel Serveur',
-        //             version: '1.0.0',
-        //         },
-        //     },
-        //     apis: ['**/*.ts'],
-        // };
+        this.swaggerOptions = {
+            swaggerDefinition: {
+                openapi: '3.0.0',
+                info: {
+                    title: 'Cadriciel Serveur',
+                    version: '1.0.0',
+                },
+            },
+            apis: ['**/*.ts'],
+        };
 
         this.config();
 
@@ -46,7 +45,7 @@ export class Application {
     }
 
     bindRoutes(): void {
-        // this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
+        this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
         this.app.use('/api/date', this.dateController.router);
         this.app.use('/api/admin', this.adminController.router);
         this.app.use('/api/questions', this.questionsController.router);

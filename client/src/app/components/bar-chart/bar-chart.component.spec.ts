@@ -1,15 +1,24 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { SocketRoomService } from '@app/services/socket-room.service';
+import { of } from 'rxjs';
 import { BarChartComponent } from './bar-chart.component';
 
 describe('BarChartComponent', () => {
     let component: BarChartComponent;
     let fixture: ComponentFixture<BarChartComponent>;
+    let mockSocketRoomService: jasmine.SpyObj<SocketRoomService>;
 
     beforeEach(async () => {
+        mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', ['listenForMessages']);
+
         await TestBed.configureTestingModule({
             declarations: [BarChartComponent],
+            providers: [{ provide: SocketRoomService, useValue: mockSocketRoomService }],
         }).compileComponents();
+    });
 
+    beforeEach(() => {
+        mockSocketRoomService.listenForMessages.and.returnValues(of({}), of({}));
         fixture = TestBed.createComponent(BarChartComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -19,28 +28,22 @@ describe('BarChartComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should have correct chart legend setting', () => {
-        expect(component.barChartLegend).toBe(false);
+    it('should initialize barChartData with labels and datasets', () => {
+        component.labels = 'Test Label';
+        component.datasets = [{ data: [1, 2], label: 'Test Dataset', backgroundColor: 'red' }];
+        component.updateData();
+
+        expect(component.barChartData).toEqual({
+            labels: ['Test Label'],
+            datasets: [{ data: [1, 2], label: 'Test Dataset', backgroundColor: 'red' }],
+        });
     });
 
-    it('should have correct chart data', () => {
-        expect(component.barChartData.labels).toEqual(['Question 1']);
-        expect(component.barChartData.datasets.length).toBe(4);
-        expect(component.barChartData.datasets[0].data).toEqual([2]);
-        expect(component.barChartData.datasets[1].data).toEqual([1]);
-        expect(component.barChartData.datasets[2].data).toEqual([1]);
-        expect(component.barChartData.datasets[3].data).toEqual([1]);
-    });
-
-    it('should have correct chart options', () => {
-        if (component.barChartOptions) {
-            expect(component.barChartOptions.responsive).toBe(true);
-            expect(component.barChartOptions.maintainAspectRatio).toBe(false);
-            expect(component.barChartOptions.scales?.x?.display).toBe(false);
-            expect(component.barChartOptions.scales?.y?.display).toBe(true);
-            expect(component.barChartOptions.scales?.y?.grid?.display).toBe(false);
-        } else {
-            fail('barChartOptions is undefined');
-        }
-    });
+    it('should update data on QCM_STATS and UPDATE_CHART events', fakeAsync(() => {
+        const updateDataSpy = spyOn(component, 'updateData');
+        mockSocketRoomService.listenForMessages.and.returnValues(of({}), of({}));
+        fixture.detectChanges(); // ngOnInit is called
+        tick();
+        expect(updateDataSpy).toHaveBeenCalledTimes(2);
+    }));
 });

@@ -23,20 +23,15 @@
                 </ul>
 
                 <div class="button-row">
-                    <!-- Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
+                    <!-- Pour le Sprint 3 : Ajouter une condition pour vérifier si le mode de jeu est le mode aléatoire,si oui, désactiver le 
                     bouton "tester le jeu" -->
-                    <button
-                        mat-fab
-                        (click)="launchTestGame(game)"
-                        extended
-                        color="primary"
-                        [routerLink]="['/game', game.id]"
-                        [queryParams]="{ testMode: 'true' }"
-                    >
+                    <button mat-fab (click)="launchTestGame(game)" extended color="primary"
+                        [routerLink]="['/game', game.id]" [queryParams]="{ testMode: 'true' }">
                         Tester le jeu
                     </button>
 
-                    <button mat-fab (click)="launchGame(game)" extended color="primary" [routerLink]="['/hostView', game.id]">
+                    <button mat-fab (click)="launchGame(game)" extended color="primary"
+                        [routerLink]="['/hostView', game.id]">
                         Lancer une partie
                     </button>
                 </div>

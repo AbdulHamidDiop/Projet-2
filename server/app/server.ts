@@ -138,6 +138,11 @@ export class Server {
                 gameStatsNamespace.to(data.room).emit(Events.UPDATE_PLAYER, data);
             });
 
+            socket.on(Events.GET_PLAYERS, (data) => {
+                console.log(data);
+                gameStatsNamespace.to(data.room).emit(Events.GET_PLAYERS, data);
+            });
+
             socket.on('disconnect', () => {
                 console.log('User disconnected from gameStats namespace');
             });
@@ -201,8 +206,6 @@ export class Server {
 
     private setupDefaultJoinRoomEvent(socket: Socket) {
         socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
-            // if (!room || !this.liveRooms.includes(room)) return;
-
             socket.join(room);
             console.log(`Socket ${socket.id} joined room: ${room}`);
             console.log(`liveRooms: ${this.liveRooms}`);

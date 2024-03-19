@@ -397,8 +397,14 @@ export class GameController {
 
         this.router.get('/availability/:id', async (req: Request, res: Response) => {
             const game = await this.gamesService.getGameByID(req.params.id);
+            if (!game) {
+                res.status(StatusCodes.OK).json(false);
+                return;
+            }
+
+            const unavailable = game.unavailable;
             const hidden = game.isHidden;
-            res.status(StatusCodes.OK).json(game && !hidden);
+            res.status(StatusCodes.OK).json(!hidden && !unavailable);
         });
     }
 }
