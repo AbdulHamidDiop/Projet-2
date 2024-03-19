@@ -1,9 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatDialogModule } from '@angular/material/dialog';
-import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
-import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
+import { SocketRoomService } from '@app/services/socket-room.service';
 import { GamePageComponent } from './game-page.component';
-import { ActivatedRoute } from '@angular/router';
 
 describe('GamePageComponent', () => {
     let component: GamePageComponent;
@@ -11,21 +8,27 @@ describe('GamePageComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [MatDialogModule],
-            declarations: [GamePageComponent, SidebarComponent, PlayAreaComponent],
-            providers: [
-                { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => 'test-game-id' }, queryParams: { testMode: 'true' } } } },
-            ],
+            declarations: [GamePageComponent],
+            providers: [SocketRoomService],
         }).compileComponents();
     });
 
     beforeEach(() => {
         fixture = TestBed.createComponent(GamePageComponent);
         component = fixture.componentInstance;
-        fixture.detectChanges();
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
+    });
+
+    it('should initialize messages array during component creation', () => {
+        expect(component.messages).toEqual([]);
+    });
+
+    it('should reinitialize messages array on ngOnInit', () => {
+        component.messages = ['existing message'];
+        component.ngOnInit();
+        expect(component.messages).toEqual([]);
     });
 });
