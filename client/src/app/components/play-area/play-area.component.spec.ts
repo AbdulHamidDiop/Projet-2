@@ -15,7 +15,7 @@ import { Game, Question, Type } from '@common/game';
 import { SHOW_FEEDBACK_DELAY } from './const';
 
 import { Events, Namespaces } from '@common/sockets';
-import { validQuestion } from '@common/test-interfaces';
+import { VALID_QUESTION } from '@common/test-interfaces';
 import { Subject, of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
@@ -118,7 +118,7 @@ describe('PlayAreaComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(PlayAreaComponent);
         component = fixture.componentInstance;
-        component.question = validQuestion;
+        component.question = { ...VALID_QUESTION };
         gameManager = TestBed.inject(GameManagerService);
         fixture.detectChanges();
     });
@@ -261,8 +261,7 @@ describe('PlayAreaComponent', () => {
     });
 
     it('pressing a number key should call handleQCMChoice with the right choice selected', () => {
-        component.question = validQuestion;
-        component.nbChoices = validQuestion.choices.length;
+        component.question = { ...VALID_QUESTION };
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -274,8 +273,7 @@ describe('PlayAreaComponent', () => {
     });
 
     it('pressing a number once should add the choice to the answer array and twice should remove it', () => {
-        component.question = validQuestion;
-        component.nbChoices = validQuestion.choices.length;
+        component.question = { ...VALID_QUESTION };
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -288,8 +286,7 @@ describe('PlayAreaComponent', () => {
     });
 
     it('selecting a wrong choice should not increase the score', () => {
-        component.question = validQuestion;
-        component.nbChoices = validQuestion.choices.length;
+        component.question = { ...VALID_QUESTION };
         const choices = component.question.choices;
         if (choices) {
             const wrongChoice = choices.find((choice) => !choice.isCorrect);
