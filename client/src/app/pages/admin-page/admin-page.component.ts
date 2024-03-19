@@ -86,7 +86,7 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
-    questionErrorsHandling(questions: Question[]) {
+    handleQuestionErrors(questions: Question[]) {
         questions.forEach((question: Question) => {
             this.validateQuestionType(question);
             this.validateQuestionText(question);
@@ -100,13 +100,13 @@ export class AdminPageComponent implements OnInit {
     validateQuestionType(question: Question) {
         const validQuestionTypes = ['QCM', 'QRL'];
         if (!validQuestionTypes.includes(question.type)) {
-            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
+            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL.\n';
         }
     }
 
     validateQuestionText(question: Question) {
         if (!question.text || typeof question.text !== 'string') {
-            this.errors += 'Les questions doivent avoir un texte de type string. ';
+            this.errors += 'Les questions doivent avoir un texte de type string.\n';
         }
     }
 
@@ -120,25 +120,25 @@ export class AdminPageComponent implements OnInit {
                 question.points % MIN_POINTS === 0
             )
         ) {
-            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
+            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10.\n';
         }
     }
 
     validateQuestionChoices(question: Question) {
         if (!(question.choices.length >= MIN_CHOICES && question.choices.length <= MAX_CHOICES)) {
-            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
+            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4.\n';
         }
     }
 
     validateChoiceText(question: Question) {
         if (!question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string')) {
-            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
+            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string.\n';
         }
     }
 
     validateChoiceValidity(question: Question) {
         if (question.choices.every((choice: Choices) => choice.isCorrect) || question.choices.every((choiche: Choices) => !choiche.isCorrect)) {
-            this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.';
+            this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.\n';
         }
     }
 
@@ -188,7 +188,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     onImportButtonClick() {
-        this.errors = 'Erreurs rencontrées: ';
+        this.errors = 'Erreurs rencontrées: \n';
 
         if (this.verifyIfJSON()) {
             this.readFile(this.selectedFile).then((jsonArray: unknown) => {
@@ -196,7 +196,7 @@ export class AdminPageComponent implements OnInit {
             });
         } else {
             const handleErrorsGrid = this.el.nativeElement.querySelector('#handleErrorsGrid');
-            handleErrorsGrid.innerText = 'Le type de fichier est invalide. Veuillez sélectionner un fichier de type JSON.';
+            handleErrorsGrid.innerText = 'Le type de fichier est invalide. Veuillez sélectionner un fichier de type JSON.\n';
         }
     }
 
@@ -234,36 +234,36 @@ export class AdminPageComponent implements OnInit {
 
     private validateTitle(obj: Game): void {
         if (!obj.title || typeof obj.title !== 'string') {
-            this.errors += 'Le jeu importé doit avoir un titre de type string. ';
+            this.errors += 'Le jeu importé doit avoir un titre de type string.\n';
         } else {
             if (this.games.some((game) => game.title === obj.title)) {
-                this.errors += 'Le titre choisi existe déjà. Veuillez en choisir un nouveau. ';
+                this.errors += 'Le titre choisi existe déjà. Veuillez en choisir un nouveau.\n';
             }
         }
     }
 
     private validateDescription(obj: Game): void {
         if (!obj.description || typeof obj.description !== 'string') {
-            this.errors += 'Le jeu importé doit avoir une description de type string. ';
+            this.errors += 'Le jeu importé doit avoir une description de type string.\n';
         }
     }
 
     private validateDuration(obj: Game): void {
         if (!obj.duration || typeof obj.duration !== 'number') {
-            this.errors += 'Le jeu importé doit avoir un temps alloué de type int. ';
+            this.errors += 'Le jeu importé doit avoir un temps alloué de type int.\n';
         } else {
             if (obj.duration < MIN_DURATION || obj.duration > MAX_DURATION) {
-                this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes. ';
+                this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes.\n';
             }
         }
     }
 
     private validateQuestions(obj: Game): boolean {
         if (!obj.questions || obj.questions.length === 0) {
-            this.errors += 'Le jeu doit contenir au moins une question. ';
+            this.errors += 'Le jeu doit contenir au moins une question.\n';
             return false;
         }
-        this.questionErrorsHandling(obj.questions);
+        this.handleQuestionErrors(obj.questions);
         return true;
     }
 

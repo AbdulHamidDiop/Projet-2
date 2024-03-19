@@ -78,10 +78,10 @@ export class SocketEvents {
                 this.socketIdRoom.set(socket.id, room);
                 const playerProfile: Player = { id: '', name: 'Player', isHost: false, score: 0, bonusCount: 0 };
                 this.playerSocketId.set(socket.id, playerProfile);
-                socket.emit(Events.JOIN_ROOM, true); // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
+                socket.emit(Events.JOIN_ROOM, true);
+                // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
                 // Le socket rejoint le room après avoir envoyé son nom et que celui-ci est validé.
-            }
-            else {
+            } else {
                 socket.emit(Events.JOIN_ROOM, false);
             }
         });
@@ -213,7 +213,7 @@ export class SocketEvents {
                     socket.emit(Events.UNLOCK_ROOM);
                     const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
                     unlockMessage.timeStamp = new Date().toLocaleTimeString();
-                    //socket.emit(Events.CHAT_MESSAGE, unlockMessage);
+                    // socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });

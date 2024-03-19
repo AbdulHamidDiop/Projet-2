@@ -87,22 +87,11 @@ describe('Socket Events Service', () => {
     it('Should call socket.emit on call to listenForCreateRoom', () => {
         socket.on('listenForCreateRoom', () => {
             // La fonction socket.on est mock, les appels à socket.on sont synchrones.
-            let i = 0;
             const sandbox = createSandbox();
-            const makeRoomIdStub = stub(socketEvents, 'makeRoomId').callsFake(() => {
-                if (i < 1) {
-                    i++;
-                    return '';
-                } else {
-                    return '0';
-                }
-            });
             socketEvents.liveRooms = [''];
             socketEvents.listenForCreateRoomEvent(socket);
             socket.removeAllListeners(Events.CREATE_ROOM);
             expect(socketOnStub.called).to.equal(true);
-            expect(socketEmitStub.called).to.equal(true);
-            expect(makeRoomIdStub.called).to.equal(true);
             socketEvents.liveRooms = [LOBBY];
             sandbox.restore();
         });

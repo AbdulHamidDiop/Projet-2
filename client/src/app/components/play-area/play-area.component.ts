@@ -15,13 +15,7 @@ import { QCMStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
-
-export const DEFAULT_WIDTH = 200;
-export const DEFAULT_HEIGHT = 200;
-export const SHOW_FEEDBACK_DELAY = 3000;
-export const DEFAULT_TIMER = 25;
-export const BONUS_MULTIPLIER = 0.2;
-const ERROR_INDEX = -1;
+import { BONUS_MULTIPLIER, ERROR_INDEX, SHOW_FEEDBACK_DELAY } from './const';
 
 @Component({
     selector: 'app-play-area',
@@ -41,9 +35,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     showPoints: boolean = false;
     showCountDown: boolean = false;
     countDownKey: number = Date.now(); // to force change dete/ctiosn
-    disableChoices = false;
+    choiceDisabled = false;
     feedback: Feedback[];
-    qcmstat: QCMStats;
+    qcmStat: QCMStats;
     bonusGiven = false;
     gotBonus = false;
 
@@ -61,10 +55,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
-        public gameManager: GameManagerService,
-        public socketService: SocketRoomService,
-        private playerService: PlayerService,
-        private cdr: ChangeDetectorRef,
+        readonly gameManager: GameManagerService,
+        readonly socketService: SocketRoomService,
+        readonly playerService: PlayerService,
+        private changeDetector: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
         private route: ActivatedRoute,
@@ -122,7 +116,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     @HostListener('keydown', ['$event'])
-    buttonDetect(event: KeyboardEvent) {
+    detectButton(event: KeyboardEvent) {
         this.buttonPressed = event.key;
         if (this.buttonPressed === 'Enter') {
             this.confirmAnswers();
@@ -167,16 +161,15 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         return text !== '';
     }
 
-    nextQuestion() {
+    goNextQuestion() {
         this.answer = [];
         this.endGameTest();
-        const newQuestion = this.gameManager.nextQuestion();
+        const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
-        // this.socketService.sendMessage(Events.START_TIMER, nsp.GAME);
-        this.cdr.detectChanges();
+        this.changeDetector.detectChanges();
     }
 
     handleQCMChoice(answer: string) {
@@ -193,14 +186,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.answer.push(answer);
         }
 
-        this.qcmstat = {
+        this.qcmStat = {
             questionId: this.question.id,
             choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
             correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
         };
-        this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmstat);
+        this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmStat);
     }
 
     isChoice(choice: string): boolean {
@@ -208,8 +201,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async confirmAnswers() {
-        this.disableChoices = true;
-        // this.timeService.stopTimer();
+        this.choiceDisabled = true;
 
         if (this.inTestMode) {
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -221,8 +213,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         await this.updateScore();
         setTimeout(
             () => {
-                this.disableChoices = false;
-                this.nextQuestion();
+                this.choiceDisabled = false;
+                this.goNextQuestion();
             },
             this.inTestMode ? SHOW_FEEDBACK_DELAY : SHOW_FEEDBACK_DELAY * 2,
         );
@@ -325,7 +317,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    trackByFn(item: any) {
+    trackByFunction(item: any) {
         return item.id;
     }
 }

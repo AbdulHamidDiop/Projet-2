@@ -15,7 +15,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     @Input() game: Game = {} as Game;
     @Input() players: Player[] = [];
     room: string;
-    private roomLocked: boolean = false;
+    roomLocked: boolean = false;
     private globalChatSubscription: Subscription;
 
     constructor(
