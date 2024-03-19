@@ -3,7 +3,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question, Type } from '@common/game';
-import { validQuestion } from '@common/test-interfaces';
+import { VALID_QUESTION } from '@common/test-interfaces';
 import { AdminQuestionsBankComponent } from './admin-questions-bank.component';
 
 describe('AdminQuestionsBankComponent', () => {
@@ -11,7 +11,7 @@ describe('AdminQuestionsBankComponent', () => {
     let fixture: ComponentFixture<AdminQuestionsBankComponent>;
     // eslint-disable-next-line prefer-arrow/prefer-arrow-functions
     async function getAllQuestionsMock(): Promise<Question[]> {
-        return [validQuestion];
+        return [VALID_QUESTION];
     }
     const getQuestionsSpy = jasmine.createSpy('getAllQuestions').and.callFake(getAllQuestionsMock);
 
@@ -44,8 +44,8 @@ describe('AdminQuestionsBankComponent', () => {
     });
 
     it('Should let user change the order of questions by calling moveItemInArray on a drag and drop event', () => {
-        const question1 = { ...validQuestion };
-        const question2 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
+        const question2 = { ...VALID_QUESTION };
         question1.text = 'Question 1';
         question2.text = 'Question 2';
         component.questionsBankList.data = [question1, question2];
@@ -64,8 +64,8 @@ describe('AdminQuestionsBankComponent', () => {
     });
 
     it('Should let user transfer questions from questions area by calling transferItemInArray on a drag and drop event', () => {
-        const question1 = { ...validQuestion };
-        const question2 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
+        const question2 = { ...VALID_QUESTION };
         question1.text = 'Question 1';
         question2.text = 'Question 2';
         component.questionsBankList.data = [question1];
@@ -82,15 +82,15 @@ describe('AdminQuestionsBankComponent', () => {
     });
 
     it('Should sort questions by last modification date', () => {
-        const question1 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         question1.lastModification = new Date(2024, 3);
         question1.id = '1';
-        const question2 = { ...validQuestion };
+        const question2 = { ...VALID_QUESTION };
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         question2.lastModification = new Date(2024, 2);
         question2.id = '2';
-        const question3 = { ...validQuestion };
+        const question3 = { ...VALID_QUESTION };
         // eslint-disable-next-line @typescript-eslint/no-magic-numbers
         question3.lastModification = new Date(2024, 1);
         question3.id = '3';
@@ -110,11 +110,11 @@ describe('AdminQuestionsBankComponent', () => {
     });
 
     it('Should let user change type of question being viewed by pressing the toggle question type buttons', () => {
-        const question1 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
         question1.type = Type.QRL;
-        const question2 = { ...validQuestion };
+        const question2 = { ...VALID_QUESTION };
         question2.type = Type.QRL;
-        const question3 = { ...validQuestion };
+        const question3 = { ...VALID_QUESTION };
         question3.type = Type.QCM;
 
         component.questions = [question1, question2, question3];

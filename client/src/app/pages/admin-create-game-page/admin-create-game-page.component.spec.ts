@@ -16,7 +16,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { FetchService } from '@app/services/fetch.service';
 import { GameService } from '@app/services/game.service';
 import { Game, Question, Type } from '@common/game';
-import { validGame, validQuestion } from '@common/test-interfaces';
+import { VALID_GAME, VALID_QUESTION } from '@common/test-interfaces';
 import { Observable } from 'rxjs';
 import { AdminCreateGamePageComponent } from './admin-create-game-page.component';
 
@@ -104,15 +104,15 @@ describe('AdminCreateGamePageComponent', () => {
     let fixture: ComponentFixture<AdminCreateGamePageComponent>;
 
     const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
-        subscriber.next([validQuestion]);
+        subscriber.next([VALID_QUESTION]);
     });
 
     const openDialogSpy = jasmine.createSpy('open').and.callFake(() => {
         return { afterClosed: () => observableQuestion };
     });
-    const getGameByIdSpy = jasmine.createSpy('getGameByID').and.returnValue(validGame);
+    const getGameByIdSpy = jasmine.createSpy('getGameByID').and.returnValue(VALID_GAME);
     const addGameSpy = jasmine.createSpy('addGame').and.callFake(addGameMock);
-    const gameServiceSpy = jasmine.createSpy('getAllGames').and.returnValue([validGame]);
+    const gameServiceSpy = jasmine.createSpy('getAllGames').and.returnValue([VALID_GAME]);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const observableParamMap: Observable<any> = new Observable((subscriber) => {
         subscriber.next({ get: () => false });
@@ -175,7 +175,7 @@ describe('AdminCreateGamePageComponent', () => {
         component.ngAfterViewInit();
     });
     it('Should create new question game, copy relevant fields from form input', () => {
-        const game: Game = { ...validGame };
+        const game: Game = { ...VALID_GAME };
         component.populateForm(game);
         component.saveQuiz();
         expect(component.game.title === game.title).toBeTruthy();
@@ -208,7 +208,7 @@ describe('AdminCreateGamePageComponent', () => {
     });
     it('Should call gameService.addGame when pressing button to save quiz', async () => {
         addGameSpy.calls.reset();
-        const game: Game = { ...validGame };
+        const game: Game = { ...VALID_GAME };
         component.populateForm(game);
         component.saveQuiz();
         addGameMock().then(() => {
@@ -216,13 +216,13 @@ describe('AdminCreateGamePageComponent', () => {
         });
     });
     it('Should validate game name as not empty', () => {
-        const game: Game = { ...validGame };
+        const game: Game = { ...VALID_GAME };
         game.title = '';
         component.populateForm(game);
         expect(component.gameForm.valid).toBeFalsy();
     });
     it('Should let user pick a time interval between 10 and 60 seconds inclusively', () => {
-        const game: Game = { ...validGame };
+        const game: Game = { ...VALID_GAME };
         game.duration = 9;
         component.populateForm(game);
         expect(component.gameForm.valid).toBeFalsy();
@@ -241,8 +241,8 @@ describe('AdminCreateGamePageComponent', () => {
     });
     it('Should let user change the order of questions by calling moveItemInArray', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const question1 = { ...validQuestion };
-        const question2 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
+        const question2 = { ...VALID_QUESTION };
         question1.text = '1';
         question2.text = '2';
         component.questionsBankList.data = [question1, question2];
@@ -261,8 +261,8 @@ describe('AdminCreateGamePageComponent', () => {
     });
     it('Should let user transfer questions from question bank by calling transferItemInArray', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const question1 = { ...validQuestion };
-        const question2 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
+        const question2 = { ...VALID_QUESTION };
         question1.text = '1';
         question2.text = '2';
         component.questionsBankList.data = [question1];
@@ -296,17 +296,17 @@ describe('AdminCreateGamePageComponent', () => {
         expect(getGameByIdSpy).toHaveBeenCalled();
     });
     it('Should delete question on call to handleDeleteQuestion', () => {
-        component.questions = [validQuestion];
+        component.questions = [VALID_QUESTION];
         component.handleDeleteQuestion(0);
         expect(component.questions.length).toBe(0);
     });
     it('Should update question on call to handleSaveQuestion', () => {
-        const question1 = { ...validQuestion };
+        const question1 = { ...VALID_QUESTION };
         question1.text = '1';
-        const question2 = { ...validQuestion };
+        const question2 = { ...VALID_QUESTION };
         question2.text = '2';
         component.questions = [question1, question2];
-        const question3 = { ...validQuestion };
+        const question3 = { ...VALID_QUESTION };
         question3.text = '3';
         component.handleSaveQuestion(question3, 1);
         expect(component.questions.length).toBe(2);

@@ -1,5 +1,5 @@
 import { Choices, Game, Question, Type } from '@common/game';
-export const validChoices: Choices[] = [
+export const VALID_CHOICES: Choices[] = [
     {
         text: 'Choix valide #1',
         isCorrect: true,
@@ -13,7 +13,7 @@ export const validChoices: Choices[] = [
         index: 0,
     },
 ];
-export const validQuestion: Question = {
+export const VALID_QUESTION: Question = {
     id: '2',
     lastModification: null,
     type: Type.QCM,
@@ -36,7 +36,7 @@ export const validQuestion: Question = {
     answer: 'Choix #1',
 };
 
-export const validGame: Game = {
+export const VALID_GAME: Game = {
     id: '0',
     lastModification: new Date(),
     title: 'Jeu standard',
