@@ -4,13 +4,13 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
-import { Feedback } from '@common/feedback';
-import { Player, Question, Type } from '@common/game';
+import { Feedback, Player, Question, Type } from '@common/game';
 import { QCMStats } from '@common/game-stats';
-import { of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
-
 import { HostGameViewComponent } from './host-game-view.component';
+import { Events, Namespaces } from '@common/sockets';
+import { of } from 'rxjs';
+import { EventEmitter } from '@angular/core';
 
 describe('HostGameViewComponent', () => {
     let component: HostGameViewComponent;
@@ -23,6 +23,7 @@ describe('HostGameViewComponent', () => {
     let mockPlayers: Player[];
     let mockStat: QCMStats;
     let mockFeedback: Feedback[];
+    const SHOW_FEEDBACK_DELAY = 3000;
 
     beforeEach(async () => {
         gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
@@ -36,6 +37,12 @@ describe('HostGameViewComponent', () => {
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+        socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
+        socketServiceSpy.getPlayers.and.returnValue(of([]));
+        socketServiceSpy.listenForMessages.and.returnValue(of({}));
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer'], {
+            timerEnded: new EventEmitter<void>(),
+        });
 
         // Mock data
         mockQuestion = {
@@ -74,6 +81,7 @@ describe('HostGameViewComponent', () => {
                 { provide: SocketRoomService, useValue: socketServiceSpy },
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: Router, useValue: routerSpy },
+                { provide: TimeService, useValue: timeServiceSpy },
                 {
                     provide: ActivatedRoute,
                     useValue: {
@@ -95,13 +103,56 @@ describe('HostGameViewComponent', () => {
         socketServiceSpy.getPlayers.and.returnValue(of(mockPlayers));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
         fixture.detectChanges();
+        spyOn(component, 'notifyNextQuestion');
     });
 
     it('should create', () => {
         expect(component).toBeTruthy();
     });
 
+    it('should handle timerEnded event from TimeService', fakeAsync(() => {
+        component.ngOnInit();
+        timeServiceSpy.timerEnded.emit();
+        tick();
+        expect(component.notifyNextQuestion).toHaveBeenCalled();
+    }));
+
+    it('should handle END_GAME event from SocketRoomService', fakeAsync(() => {
+        const openResultsPageSpy = spyOn(component, 'openResultsPage');
+        socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
+            if (namespace === Namespaces.GAME && event === Events.END_GAME) {
+                return of({});
+            }
+            return of({});
+        });
+        component.ngOnInit();
+        tick();
+        expect(openResultsPageSpy).toHaveBeenCalled();
+    }));
+
+    it('should handle UPDATE_PLAYER event from SocketRoomService', fakeAsync(() => {
+        const mockPlayerWithRoom = { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0, room: 'test-room' };
+        const updatePlayersSpy = spyOn(component, 'updatePlayers');
+        socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
+            if (namespace === Namespaces.GAME_STATS && event === Events.UPDATE_PLAYER) {
+                return of(mockPlayerWithRoom);
+            }
+            return of({});
+        });
+        component.ngOnInit();
+        tick();
+        expect(updatePlayersSpy).toHaveBeenCalledWith(
+            jasmine.objectContaining({ name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0 }),
+        );
+    }));
+
     it('should update players on component initialization', () => {
+        socketServiceSpy.getPlayers.and.returnValue(of(mockPlayers));
+
+        fixture = TestBed.createComponent(HostGameViewComponent);
+        component = fixture.componentInstance;
+        fixture.detectChanges();
+
         expect(component.players).toEqual(mockPlayers);
     });
 
@@ -145,5 +196,49 @@ describe('HostGameViewComponent', () => {
         //        component.updatePlayers(mockPlayer);
         tick();
         expect(component.players).toContain(mockPlayer);
+    }));
+
+    it('should call showResults and send SHOW_RESULTS and STOP_TIMER messages', () => {
+        component.showResults();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.SHOW_RESULTS, Namespaces.GAME);
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.STOP_TIMER, Namespaces.GAME);
+    });
+
+    it('should call notifyNextQuestion and send STOP_TIMER message', () => {
+        component.notifyNextQuestion();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.STOP_TIMER, Namespaces.GAME);
+    });
+
+    it('should set onLastQuestion to true and call showResults when endGame is true', () => {
+        spyOn(component, 'showResults');
+        gameManagerServiceSpy.endGame = true;
+        component.notifyNextQuestion();
+        expect(component.onLastQuestion).toBeTrue();
+        expect(component.showResults).toHaveBeenCalled();
+    });
+
+    it('should send NEXT_QUESTION message when endGame is false', () => {
+        gameManagerServiceSpy.endGame = false;
+        component.notifyNextQuestion();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.NEXT_QUESTION, Namespaces.GAME);
+    });
+
+    it('should set showCountDown to true when openCountDownModal is called', () => {
+        component.openCountDownModal();
+        expect(component.showCountDown).toBeTrue();
+    });
+
+    it('should set showCountDown to false when onCountDownModalClosed is called', () => {
+        component.onCountDownModalClosed();
+        expect(component.showCountDown).toBeFalse();
+    });
+
+    it('should call showResults and sendMessage with END_GAME event after a delay', fakeAsync(() => {
+        spyOn(component, 'showResults');
+        spyOn(socketServiceSpy, 'sendMessage');
+        component.notifyEndGame();
+        tick(SHOW_FEEDBACK_DELAY);
+        expect(component.showResults).toHaveBeenCalled();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.END_GAME, Namespaces.GAME);
     }));
 });
