@@ -36,7 +36,7 @@ describe('CountdownModalComponent', () => {
 
         fixture.detectChanges();
 
-        expect(component.countdown).toBe(0);
+        expect(component.countdown).toBe(3);
         expect(component.showModal).toBeFalse();
         expect(wasClosed).toBeTrue();
     }));

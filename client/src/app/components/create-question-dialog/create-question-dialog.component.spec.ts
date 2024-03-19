@@ -1,8 +1,9 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Choices, Question, Type } from '@common/game';
@@ -59,6 +60,12 @@ describe('CreateQuestionDialogComponent', () => {
                     useValue: {
                         setControl: setControlSpy,
                         removeControl: removeControlSpy,
+                    },
+                },
+                {
+                    provide: Router,
+                    useValue: {
+                        url: '/admin/questions', // Mocking Router to return a specific URL
                     },
                 },
             ],
@@ -198,10 +205,26 @@ describe('CreateQuestionDialogComponent', () => {
         });
     });
 
-    it('Should call MatDialogRef.close after pressing submit button to close the dialog', () => {
+    it('should call MatDialogRef.close with question data after successful form submission', fakeAsync(() => {
+        component.questionForm.setValue({
+            type: 'QCM',
+            text: 'Example question text',
+            points: 30,
+            choices: [
+                { text: 'Choice 1', isCorrect: true },
+                { text: 'Choice 2', isCorrect: false },
+            ],
+            addToBank: false,
+        });
+
+        const addQuestionPromise = Promise.resolve(true);
+        addQuestionSpy.and.returnValue(addQuestionPromise);
         component.onSubmit();
-        expect(closeDialogSpy).toHaveBeenCalled();
-    });
+        tick();
+
+        expect(closeDialogSpy).toHaveBeenCalledWith(jasmine.any(Object));
+        expect(addQuestionSpy).toHaveBeenCalledWith(jasmine.any(Object));
+    }));
 
     it('Should call setControl and removeControl to change question form on change of question type', () => {
         observableAbstractControl.subscribe((type) => {
@@ -209,5 +232,10 @@ describe('CreateQuestionDialogComponent', () => {
                 expect(component.questionForm.contains('choices')).toBeTruthy();
             }
         });
+    });
+
+    it('should set hideAddToBankOption to true if the route is /admin/questions', () => {
+        fixture.detectChanges();
+        expect(component.hideAddToBankOption).toBeTrue();
     });
 });
