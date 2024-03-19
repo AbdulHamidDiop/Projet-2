@@ -1,6 +1,6 @@
 import { GameSessionService } from '@app/services/game-session.service';
 import { Game, Player } from '@common/game';
-import { ChatMessage, GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from '@common/message';
+import { ChatMessage, GAME_STARTED_MESSAGE, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
 import { Service } from 'typedi';
@@ -171,6 +171,13 @@ export class SocketEvents {
                     socket.emit(Events.GET_PLAYERS, playerList);
                     socket.to(room).emit(Events.GET_PLAYERS, playerList);
                     socket.emit(Events.GET_GAME_ID, gameId);
+                    const message: ChatMessage = {
+                        author: sysmsg.AUTHOR,
+                        message: name + ' ' + sysmsg.PLAYER_JOINED,
+                        timeStamp: new Date().toLocaleTimeString(),
+                    };
+                    socket.to(room).emit(Events.CHAT_MESSAGE, message);
+                    socket.emit(Events.CHAT_MESSAGE, message);
                 }
             }
         });
@@ -189,18 +196,7 @@ export class SocketEvents {
                 const player = this.playerSocketId.get(socket.id);
                 if (player.isHost) {
                     const room = this.socketIdRoom.get(socket.id);
-                    if (this.lockedRooms.includes(room)) {
-                        //socket.emit(Events.LOCK_ROOM);
-                        const lockMessage: ChatMessage = { ...ROOM_LOCKED_MESSAGE };
-                        lockMessage.timeStamp = new Date().toLocaleTimeString();
-                        //socket.emit(Events.CHAT_MESSAGE, lockMessage);
-                    } else {
-                        this.lockedRooms.push(room);
-                        //socket.to(room).to(socket.id).emit(Events.LOCK_ROOM);
-                        const lockMessage: ChatMessage = { ...ROOM_LOCKED_MESSAGE };
-                        lockMessage.timeStamp = new Date().toLocaleTimeString();
-                        //socket.to(room).emit(Events.CHAT_MESSAGE, lockMessage);
-                    }
+                    this.lockedRooms.push(room);
                 }
             }
         });
