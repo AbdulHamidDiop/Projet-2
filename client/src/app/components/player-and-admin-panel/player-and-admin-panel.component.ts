@@ -50,12 +50,11 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     startGame() {
         if (this.players.length > 0) {
             this.socket.startGame();
-            if (this.roomLocked == true) {
+            if (this.roomLocked === true) {
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
                 this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
-            }
-            else {
-                this.snackBar.open("La partie doit être verrouillée avant de commencer", 'Fermer', {
+            } else {
+                this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
                     verticalPosition: 'top',
                     duration: 5000,
                 });
