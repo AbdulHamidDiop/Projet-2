@@ -22,7 +22,7 @@ export class SelectUsernameComponent {
             this.socket.sendPlayerName(username);
             this.playerService.player.name = username;
             /* 
-            Si le nom est banni le message va s'afficher même si l'utilisateur n'a pas join ( à tester ).
+            Les joueurs ont déja un feedback quand un joueur rejoint la partie.
 
             const message: ChatMessage = {
                 author: sysmsg.AUTHOR,
