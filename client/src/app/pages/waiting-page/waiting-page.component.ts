@@ -58,8 +58,7 @@ export class WaitingPageComponent implements OnDestroy {
                 verticalPosition: 'top',
                 duration: 5000,
             });
-        })
-
+        });
 
         this.socket.getGameId().subscribe((id) => {
             this.game = this.gameService.getGameByID(id);
