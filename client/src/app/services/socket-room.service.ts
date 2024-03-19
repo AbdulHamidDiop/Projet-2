@@ -267,6 +267,7 @@ export class SocketRoomService implements OnDestroy {
     private handleUnload(): void {
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
+            this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
         }
     }
 
