@@ -11,12 +11,14 @@ export class CountdownModalComponent implements OnChanges {
     @Output() modalClosed: EventEmitter<void> = new EventEmitter<void>();
     @Input() countdown: number;
     @Input() message: string;
+    time: number;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.showModal && changes.showModal.currentValue) {
+            this.time = this.countdown;
             const interval = setInterval(() => {
-                this.countdown -= 1;
-                if (this.countdown === 0) {
+                this.time -= 1;
+                if (this.time === 0) {
                     clearInterval(interval);
                     this.showModal = false;
                     this.modalClosed.emit();

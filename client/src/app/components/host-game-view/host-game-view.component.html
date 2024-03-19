@@ -33,10 +33,10 @@
                         </button>
                         <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()"
                             class="confirm-button">
-                            <h3 class="confirm-text">prochaine question</h3>
+                            <h3 class="next-button">prochaine question</h3>
                         </button>
                         <button *ngIf="onLastQuestion" mat-button (click)="notifyEndGame()" class="confirm-button">
-                            <h3 class="confirm-text">Terminer le jeu</h3>
+                            <h3 class="end-button">Terminer le jeu</h3>
                         </button>
                     </mat-card-actions>
                 </section>
@@ -48,19 +48,35 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <ul>
-                <div *ngFor="let player of playerService.playersInGame">
-                    <li>{{ player.name }} : {{ player.score }} points</li>
-                </div>
-            </ul>
+            <h2 class="title"> <strong>Liste des joueurs</strong> </h2>
+            <div>
+                <table class="players-table">
+                    <thead>
+                        <tr>
+                            <th>Nom du joueur</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let player of playerService.playersInGame">
+                            <td>{{ player.name }}</td>
+                            <td>{{ player.score }} points</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="2" [rowspan]="1">
-            <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
-            </ng-container>
+            <h2 class="title"><strong>Zone Statistiques </strong></h2>
+            <div>
+                <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
+                    <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                </ng-container>
+            </div>
         </mat-grid-tile>
     </mat-grid-list>
 </main>
 
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"></app-countdown-modal>
+<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="3"></app-countdown-modal>

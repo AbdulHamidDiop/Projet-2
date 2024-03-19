@@ -30,7 +30,7 @@ describe('HostGameViewComponent', () => {
         gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
             'initialize',
             'firstQuestion',
-            'nextQuestion',
+            'goNextQuestion',
             'getFeedBack',
             'endGame',
             'reset',
@@ -113,24 +113,21 @@ describe('HostGameViewComponent', () => {
 
     it('should handle timerEnded event from TimeService', fakeAsync(() => {
         component.ngOnInit();
+        expect(component.notifyNextQuestion).not.toHaveBeenCalled();
         timeServiceSpy.timerEnded.emit();
         tick();
         expect(component.notifyNextQuestion).toHaveBeenCalled();
     }));
 
     it('should start the timer on receiving START_TIMER event', () => {
-        // Set the game duration in the GameManagerService
         gameManagerServiceSpy.game = { duration: 30 } as Game;
-        // Set up the listenForMessages spy to emit the START_TIMER event
         socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
             if (namespace === Namespaces.GAME && event === Events.START_TIMER) {
-                return of({}); // Emit an empty object to simulate the event
+                return of({});
             }
             return of({});
         });
         component.ngOnInit();
-        // No need to trigger the event manually, as it's handled by the listenForMessages spy
-        // Check that startTimer was called with the game duration
         expect(timeServiceSpy.startTimer).toHaveBeenCalledWith(gameManagerServiceSpy.game.duration!);
     });
 
@@ -194,6 +191,44 @@ describe('HostGameViewComponent', () => {
         expect(component.barChartData.length).toBeGreaterThan(0);
     }));
 
+    it('should decrement bar chart data when stat.selected is false and data value is greater than 0', fakeAsync(() => {
+        const initialStat: QCMStats = {
+            questionId: 'test-question-id',
+            choiceIndex: 0,
+            selected: true,
+            choiceAmount: 2,
+            correctIndex: 0,
+        };
+        const decrementStat: QCMStats = {
+            ...initialStat,
+            selected: false,
+        };
+        component.statisticsData = [
+            {
+                questionID: 'test-question-id',
+                data: [
+                    {
+                        data: [1],
+                        label: 'Choice 1',
+                        backgroundColor: '#4CAF50',
+                    },
+                    {
+                        data: [0],
+                        label: 'Choice 2',
+                        backgroundColor: '#FF4C4C',
+                    },
+                ],
+            },
+        ];
+        component.updateBarChartData(initialStat);
+        tick();
+        expect(component.statisticsData[0].data[0].data[0]).toBe(2);
+        component.updateBarChartData(decrementStat);
+        tick();
+        expect(component.statisticsData[0].data[0].data[0]).toBe(1);
+        expect(component.barChartData).toEqual(component.statisticsData[0].data);
+    }));
+
     it('should navigate to results page on receiving END_GAME event', fakeAsync(() => {
         component.openResultsPage();
         tick();
@@ -201,8 +236,8 @@ describe('HostGameViewComponent', () => {
     }));
 
     it('should increment questionIndex and update currentQuestion on NEXT_QUESTION event', fakeAsync(() => {
-        gameManagerServiceSpy.nextQuestion.and.returnValue(mockQuestion);
-        component.nextQuestion();
+        gameManagerServiceSpy.goNextQuestion.and.returnValue(mockQuestion);
+        component.goNextQuestion();
         tick();
         expect(component.questionIndex).toBe(1);
         expect(component.currentQuestion).toEqual(mockQuestion);

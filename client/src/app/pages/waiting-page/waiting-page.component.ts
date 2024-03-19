@@ -36,7 +36,14 @@ export class WaitingPageComponent implements OnDestroy {
             this.fullView = true;
         });
 
-        this.socket.roomJoinSubscribe().subscribe(() => {
+        this.socket.roomJoinSubscribe().subscribe((res) => {
+            if (!res) {
+                this.snackBar.open("Cette partie n'existe pas", 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 5000,
+                });
+                return;
+            }
             if (this.roomIdEntryView) {
                 this.fullView = false;
                 this.roomIdEntryView = false;
@@ -45,6 +52,14 @@ export class WaitingPageComponent implements OnDestroy {
                 this.fullView = true;
             }
         });
+
+        this.socket.roomLockedSubscribe().subscribe(() => {
+            this.snackBar.open('La partie est verrouillée', 'Fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
+        })
+
 
         this.socket.getGameId().subscribe((id) => {
             this.game = this.gameService.getGameByID(id);

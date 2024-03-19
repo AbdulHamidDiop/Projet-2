@@ -38,10 +38,10 @@ export class SocketRoomService implements OnDestroy {
         this.socket.emit(Events.JOIN_ROOM, { room: roomId });
     }
 
-    roomJoinSubscribe(): Observable<void> {
+    roomJoinSubscribe(): Observable<boolean> {
         return new Observable((observer) => {
-            this.socket.on(Events.JOIN_ROOM, () => {
-                observer.next();
+            this.socket.on(Events.JOIN_ROOM, (res) => {
+                observer.next(res);
             });
         });
     }
@@ -61,8 +61,8 @@ export class SocketRoomService implements OnDestroy {
 
     roomLockedSubscribe(): Observable<boolean> {
         return new Observable((observer) => {
-            this.socket.on(Events.LOCK_ROOM, (response) => {
-                observer.next(response);
+            this.socket.on(Events.LOCK_ROOM, () => {
+                observer.next();
             });
         });
     }

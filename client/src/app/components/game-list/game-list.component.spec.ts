@@ -61,18 +61,18 @@ describe('GameListComponent', () => {
             expect(gameService.getSelectedGame).toBeTruthy();
         });
     });
-    describe('checkAvailable', () => {
+    describe('setGameAvailability', () => {
         it('should set game as unavailable if checkHiddenOrDeleted returns false', async () => {
             const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
             gameService.checkHiddenOrDeleted.and.returnValue(firstValueFrom(of(false)));
-            await component.checkAvailable(game);
+            await component.setGameAvailability(game);
             expect(game.unavailable).toBeTrue();
         });
 
         it('should not modify game if checkHiddenOrDeleted returns true', async () => {
             const game: Game = { id: '1', title: 'Test Game', isHidden: false, questions: [] };
             gameService.checkHiddenOrDeleted.and.returnValue(firstValueFrom(of(true)));
-            await component.checkAvailable(game);
+            await component.setGameAvailability(game);
             expect(game.unavailable).toBeUndefined();
         });
     });
