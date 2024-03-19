@@ -1,10 +1,11 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed } from '@angular/core/testing';
+import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
 import { Question } from '@common/game';
 import { FetchService } from './fetch.service';
 import { GameManagerService } from './game-manager.service';
-import { Game, GameService } from './game.service';
+import { Game } from './game.service';
 
 async function arrayBufferMock(): Promise<ArrayBuffer> {
     const buffer = new ArrayBuffer(0);
@@ -101,7 +102,7 @@ describe('GameManagerService', () => {
     });
 
     it('should initialize game data correctly', async () => {
-        const gameService = TestBed.inject(GameService);
+        const gameService = TestBed.inject(GameSessionService);
         const mockGame = { id: 'gameId', questions: [] } as unknown as Game;
         spyOn(gameService, 'getQuestionsWithoutCorrectShown').and.returnValue(Promise.resolve(mockGame));
 
@@ -119,7 +120,7 @@ describe('GameManagerService', () => {
     });
 
     it('should verify if an answer is correct', async () => {
-        const gameService = TestBed.inject(GameService);
+        const gameService = TestBed.inject(GameSessionService);
         service.game = { id: 'gameId' } as unknown as Game;
         spyOn(gameService, 'checkAnswer').and.returnValue(Promise.resolve(true));
 
@@ -135,13 +136,22 @@ describe('GameManagerService', () => {
         expect(feedback).toEqual(mockFeedback);
     });
 
+    it('should return the first question', () => {
+        const mockQuestions = [{ id: 'q1' }, { id: 'q2' }] as unknown as Question[];
+        service.game = { id: 'gameId', questions: mockQuestions } as unknown as Game;
+
+        const question = service.firstQuestion();
+        expect(question).toEqual(mockQuestions[0]);
+        expect(service.currentQuestionIndex).toBe(0);
+    });
+
     describe('nextQuestion', () => {
         it('should return the next question if not at the end', () => {
             const mockQuestions = [{ id: 'q1' }, { id: 'q2' }] as unknown as Question[];
             service.game = { id: 'gameId', questions: mockQuestions } as unknown as Game;
 
             const question = service.nextQuestion();
-            expect(question).toEqual(mockQuestions[0]);
+            expect(question).toEqual(mockQuestions[1]);
             expect(service.currentQuestionIndex).toBe(1);
         });
 

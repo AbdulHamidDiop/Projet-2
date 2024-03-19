@@ -5,12 +5,12 @@ import { EventEmitter, Injectable } from '@angular/core';
 })
 export class TimeService {
     // TODO : Permettre plus qu'une minuterie à la fois
+    timerEnded: EventEmitter<void> = new EventEmitter<void>();
     private interval: number | undefined;
     private readonly tick = 1000;
     private readonly panicTick = 250; // Nouvelle vitesse pour le mode panique
     private isPanicModeActivated: boolean = false;
     private pauseFlag: boolean = false;
-    timerEnded: EventEmitter<void> = new EventEmitter<void>();
 
     private counter: number;
 

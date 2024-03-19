@@ -20,7 +20,7 @@ export const DEFAULT_WIDTH = 200;
 export const DEFAULT_HEIGHT = 200;
 export const SHOW_FEEDBACK_DELAY = 3000;
 export const DEFAULT_TIMER = 25;
-export const BONUS_MULTIPLIER = 1.2;
+export const BONUS_MULTIPLIER = 0.2;
 const ERROR_INDEX = -1;
 
 @Component({
@@ -51,11 +51,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private points = 0;
 
     private nextQuestionSubscription: Subscription;
-    private showResultsSubscription: Subscription;
     private endGameSubscription: Subscription;
     private abortGameSubscription: Subscription;
     private bonusSubscription: Subscription;
     private bonusGivenSubscription: Subscription;
+    private startTimerSubscription: Subscription;
+    private stopTimerSubscription: Subscription;
 
     // eslint-disable-next-line max-params
     constructor(
@@ -81,27 +82,17 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             await this.countPointsAndNextQuestion();
         });
 
-        this.showResultsSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SHOW_RESULTS).subscribe(async () => {
-            await this.confirmAnswers();
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
-            await this.updateScore();
+        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
+            this.endGame();
         });
 
-        this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
+        this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManager.game.duration as number;
             this.timeService.startTimer(this.timer);
         });
 
-        this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
+        this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
             this.timeService.stopTimer();
-        });
-
-        this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
-            this.timeService.stopTimer();
-        });
-
-        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
-            this.endGame();
         });
 
         this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
@@ -168,7 +159,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusSubscription.unsubscribe();
         this.bonusGivenSubscription.unsubscribe();
         this.abortGameSubscription.unsubscribe();
-        this.showResultsSubscription.unsubscribe();
+        this.startTimerSubscription.unsubscribe();
+        this.stopTimerSubscription.unsubscribe();
     }
 
     shouldRender(text: string) {
@@ -261,7 +253,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
             this.score += this.question.points;
             if (this.inTestMode || this.gotBonus) {
-                this.score *= BONUS_MULTIPLIER;
+                this.score += this.question.points * BONUS_MULTIPLIER;
                 this.player.bonusCount++;
             }
 
