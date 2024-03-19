@@ -7,6 +7,7 @@ import { Game, Player } from '@common/game';
 import { Events, Namespaces as nsp } from '@common/sockets';
 
 const START_TIMER_DELAY = 500;
+const START_GAME_DELAY = 5000;
 
 @Component({
     selector: 'app-waiting-page',
@@ -21,6 +22,7 @@ export class WaitingPageComponent implements OnDestroy {
     player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
     game: Game = {} as Game;
     players: Player[] = [];
+    showCountDown: boolean = false;
     // eslint-disable-next-line max-params
     constructor(
         private gameService: GameService,
@@ -98,14 +100,26 @@ export class WaitingPageComponent implements OnDestroy {
 
     gameStartSubscribe() {
         this.socket.gameStartSubscribe().subscribe(() => {
-            if (this.player.isHost) {
-                setTimeout(() => {
-                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
-                }, START_TIMER_DELAY);
-                this.router.navigate(['/hostView/' + this.game.id]);
-            } else {
-                this.router.navigate(['/game/' + this.game.id]);
-            }
+            this.openCountDownModal();
+            setTimeout(() => {
+                if (this.player.isHost) {
+                    setTimeout(() => {
+                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                        this.socket.requestPlayers();
+                    }, START_TIMER_DELAY);
+                    this.router.navigate(['/hostView/' + this.game.id]);
+                } else {
+                    this.router.navigate(['/game/' + this.game.id]);
+                }
+            }, START_GAME_DELAY);
         });
+    }
+
+    openCountDownModal(): void {
+        this.showCountDown = true;
+    }
+
+    onCountDownModalClosed(): void {
+        this.showCountDown = false;
     }
 }

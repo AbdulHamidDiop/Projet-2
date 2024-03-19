@@ -138,6 +138,9 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
+    requestPlayers(): void {
+        this.socket.emit(Events.GET_PLAYERS);
+    }
 
     getProfile(): Observable<Player> {
         return new Observable((observer) => {

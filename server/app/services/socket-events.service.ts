@@ -1,6 +1,6 @@
 import { GameSessionService } from '@app/services/game-session.service';
 import { Game, Player } from '@common/game';
-import { ChatMessage, GAME_STARTED_MESSAGE, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@common/message';
+import { ChatMessage, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
 import { Service } from 'typedi';
@@ -31,6 +31,7 @@ export class SocketEvents {
         this.listenForUnlockRoomEvent(socket);
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
+        this.listenForRequestPlayersEvent(socket);
         //        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
@@ -250,10 +251,6 @@ export class SocketEvents {
                 if (host && host.isHost && players.length > 0) {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
-                        const gameStartMessage = { ...GAME_STARTED_MESSAGE };
-                        gameStartMessage.timeStamp = new Date().toLocaleTimeString();
-                        socket.emit(Events.CHAT_MESSAGE, gameStartMessage);
-                        socket.to(room).emit(Events.CHAT_MESSAGE, gameStartMessage);
                         socket.emit(Events.START_GAME);
                         socket.to(room).emit(Events.GET_PLAYERS, players);
                         socket.emit(Events.GET_PLAYERS, players);
@@ -263,6 +260,15 @@ export class SocketEvents {
                 }
             }
         });
+    }
+
+    listenForRequestPlayersEvent(socket: Socket) {
+        socket.on(Events.GET_PLAYERS, () => {
+            const room = this.socketIdRoom.get(socket.id);
+            const players = this.mapOfPlayersInRoom.get(room);
+            socket.to(room).emit(Events.GET_PLAYERS, players);
+            socket.emit(Events.GET_PLAYERS, players);
+        })
     }
 
     makeRoomId(): string {
