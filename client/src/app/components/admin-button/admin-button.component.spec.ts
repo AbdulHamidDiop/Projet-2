@@ -64,4 +64,23 @@ describe('AdminButtonComponent', () => {
         component.onButtonClick();
         expect(component.verifyPassword).toHaveBeenCalled();
     });
+
+    it('toggleAdmin should toggle showAdminInput', () => {
+        component.showAdminInput = false;
+        component.toggleAdmin();
+        expect(component.showAdminInput).toBeTrue();
+        component.toggleAdmin();
+        expect(component.showAdminInput).toBeFalse();
+    });
+
+    it('should set passwordError to true on failed password verification', fakeAsync(() => {
+        component.userInput = 'log2990-312';
+
+        spyOn(window, 'fetch').and.returnValue(Promise.resolve(new Response(null, { status: 401, headers: { contentType: 'application/json' } })));
+
+        component.verifyPassword();
+        tick();
+
+        expect(component.passwordError).toBeTrue();
+    }));
 });

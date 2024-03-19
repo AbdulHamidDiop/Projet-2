@@ -1,4 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -20,10 +21,12 @@ export class WaitingPageComponent implements OnDestroy {
     player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
     game: Game = {} as Game;
     players: Player[] = [];
+    // eslint-disable-next-line max-params
     constructor(
         private gameService: GameService,
         private socket: SocketRoomService,
         readonly router: Router,
+        private snackBar: MatSnackBar,
     ) {
         this.socket.leaveRoomSubscribe().subscribe(() => {
             this.fullView = false;
@@ -33,7 +36,14 @@ export class WaitingPageComponent implements OnDestroy {
             this.fullView = true;
         });
 
-        this.socket.roomJoinSubscribe().subscribe(() => {
+        this.socket.roomJoinSubscribe().subscribe((res) => {
+            if (!res) {
+                this.snackBar.open("Cette partie n'existe pas", 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 5000,
+                });
+                return;
+            }
             if (this.roomIdEntryView) {
                 this.fullView = false;
                 this.roomIdEntryView = false;
@@ -42,6 +52,14 @@ export class WaitingPageComponent implements OnDestroy {
                 this.fullView = true;
             }
         });
+
+        this.socket.roomLockedSubscribe().subscribe(() => {
+            this.snackBar.open('La partie est verrouillée', 'Fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
+        })
+
 
         this.socket.getGameId().subscribe((id) => {
             this.game = this.gameService.getGameByID(id);
@@ -63,11 +81,10 @@ export class WaitingPageComponent implements OnDestroy {
         });
 
         this.socket.kickSubscribe().subscribe(() => {
-            alert('Votre nom est banni.');
-            /*            this.snackBar.open('Votre nom est banni', 'Fermer', {
+            this.snackBar.open('Votre nom est banni', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
-            });*/
+            });
             this.router.navigate(['/waiting']);
         });
 

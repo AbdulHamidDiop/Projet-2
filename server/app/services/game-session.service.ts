@@ -64,14 +64,14 @@ export class GameSessionService {
             return false;
         }
         const question = game.questions.find((q) => q.id === questionID);
-        if (question.choices) {
+        if (question && question.choices) {
             const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
             if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
                 return false;
             }
             return true;
         }
-        return true;
+        return false;
     }
 
     async generateFeedback(pin: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {

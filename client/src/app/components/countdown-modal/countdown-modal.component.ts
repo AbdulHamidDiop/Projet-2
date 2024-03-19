@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 
-const COUNT_DOWN = 3;
 const COUNT_DOWN_INTERVAL = 1000;
 @Component({
     selector: 'app-countdown-modal',
@@ -12,13 +11,14 @@ export class CountdownModalComponent implements OnChanges {
     @Output() modalClosed: EventEmitter<void> = new EventEmitter<void>();
     @Input() countdown: number;
     @Input() message: string;
+    time: number;
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.showModal && changes.showModal.currentValue) {
-            this.countdown = COUNT_DOWN;
+            this.time = this.countdown;
             const interval = setInterval(() => {
-                this.countdown -= 1;
-                if (this.countdown === 0) {
+                this.time -= 1;
+                if (this.time === 0) {
                     clearInterval(interval);
                     this.showModal = false;
                     this.modalClosed.emit();

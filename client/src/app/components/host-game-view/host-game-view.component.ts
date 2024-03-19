@@ -28,6 +28,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     questionIndex: number = 0;
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
+    players: Player[] = [];
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -63,10 +64,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY,
             );
         });
-    }
-
-    get players(): Player[] {
-        return this.playerService.playersInGame;
     }
 
     get time(): number {
