@@ -206,8 +206,6 @@ export class Server {
 
     private setupDefaultJoinRoomEvent(socket: Socket) {
         socket.on(Events.JOIN_ROOM, ({ room }: { room: string }) => {
-            // if (!room || !this.liveRooms.includes(room)) return;
-
             socket.join(room);
             console.log(`Socket ${socket.id} joined room: ${room}`);
             console.log(`liveRooms: ${this.liveRooms}`);

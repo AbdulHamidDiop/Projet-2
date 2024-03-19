@@ -1,7 +1,6 @@
 export interface Choices {
     text: string;
     isCorrect: boolean;
-    numberAnswered: number;
     index: number;
 }
 
@@ -37,7 +36,6 @@ export interface Player {
     score: number;
     bonusCount: number;
 }
-
 
 export interface Player {
     name: string;

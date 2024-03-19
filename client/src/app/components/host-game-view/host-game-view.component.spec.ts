@@ -53,8 +53,8 @@ describe('HostGameViewComponent', () => {
             text: 'Test Question',
             points: 10,
             choices: [
-                { text: 'Choice 1', isCorrect: true, numberAnswered: 0, index: 0 },
-                { text: 'Choice 2', isCorrect: false, numberAnswered: 0, index: 1 },
+                { text: 'Choice 1', isCorrect: true, index: 0 },
+                { text: 'Choice 2', isCorrect: false, index: 1 },
             ],
             answer: 'Choice 1',
         };
