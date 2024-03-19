@@ -1922,5 +1922,90 @@
       ],
       "isHidden": false
     }
+  },
+  {
+    "pin": "7228",
+    "game": {
+      "id": "462778813466",
+      "lastModification": "2024-02-01T15:04:42.270Z",
+      "title": "Capitales du monde",
+      "description": "Questions sur les capitales de différents pays",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "13",
+          "type": "QCM",
+          "text": "Quelle ville est la capitale du Canada ?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "Ottawa",
+              "isCorrect": true
+            },
+            {
+              "text": "Toronto",
+              "isCorrect": false
+            },
+            {
+              "text": "Montréal",
+              "isCorrect": false
+            },
+            {
+              "text": "Vancouver",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "id": "14",
+          "type": "QCM",
+          "text": "Quelle est la capitale des États-Unis",
+          "points": 20,
+          "choices": [
+            {
+              "text": "New York",
+              "isCorrect": false
+            },
+            {
+              "text": "Washington",
+              "isCorrect": true
+            },
+            {
+              "text": "Los Angeles",
+              "isCorrect": false
+            },
+            {
+              "text": "San Francisco",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "id": "15",
+          "type": "QCM",
+          "text": "Quelle ville parmi les suivantes n'est pas la capitale d'un pays",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": false
+            },
+            {
+              "text": "Londres",
+              "isCorrect": false
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "Vancouver",
+              "isCorrect": true
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
   }
 ]
