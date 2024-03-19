@@ -1,1822 +1,1926 @@
 [
-    {
-        "pin": "1122",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
+  {
+    "pin": "1122",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
         }
-    },
-    {
-        "pin": "6773",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2146",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "8494",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "5321",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "3282",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "6632",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "9891",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "7769",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "6157",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2927",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2861",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "3681",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "5923",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "1543",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2832",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "7574",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "4714",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "7359",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "9822",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "3359",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "6915",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "9955",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "8263",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "3985",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2112",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "3331",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2316",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "1921",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "6893",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "9813",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "4337",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "6417",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "3978",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
-    },
-    {
-        "pin": "2372",
-        "game": {
-            "id": "46277881345",
-            "lastModification": "2024-02-01T15:04:41.171Z",
-            "title": "Questionnaire sur le JS",
-            "description": "Questions de pratique sur le langage JavaScript",
-            "duration": 59,
-            "questions": [
-                {
-                    "id": "11",
-                    "type": "QCM",
-                    "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
-                    "points": 40,
-                    "choices": [
-                        {
-                            "text": "var",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "self",
-                            "isCorrect": false
-                        },
-                        {
-                            "text": "this",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "int"
-                        }
-                    ]
-                },
-                {
-                    "id": "12",
-                    "type": "QCM",
-                    "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
-                    "points": 20,
-                    "choices": [
-                        {
-                            "text": "Non",
-                            "isCorrect": true
-                        },
-                        {
-                            "text": "Oui",
-                            "isCorrect": false
-                        }
-                    ]
-                }
-            ],
-            "isHidden": false
-        }
+      ],
+      "isHidden": false
     }
+  },
+  {
+    "pin": "6773",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2146",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "8494",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "5321",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "3282",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "6632",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "9891",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "7769",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "6157",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2927",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2861",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "3681",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "5923",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "1543",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2832",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "7574",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "4714",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "7359",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "9822",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "3359",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "6915",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "9955",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "8263",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "3985",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2112",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "3331",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2316",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "1921",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "6893",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "9813",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "4337",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "6417",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "3978",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "2372",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "4848",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  },
+  {
+    "pin": "6791",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
+  }
 ]
