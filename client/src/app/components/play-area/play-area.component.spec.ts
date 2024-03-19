@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines */
+import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { PlayAreaComponent, SHOW_FEEDBACK_DELAY } from '@app/components/play-area/play-area.component';
@@ -10,8 +12,10 @@ import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Question, Type } from '@common/game';
+
+import { Events, Namespaces } from '@common/sockets';
 import { validQuestion } from '@common/test-interfaces';
-import { of } from 'rxjs';
+import { Subject, of } from 'rxjs';
 import SpyObj = jasmine.SpyObj;
 
 const DEFAULT_POINTS = 10;
@@ -26,18 +30,21 @@ describe('PlayAreaComponent', () => {
     let matDialogRefSpy: SpyObj<MatDialogRef<any, any>>;
 
     beforeEach(async () => {
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'time'], ['counter', 'interval']);
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'time', 'timerEnded'], ['counter', 'interval']);
         timeServiceSpy.startTimer.and.returnValue();
-        timeServiceSpy.time = 0;
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage']);
+        timeServiceSpy.timerEnded = new EventEmitter<void>();
+
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage', 'sendChatMessage']);
         socketMock.listenForMessages.and.returnValue(of({} as any));
         socketMock.sendMessage.and.returnValue({} as any);
-        matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll']);
+
+        matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
         matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
         matDialogRefSpy.afterClosed.and.returnValue(of(true));
         matDialogMock.open.and.returnValue(matDialogRefSpy);
+
         await TestBed.configureTestingModule({
-            imports: [MatListModule, BrowserAnimationsModule],
+            imports: [MatListModule, BrowserAnimationsModule, MatSnackBarModule, MatDialogModule],
             declarations: [PlayAreaComponent],
             providers: [
                 { provide: TimeService, useValue: timeServiceSpy },
@@ -46,6 +53,17 @@ describe('PlayAreaComponent', () => {
                     provide: GameManagerService,
                     useValue: jasmine.createSpyObj('GameManagerService', {
                         nextQuestion: () => ({
+                            id: 'test-qcm',
+                            type: Type.QCM,
+                            text: 'Test QCM Question?',
+                            points: 10,
+                            lastModification: new Date(),
+                            choices: [
+                                { text: 'Option 1', isCorrect: true },
+                                { text: 'Option 2', isCorrect: false },
+                            ],
+                        }),
+                        firstQuestion: () => ({
                             id: 'test-qcm',
                             type: Type.QCM,
                             text: 'Test QCM Question?',
@@ -106,6 +124,7 @@ describe('PlayAreaComponent', () => {
 
     afterEach(() => {
         jasmine.getEnv().allowRespy(true);
+        TestBed.resetTestingModule();
     });
 
     it('should create', () => {
@@ -281,15 +300,6 @@ describe('PlayAreaComponent', () => {
         }
     });
 
-    it('confirmAnswers should be called when the timer runs out', fakeAsync(() => {
-        timeServiceSpy.time = 0;
-        spyOn(component, 'confirmAnswers').and.returnValue({} as any);
-        const time = component.time;
-        expect(time).toEqual(0);
-        expect(component.confirmAnswers).toHaveBeenCalled();
-        flush();
-    }));
-
     it('confirmAnswers should update score and proceed after delay', fakeAsync(() => {
         spyOn(component, 'updateScore').and.returnValue({} as any);
         spyOn(component, 'nextQuestion').and.returnValue();
@@ -309,7 +319,6 @@ describe('PlayAreaComponent', () => {
         dialogRefSpyObj.afterClosed().subscribe(() => {
             expect(component.score).toBe(0);
             expect(component.answer.length).toBe(0);
-            expect(component.router.navigate).toHaveBeenCalledWith(['/']);
         });
     });
 
@@ -366,5 +375,104 @@ describe('PlayAreaComponent', () => {
             const style = component.getStyle('Option 5');
             expect(style).toBe('');
         });
+    });
+
+    describe('PlayAreaComponent with dynamic socket messages', () => {
+        const nextQuestionSubject = new Subject<void>();
+        const endGameSubject = new Subject<void>();
+        const startTimerSubject = new Subject<void>();
+        const stopTimerSubject = new Subject<void>();
+        const bonusSubject = new Subject<void>();
+        const bonusGivenSubject = new Subject<void>();
+        const abortGameSubject = new Subject<void>();
+
+        beforeEach(async () => {
+            socketMock.listenForMessages.and.callFake((namespace: string, event: string) => {
+                if (namespace === Namespaces.GAME && event === Events.NEXT_QUESTION) {
+                    return nextQuestionSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.END_GAME) {
+                    return endGameSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.START_TIMER) {
+                    return startTimerSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.STOP_TIMER) {
+                    return stopTimerSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.BONUS) {
+                    return bonusSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.BONUS_GIVEN) {
+                    return bonusGivenSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.ABORT_GAME) {
+                    return abortGameSubject.asObservable();
+                }
+                return new Subject().asObservable();
+            });
+        });
+
+        beforeEach(() => {
+            fixture = TestBed.createComponent(PlayAreaComponent);
+            component = fixture.componentInstance;
+            fixture.detectChanges();
+        });
+
+        it('should handle NEXT_QUESTION event', fakeAsync(() => {
+            spyOn(component, 'confirmAnswers').and.resolveTo();
+            nextQuestionSubject.next();
+            flush();
+
+            expect(component.confirmAnswers).toHaveBeenCalled();
+            nextQuestionSubject.complete();
+        }));
+
+        it('should handle END_GAME event', fakeAsync(() => {
+            spyOn(component, 'endGame').and.callThrough();
+            endGameSubject.next();
+            flush();
+
+            expect(component.endGame).toHaveBeenCalled();
+            endGameSubject.complete();
+        }));
+
+        it('should handle START_TIMER event', fakeAsync(() => {
+            component.gameManager.game = { duration: 10 } as Game;
+            spyOn(component.timeService, 'startTimer');
+            startTimerSubject.next();
+            flush();
+
+            expect(component.timeService.startTimer).toHaveBeenCalledWith(jasmine.any(Number));
+            startTimerSubject.complete();
+        }));
+
+        it('should handle STOP_TIMER event', fakeAsync(() => {
+            spyOn(component.timeService, 'stopTimer');
+            stopTimerSubject.next();
+            flush();
+
+            expect(component.timeService.stopTimer).toHaveBeenCalled();
+            stopTimerSubject.complete();
+        }));
+
+        it('should handle BONUS event', fakeAsync(() => {
+            bonusSubject.next();
+            flush();
+
+            expect(component.gotBonus).toBeTrue();
+            bonusSubject.complete();
+        }));
+
+        it('should handle BONUS_GIVEN event', fakeAsync(() => {
+            bonusGivenSubject.next();
+            flush();
+
+            expect(component.bonusGiven).toBeTrue();
+            bonusGivenSubject.complete();
+        }));
+
+        it('should handle ABORT_GAME event', fakeAsync(() => {
+            spyOn(component.router, 'navigate');
+            abortGameSubject.next();
+            flush();
+
+            expect(component.router.navigate).toHaveBeenCalledWith(['/']);
+            abortGameSubject.complete();
+        }));
     });
 });

@@ -1,10 +1,10 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed } from '@angular/core/testing';
+import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
 import { Question } from '@common/game';
 import { FetchService } from './fetch.service';
 import { GameManagerService } from './game-manager.service';
-import { GameSessionService } from './game-session.service';
 import { Game } from './game.service';
 
 async function arrayBufferMock(): Promise<ArrayBuffer> {
