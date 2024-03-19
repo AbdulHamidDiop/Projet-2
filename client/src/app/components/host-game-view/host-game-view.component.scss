@@ -3,29 +3,88 @@ main {
     margin-left: 200px;
 }
 
+// CSS pour les boutons
+.pause-button {
+    margin-top: 20px;
+    margin-right: 10px;
+    text-align: center;
+    border: none;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pause-button:hover {
+    background-color: #0056b3;
+}
+
+.next-button {
+    margin-top: 20px;
+    margin-right: 10px;
+    text-align: center;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    background-color: rgb(15, 142, 32);
+}
+
+.next-button:hover {
+    background-color: #05611c;
+}
+
 .panic-button {
+    margin-top: 20px;
+    margin-right: 10px;
+    text-align: center;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
     background-color: red;
 }
 
-/* Footer styles */
-.footer-item {
-    background: #503bb8;
-    color: white;
-    padding: 10px;
-    border-top: 1px solid #555;
+.panic-button:hover {
+    background-color: #701010;
+}
+
+.end-button {
+    margin-top: 20px;
+    margin-right: 10px;
     text-align: center;
+    border: none;
+    padding: 10px 20px;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+    background-color: rgb(23, 5, 5);
 }
 
-.footer-item h4 {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-    color: #28a745; /* Vert */
+// CSS Liste des joueurs et zone statistique
+
+.title {
+    color: #007bff;
+    text-decoration: underline;
+    font-size: 24px;
+    align-content: center;
 }
 
-.footer-item p span:nth-child(even) {
-    color: #ffc107; /* Jaune */
+.players-table {
+    width: 100%; /* Largeur de la table */
+    border-collapse: collapse; /* Fusion des bordures de cellules */
 }
 
-.footer-item p span:nth-child(odd) {
-    color: #17a2b8; /* Bleu cyan */
+.players-table th,
+.players-table td {
+    border: 1px solid black; /* Bordures des cellules */
+    padding: 8px; /* Espacement intérieur des cellules */
+    text-align: left; /* Alignement du texte à gauche */
 }

@@ -22,19 +22,19 @@ export class GameListComponent implements OnInit {
 
     async ngOnInit() {
         this.games = await this.gameService.getAllGames();
-        this.games = this.games.filter((game) => game.isHidden === false);
+        this.games = this.games.filter((game) => !game.isHidden);
     }
 
     async selectGame(game: Game): Promise<void> {
         this.gameService.selectGame(game);
-        await this.checkAvailable(game);
+        await this.setGameAvailability(game);
     }
 
     getSelectedGame(): Game {
         return this.gameService.getSelectedGame();
     }
 
-    async checkAvailable(game: Game): Promise<void> {
+    async setGameAvailability(game: Game): Promise<void> {
         if (!(await this.gameService.checkHiddenOrDeleted(game))) {
             game.unavailable = true;
         }

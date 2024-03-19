@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { GameSessionService } from '@app/services/game-session.service';
 import { Player } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
@@ -20,6 +21,7 @@ describe('Socket Events Service', () => {
     let socketEmitStub: SinonStub;
     let socketJoinStub: SinonStub;
     let socketIdStub: SinonSpy;
+    let gameSessionService: GameSessionService;
     // const portNumber = 3000;
     //    const url = 'http://localhost:3000';
     let server: Server;
@@ -72,7 +74,7 @@ describe('Socket Events Service', () => {
             clientSocket.on('connect', done);
         });
 
-        socketEvents = new SocketEvents();
+        socketEvents = new SocketEvents(gameSessionService);
     });
 
     it('Should have a makeRoomId method', () => {

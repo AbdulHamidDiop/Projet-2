@@ -7,11 +7,12 @@ import { MatListModule } from '@angular/material/list';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
-import { PlayAreaComponent, SHOW_FEEDBACK_DELAY } from '@app/components/play-area/play-area.component';
+import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Question, Type } from '@common/game';
+import { SHOW_FEEDBACK_DELAY } from './const';
 
 import { Events, Namespaces } from '@common/sockets';
 import { validQuestion } from '@common/test-interfaces';
@@ -52,7 +53,7 @@ describe('PlayAreaComponent', () => {
                 {
                     provide: GameManagerService,
                     useValue: jasmine.createSpyObj('GameManagerService', {
-                        nextQuestion: () => ({
+                        goNextQuestion: () => ({
                             id: 'test-qcm',
                             type: Type.QCM,
                             text: 'Test QCM Question?',
@@ -156,13 +157,13 @@ describe('PlayAreaComponent', () => {
         expect(component.answer.length).toBe(0);
     });
 
-    it('nextQuestion should call gameManager.nextQuestion', fakeAsync(() => {
+    it('goNextQuestion should call gameManager.goNextQuestion', fakeAsync(() => {
         // Prepare the next question to be returned by the GameManagerService
         gameManager = TestBed.inject(GameManagerService);
         spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
 
-        component.nextQuestion();
-        expect(gameManager.nextQuestion).toHaveBeenCalled();
+        component.goNextQuestion();
+        expect(gameManager.goNextQuestion).toHaveBeenCalled();
         fixture.detectChanges();
         flush();
     }));
@@ -174,7 +175,7 @@ describe('PlayAreaComponent', () => {
         expect(timeServiceSpy.startTimer).toHaveBeenCalledWith(component['timer']);
     });
 
-    it('buttonDetect should modify the buttonPressed variable and call handleQCMChoice', () => {
+    it('detectButton should modify the buttonPressed variable and call handleQCMChoice', () => {
         spyOn(component, 'handleQCMChoice');
         component.question = {
             type: Type.QCM,
@@ -189,7 +190,7 @@ describe('PlayAreaComponent', () => {
         const buttonEvent = {
             key: expectedKey,
         } as KeyboardEvent;
-        component.buttonDetect(buttonEvent);
+        component.detectButton(buttonEvent);
         expect(component.buttonPressed).toEqual(expectedKey);
         expect(component.handleQCMChoice).toHaveBeenCalled();
     });
@@ -206,16 +207,16 @@ describe('PlayAreaComponent', () => {
     it('should handle keyboard events for different keys', () => {
         fixture.detectChanges();
         const componentElement = fixture.nativeElement;
-        spyOn(component, 'buttonDetect').and.callThrough();
+        spyOn(component, 'detectButton').and.callThrough();
         const event = new KeyboardEvent('keydown', { key: 'Enter' });
         componentElement.dispatchEvent(event);
         fixture.detectChanges();
-        expect(component.buttonDetect).toHaveBeenCalled();
+        expect(component.detectButton).toHaveBeenCalled();
     });
 
-    it('nextQuestion should reset answer', () => {
+    it('goNextQuestion should reset answer', () => {
         component.answer = ['Some Answer', 'Another Answer'];
-        component.nextQuestion();
+        component.goNextQuestion();
         expect(component.answer).toEqual([]);
     });
 
@@ -267,7 +268,7 @@ describe('PlayAreaComponent', () => {
             const choice = choices[0];
             spyOn(component, 'handleQCMChoice');
             const event = new KeyboardEvent('keydown', { key: '1' });
-            component.buttonDetect(event);
+            component.detectButton(event);
             expect(component.handleQCMChoice).toHaveBeenCalledWith(choice.text);
         }
     });
@@ -279,9 +280,9 @@ describe('PlayAreaComponent', () => {
         if (choices) {
             const choice = choices[0];
             const event = new KeyboardEvent('keydown', { key: '1' });
-            component.buttonDetect(event);
+            component.detectButton(event);
             expect(component.answer).toContain(choice.text);
-            component.buttonDetect(event);
+            component.detectButton(event);
             expect(component.answer).not.toContain(choice.text);
         }
     });
@@ -302,12 +303,12 @@ describe('PlayAreaComponent', () => {
 
     it('confirmAnswers should update score and proceed after delay', fakeAsync(() => {
         spyOn(component, 'updateScore').and.returnValue({} as any);
-        spyOn(component, 'nextQuestion').and.returnValue();
+        spyOn(component, 'goNextQuestion').and.returnValue();
         component.confirmAnswers();
         tick(SHOW_FEEDBACK_DELAY * 2);
         expect(component.updateScore).toHaveBeenCalled();
-        expect(component.disableChoices).toBeFalse();
-        expect(component.nextQuestion).toHaveBeenCalled();
+        expect(component.choiceDisabled).toBeFalse();
+        expect(component.goNextQuestion).toHaveBeenCalled();
     }));
 
     it('handleAbort should reset score and navigate on confirmation', () => {

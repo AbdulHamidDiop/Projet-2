@@ -1,7 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { Choices } from '@common/game';
-
-const MULTIPLE_OF_TEN = 10;
+import { MULTIPLE_OF_TEN } from './const';
 
 export const multipleOfTenValidator: ValidatorFn = (control: AbstractControl): { [key: string]: unknown } | null => {
     const isValid = control.value % MULTIPLE_OF_TEN === 0;

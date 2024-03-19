@@ -10,9 +10,8 @@ import { CommunicationService } from '@app/services/communication.service';
 import { GameService } from '@app/services/game.service';
 import { Game, Question } from '@common/game';
 import { v4 } from 'uuid';
+import { MAX_DURATION, MIN_DURATION } from './const';
 
-const MIN_DURATION = 10;
-const MAX_DURATION = 60;
 @Component({
     selector: 'app-admin-create-game-page',
     templateUrl: './admin-create-game-page.component.html',
@@ -30,8 +29,8 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
 
     constructor(
         public dialog: MatDialog,
-        private fb: FormBuilder,
-        private cd: ChangeDetectorRef, // to avoid ExpressionChangedAfterItHasBeenCheckedError
+        private formBuilder: FormBuilder,
+        private changeDetector: ChangeDetectorRef, // to avoid ExpressionChangedAfterItHasBeenCheckedError
         private gameService: GameService,
         private route: ActivatedRoute,
         private communicationService: CommunicationService,
@@ -40,7 +39,7 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit(): void {
         this.questionsBankList = this.questionsBankComponent.questionsBankList;
-        this.cd.detectChanges();
+        this.changeDetector.detectChanges();
     }
 
     async ngOnInit() {
@@ -54,7 +53,7 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
         if (!this.isAuthentificated) {
             this.router.navigate(['/home']);
         }
-        this.gameForm = this.fb.group({
+        this.gameForm = this.formBuilder.group({
             title: ['', Validators.required],
             description: [''],
             duration: [null, [Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)]],

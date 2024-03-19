@@ -54,7 +54,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             setTimeout(
                 () => {
                     this.questionIndex++;
-                    this.currentQuestion = this.gameManagerService.nextQuestion();
+                    this.currentQuestion = this.gameManagerService.goNextQuestion();
                     if (this.gameManagerService.endGame) {
                         this.onLastQuestion = true;
                     }
@@ -132,9 +132,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.barChartData = this.statisticsData[this.questionIndex].data;
     }
 
-    nextQuestion(): void {
+    goNextQuestion(): void {
         this.questionIndex++;
-        this.currentQuestion = this.gameManagerService.nextQuestion();
+        this.currentQuestion = this.gameManagerService.goNextQuestion();
     }
 
     showResults(): void {

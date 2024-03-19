@@ -146,17 +146,17 @@ describe('GameManagerService', () => {
         expect(service.currentQuestionIndex).toBe(0);
     });
 
-    describe('nextQuestion', () => {
+    describe('goNextQuestion', () => {
         it('should return the next question if not at the end', () => {
             const mockQuestions = [{ id: 'q1' }, { id: 'q2' }] as unknown as Question[];
             service.game = { id: 'gameId', questions: mockQuestions } as unknown as Game;
-            const question = service.nextQuestion();
+            const question = service.goNextQuestion();
             expect(question).toEqual(mockQuestions[1]);
             expect(service.currentQuestionIndex).toBe(1);
         });
 
         it('should return an empty Question if game is not defined', () => {
-            const question = service.nextQuestion();
+            const question = service.goNextQuestion();
             expect(question).toEqual({} as Question);
         });
 
@@ -165,7 +165,7 @@ describe('GameManagerService', () => {
             service.game = { id: 'gameId', questions: mockQuestions as unknown as Question[] } as unknown as Game;
             service.currentQuestionIndex = 0;
 
-            const question = service.nextQuestion();
+            const question = service.goNextQuestion();
             expect(service.endGame).toBeTrue();
             expect(question).toEqual(mockQuestions[0] as Question);
         });

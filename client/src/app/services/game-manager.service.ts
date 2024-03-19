@@ -39,7 +39,7 @@ export class GameManagerService {
         return {} as Question;
     }
 
-    nextQuestion(): Question {
+    goNextQuestion(): Question {
         if (this.game) {
             if (this.currentQuestionIndex + 1 === this.game.questions.length) {
                 this.endGame = true;
