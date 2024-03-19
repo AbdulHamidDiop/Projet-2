@@ -80,8 +80,7 @@ export class SocketEvents {
                 this.playerSocketId.set(socket.id, playerProfile);
                 socket.emit(Events.JOIN_ROOM, true); // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
                 // Le socket rejoint le room après avoir envoyé son nom et que celui-ci est validé.
-            }
-            else {
+            } else {
                 socket.emit(Events.JOIN_ROOM, false);
             }
         });
@@ -190,16 +189,16 @@ export class SocketEvents {
                 if (player.isHost) {
                     const room = this.socketIdRoom.get(socket.id);
                     if (this.lockedRooms.includes(room)) {
-                        //socket.emit(Events.LOCK_ROOM);
+                        // socket.emit(Events.LOCK_ROOM);
                         const lockMessage: ChatMessage = { ...ROOM_LOCKED_MESSAGE };
                         lockMessage.timeStamp = new Date().toLocaleTimeString();
-                        //socket.emit(Events.CHAT_MESSAGE, lockMessage);
+                        // socket.emit(Events.CHAT_MESSAGE, lockMessage);
                     } else {
                         this.lockedRooms.push(room);
-                        //socket.to(room).to(socket.id).emit(Events.LOCK_ROOM);
+                        // socket.to(room).to(socket.id).emit(Events.LOCK_ROOM);
                         const lockMessage: ChatMessage = { ...ROOM_LOCKED_MESSAGE };
                         lockMessage.timeStamp = new Date().toLocaleTimeString();
-                        //socket.to(room).emit(Events.CHAT_MESSAGE, lockMessage);
+                        // socket.to(room).emit(Events.CHAT_MESSAGE, lockMessage);
                     }
                 }
             }
@@ -217,7 +216,7 @@ export class SocketEvents {
                     socket.emit(Events.UNLOCK_ROOM);
                     const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
                     unlockMessage.timeStamp = new Date().toLocaleTimeString();
-                    //socket.emit(Events.CHAT_MESSAGE, unlockMessage);
+                    // socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });
