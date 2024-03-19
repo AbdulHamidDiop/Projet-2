@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
@@ -21,7 +22,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     game: Game;
     timer: number;
     currentQuestion: Question;
-    players: Player[];
     stats: QCMStats[];
     statisticsData: BarChartQuestionStats[] = [];
     barChartData: BarChartChoiceStats[] = [];
@@ -35,9 +35,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private router: Router,
         private socketService: SocketRoomService,
+        readonly playerService: PlayerService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
-            this.players = players;
+            this.playerService.setGamePlayers(players);
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManagerService.game.duration as number;
@@ -62,7 +63,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY,
             );
         });
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    }
+
+    get players(): Player[] {
+        return this.playerService.playersInGame;
     }
 
     get time(): number {
@@ -88,16 +92,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
             const { room, ...player } = playerWithRoom as Player & { room: string };
-            this.updatePlayers(player as Player);
+            this.playerService.addGamePlayers(player as Player);
         });
 
         this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
             this.openResultsPage();
-        });
-
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
-            const { room, ...player } = playerWithRoom as Player & { room: string };
-            this.updatePlayers(player as Player);
         });
     }
 
@@ -173,15 +172,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.router.navigate(['/game', gameId, 'results']);
         }
         this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
-    }
-
-    updatePlayers(player: Player): void {
-        const index = this.players.findIndex((pl) => pl.name === player.name);
-        if (index >= 0) {
-            this.players[index] = player;
-        } else {
-            this.players.push(player);
-        }
+        this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
     }
 
     ngOnDestroy() {

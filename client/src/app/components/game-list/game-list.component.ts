@@ -41,6 +41,7 @@ export class GameListComponent implements OnInit {
     }
 
     launchGame(game: Game) {
+        this.socket.leaveRoom();
         this.playerService.player.isHost = true;
         this.playerService.player.name = 'Organisateur';
         this.socket.createRoom(game);

@@ -3,13 +3,13 @@ export const validChoices: Choices[] = [
     {
         text: 'Choix valide #1',
         isCorrect: true,
-        numberAnswered: 0,
+
         index: 0,
     },
     {
         text: 'Choix valide #2',
         isCorrect: false,
-        numberAnswered: 0,
+
         index: 0,
     },
 ];
@@ -23,13 +23,13 @@ export const validQuestion: Question = {
         {
             text: 'Choix valide #1',
             isCorrect: true,
-            numberAnswered: 0,
+
             index: 0,
         },
         {
             text: 'Choix valide #2',
             isCorrect: false,
-            numberAnswered: 0,
+
             index: 0,
         },
     ],
@@ -52,13 +52,13 @@ export const validGame: Game = {
                 {
                     text: 'Choix valide #1',
                     isCorrect: true,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
                 {
                     text: 'Choix valide #2',
                     isCorrect: false,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
             ],
@@ -74,13 +74,13 @@ export const validGame: Game = {
                 {
                     text: 'Choix valide #1',
                     isCorrect: true,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
                 {
                     text: 'Choix valide #2',
                     isCorrect: false,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
             ],
@@ -96,13 +96,13 @@ export const validGame: Game = {
                 {
                     text: 'Choix valide #1',
                     isCorrect: true,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
                 {
                     text: 'Choix valide #2',
                     isCorrect: false,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
             ],
@@ -118,13 +118,13 @@ export const validGame: Game = {
                 {
                     text: 'Choix valide #1',
                     isCorrect: true,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
                 {
                     text: 'Choix valide #2',
                     isCorrect: false,
-                    numberAnswered: 0,
+
                     index: 0,
                 },
             ],

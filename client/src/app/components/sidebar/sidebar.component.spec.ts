@@ -11,8 +11,10 @@ describe('SidebarComponent', () => {
     let socketMock: SpyObj<SocketRoomService>;
 
     beforeEach(async () => {
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['getChatMessages', 'sendChatMessage']);
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['getChatMessages', 'sendMessage', 'sendChatMessage', 'listenForMessages']);
         socketMock.getChatMessages.and.returnValue(of({} as ChatMessage));
+        socketMock.listenForMessages.and.returnValue(of({} as ChatMessage));
+
         await TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [{ provide: SocketRoomService, useValue: socketMock }],

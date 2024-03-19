@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
 import { PlayerAndAdminPanelComponent } from './player-and-admin-panel.component';
@@ -9,11 +10,18 @@ describe('PlayerAndAdminPanelComponent', () => {
     let component: PlayerAndAdminPanelComponent;
     let fixture: ComponentFixture<PlayerAndAdminPanelComponent>;
     let socketMock: SpyObj<SocketRoomService>;
+    let snackBarMock: SpyObj<MatSnackBar>;
+
     beforeEach(async () => {
         socketMock = jasmine.createSpyObj('SocketRoomService', ['kickPlayer', 'leaveRoom', 'lockRoom', 'unlockRoom', 'startGame']);
+        snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+
         await TestBed.configureTestingModule({
             declarations: [PlayerAndAdminPanelComponent],
-            providers: [{ provide: SocketRoomService, useValue: socketMock }],
+            providers: [
+                { provide: SocketRoomService, useValue: socketMock },
+                { provide: MatSnackBar, useValue: snackBarMock },
+            ],
         }).compileComponents();
     });
 

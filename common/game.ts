@@ -1,7 +1,6 @@
 export interface Choices {
     text: string;
     isCorrect: boolean;
-    numberAnswered: number;
     index: number;
 }
 

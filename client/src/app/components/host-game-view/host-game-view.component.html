@@ -48,9 +48,11 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <div *ngFor="let player of players">
-                <p>{{ player.name }} : {{ player.score }} points</p>
-            </div>
+            <ul>
+                <div *ngFor="let player of playerService.playersInGame">
+                    <li>{{ player.name }} : {{ player.score }} points</li>
+                </div>
+            </ul>
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="2" [rowspan]="1">

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -10,7 +11,7 @@ describe('SelectRoomComponent', () => {
 
     let socketMock: SpyObj<SocketRoomService>;
     beforeEach(async () => {
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['joinRoom']);
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['joinRoom', 'joinAllNamespaces']);
         await TestBed.configureTestingModule({
             declarations: [SelectRoomComponent],
             providers: [{ provide: SocketRoomService, useValue: socketMock }],
@@ -26,5 +27,13 @@ describe('SelectRoomComponent', () => {
     it('Should call socket.joinRoom on call to joinRoom', () => {
         component.joinRoom({ value: '09211' } as HTMLInputElement);
         expect(socketMock.joinRoom).toHaveBeenCalled();
+    });
+
+    it('Should restrict input', () => {
+        const target = { value: '09211' } as any;
+        const event: Event = { target } as Event;
+
+        component.restrictInput(event);
+        expect(target.value).toEqual('0921');
     });
 });

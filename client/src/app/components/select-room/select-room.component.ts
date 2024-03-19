@@ -19,7 +19,7 @@ export class SelectRoomComponent {
         }
     }
 
-    restrictInput(event: any) {
+    restrictInput(event: Event) {
         const input = event.target as HTMLInputElement;
         input.value = input.value.replace(/\D/g, '');
         if (input.value.length > MAX_CHARACTERS) {
