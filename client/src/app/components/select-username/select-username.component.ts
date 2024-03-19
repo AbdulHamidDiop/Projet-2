@@ -15,11 +15,11 @@ export class SelectUsernameComponent {
         private snackBar: MatSnackBar,
     ) {
         this.socket.nameAvailable().subscribe(() => {
-            this.snackBar.open("Le nom choisi est déjà utilisé", 'Fermer', {
+            this.snackBar.open('Le nom choisi est déjà utilisé', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
             });
-        })
+        });
     }
 
     sendUsername(input: HTMLInputElement) {
