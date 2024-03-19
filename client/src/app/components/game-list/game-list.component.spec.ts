@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed, fakeAsync } from '@angular/core/testing';
+import { Router } from '@angular/router';
+import { GameSessionService } from '@app/services/game-session.service';
 import { Game, GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { firstValueFrom, of } from 'rxjs';
@@ -9,15 +11,25 @@ describe('GameListComponent', () => {
     let gameService: jasmine.SpyObj<GameService>;
     let socketMock: jasmine.SpyObj<SocketRoomService>;
     let fixture: ComponentFixture<GameListComponent>;
+    let router: jasmine.SpyObj<Router>;
+    let gameSessionService: jasmine.SpyObj<GameSessionService>;
+
     beforeEach(async () => {
         gameService = jasmine.createSpyObj('GameService', ['getAllGames', 'selectGame', 'getSelectedGame', 'checkHiddenOrDeleted']);
         gameService.selectGame.and.returnValue();
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['createRoom']);
+
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['createRoom', 'leaveRoom']);
         socketMock.createRoom.and.returnValue();
+
+        gameSessionService = jasmine.createSpyObj('GameSessionService', ['createSession']);
+
+        router = jasmine.createSpyObj('Router', ['navigate']);
         await TestBed.configureTestingModule({
             providers: [
                 { provide: GameService, useValue: gameService },
                 { provide: SocketRoomService, useValue: socketMock },
+                { provide: Router, useValue: router },
+                { provide: GameSessionService, useValue: gameSessionService },
             ],
         }).compileComponents();
     });
@@ -74,6 +86,21 @@ describe('GameListComponent', () => {
             gameService.checkHiddenOrDeleted.and.returnValue(firstValueFrom(of(true)));
             await component.setGameAvailability(game);
             expect(game.unavailable).toBeUndefined();
+        });
+    });
+
+    describe('launchGame', () => {
+        it('should launch game correctly', () => {
+            const game: Game = { id: '1', title: 'Test Game' } as Game;
+            component.launchGame(game);
+            expect(socketMock.leaveRoom).toHaveBeenCalled();
+            expect(socketMock.createRoom).toHaveBeenCalledWith(game);
+            expect(router.navigate).toHaveBeenCalledWith(['/waiting']);
+        });
+        it('should launch test game correctly', async () => {
+            const game: Game = { id: '1', title: 'Test Game' } as Game;
+            await component.launchTestGame(game);
+            expect(gameSessionService.createSession).toHaveBeenCalledWith(game.id, game);
         });
     });
 });
