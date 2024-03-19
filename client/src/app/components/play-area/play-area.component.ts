@@ -218,7 +218,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async countPointsAndNextQuestion() {
-        // this.openCountDownModal();
         await this.updateScore();
         setTimeout(
             () => {
@@ -227,6 +226,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             },
             this.inTestMode ? SHOW_FEEDBACK_DELAY : SHOW_FEEDBACK_DELAY * 2,
         );
+        if (!this.inTestMode) {
+            setTimeout(() => {
+                this.openCountDownModal();
+            }, SHOW_FEEDBACK_DELAY);
+        }
+
     }
 
     onFinalAnswer() {
