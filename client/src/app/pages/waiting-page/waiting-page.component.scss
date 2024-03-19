@@ -1,10 +1,14 @@
 main {
-    //    background-color: #007bff;
     height: 100vh;
     display: flex;
     margin-left: 250px;
-    //    place-items: center;
-    //    position: relative;
+}
+
+.header-item {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    color: #007bff;
 }
 
 .example-form {

@@ -12,7 +12,7 @@ import { API_URL } from '@common/consts';
 export class AdminButtonComponent {
     showAdminInput: boolean = false;
     userInput: string = '';
-    passwordError: Boolean;
+    passwordError: boolean;
 
     constructor(
         readonly communicationService: CommunicationService,
@@ -29,7 +29,6 @@ export class AdminButtonComponent {
         const response = await fetch(API_URL + 'admin/password', {
             method: 'POST',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ password: this.userInput }),

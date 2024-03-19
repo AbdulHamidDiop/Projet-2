@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed } from '@angular/core/testing';
+import { Game } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Socket } from 'socket.io-client';
@@ -41,7 +42,8 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to createRoom', () => {
-        service.createRoom('');
+        const gameTest: Game = { id: '1', title: 'Game 1', isHidden: false, questions: [] };
+        service.createRoom(gameTest);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 
@@ -198,7 +200,7 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to sendMessage', () => {
-        service.sendMessage('' as Events, '' as Namespaces, '', {});
+        service.sendMessage('' as Events, '' as Namespaces);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 
