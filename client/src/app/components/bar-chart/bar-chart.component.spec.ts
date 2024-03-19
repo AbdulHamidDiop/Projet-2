@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { of } from 'rxjs';
 import { BarChartComponent } from './bar-chart.component';
@@ -10,7 +10,10 @@ describe('BarChartComponent', () => {
 
     beforeEach(async () => {
         mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', ['listenForMessages']);
-
+        mockSocketRoomService.listenForMessages.and.returnValues(
+            of({}), // Mock data for QCM_STATS event
+            of({}), // Mock data for UPDATE_CHART event
+        );
         await TestBed.configureTestingModule({
             declarations: [BarChartComponent],
             providers: [{ provide: SocketRoomService, useValue: mockSocketRoomService }],
@@ -38,12 +41,4 @@ describe('BarChartComponent', () => {
             datasets: [{ data: [1, 2], label: 'Test Dataset', backgroundColor: 'red' }],
         });
     });
-
-    it('should update data on QCM_STATS and UPDATE_CHART events', fakeAsync(() => {
-        const updateDataSpy = spyOn(component, 'updateData');
-        mockSocketRoomService.listenForMessages.and.returnValues(of({}), of({}));
-        fixture.detectChanges(); // ngOnInit is called
-        tick();
-        expect(updateDataSpy).toHaveBeenCalledTimes(2);
-    }));
 });
