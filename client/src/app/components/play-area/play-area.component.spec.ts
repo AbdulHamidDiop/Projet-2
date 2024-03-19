@@ -140,7 +140,7 @@ describe('PlayAreaComponent', () => {
     it('nextQuestion should call gameManager.nextQuestion', fakeAsync(() => {
         // Prepare the next question to be returned by the GameManagerService
         gameManager = TestBed.inject(GameManagerService);
-        spyOn(component, 'countPointsAndNextQuestion').and.returnValue();
+        spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
 
         component.nextQuestion();
         expect(gameManager.nextQuestion).toHaveBeenCalled();
@@ -316,7 +316,7 @@ describe('PlayAreaComponent', () => {
     it('should get feedback and update state for QCM questions', fakeAsync(() => {
         component.question = { id: '123', type: Type.QCM } as Question;
         component.answer = ['Option 1'];
-        spyOn(component, 'countPointsAndNextQuestion').and.returnValue();
+        spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
         component.confirmAnswers();
         expect(gameManager.getFeedBack).toHaveBeenCalledWith('123', ['Option 1']);
         flush();
