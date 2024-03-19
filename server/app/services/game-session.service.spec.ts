@@ -122,7 +122,7 @@ describe('GameSession Service', () => {
     });
 
     it('should filter by pin', async () => {
-        const pin = '1122';
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const result = await gameSessionService.getSessionByPin(pin);
         expect(result).to.deep.equal(JSON.parse(SESSION_DATA)[0]);
     });
@@ -136,7 +136,7 @@ describe('GameSession Service', () => {
     });
 
     it('should not add session with exisitng pin to database', async () => {
-        const pin = '1122';
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const game = GAME;
         const result = await gameSessionService.createSession(pin, GAME);
         expect(result).to.deep.equal({ pin, game });
@@ -144,19 +144,19 @@ describe('GameSession Service', () => {
     });
 
     it('should delete session with exisitng pin from the database', async () => {
-        const pin = '1122';
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         await gameSessionService.deleteSession(pin);
         expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(0);
     });
 
     it('should return the game corresponding to a certain pin ', async () => {
-        const pin = '1122';
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const result = await gameSessionService.getGameByPin(pin);
         expect(result).to.deep.equal(JSON.parse(SESSION_DATA)[0].game);
     });
 
     it('should get questions without correct answers being shown from pin', async () => {
-        const pin = '1122';
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const result = await gameSessionService.getQuestionsWithoutCorrectShown(pin);
         expect(result).to.deep.equal({
             id: '46277881345',
