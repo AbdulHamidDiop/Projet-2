@@ -8,7 +8,6 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
-// import { PlayAreaComponent } from '../play-area/play-area.component';
 
 const START_TIMER_DELAY = 500;
 const SHOW_FEEDBACK_DELAY = 3000;

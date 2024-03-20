@@ -1,5 +1,11 @@
 /* Reset some default browser styles */
-body, h1, h2, h3, p, ul, li {
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li {
     margin: 0;
     padding: 0;
 }
@@ -72,27 +78,4 @@ button.mat-fab {
 /* Add hover effect for better user interaction */
 .mat-expansion-panel:hover {
     background-color: #f0f0f0;
-}
-
-/* Footer styles */
-.footer-item {
-    background-color: #333;
-    color: white;
-    padding: 10px;
-    border-top: 1px solid #555;
-    text-align: center;
-}
-
-.footer-item h4 {
-    margin-top: 0.25em;
-    margin-bottom: 0.25em;
-    color: #28a745;
-}
-
-.footer-item p span:nth-child(even) {
-    color: #ffc107;
-}
-
-.footer-item p span:nth-child(odd) {
-    color: #17a2b8;
 }

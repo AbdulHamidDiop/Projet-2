@@ -53,6 +53,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private stopTimerSubscription: Subscription;
 
     // eslint-disable-next-line max-params
+    // On a besoin de tout ces injections pour l'instant. Nous n'avons pas encore trouvé de moyen pour découpler ce component.
     constructor(
         readonly timeService: TimeService,
         readonly gameManager: GameManagerService,

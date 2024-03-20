@@ -24,17 +24,6 @@ small {
 
 mat-card.scrollable-content {
     margin-bottom: 15px;
-    /*    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-
-    > mat-card-title-group {
-        display: block;
-    }
-
-    > mat-card-content {
-        overflow-y: auto;
-    }*/
 }
 
 .author {
@@ -44,22 +33,3 @@ mat-card.scrollable-content {
 .system {
     background-color: rgba(250, 128, 114, 0.416);
 }
-
-/* Customizing the scrollbar for .messages-container */
-/*.messages-container::-webkit-scrollbar {
-    width: 8px;
-    border-radius: 10px;
-}
-
-.messages-container::-webkit-scrollbar-track {
-    background: #f1f1f1;
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-.messages-container::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-*/

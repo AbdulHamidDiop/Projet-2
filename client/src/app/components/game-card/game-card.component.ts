@@ -23,9 +23,8 @@ export class GameCardComponent {
     }
 
     onExportButtonClick(game: Game) {
-        // enlever isHidden de l'objet sans faire de boucle ou grande fonction
-        // eslint-disable-next-line no-unused-vars
-        const { isHidden, ...gameWithoutHidden }: Game = game;
+        const gameWithoutHidden: Game = { ...game };
+        delete gameWithoutHidden.isHidden;
         const jsonData = JSON.stringify(gameWithoutHidden);
         const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);

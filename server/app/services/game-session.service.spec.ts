@@ -242,37 +242,4 @@ describe('GameSession Service', () => {
         const result = await gameSessionService.generateFeedback(pin, questionID, answer);
         expect(result).to.deep.equal([]);
     });
-
-    // export interface Feedback {
-    //     choice: string;
-    //     status: 'correct' | 'incorrect' | 'missed';
-    // }
-
-    // async generateFeedback(pin: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
-    //     const game = await this.getGameByPin(pin);
-    //     const question = game.questions.find((q) => q.id === questionId);
-
-    //     if (!question) {
-    //         return [];
-    //     }
-
-    //     const feedback: Feedback[] = question.choices.map((choice) => {
-    //         const isSelected = submittedAnswers.includes(choice.text);
-    //         let status: 'correct' | 'incorrect' | 'missed';
-
-    //         if (isSelected) {
-    //             if (choice.isCorrect) {
-    //                 status = 'correct';
-    //             } else {
-    //                 status = 'incorrect';
-    //             }
-    //         } else if (choice.isCorrect) {
-    //             status = 'missed';
-    //         }
-
-    //         return { choice: choice.text, status };
-    //     });
-
-    //     return feedback;
-    // }
 });
