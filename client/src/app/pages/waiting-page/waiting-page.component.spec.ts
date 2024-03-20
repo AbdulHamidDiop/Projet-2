@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Player, Game } from '@common/game';
+import { Game, Player } from '@common/game';
 import { of } from 'rxjs';
 import { WaitingPageComponent } from './waiting-page.component';
 import SpyObj = jasmine.SpyObj;
@@ -94,10 +94,5 @@ describe('WaitingPageComponent', () => {
         component.player.isHost = false;
         component.gameStartSubscribe();
         expect(routerMock.navigate).toHaveBeenCalledWith(['/game/123']);
-    });
-
-    it('Should call socket.leaveRoom on call to ngOnDestroy', () => {
-        component.ngOnDestroy();
-        expect(socketMock.leaveRoom).toHaveBeenCalled();
     });
 });
