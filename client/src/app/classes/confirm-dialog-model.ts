@@ -4,3 +4,4 @@ export class ConfirmDialogModel {
         public message: string,
     ) {}
 }
+// branche vivante
