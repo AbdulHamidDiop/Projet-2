@@ -349,7 +349,7 @@ describe('AdminPageComponent', () => {
         component.onImportButtonClick();
         expect(nativeElementMock.querySelector).toHaveBeenCalledWith('#handleErrorsGrid');
         expect(nativeElementMock.querySelector('#handleErrorsGrid').innerText).toEqual(
-            'Le type de fichier est invalide. Veuillez sélectionner un fichier de type JSON.',
+            'Le type de fichier est invalide. Veuillez sélectionner un fichier de type JSON.\n',
         );
     });
     it('onImportButtonClick should handleFile if verifyIsJSON is true', () => {

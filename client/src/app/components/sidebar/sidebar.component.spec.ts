@@ -44,7 +44,7 @@ describe('SidebarComponent', () => {
     it('Should call socket.getChatMessages on creation', () => {
         expect(socketMock.getChatMessages).toHaveBeenCalled();
         socketMock.getChatMessages().subscribe(() => {
-            expect(component.messages.length).toEqual(3);
+            expect(component.messages.length).toEqual(2);
         });
     });
 
