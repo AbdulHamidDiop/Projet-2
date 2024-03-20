@@ -213,7 +213,7 @@ export class SocketEvents {
                     socket.emit(Events.UNLOCK_ROOM);
                     const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
                     unlockMessage.timeStamp = new Date().toLocaleTimeString();
-                    // socket.emit(Events.CHAT_MESSAGE, unlockMessage);
+                    socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });
@@ -236,6 +236,7 @@ export class SocketEvents {
                     });
                     this.mapOfPlayersInRoom.set(room, playerList);
                     socket.to(room).emit(Events.GET_PLAYERS, playerList);
+                    socket.emit(Events.GET_PLAYERS, playerList);
                     this.bannedNamesInRoom.get(room).push(playerName);
                 }
             }
