@@ -72,7 +72,6 @@ export class Server {
             });
 
             socket.on(Events.CHAT_HISTORY, (data) => {
-                console.log(`Chat history requested for room: ${data.room}`);
                 const chatHistory = this.chatHistories.get(data.room) || [];
                 socket.to(data.room).emit(Events.CHAT_HISTORY, chatHistory);
             });

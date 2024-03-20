@@ -18,6 +18,7 @@ export class Application {
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
     // Les paramètres sont nécessaires pour configurer les routes.
+    // eslint-disable-next-line max-params
     constructor(
         private readonly adminController: AdminController,
         private readonly questionsController: QuestionsController,

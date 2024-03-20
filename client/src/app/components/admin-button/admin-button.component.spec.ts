@@ -2,7 +2,6 @@ import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
-import { MainPageComponent } from '@app/pages/main-page/main-page.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { API_URL } from '@common/consts';
 import { of } from 'rxjs';
@@ -21,7 +20,7 @@ describe('AdminButtonComponent', () => {
 
         await TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientTestingModule],
-            declarations: [MainPageComponent],
+            declarations: [],
             providers: [CommunicationService],
         }).compileComponents();
     });

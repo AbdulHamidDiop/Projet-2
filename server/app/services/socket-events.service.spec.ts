@@ -22,8 +22,6 @@ describe('Socket Events Service', () => {
     let socketJoinStub: SinonStub;
     let socketIdStub: SinonSpy;
     let gameSessionService: GameSessionService;
-    // const portNumber = 3000;
-    //    const url = 'http://localhost:3000';
     let server: Server;
     const httpServer = createServer();
 
