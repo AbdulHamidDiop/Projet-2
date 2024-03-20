@@ -16,6 +16,7 @@ describe('WaitingPageComponent', () => {
     let gameServiceMock: SpyObj<GameService>;
     let snackBarMock: SpyObj<MatSnackBar>;
     const DELAY = 5000;
+    const DELAY_THREE_SEC = 3000;
 
     beforeEach(async () => {
         socketMock = jasmine.createSpyObj('SocketRoomService', [
@@ -88,20 +89,17 @@ describe('WaitingPageComponent', () => {
     });
 
     it('Should navigate to hostView if player is the host', fakeAsync(() => {
-        const fiveSeconds = 50000;
-        const threeSeconds = 3000;
         component.player.isHost = true;
         component.gameStartSubscribe();
 
         socketMock.requestPlayers.and.returnValue();
         tick(DELAY + 1);
-        tick(DELAY + 1);
+        tick(DELAY_THREE_SEC + 1);
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['/hostView/123']);
     }));
 
     it('Should navigate to game if player is not the host', fakeAsync(() => {
-        const fiveSeconds = 50000;
         component.player.isHost = false;
         component.gameStartSubscribe();
 
