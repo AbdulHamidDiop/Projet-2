@@ -31,7 +31,7 @@ export class SocketEvents {
         this.listenForUnlockRoomEvent(socket);
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
-        //        this.listenForLeaveRoomEvent(socket);
+        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
         socket.on(Events.CREATE_ROOM, async ({ game }: { game: Game }) => {
@@ -281,7 +281,7 @@ export class SocketEvents {
         return id;
     }
     socketInRoom(socket: Socket): boolean {
-        return this.socketIdRoom.get(socket.id) !== undefined;
+        return this.socketIdRoom.get(socket.id) !== undefined && this.playerSocketId.get(socket.id) !== undefined;
     }
     roomCreated(room: string): boolean {
         return this.liveRooms.includes(room);

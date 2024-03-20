@@ -25,7 +25,7 @@ export class SelectUsernameComponent {
     sendUsername(input: HTMLInputElement) {
         const regex = /^[a-zA-Z]+$/;
         if (regex.test(input.value) && input.value.length > 1) {
-            const username = input.value
+            const username = input.value.toLowerCase();
             this.socket.sendPlayerName(username);
             this.playerService.player.name = username;
         } else {
