@@ -14,9 +14,9 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
-    private socket: Socket;
-    private url = 'http://localhost:3000'; // Your Socket.IO server URL
-    private namespaces: Map<string, Socket> = new Map();
+    readonly socket: Socket;
+    readonly url = 'http://localhost:3000'; // Your Socket.IO server URL
+    readonly namespaces: Map<string, Socket> = new Map();
 
     constructor(
         private io: IoService,

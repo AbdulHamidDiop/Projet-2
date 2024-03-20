@@ -304,4 +304,22 @@ describe('HostGameViewComponent', () => {
         expect(component.showResults).toHaveBeenCalled();
         expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.END_GAME, Namespaces.GAME);
     }));
+
+    it('should show results and set onLastQuestion to true when endGame is true', () => {
+        spyOn(component, 'showResults');
+        component.gameManagerService.endGame = true;
+        component.choseNextQuestion();
+
+        expect(component.showResults).toHaveBeenCalled();
+        expect(component.onLastQuestion).toBeTrue();
+    });
+
+    it('should send a message to the socket service to request the next question when endGame is false', () => {
+        component.gameManagerService.endGame = false;
+        spyOn(component.socketService, 'sendMessage');
+
+        component.choseNextQuestion();
+
+        expect(component.socketService.sendMessage).toHaveBeenCalledWith(Events.NEXT_QUESTION, Namespaces.GAME);
+    });
 });

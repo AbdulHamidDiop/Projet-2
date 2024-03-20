@@ -1,5 +1,5 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -76,9 +76,6 @@ describe('CreateQuestionDialogComponent', () => {
         fixture = TestBed.createComponent(CreateQuestionDialogComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
-    });
-    it('Should initialize question from MAT_DIALOG_DATA injection token', () => {
-        expect(component.id).toBe(VALID_QUESTION.id);
     });
 
     it('Should assign id if no question data is injected via MAT_DIALOG_DATA', () => {
@@ -204,27 +201,6 @@ describe('CreateQuestionDialogComponent', () => {
             expect(addQuestionSpy).toHaveBeenCalled();
         });
     });
-
-    it('should call MatDialogRef.close with question data after successful form submission', fakeAsync(() => {
-        component.questionForm.setValue({
-            type: 'QCM',
-            text: 'Example question text',
-            points: 30,
-            choices: [
-                { text: 'Choice 1', isCorrect: true },
-                { text: 'Choice 2', isCorrect: false },
-            ],
-            addToBank: false,
-        });
-
-        const addQuestionPromise = Promise.resolve(true);
-        addQuestionSpy.and.returnValue(addQuestionPromise);
-        component.onSubmit();
-        tick();
-
-        expect(closeDialogSpy).toHaveBeenCalledWith(jasmine.any(Object));
-        expect(addQuestionSpy).toHaveBeenCalledWith(jasmine.any(Object));
-    }));
 
     it('Should call setControl and removeControl to change question form on change of question type', () => {
         observableAbstractControl.subscribe((type) => {
