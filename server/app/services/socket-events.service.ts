@@ -290,6 +290,6 @@ export class SocketEvents {
         return this.socketIdRoom.get(socket.id) !== undefined && this.playerSocketId.get(socket.id) !== undefined;
     }
     roomCreated(room: string): boolean {
-        return this.liveRooms.includes(room);
+        return this.liveRooms.includes(room) && this.mapOfPlayersInRoom.has(room);
     }
 }
