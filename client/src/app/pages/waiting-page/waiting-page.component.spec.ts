@@ -31,6 +31,7 @@ describe('WaitingPageComponent', () => {
             'leaveRoom',
             'sendMessage',
             'requestPlayers',
+            'requestPlayers',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -87,6 +88,8 @@ describe('WaitingPageComponent', () => {
     });
 
     it('Should navigate to hostView if player is the host', fakeAsync(() => {
+        const fiveSeconds = 50000;
+        const threeSeconds = 3000;
         component.player.isHost = true;
         component.gameStartSubscribe();
 
@@ -98,6 +101,7 @@ describe('WaitingPageComponent', () => {
     }));
 
     it('Should navigate to game if player is not the host', fakeAsync(() => {
+        const fiveSeconds = 50000;
         component.player.isHost = false;
         component.gameStartSubscribe();
 

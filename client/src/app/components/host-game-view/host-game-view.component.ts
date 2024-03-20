@@ -87,6 +87,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
+            // enlever room de l'objet sans faire de boucle ou grande fonction
+            // eslint-disable-next-line no-unused-vars
             const { room, ...player } = playerWithRoom as Player & { room: string };
             this.playerService.addGamePlayers(player as Player);
         });
