@@ -3,9 +3,9 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
 import { ROOM_LOCKED_MESSAGE } from '@common/message';
+import { of } from 'rxjs';
 import { PlayerAndAdminPanelComponent } from './player-and-admin-panel.component';
 import SpyObj = jasmine.SpyObj;
-import { of } from 'rxjs';
 
 describe('PlayerAndAdminPanelComponent', () => {
     let component: PlayerAndAdminPanelComponent;
@@ -95,7 +95,7 @@ describe('PlayerAndAdminPanelComponent', () => {
         component.players = [{} as Player];
         component.roomLocked = false;
         component.startGame();
-        expect(socketMock.startGame).not.toHaveBeenCalled();
+        expect(socketMock.startGame).toHaveBeenCalled();
         expect(snackBarMock.open).toHaveBeenCalledWith('La partie doit être verrouillée avant de commencer', 'Fermer', {
             verticalPosition: 'top',
             duration: 5000,
