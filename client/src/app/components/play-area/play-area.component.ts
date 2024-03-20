@@ -223,7 +223,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
         }
-
     }
 
     onFinalAnswer() {
