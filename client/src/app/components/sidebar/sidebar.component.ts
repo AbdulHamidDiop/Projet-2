@@ -69,9 +69,8 @@ export class SidebarComponent implements OnDestroy {
             if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
                 this.socketsService.sendChatMessage(this.currentMessage);
                 this.messageHistory.push(this.currentMessage);
-            }
-            else {
-                this.snackBar.open("Le message ne peut pas excéder 200 caractères", 'Fermer', {
+            } else {
+                this.snackBar.open('Le message ne peut pas excéder 200 caractères', 'Fermer', {
                     verticalPosition: 'top',
                     duration: 5000,
                 });

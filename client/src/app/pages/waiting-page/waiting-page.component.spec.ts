@@ -29,7 +29,7 @@ describe('WaitingPageComponent', () => {
             'disconnectSubscribe',
             'leaveRoom',
             'sendMessage',
-            'requestPlayers'
+            'requestPlayers',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -86,21 +86,24 @@ describe('WaitingPageComponent', () => {
     });
 
     it('Should navigate to hostView if player is the host', fakeAsync(() => {
+        const fiveSeconds = 50000;
+        const threeSeconds = 3000;
         component.player.isHost = true;
         component.gameStartSubscribe();
 
         socketMock.requestPlayers.and.returnValue();
-        tick(5000 + 1);
-        tick(3000 + 1);
+        tick(fiveSeconds + 1);
+        tick(threeSeconds + 1);
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['/hostView/123']);
     }));
 
     it('Should navigate to game if player is not the host', fakeAsync(() => {
+        const fiveSeconds = 50000;
         component.player.isHost = false;
         component.gameStartSubscribe();
 
-        tick(5000 + 1);
+        tick(fiveSeconds + 1);
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['/game/123']);
     }));

@@ -29,7 +29,7 @@ export class AdminButtonComponent {
         const response = await fetch(API_URL + 'admin/password', {
             method: 'POST',
             headers: {
-                // Nécessaire pour que le code fonctionne
+                // Necessaire au fonctionnement du serveur
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
