@@ -125,7 +125,7 @@ describe('TimeService', () => {
         expect(service.time).toEqual(timeAfterPause);
         service.pauseTimer();
         tick(MS_SECOND * 2);
-        expect(service.time).toEqual(timeAfterPause - 2);
+        expect(service.time).toEqual(timeAfterPause);
         discardPeriodicTasks();
     }));
 

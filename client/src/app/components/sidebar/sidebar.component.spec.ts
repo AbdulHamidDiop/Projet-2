@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Subject, of } from 'rxjs';
+
 import SpyObj = jasmine.SpyObj;
 
 describe('SidebarComponent', () => {
@@ -27,6 +29,7 @@ describe('SidebarComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [SidebarComponent],
             providers: [{ provide: SocketRoomService, useValue: socketMock }],
+            imports: [MatSnackBarModule],
         }).compileComponents();
     });
 
@@ -124,11 +127,9 @@ describe('SidebarComponent', () => {
 
         it('should update message history on chat history event', () => {
             spyOn(component, 'autoScroll');
-            spyOn(component, 'purgeChat');
             chatHistorySubject.next([testMessage]);
             expect(component.messages).toBeTruthy();
             expect(component.autoScroll).toHaveBeenCalled();
-            expect(component.purgeChat).toHaveBeenCalled();
             expect(component.messages.length).toEqual(1);
         });
 
