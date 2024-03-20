@@ -2928,6 +2928,7 @@
     }
   },
   {
+<<<<<<< HEAD
     "pin": "2184",
     "game": {
       "id": "46277881345",
@@ -2956,10 +2957,42 @@
             },
             {
               "text": "int"
+=======
+    "pin": "4238",
+    "game": {
+      "id": "46277881346",
+      "lastModification": "2024-03-18T00:00:00.000Z",
+      "title": "Quiz de codage classique",
+      "description": "Testez vos connaissances en codage avec ce quiz QCM.",
+      "duration": 45,
+      "questions": [
+        {
+          "id": "1",
+          "type": "QCM",
+          "text": "Quelle est la complexité temporelle de l'algorithme de tri rapide (quicksort) dans le pire des cas ?",
+          "points": 1,
+          "choices": [
+            {
+              "text": "O(n)",
+              "isCorrect": false
+            },
+            {
+              "text": "O(n log n)",
+              "isCorrect": true
+            },
+            {
+              "text": "O(n^2)",
+              "isCorrect": false
+            },
+            {
+              "text": "O(log n)",
+              "isCorrect": false
+>>>>>>> 223101432c5d09e1c45fcfdccab4e2c535a89930
             }
           ]
         },
         {
+<<<<<<< HEAD
           "id": "12",
           "type": "QCM",
           "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
@@ -2971,6 +3004,99 @@
             },
             {
               "text": "Oui",
+=======
+          "id": "2",
+          "type": "QCM",
+          "text": "Quel est le langage de programmation utilisé pour développer des applications iOS ?",
+          "points": 1,
+          "choices": [
+            {
+              "text": "Java",
+              "isCorrect": false
+            },
+            {
+              "text": "Swift",
+              "isCorrect": true
+            },
+            {
+              "text": "Python",
+              "isCorrect": false
+            },
+            {
+              "text": "C++",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "id": "3",
+          "type": "QCM",
+          "text": "Quelle est la sortie du code suivant en Python ?\nprint(10 % 3)",
+          "points": 1,
+          "choices": [
+            {
+              "text": "3",
+              "isCorrect": false
+            },
+            {
+              "text": "1",
+              "isCorrect": true
+            },
+            {
+              "text": "0",
+              "isCorrect": false
+            },
+            {
+              "text": "10",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "id": "4",
+          "type": "QCM",
+          "text": "Quelle est la différence entre '==' et '===' en JavaScript ?",
+          "points": 1,
+          "choices": [
+            {
+              "text": "'==' compare les valeurs sans tenir compte du type, '===' compare les valeurs et les types",
+              "isCorrect": true
+            },
+            {
+              "text": "'==' compare les valeurs et les types, '===' compare les valeurs sans tenir compte du type",
+              "isCorrect": false
+            },
+            {
+              "text": "'==' est utilisé pour la comparaison de chaînes, '===' est utilisé pour la comparaison de nombres",
+              "isCorrect": false
+            },
+            {
+              "text": "Il n'y a pas de différence, ils font la même chose",
+              "isCorrect": false
+            }
+          ]
+        },
+        {
+          "id": "5",
+          "type": "QCM",
+          "text": "Quelle est la complexité temporelle de l'algorithme de recherche binaire ?",
+          "points": 1,
+          "choices": [
+            {
+              "text": "O(log n)",
+              "isCorrect": true
+            },
+            {
+              "text": "O(n)",
+              "isCorrect": false
+            },
+            {
+              "text": "O(n log n)",
+              "isCorrect": false
+            },
+            {
+              "text": "O(n^2)",
+>>>>>>> 223101432c5d09e1c45fcfdccab4e2c535a89930
               "isCorrect": false
             }
           ]
