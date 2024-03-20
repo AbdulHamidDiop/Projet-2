@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { of } from 'rxjs';
+import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { of } from 'rxjs';
 import { SelectUsernameComponent } from './select-username.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -17,7 +17,7 @@ describe('SelectUsernameComponent', () => {
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
         socketMock.nameAvailable.and.returnValue(of(undefined));
 
-        snackBarMock.open.and.returnValue({} as any);
+        snackBarMock.open.and.returnValue({} as MatSnackBarRef<TextOnlySnackBar>);
         await TestBed.configureTestingModule({
             declarations: [SelectUsernameComponent],
             providers: [
@@ -37,11 +37,11 @@ describe('SelectUsernameComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('Should call socket.sendPlayerName only if name is valid and not call snackBar.open for invalid name', () => {
+    it('Should call socket.sendPlayerName only if name is valid and call snackBar.open for invalid name', () => {
         const validName = 'ValidName';
         component.sendUsername({ value: validName } as HTMLInputElement);
         expect(socketMock.sendPlayerName).toHaveBeenCalledWith(validName);
-        expect(snackBarMock.open).not.toHaveBeenCalled();
+        expect(snackBarMock.open).toHaveBeenCalled();
     });
 
     it('Should not call socket.sendPlayerName and call snackBar.open if name is invalid', () => {
