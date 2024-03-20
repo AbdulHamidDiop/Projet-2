@@ -8,8 +8,6 @@ export class TimeService {
     timerEnded: EventEmitter<void> = new EventEmitter<void>();
     private interval: number | undefined;
     private readonly tick = 1000;
-    private readonly panicTick = 250; // Nouvelle vitesse pour le mode panique
-    private isPanicModeActivated: boolean = false;
     private pauseFlag: boolean = false;
 
     private counter: number;
@@ -43,21 +41,6 @@ export class TimeService {
             this.stopTimer();
         } else {
             this.startTimer(this.counter);
-        }
-    }
-
-    activatePanicMode() {
-        if (this.counter >= 10 && !this.isPanicModeActivated) {
-            // Vérifie si le temps restant est suffisant et si le mode panique n'est pas déjà activé
-            this.isPanicModeActivated = true;
-            clearInterval(this.interval);
-            this.interval = window.setInterval(() => {
-                if (this.counter > 0) {
-                    this.counter -= 0.25; // Diminue de 0.25 chaque 250ms
-                } else {
-                    this.stopTimer();
-                }
-            }, this.panicTick);
         }
     }
 }

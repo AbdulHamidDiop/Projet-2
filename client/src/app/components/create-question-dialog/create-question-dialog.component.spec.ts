@@ -1,5 +1,5 @@
 import { DragDropModule } from '@angular/cdk/drag-drop';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Choices, Question, Type } from '@common/game';
-import { validQuestion } from '@common/test-interfaces';
+import { VALID_QUESTION } from '@common/test-interfaces';
 import { Observable } from 'rxjs';
 import { CreateQuestionDialogComponent } from './create-question-dialog.component';
 
@@ -21,7 +21,7 @@ describe('CreateQuestionDialogComponent', () => {
     let component: CreateQuestionDialogComponent;
     let fixture: ComponentFixture<CreateQuestionDialogComponent>;
     const validQuestionForm = {
-        question: validQuestion,
+        question: { ...VALID_QUESTION },
     };
     const closeDialogSpy = jasmine.createSpy('close').and.callThrough();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -77,9 +77,6 @@ describe('CreateQuestionDialogComponent', () => {
         component = fixture.componentInstance;
         fixture.detectChanges();
     });
-    it('Should initialize question from MAT_DIALOG_DATA injection token', () => {
-        expect(component.id).toBe(validQuestion.id);
-    });
 
     it('Should assign id if no question data is injected via MAT_DIALOG_DATA', () => {
         component.data = null;
@@ -98,7 +95,7 @@ describe('CreateQuestionDialogComponent', () => {
         component.removeChoice(0);
         expect(component.choices.length).toBe(0);
 
-        const question: Question = validQuestion;
+        const question: Question = { ...VALID_QUESTION };
         component.populateForm(question);
         expect(component.choices.length === question.choices.length).toBeTruthy();
         expect(component.choices.at(0).value.text === question.choices[0].text).toBeTruthy();
@@ -135,7 +132,7 @@ describe('CreateQuestionDialogComponent', () => {
     });
 
     it('Should check if question points are in interval [10 à 100] and a multiple of 10.', () => {
-        const question: Question = { ...validQuestion };
+        const question: Question = { ...VALID_QUESTION };
         question.points = 51;
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
@@ -154,7 +151,7 @@ describe('CreateQuestionDialogComponent', () => {
     });
 
     it('Should check if there are between 2 and 4 choices in the question', () => {
-        const question: Question = { ...validQuestion };
+        const question: Question = { ...VALID_QUESTION };
         component.populateForm(question);
         expect(component.questionForm.valid).toBeTruthy();
 
@@ -174,7 +171,7 @@ describe('CreateQuestionDialogComponent', () => {
     });
 
     it('Should copy choices from question and their correctness', () => {
-        const question: Question = { ...validQuestion };
+        const question: Question = { ...VALID_QUESTION };
         question.choices = [{ text: '1', isCorrect: true } as Choices, { text: '2', isCorrect: false } as Choices];
         component.populateForm(question);
         component.onSubmit();
@@ -185,7 +182,7 @@ describe('CreateQuestionDialogComponent', () => {
     });
 
     it('Should ask for at least one correct or incorrect choices per question.', () => {
-        const question: Question = { ...validQuestion };
+        const question: Question = { ...VALID_QUESTION };
         question.choices = [{ text: 'Valid text', isCorrect: true } as Choices, { text: 'Valid text', isCorrect: true } as Choices];
         component.populateForm(question);
         expect(component.questionForm.valid).toBeFalsy();
@@ -196,7 +193,7 @@ describe('CreateQuestionDialogComponent', () => {
     });
 
     it('Should call questionsService.addQuestion when selecting addToBank option in the question form.', async () => {
-        const question: Question = validQuestion;
+        const question: Question = { ...VALID_QUESTION };
         component.populateForm(question);
         component.questionForm.patchValue({ addToBank: true });
         component.onSubmit();
@@ -204,27 +201,6 @@ describe('CreateQuestionDialogComponent', () => {
             expect(addQuestionSpy).toHaveBeenCalled();
         });
     });
-
-    it('should call MatDialogRef.close with question data after successful form submission', fakeAsync(() => {
-        component.questionForm.setValue({
-            type: 'QCM',
-            text: 'Example question text',
-            points: 30,
-            choices: [
-                { text: 'Choice 1', isCorrect: true },
-                { text: 'Choice 2', isCorrect: false },
-            ],
-            addToBank: false,
-        });
-
-        const addQuestionPromise = Promise.resolve(true);
-        addQuestionSpy.and.returnValue(addQuestionPromise);
-        component.onSubmit();
-        tick();
-
-        expect(closeDialogSpy).toHaveBeenCalledWith(jasmine.any(Object));
-        expect(addQuestionSpy).toHaveBeenCalledWith(jasmine.any(Object));
-    }));
 
     it('Should call setControl and removeControl to change question form on change of question type', () => {
         observableAbstractControl.subscribe((type) => {

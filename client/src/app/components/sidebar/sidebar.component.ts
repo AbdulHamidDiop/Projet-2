@@ -42,9 +42,9 @@ export class SidebarComponent implements OnDestroy {
         });
 
         this.chatHistorySubscription = this.socketsService.listenForMessages(nsp.CHAT_MESSAGES, Events.CHAT_HISTORY).subscribe((data: unknown) => {
-            //this.purgeChat();
+            // this.purgeChat();
+            const chatHistory = data as ChatMessage[];
             if (this.messageHistory.length === 0) {
-                const chatHistory = data as ChatMessage[];
                 this.messageHistory = this.messageHistory.concat(chatHistory);
             }
             this.autoScroll();
@@ -66,9 +66,8 @@ export class SidebarComponent implements OnDestroy {
         if (event.key === 'Enter' && this.currentMessage.message) {
             this.currentMessage.author = this.player.name;
             this.currentMessage.timeStamp = new Date().toLocaleTimeString();
-            if (this.currentMessage.message.length <= 200) {
+            if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
                 this.socketsService.sendChatMessage(this.currentMessage);
-                this.messageHistory.push(this.currentMessage);
             }
             else {
                 this.snackBar.open("Le message ne peut pas excéder 200 caractères", 'Fermer', {

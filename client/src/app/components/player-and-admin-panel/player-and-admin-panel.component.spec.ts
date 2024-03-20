@@ -2,10 +2,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
-import { ROOM_LOCKED_MESSAGE, GAME_STARTED_MESSAGE } from '@common/message';
+import { ROOM_LOCKED_MESSAGE } from '@common/message';
+import { of } from 'rxjs';
 import { PlayerAndAdminPanelComponent } from './player-and-admin-panel.component';
 import SpyObj = jasmine.SpyObj;
-import { of } from 'rxjs';
 
 describe('PlayerAndAdminPanelComponent', () => {
     let component: PlayerAndAdminPanelComponent;
@@ -79,14 +79,34 @@ describe('PlayerAndAdminPanelComponent', () => {
         );
     });
 
-    it('Should call socket.startGame and send start game message on call to startGame, but only if there is at least one player', () => {
+    it('Should send game start message when starting a game with a locked room and at least one player', () => {
         component.players = [{} as Player];
+        component.roomLocked = true;
+        const expectedMessage = jasmine.objectContaining({
+            author: 'Système',
+            message: 'Le jeu commence',
+        });
         component.startGame();
         expect(socketMock.startGame).toHaveBeenCalled();
-        expect(socketMock.sendChatMessage).toHaveBeenCalledWith(GAME_STARTED_MESSAGE);
-        component.players = [];
+        expect(socketMock.sendChatMessage).toHaveBeenCalledWith(expectedMessage);
+    });
+
+    it('Should show a snackbar if trying to start a game with an unlocked room', () => {
+        component.players = [{} as Player];
+        component.roomLocked = false;
         component.startGame();
-        expect(socketMock.startGame).toHaveBeenCalledTimes(1);
+        expect(socketMock.startGame).toHaveBeenCalled();
+        expect(snackBarMock.open).toHaveBeenCalledWith('La partie doit être verrouillée avant de commencer', 'Fermer', {
+            verticalPosition: 'top',
+            duration: 5000,
+        });
+    });
+
+    it('Should show a snackbar if trying to start a game with no players', () => {
+        component.players = [];
+        component.roomLocked = true;
+        component.startGame();
+        expect(socketMock.startGame).not.toHaveBeenCalled();
         expect(snackBarMock.open).toHaveBeenCalledWith("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
             verticalPosition: 'top',
             duration: 5000,

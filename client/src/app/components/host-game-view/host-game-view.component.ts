@@ -35,7 +35,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly timeService: TimeService,
         private route: ActivatedRoute,
         private router: Router,
-        private socketService: SocketRoomService,
+        readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
@@ -141,12 +141,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
     notifyNextQuestion() {
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
-        if (this.gameManagerService.endGame) {
-            this.showResults();
-            this.onLastQuestion = true;
-        } else if (!this.gameManagerService.endGame) {
-            this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
-        }
+        this.choseNextQuestion();
     }
 
     openCountDownModal(): void {
@@ -175,5 +170,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.timeService.stopTimer();
         this.gameManagerService.reset();
+    }
+
+    choseNextQuestion(): void {
+        if (this.gameManagerService.endGame) {
+            this.showResults();
+            this.onLastQuestion = true;
+        } else if (!this.gameManagerService.endGame) {
+            this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+        }
     }
 }

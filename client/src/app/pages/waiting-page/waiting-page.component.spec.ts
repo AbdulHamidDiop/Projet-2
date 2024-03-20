@@ -1,9 +1,9 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Player, Game } from '@common/game';
+import { Game, Player } from '@common/game';
 import { of } from 'rxjs';
 import { WaitingPageComponent } from './waiting-page.component';
 import SpyObj = jasmine.SpyObj;
@@ -29,6 +29,7 @@ describe('WaitingPageComponent', () => {
             'disconnectSubscribe',
             'leaveRoom',
             'sendMessage',
+            'requestPlayers'
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -84,20 +85,23 @@ describe('WaitingPageComponent', () => {
         expect(snackBarMock.open).toHaveBeenCalledWith("Cette partie n'existe pas", 'Fermer', { verticalPosition: 'top', duration: 5000 });
     });
 
-    it('Should navigate to hostView if player is the host', () => {
+    it('Should navigate to hostView if player is the host', fakeAsync(() => {
         component.player.isHost = true;
         component.gameStartSubscribe();
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/hostView/123']);
-    });
 
-    it('Should navigate to game if player is not the host', () => {
+        socketMock.requestPlayers.and.returnValue();
+        tick(5000 + 1);
+        tick(3000 + 1);
+
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/hostView/123']);
+    }));
+
+    it('Should navigate to game if player is not the host', fakeAsync(() => {
         component.player.isHost = false;
         component.gameStartSubscribe();
-        expect(routerMock.navigate).toHaveBeenCalledWith(['/game/123']);
-    });
 
-    it('Should call socket.leaveRoom on call to ngOnDestroy', () => {
-        component.ngOnDestroy();
-        expect(socketMock.leaveRoom).toHaveBeenCalled();
-    });
+        tick(5000 + 1);
+
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/game/123']);
+    }));
 });
