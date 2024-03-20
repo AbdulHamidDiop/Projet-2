@@ -20,6 +20,7 @@ export class ResultsPageComponent implements OnInit {
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
 
+    // On a besoin de ces injections.
     constructor(
         private socketsService: SocketRoomService,
         private gameService: GameService,

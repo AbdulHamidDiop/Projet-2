@@ -27,6 +27,7 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     questions: Question[] = [];
     isAuthentificated: boolean;
 
+    // On a besoin de tout ces paramètres qui sont notamment des élèments d'Angular.
     constructor(
         public dialog: MatDialog,
         private formBuilder: FormBuilder,

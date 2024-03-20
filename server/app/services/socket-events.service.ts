@@ -268,7 +268,7 @@ export class SocketEvents {
             const players = this.mapOfPlayersInRoom.get(room);
             socket.to(room).emit(Events.GET_PLAYERS, players);
             socket.emit(Events.GET_PLAYERS, players);
-        })
+        });
     }
 
     makeRoomId(): string {

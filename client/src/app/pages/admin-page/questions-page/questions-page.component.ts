@@ -15,6 +15,7 @@ export class QuestionsPageComponent implements OnInit {
     questions: Question[];
     isAuthentificated: boolean;
 
+    // On a besoin de ces paramètres, notamment des élèments d'angular.
     constructor(
         public dialog: MatDialog,
         readonly communicationService: CommunicationService,

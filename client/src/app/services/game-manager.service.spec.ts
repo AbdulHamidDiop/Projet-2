@@ -50,33 +50,6 @@ const response: Response = {
     json: jsonMock,
     text: textMock,
 };
-// const errorResponse: Response = {
-//     ok: false,
-//     status: 404,
-//     type: 'basic',
-//     headers: new Headers(),
-//     redirected: false,
-//     statusText: '',
-//     url: '',
-//     clone: () => {
-//         return new Response();
-//     },
-//     body: new ReadableStream<Uint8Array>(),
-//     bodyUsed: false,
-//     arrayBuffer: arrayBufferMock,
-//     blob: blobMock,
-//     formData: formDataMock,
-//     json: jsonMock,
-//     text: textMock,
-// };
-
-// async function fetchMock(): Promise<Response> {
-//     if (responseSetToOk) {
-//         return response;
-//     } else {
-//         return errorResponse;
-//     }
-// }
 
 describe('GameManagerService', () => {
     let service: GameManagerService;

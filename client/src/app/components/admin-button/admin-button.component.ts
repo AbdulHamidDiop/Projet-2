@@ -29,6 +29,8 @@ export class AdminButtonComponent {
         const response = await fetch(API_URL + 'admin/password', {
             method: 'POST',
             headers: {
+                // Ce sont des headers de HTML qui ne sont pas pris en compte dans la naming convention de ESLINT
+                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({ password: this.userInput }),

@@ -20,6 +20,8 @@ export class CreateQuestionDialogComponent implements OnInit {
     id: string;
     hideAddToBankOption = false;
 
+    // eslint-disable-next-line max-params
+    // On a besoin de toutes ces injections qui sont notamment des élèments d'Angular.
     constructor(
         public formBuilder: FormBuilder,
         public dialogRef: MatDialogRef<CreateQuestionDialogComponent>,

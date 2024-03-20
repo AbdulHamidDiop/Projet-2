@@ -23,7 +23,8 @@ export class GameCardComponent {
     }
 
     onExportButtonClick(game: Game) {
-        const { isHidden, ...gameWithoutHidden }: Game = game;
+        const gameWithoutHidden: Game = { ...game };
+        delete gameWithoutHidden.isHidden;
         const jsonData = JSON.stringify(gameWithoutHidden);
         const blob = new Blob([jsonData], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
