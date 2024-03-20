@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { of } from 'rxjs';
 import { SelectUsernameComponent } from './select-username.component';
 import SpyObj = jasmine.SpyObj;
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// Pour les tests on utilise souvent des any.
 
 describe('SelectUsernameComponent', () => {
     let component: SelectUsernameComponent;
@@ -17,7 +19,7 @@ describe('SelectUsernameComponent', () => {
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
         socketMock.nameAvailable.and.returnValue(of(undefined));
 
-        snackBarMock.open.and.returnValue({} as MatSnackBarRef<TextOnlySnackBar>);
+        snackBarMock.open.and.returnValue({} as any);
         await TestBed.configureTestingModule({
             declarations: [SelectUsernameComponent],
             providers: [
@@ -37,11 +39,10 @@ describe('SelectUsernameComponent', () => {
         expect(component).toBeTruthy();
     });
 
-    it('Should call socket.sendPlayerName only if name is valid and call snackBar.open for invalid name', () => {
-        const validName = 'ValidName';
+    it('Should call socket.sendPlayerName if name is valid', () => {
+        const validName = 'validname';
         component.sendUsername({ value: validName } as HTMLInputElement);
         expect(socketMock.sendPlayerName).toHaveBeenCalledWith(validName);
-        expect(snackBarMock.open).toHaveBeenCalled();
     });
 
     it('Should not call socket.sendPlayerName and call snackBar.open if name is invalid', () => {

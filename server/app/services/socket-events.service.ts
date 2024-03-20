@@ -32,7 +32,7 @@ export class SocketEvents {
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
         this.listenForRequestPlayersEvent(socket);
-        //        this.listenForLeaveRoomEvent(socket);
+        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
         socket.on(Events.CREATE_ROOM, async ({ game }: { game: Game }) => {
@@ -214,7 +214,7 @@ export class SocketEvents {
                     socket.emit(Events.UNLOCK_ROOM);
                     const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
                     unlockMessage.timeStamp = new Date().toLocaleTimeString();
-                    // socket.emit(Events.CHAT_MESSAGE, unlockMessage);
+                    socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });
@@ -237,6 +237,7 @@ export class SocketEvents {
                     });
                     this.mapOfPlayersInRoom.set(room, playerList);
                     socket.to(room).emit(Events.GET_PLAYERS, playerList);
+                    socket.emit(Events.GET_PLAYERS, playerList);
                     this.bannedNamesInRoom.get(room).push(playerName);
                 }
             }
@@ -286,7 +287,7 @@ export class SocketEvents {
         return id;
     }
     socketInRoom(socket: Socket): boolean {
-        return this.socketIdRoom.get(socket.id) !== undefined;
+        return this.socketIdRoom.get(socket.id) !== undefined && this.playerSocketId.get(socket.id) !== undefined;
     }
     roomCreated(room: string): boolean {
         return this.liveRooms.includes(room);
