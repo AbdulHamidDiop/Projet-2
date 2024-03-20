@@ -1,7 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
+import { ROOM_LOCKED_MESSAGE } from '@common/message';
+import { of } from 'rxjs';
 import { PlayerAndAdminPanelComponent } from './player-and-admin-panel.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -9,11 +11,29 @@ describe('PlayerAndAdminPanelComponent', () => {
     let component: PlayerAndAdminPanelComponent;
     let fixture: ComponentFixture<PlayerAndAdminPanelComponent>;
     let socketMock: SpyObj<SocketRoomService>;
+    let snackBarMock: SpyObj<MatSnackBar>;
+
     beforeEach(async () => {
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['kickPlayer', 'leaveRoom', 'lockRoom', 'unlockRoom', 'startGame']);
+        socketMock = jasmine.createSpyObj('SocketRoomService', [
+            'kickPlayer',
+            'leaveRoom',
+            'lockRoom',
+            'unlockRoom',
+            'startGame',
+            'getChatMessages',
+            'sendChatMessage',
+        ]);
+        snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+
+        const mockChatMessage = { author: 'room', message: 'testRoom', timeStamp: new Date().toISOString() };
+        socketMock.getChatMessages.and.returnValue(of(mockChatMessage));
+
         await TestBed.configureTestingModule({
             declarations: [PlayerAndAdminPanelComponent],
-            providers: [{ provide: SocketRoomService, useValue: socketMock }],
+            providers: [
+                { provide: SocketRoomService, useValue: socketMock },
+                { provide: MatSnackBar, useValue: snackBarMock },
+            ],
         }).compileComponents();
     });
 
@@ -27,6 +47,10 @@ describe('PlayerAndAdminPanelComponent', () => {
         expect(component).toBeTruthy();
     });
 
+    it('Should update room variable on chat message subscription', () => {
+        expect(component.room).toEqual('testRoom');
+    });
+
     it('Should call socket.kickPlayer on call to kickPlayer', () => {
         component.kickPlayer('');
         expect(socketMock.kickPlayer).toHaveBeenCalled();
@@ -37,22 +61,55 @@ describe('PlayerAndAdminPanelComponent', () => {
         expect(socketMock.leaveRoom).toHaveBeenCalled();
     });
 
-    it('Should call socket.lockRoom on call to lock', () => {
+    it('Should call socket.lockRoom and send lock message on call to lock', () => {
         component.lock();
         expect(socketMock.lockRoom).toHaveBeenCalled();
+        expect(socketMock.sendChatMessage).toHaveBeenCalledWith(ROOM_LOCKED_MESSAGE);
     });
 
-    it('Should call socket.unlockRoom on call to unlock', () => {
+    it('Should call socket.unlockRoom and send unlock message on call to unlock', () => {
+        component.roomLocked = true;
         component.unlock();
         expect(socketMock.unlockRoom).toHaveBeenCalled();
+        expect(socketMock.sendChatMessage).toHaveBeenCalledWith(
+            jasmine.objectContaining({
+                author: 'Système',
+                message: 'La salle est maintenant déverrouillée',
+            }),
+        );
     });
 
-    it('Should call socket.startGame on call to startGame, but only if there is at least one player', () => {
+    it('Should send game start message when starting a game with a locked room and at least one player', () => {
         component.players = [{} as Player];
+        component.roomLocked = true;
+        const expectedMessage = jasmine.objectContaining({
+            author: 'Système',
+            message: 'Le jeu commence',
+        });
         component.startGame();
         expect(socketMock.startGame).toHaveBeenCalled();
-        component.players = [];
+        expect(socketMock.sendChatMessage).toHaveBeenCalledWith(expectedMessage);
+    });
+
+    it('Should show a snackbar if trying to start a game with an unlocked room', () => {
+        component.players = [{} as Player];
+        component.roomLocked = false;
         component.startGame();
-        expect(socketMock.startGame).toHaveBeenCalledTimes(1);
+        expect(socketMock.startGame).toHaveBeenCalled();
+        expect(snackBarMock.open).toHaveBeenCalledWith('La partie doit être verrouillée avant de commencer', 'Fermer', {
+            verticalPosition: 'top',
+            duration: 5000,
+        });
+    });
+
+    it('Should show a snackbar if trying to start a game with no players', () => {
+        component.players = [];
+        component.roomLocked = true;
+        component.startGame();
+        expect(socketMock.startGame).not.toHaveBeenCalled();
+        expect(snackBarMock.open).toHaveBeenCalledWith("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
+            verticalPosition: 'top',
+            duration: 5000,
+        });
     });
 });

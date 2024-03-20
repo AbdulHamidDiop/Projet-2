@@ -21,10 +21,10 @@ export class MainPageComponent {
     ) {}
 
     async verifyPassword() {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const response = await fetch(API_URL + 'admin/password', {
             method: 'POST',
             headers: {
+                // Necessaire au fonctionnement du serveur
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },

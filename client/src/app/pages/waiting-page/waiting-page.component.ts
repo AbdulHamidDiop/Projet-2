@@ -1,16 +1,20 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
+import { Events, Namespaces as nsp } from '@common/sockets';
+
+const START_TIMER_DELAY = 500;
+const START_GAME_DELAY = 5000;
 
 @Component({
     selector: 'app-waiting-page',
     templateUrl: './waiting-page.component.html',
     styleUrls: ['./waiting-page.component.scss'],
 })
-export class WaitingPageComponent {
+export class WaitingPageComponent implements OnDestroy {
     fullView: boolean = true;
     roomIdEntryView: boolean = true;
     usernameEntryView: boolean = false;
@@ -18,19 +22,14 @@ export class WaitingPageComponent {
     player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
     game: Game = {} as Game;
     players: Player[] = [];
+    showCountDown: boolean = false;
+    // eslint-disable-next-line max-params
     constructor(
         private gameService: GameService,
         private socket: SocketRoomService,
         readonly router: Router,
+        private snackBar: MatSnackBar,
     ) {
-        this.socket.roomLockedSubscribe().subscribe(() => {
-            alert("La salle d'attente est verrouillée.");
-        });
-
-        this.socket.unlockSubscribe().subscribe(() => {
-            alert("La salle d'attente est déverouillée, le jeu ne peut pas commencer tant que la salle n'est pas verrouillée.");
-        });
-
         this.socket.leaveRoomSubscribe().subscribe(() => {
             this.fullView = false;
             this.roomIdEntryView = true;
@@ -39,7 +38,14 @@ export class WaitingPageComponent {
             this.fullView = true;
         });
 
-        this.socket.roomJoinSubscribe().subscribe(() => {
+        this.socket.roomJoinSubscribe().subscribe((res) => {
+            if (!res) {
+                this.snackBar.open("Cette partie n'existe pas", 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 5000,
+                });
+                return;
+            }
             if (this.roomIdEntryView) {
                 this.fullView = false;
                 this.roomIdEntryView = false;
@@ -47,6 +53,13 @@ export class WaitingPageComponent {
                 this.playerPanelView = false;
                 this.fullView = true;
             }
+        });
+
+        this.socket.roomLockedSubscribe().subscribe(() => {
+            this.snackBar.open('La partie est verrouillée', 'Fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
         });
 
         this.socket.getGameId().subscribe((id) => {
@@ -69,7 +82,10 @@ export class WaitingPageComponent {
         });
 
         this.socket.kickSubscribe().subscribe(() => {
-            alert('Votre nom est banni.');
+            this.snackBar.open('Votre nom est banni', 'Fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
             this.router.navigate(['/waiting']);
         });
 
@@ -78,19 +94,32 @@ export class WaitingPageComponent {
         });
     }
 
-    // eslint-disable-next-line @angular-eslint/use-lifecycle-interface
     ngOnDestroy() {
         this.socket.leaveRoom();
     }
 
     gameStartSubscribe() {
         this.socket.gameStartSubscribe().subscribe(() => {
-            alert('Le jeu commence maintenant.');
-            if (this.player.isHost) {
-                this.router.navigate(['/game/' + this.game.id + '/results']);
-            } else {
-                this.router.navigate(['/game/' + this.game.id]);
-            }
+            this.openCountDownModal();
+            setTimeout(() => {
+                if (this.player.isHost) {
+                    setTimeout(() => {
+                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                        this.socket.requestPlayers();
+                    }, START_TIMER_DELAY);
+                    this.router.navigate(['/hostView/' + this.game.id]);
+                } else {
+                    this.router.navigate(['/game/' + this.game.id]);
+                }
+            }, START_GAME_DELAY);
         });
+    }
+
+    openCountDownModal(): void {
+        this.showCountDown = true;
+    }
+
+    onCountDownModalClosed(): void {
+        this.showCountDown = false;
     }
 }

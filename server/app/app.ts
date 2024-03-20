@@ -1,6 +1,5 @@
 import { HttpException } from '@app/classes/http.exception';
 import { AdminController } from '@app/controllers/admin.controller';
-import { DateController } from '@app/controllers/date.controller';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
@@ -8,6 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import { Service } from 'typedi';
+import { GameSessionController } from './controllers/game-session.controller';
 import { GameController } from './controllers/game.controller';
 import { QuestionsController } from './controllers/questions.controller';
 
@@ -18,12 +18,11 @@ export class Application {
     private readonly swaggerOptions: swaggerJSDoc.Options;
 
     // Les paramètres sont nécessaires pour configurer les routes.
-    // eslint-disable-next-line max-params
     constructor(
-        private readonly dateController: DateController,
         private readonly adminController: AdminController,
         private readonly questionsController: QuestionsController,
         private readonly gamesController: GameController,
+        private readonly gameSessionController: GameSessionController,
     ) {
         this.app = express();
 
@@ -45,10 +44,10 @@ export class Application {
 
     bindRoutes(): void {
         this.app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerJSDoc(this.swaggerOptions)));
-        this.app.use('/api/date', this.dateController.router);
         this.app.use('/api/admin', this.adminController.router);
         this.app.use('/api/questions', this.questionsController.router);
         this.app.use('/api/game', this.gamesController.router);
+        this.app.use('/api/gameSession', this.gameSessionController.router);
         this.app.use('/', (req, res) => {
             res.redirect('/api/docs');
         });

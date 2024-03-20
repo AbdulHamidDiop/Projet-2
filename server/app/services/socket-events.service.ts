@@ -1,5 +1,6 @@
-import { Player } from '@common/game';
-import { ChatMessage } from '@common/message';
+import { GameSessionService } from '@app/services/game-session.service';
+import { Game, Player } from '@common/game';
+import { ChatMessage, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
 import { Service } from 'typedi';
@@ -15,12 +16,14 @@ export class SocketEvents {
     lockedRooms: string[] = [''];
     playerSocketId: Map<string, Player> = new Map();
 
-    constructor() {
+    constructor(private gameSessionService: GameSessionService) {
         this.liveRooms.push(LOBBY);
     }
     listenForEvents(socket: Socket) {
         this.socketIdRoom.set(socket.id, LOBBY);
         this.listenForCreateRoomEvent(socket);
+        this.listenForDeleteRoomEvent(socket);
+        this.listenForJoinRoomEvent(socket);
         this.listenForChatMessageEvent(socket);
         this.listenForSetPlayerNameEvent(socket);
         this.listenForGetPlayerProfileEvent(socket);
@@ -28,15 +31,17 @@ export class SocketEvents {
         this.listenForUnlockRoomEvent(socket);
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
-        this.listenForLeaveRoomEvent(socket);
-        this.listenForDeleteRoomEvent(socket);
+        this.listenForRequestPlayersEvent(socket);
+        //        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
-        socket.on(Events.CREATE_ROOM, ({ id }) => {
+        socket.on(Events.CREATE_ROOM, async ({ game }: { game: Game }) => {
+            const id = game.id;
             let room = this.makeRoomId();
             while (this.liveRooms.includes(room)) {
                 room = this.makeRoomId();
             }
+            await this.gameSessionService.createSession(room, game);
             // leaveAllRooms(socket); À ajouter plus tard.
             socket.join(room);
             const player: Player = { name: 'Organisateur', score: 0, isHost: true, id: '', bonusCount: 0 };
@@ -47,7 +52,7 @@ export class SocketEvents {
             this.bannedNamesInRoom.set(room, ['organisateur']); // Le nom organisateur est banni dans toute les rooms.
             this.chatHistories.set(room, []);
             this.roomGameId.set(room, id);
-            socket.emit(Events.JOIN_ROOM);
+            socket.emit(Events.JOIN_ROOM, true);
             socket.emit(Events.GET_GAME_ID, id);
             socket.emit(Events.GET_PLAYER_PROFILE, player);
             socket.emit(Events.GET_PLAYERS, []);
@@ -57,18 +62,28 @@ export class SocketEvents {
                 timeStamp: new Date().toLocaleTimeString(),
             };
             socket.emit(Events.CHAT_MESSAGE, message); // Sert pour les tests.
+
+            const roomMessage: ChatMessage = {
+                author: 'room',
+                message: room,
+                timeStamp: new Date().toLocaleTimeString(),
+            };
+            socket.emit(Events.CHAT_MESSAGE, roomMessage);
         });
     }
     listenForJoinRoomEvent(socket: Socket) {
         socket.on(Events.JOIN_ROOM, ({ room }) => {
             if (this.lockedRooms.includes(room)) {
-                socket.emit(Events.LOCK_ROOM, true);
+                socket.emit(Events.LOCK_ROOM);
             } else if (this.liveRooms.includes(room)) {
                 this.socketIdRoom.set(socket.id, room);
                 const playerProfile: Player = { id: '', name: 'Player', isHost: false, score: 0, bonusCount: 0 };
                 this.playerSocketId.set(socket.id, playerProfile);
-                socket.emit(Events.JOIN_ROOM); // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
+                socket.emit(Events.JOIN_ROOM, true);
+                // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
                 // Le socket rejoint le room après avoir envoyé son nom et que celui-ci est validé.
+            } else {
+                socket.emit(Events.JOIN_ROOM, false);
             }
         });
     }
@@ -157,6 +172,13 @@ export class SocketEvents {
                     socket.emit(Events.GET_PLAYERS, playerList);
                     socket.to(room).emit(Events.GET_PLAYERS, playerList);
                     socket.emit(Events.GET_GAME_ID, gameId);
+                    const message: ChatMessage = {
+                        author: sysmsg.AUTHOR,
+                        message: name + ' ' + sysmsg.PLAYER_JOINED,
+                        timeStamp: new Date().toLocaleTimeString(),
+                    };
+                    socket.to(room).emit(Events.CHAT_MESSAGE, message);
+                    socket.emit(Events.CHAT_MESSAGE, message);
                 }
             }
         });
@@ -175,12 +197,7 @@ export class SocketEvents {
                 const player = this.playerSocketId.get(socket.id);
                 if (player.isHost) {
                     const room = this.socketIdRoom.get(socket.id);
-                    if (this.lockedRooms.includes(room)) {
-                        socket.emit(Events.LOCK_ROOM, true);
-                    } else {
-                        this.lockedRooms.push(room);
-                        socket.to(room).to(socket.id).emit(Events.LOCK_ROOM);
-                    }
+                    this.lockedRooms.push(room);
                 }
             }
         });
@@ -195,6 +212,9 @@ export class SocketEvents {
                         return lockedRoom !== room;
                     });
                     socket.emit(Events.UNLOCK_ROOM);
+                    const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
+                    unlockMessage.timeStamp = new Date().toLocaleTimeString();
+                    // socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });
@@ -232,12 +252,23 @@ export class SocketEvents {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
                         socket.emit(Events.START_GAME);
+                        socket.to(room).emit(Events.GET_PLAYERS, players);
+                        socket.emit(Events.GET_PLAYERS, players);
                     } else {
                         socket.emit(Events.UNLOCK_ROOM);
                     }
                 }
             }
         });
+    }
+
+    listenForRequestPlayersEvent(socket: Socket) {
+        socket.on(Events.GET_PLAYERS, () => {
+            const room = this.socketIdRoom.get(socket.id);
+            const players = this.mapOfPlayersInRoom.get(room);
+            socket.to(room).emit(Events.GET_PLAYERS, players);
+            socket.emit(Events.GET_PLAYERS, players);
+        })
     }
 
     makeRoomId(): string {

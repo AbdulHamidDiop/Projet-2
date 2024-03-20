@@ -2,79 +2,113 @@ import { Game } from '@common/game';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import { SinonStub, stub } from 'sinon';
-import { GamesService } from './games.service';
+import { GameSessionService } from './game-session.service';
 
-const DATA_LENGTH = 0;
-
-const FIRST_QUIZ = {
-    id: '00000000-1111-2222-test-000000000000',
-    lastModification: '2024-02-02T15:28:59.795Z',
-    title: 'test',
-    description: 'test',
+const GAME: Game = {
+    id: '12345678901',
+    lastModification: '2024-02-01T15:04:41.171Z',
+    title: 'Questionnaire sur le TS',
+    description: 'Questions de pratique sur le langage TypeScript',
     duration: 40,
     questions: [
         {
+            id: '1',
             type: 'QCM',
-            text: 'Quelle est la différence entre NodeJS et Angular',
-            points: 20,
-            addToBank: true,
+            text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en TS?',
+            points: 30,
             choices: [
                 {
-                    text: 'Angular = front-end, NodeJS = back-end',
-                    isCorrect: false,
-                },
-                {
-                    text: 'Angular = back-end, NodeJS = front-end',
+                    text: 'var',
                     isCorrect: true,
                 },
                 {
-                    text: 'Aucune de ces réponses',
+                    text: 'self',
                     isCorrect: false,
                 },
+                {
+                    text: 'this',
+                    isCorrect: true,
+                },
+                {
+                    text: 'int',
+                },
             ],
-            id: 'e6547406-2543-4683-b0a2-dc0f1b01df66',
-            lastModification: '2024-01-25T16:09:35.649Z',
         },
     ],
-    isHidden: true,
-};
+    isHidden: false,
+} as unknown as Game;
 
-const SECOND_QUIZ = {
-    id: '10000000-1111-2222-test-000000000000',
-    lastModification: '2024-02-02T15:28:59.795Z',
-    title: 'test',
-    description: 'test',
-    duration: 40,
-    questions: [
-        {
-            type: 'QCM',
-            text: 'Quelle est la différence entre NodeJS et Angular',
-            points: 20,
-            addToBank: true,
-            id: 'f6547406-2543-4683-b0a2-dc0f1b01df66',
-            lastModification: '2024-01-25T16:09:35.649Z',
-        },
-    ],
-    isHidden: true,
-};
+let SESSION_DATA = '';
 
-let QUIZ = '[]';
-
-describe('Games Service', () => {
-    let gamesService: GamesService;
+describe('GameSession Service', () => {
+    let gameSessionService: GameSessionService;
     let readFileStub: SinonStub;
     let writeFileStub: SinonStub;
 
     beforeEach(async () => {
-        readFileStub = stub(fs.promises, 'readFile').resolves(QUIZ);
+        SESSION_DATA = JSON.stringify([
+            {
+                pin: '1122',
+                game: {
+                    id: '46277881345',
+                    lastModification: '2024-02-01T15:04:41.171Z',
+                    title: 'Questionnaire sur le JS',
+                    description: 'Questions de pratique sur le langage JavaScript',
+                    duration: 59,
+                    questions: [
+                        {
+                            id: '11',
+                            type: 'QCM',
+                            text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+                            points: 40,
+                            choices: [
+                                {
+                                    text: 'var',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'self',
+                                    isCorrect: false,
+                                },
+                                {
+                                    text: 'this',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'int',
+                                },
+                            ],
+                        },
+                        {
+                            id: '12',
+                            type: 'QCM',
+                            text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
+                            points: 20,
+                            choices: [
+                                {
+                                    text: 'Non',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'Oui',
+                                    isCorrect: false,
+                                },
+                            ],
+                        },
+                    ],
+                    isHidden: false,
+                },
+            },
+        ]);
+        readFileStub = stub(fs.promises, 'readFile').resolves(SESSION_DATA);
         writeFileStub = stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
             return new Promise<void>((resolve) => {
-                QUIZ = data;
+                SESSION_DATA = data;
                 resolve();
             });
         });
 
-        gamesService = new GamesService();
+        gameSessionService = new GameSessionService();
     });
 
     afterEach(() => {
@@ -82,165 +116,163 @@ describe('Games Service', () => {
         writeFileStub.restore();
     });
 
-    it('should add a game to the database', async () => {
-        const quiz = { ...FIRST_QUIZ, title: 'Title' } as unknown as Game;
-        await gamesService.addGame(quiz);
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(JSON.parse(QUIZ)[DATA_LENGTH]).to.deep.equal(quiz);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
+    it('should get sessions from database', async () => {
+        const result = await gameSessionService.getAllSessions();
+        expect(result).to.deep.equal(JSON.parse(SESSION_DATA));
     });
 
-    it('should modify a game from the database if that game already exists', async () => {
-        await gamesService.addGame(FIRST_QUIZ as unknown as Game);
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(JSON.parse(QUIZ)[DATA_LENGTH]).to.deep.equal(FIRST_QUIZ);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
+    it('should filter by pin', async () => {
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const result = await gameSessionService.getSessionByPin(pin);
+        expect(result).to.deep.equal(JSON.parse(SESSION_DATA)[0]);
     });
 
-    it('should get all games', async () => {
-        const games = await gamesService.getAllGames();
-        expect(games).to.be.an('array').with.lengthOf(1);
-        expect(games[0]).to.deep.equal(FIRST_QUIZ);
-        expect(readFileStub.called);
+    it('should add session to database', async () => {
+        const pin = '2222';
+        const game = GAME;
+        const result = await gameSessionService.createSession(pin, GAME);
+        expect(result).to.deep.equal({ pin, game });
+        expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(2);
     });
 
-    it('should get a game from the database based on its id', async () => {
-        const game = await gamesService.getGameByID(FIRST_QUIZ.id);
-        expect(game).to.deep.equal(FIRST_QUIZ);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
+    it('should not add session with exisitng pin to database', async () => {
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const game = GAME;
+        const result = await gameSessionService.createSession(pin, GAME);
+        expect(result).to.deep.equal({ pin, game });
+        expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(1);
     });
 
-    it('should return null if the id is not in the database', async () => {
-        const game = await gamesService.getGameByID('fakeID');
-        expect(game).to.equal(null);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
+    it('should delete session with exisitng pin from the database', async () => {
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        await gameSessionService.deleteSession(pin);
+        expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(0);
     });
 
-    it('should not toggle any game if the id is not in the list', async () => {
-        const success = await gamesService.toggleGameHidden('fakeID');
-        expect(success).to.equal(false);
-        expect(JSON.parse(QUIZ)).to.deep.equal([FIRST_QUIZ]);
-        expect(readFileStub.called);
-        expect(writeFileStub.notCalled);
+    it('should return the game corresponding to a certain pin ', async () => {
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const result = await gameSessionService.getGameByPin(pin);
+        expect(result).to.deep.equal(JSON.parse(SESSION_DATA)[0].game);
     });
 
-    it('should toggle a games isHidden in the database based on its id', async () => {
-        const success = await gamesService.toggleGameHidden(FIRST_QUIZ.id);
-        expect(success).to.equal(true);
-        expect(JSON.parse(QUIZ)[0].id).to.equal(FIRST_QUIZ.id);
-        expect(JSON.parse(QUIZ)[0].title).to.equal(FIRST_QUIZ.title);
-        expect(JSON.parse(QUIZ)[0].isHidden).to.not.equal(FIRST_QUIZ.isHidden);
-        expect(JSON.parse(QUIZ)[0].lastModification).to.not.equal(FIRST_QUIZ.lastModification);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
-    });
-
-    it('should delete a game from the database based on its id', async () => {
-        await gamesService.deleteGameByID('FakeID');
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(readFileStub.called);
-        expect(writeFileStub.notCalled);
-    });
-
-    it('should delete a game from the database based on its id', async () => {
-        await gamesService.deleteGameByID(FIRST_QUIZ.id);
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(0);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
-    });
-
-    it('should return questions without correct answers shown', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const gameID = FIRST_QUIZ.id;
-        const result = await gamesService.getQuestionsWithoutCorrectShown(gameID);
+    it('should get questions without correct answers being shown from pin', async () => {
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const result = await gameSessionService.getQuestionsWithoutCorrectShown(pin);
         expect(result).to.deep.equal({
-            ...FIRST_QUIZ,
+            id: '46277881345',
+            lastModification: '2024-02-01T15:04:41.171Z',
+            title: 'Questionnaire sur le JS',
+            description: 'Questions de pratique sur le langage JavaScript',
+            duration: 59,
             questions: [
                 {
-                    ...FIRST_QUIZ.questions[0],
-                    choices: FIRST_QUIZ.questions[0].choices.map(({ text }) => ({ text })),
+                    id: '11',
+                    type: 'QCM',
+                    text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+                    points: 40,
+                    choices: [{ text: 'var' }, { text: 'self' }, { text: 'this' }, { text: 'int' }],
+                },
+                {
+                    id: '12',
+                    type: 'QCM',
+                    text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
+                    points: 20,
+                    choices: [{ text: 'Non' }, { text: 'Oui' }],
                 },
             ],
+            isHidden: false,
         });
     });
 
-    it('should return questions without correct answers shown, including questions without choices', async () => {
-        stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
-        const result = await gamesService.getQuestionsWithoutCorrectShown(SECOND_QUIZ.id);
-        expect(result.questions[0].choices).to.equal(undefined);
+    it('should return undefined for wrong pin', async () => {
+        const pin = '2222';
+        const result = await gameSessionService.getQuestionsWithoutCorrectShown(pin);
+        expect(result).to.equal(undefined);
     });
 
-    it('should determine if the answer is correct', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const result = await gamesService.isCorrectAnswer(['Angular = back-end, NodeJS = front-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
+    it('should return true for correct answer', async () => {
+        const answer = ['var', 'this'];
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const questionID = JSON.parse(SESSION_DATA)[0].game.questions[0].id;
+        const result = await gameSessionService.isCorrectAnswer(answer, pin, questionID);
         expect(result).to.equal(true);
     });
 
-    it('should determine if the answer is false', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const result = await gamesService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
+    it('should return false for incorrect answer', async () => {
+        const answer = ['wrong'];
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const questionID = JSON.parse(SESSION_DATA)[0].game.questions[0].id;
+        const result = await gameSessionService.isCorrectAnswer(answer, pin, questionID);
         expect(result).to.equal(false);
     });
 
-    it('should determine if the answer is correct when the game does not exist', async () => {
-        const result = await gamesService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], 'fakeID', FIRST_QUIZ.questions[0].id);
+    it('should return false for inexistant pin', async () => {
+        const answer = ['wrong'];
+        const pin = '0000';
+        const questionID = JSON.parse(SESSION_DATA)[0].game.questions[0].id;
+        const result = await gameSessionService.isCorrectAnswer(answer, pin, questionID);
         expect(result).to.equal(false);
     });
 
-    it('should determine if the answer is correct when there are no choices', async () => {
-        stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
-        const result = await gamesService.isCorrectAnswer(['Answer'], SECOND_QUIZ.id, SECOND_QUIZ.questions[0].id);
-        expect(result).to.equal(true);
+    it('should return false for inexistant question', async () => {
+        const answer = ['wrong'];
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const questionID = '0000';
+        const result = await gameSessionService.isCorrectAnswer(answer, pin, questionID);
+        expect(result).to.equal(false);
     });
 
-    it('should generate feedback for submitted answers', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const gameID = FIRST_QUIZ.id;
-        const questionID = FIRST_QUIZ.questions[0].id;
-        const submittedAnswers = ['Angular = back-end, NodeJS = front-end'];
-        const result = await gamesService.generateFeedback(gameID, questionID, submittedAnswers);
-        const expectedFeedback = [
-            { choice: 'Angular = front-end, NodeJS = back-end', status: undefined },
-            { choice: 'Angular = back-end, NodeJS = front-end', status: 'correct' },
-            { choice: 'Aucune de ces réponses', status: undefined },
-        ];
-        expect(result).to.deep.equal(expectedFeedback);
+    it('should return Feedback for correct, incorrect and missed answers', async () => {
+        const answer = ['self', 'this'];
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const questionID = JSON.parse(SESSION_DATA)[0].game.questions[0].id;
+        const result = await gameSessionService.generateFeedback(pin, questionID, answer);
+        expect(result).to.deep.equal([
+            { choice: 'var', status: 'missed' },
+            { choice: 'self', status: 'incorrect' },
+            { choice: 'this', status: 'correct' },
+            { choice: 'int', status: undefined },
+        ]);
     });
 
-    it('should generate feedback for submitted answers', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const gameID = FIRST_QUIZ.id;
-        const questionID = FIRST_QUIZ.questions[0].id;
-        const submittedAnswers = ['Angular = front-end, NodeJS = back-end'];
-        const result = await gamesService.generateFeedback(gameID, questionID, submittedAnswers);
-        const expectedFeedback = [
-            { choice: 'Angular = front-end, NodeJS = back-end', status: 'incorrect' },
-            { choice: 'Angular = back-end, NodeJS = front-end', status: 'missed' },
-            { choice: 'Aucune de ces réponses', status: undefined },
-        ];
-        expect(result).to.deep.equal(expectedFeedback);
+    it('should return empty array for inexisting question', async () => {
+        const answer = ['self', 'this'];
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        const questionID = 'fake';
+        const result = await gameSessionService.generateFeedback(pin, questionID, answer);
+        expect(result).to.deep.equal([]);
     });
 
-    it('should generate feedback for submitted answers if the question do not exist', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const gameID = FIRST_QUIZ.id;
-        const questionId = 'nonexistent-question-id';
-        const submittedAnswers = ['Some submitted answer'];
+    // export interface Feedback {
+    //     choice: string;
+    //     status: 'correct' | 'incorrect' | 'missed';
+    // }
 
-        try {
-            await gamesService.generateFeedback(gameID, questionId, submittedAnswers);
-            // If no error is thrown, fail the test
-            expect.fail('Expected an error to be thrown');
-        } catch (error) {
-            expect(error.message).to.equal('Question not found');
-        }
-    });
+    // async generateFeedback(pin: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
+    //     const game = await this.getGameByPin(pin);
+    //     const question = game.questions.find((q) => q.id === questionId);
+
+    //     if (!question) {
+    //         return [];
+    //     }
+
+    //     const feedback: Feedback[] = question.choices.map((choice) => {
+    //         const isSelected = submittedAnswers.includes(choice.text);
+    //         let status: 'correct' | 'incorrect' | 'missed';
+
+    //         if (isSelected) {
+    //             if (choice.isCorrect) {
+    //                 status = 'correct';
+    //             } else {
+    //                 status = 'incorrect';
+    //             }
+    //         } else if (choice.isCorrect) {
+    //             status = 'missed';
+    //         }
+
+    //         return { choice: choice.text, status };
+    //     });
+
+    //     return feedback;
+    // }
 });

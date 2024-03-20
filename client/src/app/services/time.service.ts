@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root',
 })
 export class TimeService {
     // TODO : Permettre plus qu'une minuterie à la fois
+    timerEnded: EventEmitter<void> = new EventEmitter<void>();
     private interval: number | undefined;
     private readonly tick = 1000;
+    private pauseFlag: boolean = false;
 
     private counter: number;
 
@@ -25,6 +27,7 @@ export class TimeService {
                 this.time--;
             } else {
                 this.stopTimer();
+                this.timerEnded.emit();
             }
         }, this.tick);
     }
@@ -32,5 +35,12 @@ export class TimeService {
     stopTimer() {
         clearInterval(this.interval);
         this.interval = undefined;
+    }
+    pauseTimer() {
+        if (!this.pauseFlag) {
+            this.stopTimer();
+        } else {
+            this.startTimer(this.counter);
+        }
     }
 }

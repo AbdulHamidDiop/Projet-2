@@ -30,7 +30,7 @@ export class AdminController {
          *             schema:
          *               type: string
          *             example:
-         *               password: LOG2990-312
+         *               password: log2990-312
          *     produces:
          *       - application/json
          *     responses:

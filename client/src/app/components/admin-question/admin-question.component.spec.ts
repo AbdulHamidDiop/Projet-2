@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Question } from '@common/game';
-import { validQuestion } from '@common/test-interfaces';
+import { VALID_QUESTION } from '@common/test-interfaces';
 import { Observable, of } from 'rxjs';
 import { AdminQuestionComponent } from './admin-question.component';
 import SpyObj = jasmine.SpyObj;
@@ -15,7 +15,7 @@ describe('AdminQuestionComponent', () => {
     let component: AdminQuestionComponent;
     let fixture: ComponentFixture<AdminQuestionComponent>;
     const observableQuestion: Observable<Question[]> = new Observable((subscriber) => {
-        subscriber.next([validQuestion]);
+        subscriber.next([VALID_QUESTION]);
     });
     const editQuestionSpy = jasmine.createSpy('editQuestion').and.callThrough();
     const deleteQuestionSpy = jasmine.createSpy('deleteQuestion').and.callThrough();
@@ -58,7 +58,7 @@ describe('AdminQuestionComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(AdminQuestionComponent);
         component = fixture.componentInstance;
-        component.question = validQuestion;
+        component.question = { ...VALID_QUESTION };
         fixture.detectChanges();
     });
 
@@ -79,7 +79,7 @@ describe('AdminQuestionComponent', () => {
     });
 
     it('System should call questionService.deleteQuestion when pressing button to delete question', () => {
-        component.deleteQuestion(validQuestion);
+        component.deleteQuestion(VALID_QUESTION);
         expect(deleteQuestionSpy).toHaveBeenCalled();
     });
 });

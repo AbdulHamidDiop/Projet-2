@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TestBed } from '@angular/core/testing';
+import { TestBed, fakeAsync } from '@angular/core/testing';
+import { Game } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Socket } from 'socket.io-client';
@@ -13,12 +14,11 @@ describe('SocketRoomService', () => {
     let ioMock: SpyObj<IoService>;
     beforeEach(() => {
         socketMock = jasmine.createSpyObj('Socket', ['on', 'emit', 'off', 'disconnect']);
-        socketMock.on.and.callFake((eventName: any, callBackFn: any) => {
+        socketMock.on.and.callFake((_eventName: any, callBackFn: any) => {
             callBackFn();
             return socketMock;
         });
         socketMock.off.and.returnValue({} as any);
-        socketMock.emit.and.returnValue({} as any);
         ioMock = jasmine.createSpyObj('IoService', ['io']);
         ioMock.io.and.returnValue(socketMock);
         TestBed.configureTestingModule({
@@ -41,13 +41,17 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to createRoom', () => {
-        service.createRoom('');
-        expect(socketMock.emit).toHaveBeenCalled();
+        const gameTest: Game = { id: '1', title: 'Game 1', isHidden: false, questions: [] };
+        service.createRoom(gameTest);
+        expect(socketMock.emit).toHaveBeenCalledWith(Events.CREATE_ROOM, { game: gameTest });
+        expect(socketMock.emit).toHaveBeenCalledTimes(1);
     });
 
     it('Should call socket.emit on call to joinRoom', () => {
-        service.joinRoom('');
-        expect(socketMock.emit).toHaveBeenCalled();
+        const roomId = '1111';
+        service.joinRoom(roomId);
+        expect(socketMock.emit).toHaveBeenCalledWith(Events.JOIN_ROOM, { room: roomId });
+        expect(socketMock.emit).toHaveBeenCalledTimes(1);
     });
 
     it('Should call socket.emit on call to leaveRoom', () => {
@@ -61,18 +65,19 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.emit on call to kickPlayer', () => {
-        service.kickPlayer('');
-        expect(socketMock.emit).toHaveBeenCalled();
+        const playerName = 'hello';
+        service.kickPlayer(playerName);
+        expect(socketMock.emit).toHaveBeenCalledWith(Events.KICK_PLAYER, { playerName });
     });
 
     it('Should call socket.emit on call to lockRoom', () => {
         service.lockRoom();
-        expect(socketMock.emit).toHaveBeenCalled();
+        expect(socketMock.emit).toHaveBeenCalledWith(Events.LOCK_ROOM);
     });
 
     it('Should call socket.emit on call to unlockRoom', () => {
         service.unlockRoom();
-        expect(socketMock.emit).toHaveBeenCalled();
+        expect(socketMock.emit).toHaveBeenCalledWith(Events.UNLOCK_ROOM);
     });
 
     it('Should call socket.emit on call to sendPlayerName', () => {
@@ -97,25 +102,31 @@ describe('SocketRoomService', () => {
 
     it('Should call socket.on on call to getPlayers', () => {
         service.getPlayers().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_PLAYERS, jasmine.any(Function));
+        });
+    });
+
+    it('Should call socket.on on call to getPlayers', () => {
+        service.getStats().subscribe(() => {
+            expect(socketMock.on).toHaveBeenCalledWith(Events.QCM_STATS, jasmine.any(Function));
         });
     });
 
     it('Should call socket.on on call to lockSubscribe', () => {
         service.lockSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.LOCK_ROOM, jasmine.any(Function));
         });
     });
 
     it('Should call socket.on on call to unlockSubscribe', () => {
         service.unlockSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.UNLOCK_ROOM, jasmine.any(Function));
         });
     });
 
     it('Should call socket.on on call to kickSubscribe', () => {
         service.kickSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.KICK_PLAYER, jasmine.any(Function));
         });
     });
 
@@ -127,7 +138,7 @@ describe('SocketRoomService', () => {
 
     it('Should call socket.on on call to getProfile', () => {
         service.getProfile().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_PLAYER_PROFILE, jasmine.any(Function));
         });
     });
 
@@ -139,7 +150,7 @@ describe('SocketRoomService', () => {
 
     it('Should call socket.on on call to roomJoinSubscribe', () => {
         service.roomJoinSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.JOIN_ROOM, jasmine.any(Function));
         });
     });
 
@@ -157,32 +168,31 @@ describe('SocketRoomService', () => {
 
     it('Should call socket.on on call to getGameId', () => {
         service.getGameId().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_GAME_ID, jasmine.any(Function));
         });
     });
 
     it('Should call socket.on on call to roomLockedSubscribe', () => {
         service.roomLockedSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.LOCK_ROOM, jasmine.any(Function));
         });
     });
 
     it('Should call socket.on on call to createRoomSubscribe', () => {
         service.createRoomSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.CREATE_ROOM, jasmine.any(Function));
         });
     });
 
     it('Should call socket.on on call to leaveRoomSubscribe', () => {
         service.leaveRoomSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith(Events.LEAVE_ROOM, jasmine.any(Function));
         });
-        service.leaveRoomSubscribe();
     });
 
     it('Should call socket.on on call to disconnectSubscribe', () => {
         service.disconnectSubscribe().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalled();
+            expect(socketMock.on).toHaveBeenCalledWith('disconnect', jasmine.any(Function));
         });
     });
 
@@ -192,13 +202,8 @@ describe('SocketRoomService', () => {
         });
     });
 
-    it('Should call socket.emit on call to joinRoomInNamespace', () => {
-        service.joinRoomInNamespace('', '');
-        expect(socketMock.emit).toHaveBeenCalled();
-    });
-
     it('Should call socket.emit on call to sendMessage', () => {
-        service.sendMessage('' as Events, '' as Namespaces, '', {});
+        service.sendMessage('' as Events, '' as Namespaces);
         expect(socketMock.emit).toHaveBeenCalled();
     });
 
@@ -212,4 +217,41 @@ describe('SocketRoomService', () => {
         service.disconnect();
         expect(socketMock.disconnect).toHaveBeenCalled();
     });
+
+    it('Should call socket.on on call to nameAvailable', () => {
+        service.nameAvailable().subscribe(() => {
+            expect(socketMock.on).toHaveBeenCalledWith(Events.NAME_NOT_AVAILABLE, jasmine.any(Function));
+        });
+    });
+
+    it('Should call io on call to connectNamespace', () => {
+        service.connectNamespace('');
+        expect(ioMock.io).toHaveBeenCalled();
+    });
+
+    it('Should call io on call to connectNamespace', () => {
+        service.connectNamespace('');
+        expect(ioMock.io).toHaveBeenCalled();
+    });
+
+    it('Should call sendMessage on call to handleUnload', () => {
+        service.playerService.player.name = 'Organisateur';
+        service.handleUnload();
+        expect(ioMock.io).toHaveBeenCalled();
+    });
+
+    it('Should call io on call to joinAllNamespaces', fakeAsync(() => {
+        service.joinAllNamespaces('');
+        expect(ioMock.io).toHaveBeenCalled();
+    }));
+
+    it('Should call emit on call to joinRoomInNamespace', fakeAsync(() => {
+        socketMock.emit.and.callFake((event: any, params: any, callBackFn: any) => {
+            callBackFn({ success: true });
+            callBackFn(undefined);
+            return socketMock;
+        });
+        service.joinRoomInNamespace('', '');
+        expect(socketMock.emit).toHaveBeenCalled();
+    }));
 });

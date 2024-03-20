@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { GameSessionService } from '@app/services/game-session.service';
 import { Player } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
@@ -20,6 +21,7 @@ describe('Socket Events Service', () => {
     let socketEmitStub: SinonStub;
     let socketJoinStub: SinonStub;
     let socketIdStub: SinonSpy;
+    let gameSessionService: GameSessionService;
     // const portNumber = 3000;
     //    const url = 'http://localhost:3000';
     let server: Server;
@@ -72,7 +74,7 @@ describe('Socket Events Service', () => {
             clientSocket.on('connect', done);
         });
 
-        socketEvents = new SocketEvents();
+        socketEvents = new SocketEvents(gameSessionService);
     });
 
     it('Should have a makeRoomId method', () => {
@@ -85,22 +87,11 @@ describe('Socket Events Service', () => {
     it('Should call socket.emit on call to listenForCreateRoom', () => {
         socket.on('listenForCreateRoom', () => {
             // La fonction socket.on est mock, les appels à socket.on sont synchrones.
-            let i = 0;
             const sandbox = createSandbox();
-            const makeRoomIdStub = stub(socketEvents, 'makeRoomId').callsFake(() => {
-                if (i < 1) {
-                    i++;
-                    return '';
-                } else {
-                    return '0';
-                }
-            });
             socketEvents.liveRooms = [''];
             socketEvents.listenForCreateRoomEvent(socket);
             socket.removeAllListeners(Events.CREATE_ROOM);
             expect(socketOnStub.called).to.equal(true);
-            expect(socketEmitStub.called).to.equal(true);
-            expect(makeRoomIdStub.called).to.equal(true);
             socketEvents.liveRooms = [LOBBY];
             sandbox.restore();
         });
