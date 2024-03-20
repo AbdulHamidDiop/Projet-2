@@ -20,7 +20,7 @@ export class SocketRoomService implements OnDestroy {
 
     constructor(
         private io: IoService,
-        private playerService: PlayerService,
+        public playerService: PlayerService,
     ) {
         this.socket = io.io(this.url);
         window.addEventListener('beforeunload', this.handleUnload.bind(this));
@@ -272,14 +272,14 @@ export class SocketRoomService implements OnDestroy {
         window.removeEventListener('beforeunload', this.handleUnload.bind(this));
     }
 
-    private handleUnload(): void {
+    handleUnload(): void {
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
             this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
         }
     }
 
-    private connectNamespace(namespace: string): Socket | undefined {
+    connectNamespace(namespace: string): Socket | undefined {
         if (!this.namespaces.has(namespace)) {
             const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
             this.namespaces.set(namespace, namespaceSocket);
