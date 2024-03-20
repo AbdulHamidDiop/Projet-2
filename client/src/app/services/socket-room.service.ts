@@ -19,8 +19,8 @@ export class SocketRoomService implements OnDestroy {
     readonly namespaces: Map<string, Socket> = new Map();
 
     constructor(
-        readonly io: IoService,
-        readonly playerService: PlayerService,
+        private io: IoService,
+        public playerService: PlayerService,
     ) {
         this.socket = io.io(this.url);
         window.addEventListener('beforeunload', this.handleUnload.bind(this));

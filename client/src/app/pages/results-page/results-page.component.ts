@@ -20,6 +20,10 @@ export class ResultsPageComponent implements OnInit {
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
 
+    // Chaque service a une fonctionnalité distincte,
+    // c'est possible de créer un service pour les appeler mais ça diminue la lisibilité du code.
+    // Router et ActivatedRoute sont nécessaire pour les fonctionnalités.
+    // eslint-disable-next-line max-params
     constructor(
         private socketsService: SocketRoomService,
         private gameService: GameService,
