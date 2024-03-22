@@ -1,8 +1,10 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { GameService } from '@app/services/game.service';
 import { Choices, Game, Question, Type } from '@common/game';
+import { GameSession } from '@common/game-session';
 import { v4 } from 'uuid';
 import { MAX_CHOICES, MAX_DURATION, MAX_POINTS, MIN_CHOICES, MIN_DURATION, MIN_POINTS } from './const';
 
@@ -13,6 +15,7 @@ import { MAX_CHOICES, MAX_DURATION, MAX_POINTS, MIN_CHOICES, MIN_DURATION, MIN_P
 })
 export class AdminPageComponent implements OnInit {
     games: Game[];
+    sessions: GameSession[];
     selectedFile: File;
     isAuthentificated: boolean;
     errors: string;
@@ -21,10 +24,15 @@ export class AdminPageComponent implements OnInit {
         readonly communicationService: CommunicationService,
         public el: ElementRef,
         readonly gameService: GameService,
+        readonly gameSessionService: GameSessionService
     ) {}
 
     async getGames() {
         this.games = await this.gameService.getAllGames();
+    }
+
+    async getSessions() {
+        this.sessions = await this.gameSessionService.getAllSessions();
     }
 
     async ngOnInit() {
@@ -35,6 +43,7 @@ export class AdminPageComponent implements OnInit {
             this.router.navigate(['/home']);
         }
         await this.getGames();
+        await this.getSessions();
     }
 
     onCreateButtonClick() {

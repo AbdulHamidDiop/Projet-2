@@ -1,16 +1,24 @@
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
-import * as fs from 'fs/promises';
+import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-
-const SESSIONS_PATH = './assets/game-sessions.json';
+import { DB_COLLECTION_HISTORIQUE } from '../../utils/env';
+import { DatabaseService } from './database.service';
 
 @Service()
 export class GameSessionService {
+    constructor(private databaseService: DatabaseService) {}
+
+    get collection(): Collection<GameSession> {
+        return this.databaseService.database.collection(
+            DB_COLLECTION_HISTORIQUE
+        );
+      }
+
     async getAllSessions(): Promise<GameSession[]> {
-        const data: string = await fs.readFile(SESSIONS_PATH, 'utf8');
-        return JSON.parse(data);
+        const games = await this.collection.find({}).toArray();
+        return games;
     }
 
     async getSessionByPin(pin: string): Promise<GameSession | undefined> {
@@ -24,15 +32,23 @@ export class GameSessionService {
         if (sessions.find((s) => s.pin === pin)) {
             return session;
         }
-        sessions.push(session);
-        await fs.writeFile(SESSIONS_PATH, JSON.stringify(sessions, null, 2), 'utf8');
+        await this.collection.insertOne(session);
         return session;
     }
 
     async deleteSession(pin: string): Promise<void> {
+        let gameFound = false;
         const sessions: GameSession[] = await this.getAllSessions();
-        const updatedSessions = sessions.filter((session) => session.pin !== pin);
-        await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedSessions, null, 2), 'utf8');
+        sessions.filter((session) => {
+            if (session.pin === pin) {
+                gameFound = true;
+                return false;
+            }
+            return true;
+        });
+        if (gameFound) {
+            await this.collection.findOneAndDelete({ pin });
+        }
     }
 
     async getGameByPin(pin: string): Promise<Game> {

@@ -7,6 +7,8 @@ import * as http from 'http';
 import { AddressInfo } from 'net';
 import { Socket, Server as SocketIOServer } from 'socket.io';
 import { Service } from 'typedi';
+import { DB_URL } from '../utils/env';
+import { DatabaseService } from './services/database.service';
 import { GameSessionService } from './services/game-session.service';
 import { SocketEvents } from './services/socket-events.service';
 
@@ -24,14 +26,14 @@ export class Server {
         private readonly application: Application,
         private socketEvents: SocketEvents,
         private gameSessionService: GameSessionService,
+        private databaseService: DatabaseService
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
         const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
         return isNaN(port) ? val : port >= 0 ? port : false;
     }
-
-    init(): void {
+    async init(): Promise<void> {
         this.application.app.set('port', Server.appPort);
         this.server = http.createServer(this.application.app);
         this.server.listen(Server.appPort);
@@ -43,6 +45,13 @@ export class Server {
         this.chatHistories.set(LOBBY, []);
         this.configureGlobalNamespace();
         this.configureStaticNamespaces();
+        try {
+            await this.databaseService.start(DB_URL);
+            console.log("Database connection successful !");
+          } catch {
+            console.error("Database connection failed !");
+            process.exit(1);
+          }
     }
 
     private configureGlobalNamespace(): void {

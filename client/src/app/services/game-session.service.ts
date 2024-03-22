@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { FetchService } from '@app/services/fetch.service';
 import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
+import { GameSession } from '@common/game-session';
 
 @Injectable({
     providedIn: 'root',
@@ -52,5 +53,14 @@ export class GameSessionService {
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
+    }
+
+    async getAllSessions() : Promise<GameSession[]> {
+        const response = await this.fetchService.fetch(API_URL + 'gameSession');
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const sessions: GameSession[] = await response.json();
+        return sessions;
     }
 }

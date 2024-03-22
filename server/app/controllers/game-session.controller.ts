@@ -32,7 +32,6 @@ export class GameSessionController {
         this.router.get('/', async (req: Request, res: Response) => {
             res.json(await this.gameSessionService.getAllSessions());
             res.status(StatusCodes.OK);
-            res.send();
         });
 
         /**
