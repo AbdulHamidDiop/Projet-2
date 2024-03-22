@@ -95,11 +95,11 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         });
 
         this.kickSubscription = this.socket.kickSubscribe().subscribe(() => {
-            this.snackBar.open('Votre nom est banni', 'Fermer', {
+            this.snackBar.open('Vous avez été exclu de la partie', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
             });
-            this.router.navigate(['/waiting']);
+            this.router.navigate(['/createGame']);
         });
 
         this.disconnectSubscription = this.socket.disconnectSubscribe().subscribe(() => {

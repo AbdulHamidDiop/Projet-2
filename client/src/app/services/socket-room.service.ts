@@ -284,7 +284,9 @@ export class SocketRoomService implements OnDestroy {
         window.removeEventListener('beforeunload', this.endGame.bind(this));
     }
 
-    endGame(): void {
+    endGame(snckbarMessage?: string): void {
+        const snackMessage = snckbarMessage || 'La partie a été interrompue';
+
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
             this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
@@ -292,7 +294,7 @@ export class SocketRoomService implements OnDestroy {
                 this.router.navigate(['/createGame']);
             }
         } else if (this.room) {
-            this.snackBar.open('La partie a été interrompue', 'Fermer', {
+            this.snackBar.open(snackMessage, 'Fermer', {
                 duration: 5000,
                 verticalPosition: 'top',
             });

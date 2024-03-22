@@ -76,6 +76,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
 
     kickPlayer(playerName: string) {
         this.socket.kickPlayer(playerName);
+        this.players = this.players.filter((p) => p.name !== playerName);
     }
 
     leaveRoom() {
