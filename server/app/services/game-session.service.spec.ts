@@ -92,6 +92,7 @@ const SESSION: GameSession = {
         ],
         isHidden: false,
     },
+    isCompleted: false
 } as unknown as GameSession; 
 
 describe('GameSession Service', () => {
@@ -249,5 +250,20 @@ describe('GameSession Service', () => {
         const questionID = 'fake';
         const result = await gameSessionService.generateFeedback(pin, questionID, answer);
         expect(result).to.deep.equal([]);
+    });
+
+    it('should return true if completeSession is success', async () => {
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(SESSION);
+        const success = await gameSessionService.completeSession(SESSION.pin);
+        expect(success).to.deep.equal(true);
+    });
+
+    it('should delete all sessions from db', async () => {
+        const isCompleted: boolean = false;
+        const pin = '2222';
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertMany([SESSION, {pin, GAME, isCompleted}]);
+        await gameSessionService.deleteHistory();
+        const sessions = await gameSessionService.getAllSessions();
+        expect(sessions.length).to.deep.equal(0);
     });
 });

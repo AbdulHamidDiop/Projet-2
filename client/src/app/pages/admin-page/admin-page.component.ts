@@ -287,4 +287,8 @@ export class AdminPageComponent implements OnInit {
             this.isArrayOfQuestions(obj.questions)
         );
     }
+    
+    async onDeleteHistory() {
+        await this.gameSessionService.deleteHistory();
+    }
 }

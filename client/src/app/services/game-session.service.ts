@@ -76,4 +76,13 @@ export class GameSessionService {
             throw new Error(`Error: ${response.status}`);
         }
     }
+
+    async deleteHistory(): Promise<void> {
+        const response = await this.fetchService.fetch(API_URL + 'gameSession/deleteHistory', {
+            method: 'DELETE',
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+    }
 }

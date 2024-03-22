@@ -59,7 +59,10 @@
             </mat-card>
         </div>
     </div>
+    <button mat-button (click)="onDeleteHistory()"><mat-icon>delete</mat-icon></button>
     <div *ngFor="let session of sessions">
-        {{ session.pin }}
+        <div *ngIf="session.isCompleted">
+            {{ session.pin }}
+        </div>
     </div>
 </main>

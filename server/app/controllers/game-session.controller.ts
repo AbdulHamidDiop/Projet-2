@@ -315,5 +315,30 @@ export class GameSessionController {
             }
             res.send();
         });
+                /**
+         * @swagger
+         *
+         * /api/gameSession/deleteHistory:
+         *   delete:
+         *     description: Clear history
+         *     tags:
+         *       - History
+         *     parameters:
+         *       - in: path
+         *         name: id
+         *         required: true
+         *         description: The ID of the game to delete
+         *         schema:
+         *           type: string
+         *         example: "test"
+         *     responses:
+         *       200:
+         *         description: OK
+         */
+        this.router.delete('/deleteHistory', async (req: Request, res: Response) => {
+            await this.gameSessionService.deleteHistory();
+            res.status(StatusCodes.NO_CONTENT);
+            res.send();
+        });
     }
 }

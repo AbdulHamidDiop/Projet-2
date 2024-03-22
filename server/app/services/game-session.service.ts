@@ -129,4 +129,8 @@ export class GameSessionService {
         });
         return hasChanged;
     }
+
+    async deleteHistory(): Promise<void> {
+        await this.collection.deleteMany({});
+    }
 }
