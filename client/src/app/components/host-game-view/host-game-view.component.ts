@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { PlayerService } from '@app/services/player.service';
@@ -47,6 +48,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private router: Router,
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
+        private snackBar: MatSnackBar,
     ) {
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
@@ -111,7 +113,13 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             const username = (data as { user: string }).user;
             this.players = this.players.filter((p) => p.name !== username);
             if (this.players.length === 0) {
-                this.socketService.endGame();
+                this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 3000,
+                });
+                setTimeout(() => {
+                    this.socketService.endGame();
+                }, SHOW_FEEDBACK_DELAY);
             }
         });
 

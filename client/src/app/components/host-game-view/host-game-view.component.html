@@ -31,8 +31,7 @@
                         <button mat-button>
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
-                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()"
-                            class="confirm-button">
+                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()" class="confirm-button">
                             <h3 class="next-button">prochaine question</h3>
                         </button>
                         <button *ngIf="onLastQuestion" mat-button (click)="notifyEndGame()" class="confirm-button">
@@ -48,7 +47,7 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <h2 class="title"> <strong>Liste des joueurs</strong> </h2>
+            <h2 class="title"><strong>Liste des joueurs</strong></h2>
             <div>
                 <table class="players-table">
                     <thead>
@@ -65,7 +64,6 @@
                     </tbody>
                 </table>
             </div>
-
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="2" [rowspan]="1">
@@ -79,4 +77,9 @@
     </mat-grid-list>
 </main>
 
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="3"></app-countdown-modal>
+<app-countdown-modal
+    [showModal]="showCountDown"
+    (modalClosed)="onCountDownModalClosed()"
+    [message]="'Prochaine question dans'"
+    [countdown]="3"
+></app-countdown-modal>

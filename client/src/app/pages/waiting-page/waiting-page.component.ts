@@ -118,7 +118,6 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     }
 
     ngOnDestroy() {
-        this.socket.leaveRoom();
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
 
