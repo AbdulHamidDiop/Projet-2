@@ -15,12 +15,12 @@ import { IoService } from './ioservice.service';
 export class SocketRoomService implements OnDestroy {
     room: string;
     readonly socket: Socket;
-    readonly url = 'http://localhost:3000'; // Your Socket.IO server URL
+    readonly url = 'http://ec2-35-183-71-164.ca-central-1.compute.amazonaws.com:3000'; // Your Socket.IO server URL
     readonly namespaces: Map<string, Socket> = new Map();
 
     constructor(
-        readonly io: IoService,
-        readonly playerService: PlayerService,
+        private io: IoService,
+        public playerService: PlayerService,
     ) {
         this.socket = io.io(this.url);
         window.addEventListener('beforeunload', this.handleUnload.bind(this));
