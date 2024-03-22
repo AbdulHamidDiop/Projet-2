@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -36,6 +37,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private router: Router,
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
+        private gameSessionService: GameSessionService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
@@ -161,6 +163,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             this.router.navigate(['/game', gameId, 'results']);
+            this.gameSessionService.completeSession(this.gameManagerService.gamePin);
         }
         this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
         this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);

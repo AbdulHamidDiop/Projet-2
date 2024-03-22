@@ -27,7 +27,8 @@ export class GameSessionService {
     }
 
     async createSession(pin: string, game: Game): Promise<GameSession> {
-        const session: GameSession = { pin, game };
+        const isCompleted: boolean = false;
+        const session: GameSession = { pin, game, isCompleted };
         const sessions: GameSession[] = await this.getAllSessions();
         if (sessions.find((s) => s.pin === pin)) {
             return session;
@@ -40,7 +41,7 @@ export class GameSessionService {
         let gameFound = false;
         const sessions: GameSession[] = await this.getAllSessions();
         sessions.filter((session) => {
-            if (session.pin === pin) {
+            if (session.pin === pin && session.isCompleted === false) {
                 gameFound = true;
                 return false;
             }
@@ -116,5 +117,16 @@ export class GameSessionService {
         });
 
         return feedback;
+    }
+    async completeSession(pin: string): Promise<boolean> {
+        let hasChanged = false;
+        const sessions: GameSession[] = await this.getAllSessions();
+        sessions.map(async (session) => {
+            if (session.pin === pin) {
+                hasChanged = true;
+                await this.collection.updateOne({ pin }, { $set: { ...session, isCompleted: !session.isCompleted } });
+            }
+        });
+        return hasChanged;
     }
 }

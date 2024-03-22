@@ -275,5 +275,45 @@ export class GameSessionController {
             }
             res.send();
         });
+/**
+         * @swagger
+         *
+         * /api/gameSession/completeGame:
+         *   post:
+         *     description: Change the attribute isComplete of session to true
+         *     tags:
+         *       - CompleteGame
+         *     requestBody:
+         *       required: true
+         *       content:
+         *         application/json:
+         *           schema:
+         *             type: object
+         *             required:
+         *               - gameID
+         *               - questionId
+         *               - submittedAnswers
+         *             properties:
+         *               gameID:
+         *                 type: string
+         *                 description: The unique identifier of the game.
+         *               questionId:
+         *                 type: string
+         *                 description: The unique identifier of the question being answered.
+         *               submittedAnswers:
+         *                 type: array
+         *                 items:
+         *                   type: string
+         *                 description: An array of submitted answers.
+         
+         */
+        this.router.patch('/completeSession', async (req: Request, res: Response) => {
+            if (await this.gameSessionService.completeSession(req.body.pin)) {
+                res.status(StatusCodes.NO_CONTENT);
+            } else {
+                res.status(StatusCodes.BAD_REQUEST);
+            }
+            res.send();
+        });
     }
 }

@@ -63,4 +63,17 @@ export class GameSessionService {
         const sessions: GameSession[] = await response.json();
         return sessions;
     }
+
+    async completeSession(pin: string) : Promise<void> {
+        const response = await this.fetchService.fetch(API_URL + 'gameSession/completeSession', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ pin: pin }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+    }
 }
