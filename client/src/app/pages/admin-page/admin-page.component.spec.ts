@@ -371,4 +371,10 @@ describe('AdminPageComponent', () => {
 
         expect(component.selectedFile).toEqual(fakeFile);
     });
+
+    it('should call deleteHistory method', async () => {
+        const deleteHistoryMock = spyOn(component.gameSessionService, 'deleteHistory').and.returnValue(Promise.resolve());
+        await component.onDeleteHistory();
+        expect(deleteHistoryMock).toHaveBeenCalled();
+    });
 });
