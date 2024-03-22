@@ -85,4 +85,17 @@ export class GameSessionService {
             throw new Error(`Error: ${response.status}`);
         }
     }
+
+    async addNbPlayers(nbPlayers: number): Promise<void> {
+        const response = await this.fetchService.fetch(API_URL + 'gameSession/addNbPlayers', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ nbPlayers: nbPlayers }),
+        });
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+    }
 }

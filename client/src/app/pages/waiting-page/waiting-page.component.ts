@@ -1,6 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { GameSessionService } from '@app/services/game-session.service';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
@@ -29,6 +30,7 @@ export class WaitingPageComponent implements OnDestroy {
         private socket: SocketRoomService,
         readonly router: Router,
         private snackBar: MatSnackBar,
+        private gameSessionService: GameSessionService,
     ) {
         this.socket.leaveRoomSubscribe().subscribe(() => {
             this.fullView = false;
@@ -108,6 +110,7 @@ export class WaitingPageComponent implements OnDestroy {
                         this.socket.requestPlayers();
                     }, START_TIMER_DELAY);
                     this.router.navigate(['/hostView/' + this.game.id]);
+                    this.gameSessionService.addNbPlayers(this.players.length);
                 } else {
                     this.router.navigate(['/game/' + this.game.id]);
                 }
