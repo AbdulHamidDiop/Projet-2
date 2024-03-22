@@ -1,8 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { PlayerService } from '@app/services/player.service';
 import { Game, Player, Question } from '@common/game';
 import { QCMStats } from '@common/game-stats';
-import { ChatMessage } from '@common/message';
+import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
@@ -14,16 +16,23 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
-    readonly socket: Socket;
-    readonly url = 'http://localhost:3000'; // Your Socket.IO server URL
-    readonly namespaces: Map<string, Socket> = new Map();
+    unitTests: boolean = false;
+    private socket: Socket;
+    private url = 'http://localhost:3000'; // Your Socket.IO server URL
+    private namespaces: Map<string, Socket> = new Map();
 
     constructor(
-        readonly io: IoService,
-        readonly playerService: PlayerService,
+        private io: IoService,
+        public playerService: PlayerService,
+        private router: Router,
+        private snackBar: MatSnackBar,
     ) {
         this.socket = io.io(this.url);
-        window.addEventListener('beforeunload', this.handleUnload.bind(this));
+        window.addEventListener('beforeunload', this.endGame.bind(this));
+
+        this.listenForMessages(Namespaces.GAME, Events.ABORT_GAME).subscribe(() => {
+            this.endGame();
+        });
     }
 
     get connected() {
@@ -272,14 +281,34 @@ export class SocketRoomService implements OnDestroy {
     }
 
     ngOnDestroy() {
-        window.removeEventListener('beforeunload', this.handleUnload.bind(this));
+        window.removeEventListener('beforeunload', this.endGame.bind(this));
     }
 
-    handleUnload(): void {
+    endGame(): void {
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
             this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
+            if (!this.unitTests) {
+                this.router.navigate(['/createGame']);
+            }
+        } else if (this.room) {
+            this.snackBar.open('La partie a été interrompue', 'Fermer', {
+                duration: 5000,
+                verticalPosition: 'top',
+            });
+            if (!this.unitTests) {
+                this.router.navigate(['/createGame']);
+            }
+            const message: ChatMessage = {
+                author: SystemMessages.AUTHOR,
+                message: this.playerService.player.name + ' ' + SystemMessages.PLAYER_LEFT,
+                timeStamp: new Date().toLocaleTimeString(),
+            };
+            this.sendChatMessage(message);
+            this.sendMessage(Events.PLAYER_LEFT, Namespaces.GAME, { user: this.playerService.player.name });
         }
+        this.leaveRoom();
+        this.room = '';
     }
 
     connectNamespace(namespace: string): Socket | undefined {

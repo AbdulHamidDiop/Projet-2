@@ -10,6 +10,8 @@ export enum Events {
     CREATE_ROOM = 'createRoom',
     DELETE_ROOM = 'deleteRoom',
     JOIN_ROOM = 'joinRoom',
+    PLAYER_LEFT = 'playerLeft',
+    PLAYER_JOINED = 'playerJoined',
     CONNECTION = 'connection',
     CHAT_MESSAGE = 'chatMessage',
     WAITING_ROOM_NOTIFICATION = 'waitingRoomNotification',
