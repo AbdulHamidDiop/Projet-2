@@ -73,4 +73,15 @@ describe('SessionComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should format date correctly', () => {
+    const testDate = new Date('2024-03-23T08:15:30');
+    
+    const expectedFormattedDate = '2024-03-23 08:15:30';
+
+    const formattedDate = component.formatDate(testDate);
+ 
+    expect(formattedDate).toEqual(expectedFormattedDate);
+  });
+
 });

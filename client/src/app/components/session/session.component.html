@@ -4,6 +4,7 @@
             ><h2>{{ session.game.title }}</h2></mat-card-title
         >
     </mat-card-header>
-    <mat-card-content> Date: {{ session.timeStarted | date: 'short' }} </mat-card-content>
+    <mat-card-content> Date: {{ formatDate(session.timeStarted) }} </mat-card-content>
+    <mat-card-content> Nombre de joueurs: {{ session.nbPlayers }} </mat-card-content>
     <mat-card-content> Meilleur score: {{ session.bestScore }} </mat-card-content>
 </mat-card>
