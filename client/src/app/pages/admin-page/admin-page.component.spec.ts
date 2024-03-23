@@ -373,6 +373,11 @@ describe('AdminPageComponent', () => {
         expect(component.isGame(mockGameFile)).toBeFalse();
     });
 
+    it('isGame should be false when QRL question has attribute choices', () => {
+        mockGameFile.questions[0].type ='QRL';
+        expect(component.isGame(mockGameFile)).toBeFalse();
+    });
+
     it('handleFile should print "Le jeu a été importé correctement." when isGame is true', () => {
         const nativeElementMock = {
             querySelector: jasmine.createSpy('querySelector').and.returnValue({ innerText: '' }),

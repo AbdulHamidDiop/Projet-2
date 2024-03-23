@@ -61,8 +61,7 @@ describe('HostGameViewComponent', () => {
             choices: [
                 { text: 'Choice 1', isCorrect: true, index: 0 },
                 { text: 'Choice 2', isCorrect: false, index: 1 },
-            ],
-            answer: 'Choice 1',
+            ]
         };
         mockPlayers = [
             { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0 },

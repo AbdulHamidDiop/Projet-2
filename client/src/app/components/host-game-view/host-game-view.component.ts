@@ -115,13 +115,13 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             };
             const correction: Feedback[] = await this.gameManagerService.getFeedBack(
                 this.currentQuestion.id,
-                this.currentQuestion.choices.map((choice) => choice.text),
+                this.currentQuestion.choices!.map((choice) => choice.text),
             );
 
             for (let i = 0; i < stat.choiceAmount; i++) {
                 barChartStat.data.push({
                     data: i === stat.choiceIndex ? [1] : [0],
-                    label: this.currentQuestion.choices[i].text,
+                    label: this.currentQuestion.choices![i].text,
                     backgroundColor: correction[i].status === 'correct' ? '#4CAF50' : '#FF4C4C',
                 });
             }

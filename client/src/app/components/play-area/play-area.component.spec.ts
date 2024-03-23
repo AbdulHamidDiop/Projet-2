@@ -184,7 +184,7 @@ describe('PlayAreaComponent', () => {
                 { text: 'Option 2', isCorrect: false },
             ],
         } as Question;
-        component.nbChoices = component.question.choices.length;
+        component.nbChoices = component.question.choices!.length;
 
         const expectedKey = '1';
         const buttonEvent = {
@@ -262,7 +262,7 @@ describe('PlayAreaComponent', () => {
 
     it('pressing a number key should call handleQCMChoice with the right choice selected', () => {
         component.question = VALID_QUESTION;
-        component.nbChoices = VALID_QUESTION.choices.length;
+        component.nbChoices = VALID_QUESTION.choices!.length;
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];
@@ -275,7 +275,7 @@ describe('PlayAreaComponent', () => {
 
     it('pressing a number once should add the choice to the answer array and twice should remove it', () => {
         component.question = VALID_QUESTION;
-        component.nbChoices = VALID_QUESTION.choices.length;
+        component.nbChoices = VALID_QUESTION.choices!.length;
         const choices = component.question.choices;
         if (choices) {
             const choice = choices[0];

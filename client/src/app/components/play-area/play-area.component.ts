@@ -128,7 +128,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.buttonPressed <= this.nbChoices.toString()
         ) {
             const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices[index - 1].text);
+            this.handleQCMChoice(this.question.choices![index - 1].text);
         }
     }
 
@@ -168,7 +168,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
         if (newQuestion && newQuestion.type === 'QCM') {
-            this.nbChoices = this.question.choices.length;
+            this.nbChoices = this.question.choices!.length;
         }
         this.changeDetector.detectChanges();
     }
@@ -189,8 +189,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.qcmStat = {
             questionId: this.question.id,
-            choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
-            correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
+            choiceIndex: this.question.choices!.findIndex((c) => c.text === answer),
+            correctIndex: this.question.choices!.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
         };
