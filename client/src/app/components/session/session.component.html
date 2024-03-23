@@ -1,0 +1,9 @@
+<mat-card class="session-card">
+    <mat-card-header>
+        <mat-card-title
+            ><h2>{{ session.game.title }}</h2></mat-card-title
+        >
+    </mat-card-header>
+    <mat-card-content> Date: {{ session.timeStarted | date: 'short' }} </mat-card-content>
+    <mat-card-content> Meilleur score: {{ session.bestScore }} </mat-card-content>
+</mat-card>
