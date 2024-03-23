@@ -31,4 +31,14 @@ export class PlayerService {
     resetGamePlayers(): void {
         this.playersInGame = [];
     }
+
+    findBestScore(): number {
+        let bestPlayer: Player = this.playersInGame[0];
+        for (let i = 1; i < this.playersInGame.length; i++) {
+            if (this.playersInGame[i].score > bestPlayer.score) {
+                bestPlayer = this.playersInGame[i];
+            }
+        }
+        return bestPlayer.score;
+    }
 }

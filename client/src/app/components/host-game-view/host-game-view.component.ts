@@ -28,7 +28,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     questionIndex: number = 0;
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
-    players: Player[] = [];
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -41,6 +40,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
+            this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManagerService.gamePin);
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManagerService.game.duration as number;
@@ -163,7 +163,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             this.router.navigate(['/game', gameId, 'results']);
-            this.gameSessionService.completeSession(this.gameManagerService.gamePin);
+            this.gameSessionService.completeSession(this.gameManagerService.gamePin, this.playerService.findBestScore());
         }
         this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
         this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);

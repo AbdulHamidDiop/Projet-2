@@ -254,7 +254,8 @@ describe('GameSession Service', () => {
 
     it('should return true if completeSession is success', async () => {
         await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(SESSION);
-        const success = await gameSessionService.completeSession(SESSION.pin);
+        const bestScore = 10;
+        const success = await gameSessionService.completeSession(SESSION.pin, bestScore);
         expect(success).to.deep.equal(true);
     });
 
@@ -265,5 +266,12 @@ describe('GameSession Service', () => {
         await gameSessionService.deleteHistory();
         const sessions = await gameSessionService.getAllSessions();
         expect(sessions.length).to.deep.equal(0);
+    });
+
+    it('should return true if addNbPlayers is success', async () => {
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(SESSION);
+        const nbPlayers = 4;
+        const success = await gameSessionService.addNbPlayers(SESSION.pin, nbPlayers);
+        expect(success).to.deep.equal(true);
     });
 });

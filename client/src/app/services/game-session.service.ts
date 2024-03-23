@@ -64,13 +64,13 @@ export class GameSessionService {
         return sessions;
     }
 
-    async completeSession(pin: string) : Promise<void> {
+    async completeSession(pin: string, bestScore: number) : Promise<void> {
         const response = await this.fetchService.fetch(API_URL + 'gameSession/completeSession', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ pin: pin }),
+            body: JSON.stringify({ pin: pin, bestScore: bestScore }),
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -86,13 +86,13 @@ export class GameSessionService {
         }
     }
 
-    async addNbPlayers(nbPlayers: number): Promise<void> {
+    async addNbPlayers(nbPlayers: number, pin: string): Promise<void> {
         const response = await this.fetchService.fetch(API_URL + 'gameSession/addNbPlayers', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ nbPlayers: nbPlayers }),
+            body: JSON.stringify({ nbPlayers: nbPlayers, pin: pin }),
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);

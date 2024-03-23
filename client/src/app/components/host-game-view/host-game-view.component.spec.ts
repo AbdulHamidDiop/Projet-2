@@ -3,6 +3,8 @@ import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testin
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { GameSessionService } from '@app/services/game-session.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
@@ -19,6 +21,8 @@ describe('HostGameViewComponent', () => {
     let gameManagerServiceSpy: SpyObj<GameManagerService>;
     let socketServiceSpy: SpyObj<SocketRoomService>;
     let timeServiceSpy: SpyObj<TimeService>;
+    let gameSessionServiceSpy: SpyObj<GameSessionService>;
+    let playerServiceSpy: SpyObj<PlayerService>
     let routerSpy: SpyObj<Router>;
     let mockQuestion: Question;
     let mockPlayers: Player[];
@@ -37,6 +41,8 @@ describe('HostGameViewComponent', () => {
         ]);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
+        gameSessionServiceSpy = jasmine.createSpyObj('GameSessionService', ['completeSession', 'addNbPlayers']);
+        playerServiceSpy = jasmine.createSpyObj('PlayerService', ['findBestScore', 'addGamePlayers']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         socketServiceSpy.getPlayers.and.returnValue(of([]));
@@ -83,6 +89,8 @@ describe('HostGameViewComponent', () => {
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: Router, useValue: routerSpy },
                 { provide: TimeService, useValue: timeServiceSpy },
+                { provide: GameSessionService, useValue: gameSessionServiceSpy },
+                { provide: PlayerService, useValue: playerServiceSpy },
                 {
                     provide: ActivatedRoute,
                     useValue: {

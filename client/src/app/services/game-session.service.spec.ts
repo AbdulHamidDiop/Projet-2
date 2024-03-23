@@ -244,6 +244,7 @@ describe('GameSessionService', () => {
 
     it('should complete session successfully', async () => {
         const pin = '1234';
+        const bestScore = 10;
         const mockResponse: Response = { ok: true } as unknown as Response;
     
         // Set up mock response from FetchService
@@ -253,15 +254,16 @@ describe('GameSessionService', () => {
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: pin }),
+                body: JSON.stringify({ pin: pin, bestScore: bestScore }),
             })
             .and.returnValue(Promise.resolve(mockResponse));
     
-        await expectAsync(service.completeSession(pin)).toBeResolved();
+        await expectAsync(service.completeSession(pin, bestScore)).toBeResolved();
     });
 
     it('should throw error when session completion fails', async () => {
         const pin = '1234';
+        const bestScore = 10;
         const mockErrorResponse: Response = { ok: false, status: 500 } as unknown as Response;
     
         // Set up mock response from FetchService
@@ -271,11 +273,11 @@ describe('GameSessionService', () => {
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: pin }),
+                body: JSON.stringify({ pin: pin, bestScore: bestScore }),
             })
             .and.returnValue(Promise.resolve(mockErrorResponse));
     
-        await expectAsync(service.completeSession(pin)).toBeRejectedWithError('Error: 500');
+        await expectAsync(service.completeSession(pin, bestScore)).toBeRejectedWithError('Error: 500');
     });
 
     it('should delete history successfully', async () => {
@@ -290,5 +292,43 @@ describe('GameSessionService', () => {
         fetchService.fetch.and.returnValue(Promise.resolve(mockErrorResponse));
 
         await expectAsync(service.deleteHistory()).toBeRejectedWithError('Error: 404');
+    });
+
+    it('should add nunmber of players successfully', async () => {
+        const pin = '1234';
+        const nbPlayers = 10;
+        const mockResponse: Response = { ok: true } as unknown as Response;
+    
+        // Set up mock response from FetchService
+        fetchService.fetch
+            .withArgs(API_URL + 'gameSession/addNbPlayers', {
+                method: 'PATCH',
+                // Le test ne fonctionne pas sinon
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nbPlayers: nbPlayers, pin: pin }),
+            })
+            .and.returnValue(Promise.resolve(mockResponse));
+    
+        await expectAsync(service.addNbPlayers(nbPlayers, pin)).toBeResolved();
+    });
+
+    it('should throw error when adding number of players fails', async () => {
+        const pin = '1234';
+        const nbPlayers = 10;
+        const mockErrorResponse: Response = { ok: false, status: 500 } as unknown as Response;
+    
+        // Set up mock response from FetchService
+        fetchService.fetch
+            .withArgs(API_URL + 'gameSession/addNbPlayers', {
+                method: 'PATCH',
+                // Le test ne fonctionne pas sinon
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nbPlayers: nbPlayers, pin: pin }),
+            })
+            .and.returnValue(Promise.resolve(mockErrorResponse));
+    
+        await expectAsync(service.addNbPlayers(nbPlayers, pin)).toBeRejectedWithError('Error: 500');
     });
 });

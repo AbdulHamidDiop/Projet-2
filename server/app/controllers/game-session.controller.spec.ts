@@ -258,23 +258,25 @@ describe('GameSessionController', () => {
             });
     });
 
-    it('should toggle an existing game\'s isHidden attribute', async () => {
+    it('should complete session of an existing session', async () => {
         gameSessionService.completeSession.resolves(true);
         const pin = '1122';
+        const bestScore = 10;
         await supertest(expressApp)
           .patch('/api/gameSession/completeSession')
           .set('Content', 'application/json')
-          .send({ pin })
+          .send({ pin, bestScore })
           .expect(StatusCodes.NO_CONTENT);
       });
 
-      it('should not toggle an unexisting game\'s isHidden attribute', async () => {
+      it('should not complete session of an unexisting session', async () => {
         gameSessionService.completeSession.resolves(false);
         const pin = '5235';
+        const bestScore = 10;
         await supertest(expressApp)
           .patch('/api/gameSession/completeSession')
           .set('Content', 'application/json')
-          .send({ pin })
+          .send({ pin, bestScore })
           .expect(StatusCodes.BAD_REQUEST);
       });
 
@@ -285,5 +287,27 @@ describe('GameSessionController', () => {
           .set('Content', 'application/json')
           .send()
           .expect(StatusCodes.NO_CONTENT);
+      });
+    
+      it('should add number of players to an existing session', async () => {
+        gameSessionService.addNbPlayers.resolves(true);
+        const pin = '1122';
+        const nbPlayers = 4;
+        await supertest(expressApp)
+          .patch('/api/gameSession/addNbPlayers')
+          .set('Content', 'application/json')
+          .send({ pin, nbPlayers })
+          .expect(StatusCodes.NO_CONTENT);
+      });
+
+      it('should not add number of players to an unexisting session', async () => {
+        gameSessionService.addNbPlayers.resolves(false);
+        const pin = '5235';
+        const nbPlayers = 4;
+        await supertest(expressApp)
+          .patch('/api/gameSession/addNbPlayers')
+          .set('Content', 'application/json')
+          .send({ pin, nbPlayers })
+          .expect(StatusCodes.BAD_REQUEST);
       });
 });

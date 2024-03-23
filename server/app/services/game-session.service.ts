@@ -118,13 +118,13 @@ export class GameSessionService {
 
         return feedback;
     }
-    async completeSession(pin: string): Promise<boolean> {
+    async completeSession(pin: string, bestScore: number): Promise<boolean> {
         let hasChanged = false;
         const sessions: GameSession[] = await this.getAllSessions();
         sessions.map(async (session) => {
             if (session.pin === pin) {
                 hasChanged = true;
-                await this.collection.updateOne({ pin }, { $set: { ...session, isCompleted: !session.isCompleted } });
+                await this.collection.updateOne({ pin }, { $set: { ...session, isCompleted: true, bestScore: bestScore } });
             }
         });
         return hasChanged;
@@ -132,5 +132,17 @@ export class GameSessionService {
 
     async deleteHistory(): Promise<void> {
         await this.collection.deleteMany({});
+    }
+
+    async addNbPlayers(pin: string, nbPlayers: number): Promise<boolean> {
+        let hasChanged = false;
+        const sessions: GameSession[] = await this.getAllSessions();
+        sessions.map(async (session) => {
+            if (session.pin === pin) {
+                hasChanged = true;
+                await this.collection.updateOne({ pin }, { $set: { ...session, nbPlayers: nbPlayers, timeStarted: new Date()} });
+            }
+        });
+        return hasChanged;
     }
 }
