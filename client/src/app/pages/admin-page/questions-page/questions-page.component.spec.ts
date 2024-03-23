@@ -188,4 +188,47 @@ describe('QuestionsPageComponent', () => {
 
         expect(component.questions).toEqual([]);
     });
+
+    it('should toggle selectedTypes when toggleQuestionType is called', () => {
+        spyOn(component, 'updateDisplayQuestions');
+    
+        expect(component.selectedTypes.size).toEqual(2);
+    
+        component.toggleQuestionType('QCM');
+        expect(component.selectedTypes.size).toEqual(1);
+        expect(component.selectedTypes.has('QCM')).toBeFalsy();
+        expect(component.updateDisplayQuestions).toHaveBeenCalled();
+    
+        component.toggleQuestionType('QRL');
+        expect(component.selectedTypes.size).toEqual(0);
+        expect(component.selectedTypes.has('QRL')).toBeFalsy();
+        expect(component.updateDisplayQuestions).toHaveBeenCalled();
+
+        component.toggleQuestionType('QRL');
+        expect(component.selectedTypes.size).toEqual(1);
+        expect(component.selectedTypes.has('QRL')).toBeTruthy();
+        expect(component.updateDisplayQuestions).toHaveBeenCalled();
+      });
+    
+      it('should update displayQuestions based on selectedTypes', () => {
+        component.questions = [mockQuestion, {...mockQuestion, type: 'QRL'}];
+    
+        component.selectedTypes = new Set();
+        component.updateDisplayQuestions();
+        expect(component.displayQuestions.length).toEqual(0);
+    
+        component.selectedTypes = new Set(['QCM']);
+        component.updateDisplayQuestions();
+        expect(component.displayQuestions.length).toEqual(1);
+        expect(component.displayQuestions[0].type).toEqual('QCM');
+    
+        component.selectedTypes = new Set(['QRL']);
+        component.updateDisplayQuestions();
+        expect(component.displayQuestions.length).toEqual(1);
+        expect(component.displayQuestions[0].type).toEqual('QRL');
+    
+        component.selectedTypes = new Set(['QCM', 'QRL']);
+        component.updateDisplayQuestions();
+        expect(component.displayQuestions.length).toEqual(2);
+      });
 });
