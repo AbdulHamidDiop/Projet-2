@@ -34,15 +34,23 @@ export class AdminQuestionsBankComponent {
             const dateB = new Date(b.lastModification);
             return dateB.getTime() - dateA.getTime();
         });
-
-        this.displayQuestions = this.questions.filter((question) => question.type === this.currentType);
+        if (this.selectedTypes.size === 0) {
+            this.displayQuestions = [];
+        } else if (this.selectedTypes.size === 2) {
+            this.displayQuestions = this.questions;
+        } else {
+            const selectedType = this.selectedTypes.values().next().value;
+            this.displayQuestions = this.questions.filter(question => question.type === selectedType);
+        }
     }
 
     toggleQuestionType(type: string): void {
         if (this.selectedTypes.has(type)) {
-            this.currentType = type;
-            this.updateDisplayQuestions();
+            this.selectedTypes.delete(type);
+        } else {
+            this.selectedTypes.add(type);
         }
+        this.updateDisplayQuestions();
     }
 
     dropQuestion(event: CdkDragDrop<Question[]>) {
