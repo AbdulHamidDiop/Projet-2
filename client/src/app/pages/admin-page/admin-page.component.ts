@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit } from '@angular/core';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSessionService } from '@app/services/game-session.service';
@@ -290,5 +291,24 @@ export class AdminPageComponent implements OnInit {
     
     async onDeleteHistory() {
         await this.gameSessionService.deleteHistory();
+        this.sessions = [];
+    }
+
+    sortList(event: MatSelectChange) {
+        const sortBy = event.value;
+
+        switch (sortBy) {
+          case 'option1':
+            this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));
+            break;
+          case 'option2':
+            this.sessions.sort((a, b) => b.game.title.localeCompare(a.game.title));
+            break;
+          case 'option3':
+            this.sessions.sort((a, b) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
+            break;
+          case 'option4':
+            this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
+        }
     }
 }
