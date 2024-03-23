@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Game, GameService } from '@app/services/game.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage } from '@common/message';
@@ -12,7 +13,7 @@ import { Events, Namespaces } from '@common/sockets';
     templateUrl: './results-page.component.html',
     styleUrls: ['./results-page.component.scss'],
 })
-export class ResultsPageComponent implements OnInit {
+export class ResultsPageComponent implements OnInit, OnDestroy {
     game: Game;
     players: Player[] = [];
     chatMessages: string[] = [];
@@ -23,6 +24,7 @@ export class ResultsPageComponent implements OnInit {
     // On a besoin de ces injections.
     constructor(
         private socketsService: SocketRoomService,
+        private playerService: PlayerService,
         private gameService: GameService,
         private route: ActivatedRoute,
         public router: Router,
@@ -36,6 +38,8 @@ export class ResultsPageComponent implements OnInit {
             }
         });
         this.connectToServer();
+        window.addEventListener('popstate', this.onLocationChange);
+        window.addEventListener('hashchange', this.onLocationChange);
     }
 
     sortPlayers(): void {
@@ -64,6 +68,22 @@ export class ResultsPageComponent implements OnInit {
             this.currentHistogramIndex--;
             this.updateChart();
         }
+    }
+
+    onLocationChange(): void {
+        if (this.playerService.player.name === 'Organisateur') {
+            this.socketsService.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
+            this.socketsService.leaveRoom();
+            this.socketsService.room = '';
+        } else {
+            this.socketsService.endGame();
+        }
+    }
+
+    ngOnDestroy(): void {
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
+        this.socketsService.endGame();
     }
 
     private updateChart(): void {

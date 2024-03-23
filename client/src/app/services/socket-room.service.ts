@@ -28,7 +28,7 @@ export class SocketRoomService implements OnDestroy {
         private snackBar: MatSnackBar,
     ) {
         this.socket = io.io(this.url);
-        window.addEventListener('beforeunload', this.endGame.bind(this));
+        window.addEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
 
         this.listenForMessages(Namespaces.GAME, Events.ABORT_GAME).subscribe(() => {
             this.endGame();
@@ -281,11 +281,11 @@ export class SocketRoomService implements OnDestroy {
     }
 
     ngOnDestroy() {
-        window.removeEventListener('beforeunload', this.endGame.bind(this));
+        window.removeEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
     }
 
-    endGame(snckbarMessage?: string): void {
-        const snackMessage = snckbarMessage || 'La partie a été interrompue';
+    endGame(snckMessage?: string): void {
+        const snackMessage = snckMessage || 'La partie a été interrompue';
 
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
@@ -299,7 +299,7 @@ export class SocketRoomService implements OnDestroy {
                 verticalPosition: 'top',
             });
             if (!this.unitTests) {
-                this.router.navigate(['/createGame']);
+                this.router.navigate(['/home']);
             }
             const message: ChatMessage = {
                 author: SystemMessages.AUTHOR,
