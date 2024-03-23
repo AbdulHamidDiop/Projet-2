@@ -1,6 +1,9 @@
 <app-nav-bar></app-nav-bar>
 
 <main>
+    <button mat-button>
+        <h3 class="panic-button" (click)="onLocationChange()">Quitter la partie</h3>
+    </button>
     <mat-grid-list cols="4" rowHeight="50vh">
         <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div id="grid-container">
@@ -58,7 +61,7 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let player of playerService.playersInGame">
-                            <td>{{ player.name }}</td>
+                            <td [ngClass]="{ leftGame: player.leftGame }">{{ player.name }}</td>
                             <td>{{ player.score }} points</td>
                         </tr>
                     </tbody>

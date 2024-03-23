@@ -52,6 +52,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     ) {
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
+            this.players = players;
         });
 
         this.startTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
@@ -112,6 +113,12 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
             this.players = this.players.filter((p) => p.name !== username);
+
+            const player = this.playerService.playersInGame.find((p) => p.name === username);
+            if (player) {
+                player.leftGame = true;
+            }
+
             if (this.players.length === 0) {
                 this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                     verticalPosition: 'top',

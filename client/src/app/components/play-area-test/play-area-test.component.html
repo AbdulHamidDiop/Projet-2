@@ -1,0 +1,58 @@
+<div id="grid-container">
+    <section id="question-container">
+        <mat-card *ngIf="shouldRender(this.question.text)">
+            <mat-card-header>
+                <mat-card-title>
+                    <h2>Question</h2>
+                </mat-card-title>
+                <mat-card-subtitle>
+                    <h3>{{ this.question.text }}</h3>
+                </mat-card-subtitle>
+            </mat-card-header>
+            <mat-card-actions align="end">
+                <button mat-button [disabled]="true">
+                    <h4>{{ this.question.points }} points.</h4>
+                </button>
+                <br />
+                <button mat-button [disabled]="true">
+                    <h4>{{ time }}s</h4>
+                </button>
+            </mat-card-actions>
+        </mat-card>
+        <br />
+        <mat-card>
+            <mat-card-header>
+                <mat-card-title>
+                    <p>Nom du joueur : organisateur</p>
+                    <p>Score du joueur : {{ this.playerScore }}</p>
+                </mat-card-title>
+            </mat-card-header>
+            <mat-card-actions align="end">
+                <button mat-button routerLink="/createGame">
+                    <h3>Abandonner</h3>
+                </button>
+                <button mat-button (click)="updateScore()">
+                    <h3>Confirmer</h3>
+                </button>
+            </mat-card-actions>
+        </mat-card>
+    </section>
+
+    <br />
+    <mat-selection-list #choices>
+        <div *ngFor="let choice of question.choices; let index = index">
+            <mat-list-item
+                (click)="handleQCMChoice(choice.text, choice.isCorrect)"
+                (keydown)="$event.stopPropagation(); buttonDetect($event)"
+                (keyup)="$event.stopPropagation()"
+                *ngIf="shouldRender(choice.text)"
+            >
+                <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
+                    <span>
+                        Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>
+                    </span>
+                </mat-list-option>
+            </mat-list-item>
+        </div>
+    </mat-selection-list>
+</div>

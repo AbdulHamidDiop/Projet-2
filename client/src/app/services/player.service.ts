@@ -13,10 +13,16 @@ export class PlayerService {
         bonusCount: 0,
     };
 
-    playersInGame: Player[];
+    playersInGame: Player[] = [];
 
     setGamePlayers(players: Player[]): void {
-        this.playersInGame = players;
+        // adds only the players that are not already in the list
+        players.forEach((player) => {
+            const index = this.playersInGame.findIndex((pl) => pl.name === player.name);
+            if (index < 0) {
+                this.playersInGame.push(player);
+            }
+        });
     }
 
     addGamePlayers(player: Player): void {

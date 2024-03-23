@@ -4,7 +4,7 @@ import { Game, GameService } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
-import { ChatMessage } from '@common/message';
+import { ChatMessage, SystemMessages } from '@common/message';
 import { Player } from '@common/player';
 import { Events, Namespaces } from '@common/sockets';
 
@@ -53,7 +53,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     returnToInitialView(): void {
-        this.router.navigate(['/home']);
+        this.leaveWithoutKickingPlayers();
     }
 
     showNextHistogram(): void {
@@ -71,19 +71,30 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     onLocationChange(): void {
-        if (this.playerService.player.name === 'Organisateur') {
-            this.socketsService.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
-            this.socketsService.leaveRoom();
-            this.socketsService.room = '';
-        } else {
-            this.socketsService.endGame();
-        }
+        this.leaveWithoutKickingPlayers();
     }
 
     ngOnDestroy(): void {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
         this.socketsService.endGame();
+    }
+
+    leaveWithoutKickingPlayers() {
+        if (this.playerService.player.name === 'Organisateur') {
+            this.socketsService.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
+            const message: ChatMessage = {
+                author: SystemMessages.AUTHOR,
+                message: "L'organisateur" + ' ' + SystemMessages.PLAYER_LEFT,
+                timeStamp: new Date().toLocaleTimeString(),
+            };
+            this.socketsService.sendChatMessage(message);
+            this.socketsService.leaveRoom();
+            this.socketsService.room = '';
+            this.router.navigate(['/']);
+        } else {
+            this.socketsService.endGame('À la prochaine partie!');
+        }
     }
 
     private updateChart(): void {

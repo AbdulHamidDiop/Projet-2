@@ -35,4 +35,5 @@ export interface Player {
     id: string;
     score: number;
     bonusCount: number;
+    leftGame?: boolean;
 }

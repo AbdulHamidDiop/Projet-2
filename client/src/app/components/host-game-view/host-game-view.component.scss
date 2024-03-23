@@ -82,6 +82,10 @@ main {
     border-collapse: collapse; /* Fusion des bordures de cellules */
 }
 
+.leftGame {
+    text-decoration: line-through;
+}
+
 .players-table th,
 .players-table td {
     border: 1px solid black; /* Bordures des cellules */

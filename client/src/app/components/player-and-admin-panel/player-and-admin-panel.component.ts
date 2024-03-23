@@ -81,6 +81,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
 
     leaveRoom() {
         this.socket.leaveRoom();
+        this.socket.endGame();
     }
 
     ngOnDestroy() {
