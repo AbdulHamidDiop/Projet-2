@@ -1,6 +1,9 @@
 <app-nav-bar></app-nav-bar>
 
 <main>
+    <button mat-button>
+        <h3 class="panic-button" (click)="onLocationChange()">Quitter la partie</h3>
+    </button>
     <mat-grid-list cols="4" rowHeight="50vh">
         <mat-grid-tile [colspan]="3" [rowspan]="1">
             <div id="grid-container">
@@ -31,8 +34,7 @@
                         <button mat-button>
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
-                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()"
-                            class="confirm-button">
+                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()" class="confirm-button">
                             <h3 class="next-button">prochaine question</h3>
                         </button>
                         <button *ngIf="onLastQuestion" mat-button (click)="notifyEndGame()" class="confirm-button">
@@ -48,7 +50,7 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <h2 class="title"> <strong>Liste des joueurs</strong> </h2>
+            <h2 class="title"><strong>Liste des joueurs</strong></h2>
             <div>
                 <table class="players-table">
                     <thead>
@@ -59,13 +61,12 @@
                     </thead>
                     <tbody>
                         <tr *ngFor="let player of playerService.playersInGame">
-                            <td>{{ player.name }}</td>
+                            <td [ngClass]="{ leftGame: player.leftGame }">{{ player.name }}</td>
                             <td>{{ player.score }} points</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="2" [rowspan]="1">
@@ -79,4 +80,9 @@
     </mat-grid-list>
 </main>
 
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="3"></app-countdown-modal>
+<app-countdown-modal
+    [showModal]="showCountDown"
+    (modalClosed)="onCountDownModalClosed()"
+    [message]="'Prochaine question dans'"
+    [countdown]="3"
+></app-countdown-modal>

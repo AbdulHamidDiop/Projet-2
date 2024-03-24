@@ -77,8 +77,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             await this.countPointsAndNextQuestion();
         });
 
-        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
-            this.endGame();
+        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
+            await this.confirmAnswers();
+            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            await this.countPointsAndNextQuestion();
+            setTimeout(() => {
+                this.endGame();
+            }, SHOW_FEEDBACK_DELAY);
         });
 
         this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
@@ -99,8 +104,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
 
         this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
-            this.snackBar.open("L'organisateur a mis fin à la partie ", 'Fermer');
+            this.snackBar.open("L'organisateur a mis fin à la partie", 'Fermer', {
+                duration: 5000,
+                verticalPosition: 'top',
+            });
             this.router.navigate(['/']);
+            this.socketService.endGame();
         });
     }
 
@@ -144,6 +153,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
         this.question = this.gameManager.firstQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
+
+        window.addEventListener('hashchange', this.onLocationChange);
+        window.addEventListener('popstate', this.onLocationChange);
     }
     ngOnDestroy() {
         this.timeService.stopTimer();
@@ -156,6 +168,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.abortGameSubscription.unsubscribe();
         this.startTimerSubscription.unsubscribe();
         this.stopTimerSubscription.unsubscribe();
+
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
     }
 
     shouldRender(text: string) {
@@ -278,13 +293,20 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 };
                 this.socketService.sendChatMessage(chatMessage);
                 this.router.navigate(['/']);
+                this.onLocationChange();
             }
         });
     }
 
     endGame() {
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
         this.router.navigate(['results'], { relativeTo: this.route });
     }
+
+    onLocationChange = () => {
+        this.socketService.endGame();
+    };
 
     endGameTest() {
         if (this.gameManager.endGame && this.inTestMode) {

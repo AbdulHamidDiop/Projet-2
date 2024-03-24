@@ -32,7 +32,7 @@ export class SocketEvents {
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
         this.listenForRequestPlayersEvent(socket);
-        //        this.listenForLeaveRoomEvent(socket);
+        this.listenForLeaveRoomEvent(socket);
     }
     listenForCreateRoomEvent(socket: Socket) {
         socket.on(Events.CREATE_ROOM, async ({ game }: { game: Game }) => {
@@ -97,7 +97,7 @@ export class SocketEvents {
             if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
                 const player = this.playerSocketId.get(socket.id);
                 const room = this.socketIdRoom.get(socket.id);
-                if (player.isHost) {
+                if (player?.isHost) {
                     this.bannedNamesInRoom.delete(room);
                     this.liveRooms = this.liveRooms.filter((liveRoom) => {
                         return liveRoom !== room;
@@ -116,7 +116,7 @@ export class SocketEvents {
                     socket.emit(Events.LEAVE_ROOM);
                     socket.to(room).emit(Events.LEAVE_ROOM);
                 } else {
-                    const players = this.mapOfPlayersInRoom.get(room).filter((value) => {
+                    const players = this.mapOfPlayersInRoom.get(room)?.filter((value) => {
                         return value.name !== player.name;
                     });
                     this.mapOfPlayersInRoom.set(room, players);

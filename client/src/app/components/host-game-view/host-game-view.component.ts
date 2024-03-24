@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { PlayerService } from '@app/services/player.service';
@@ -8,8 +9,8 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
+import { Subscription } from 'rxjs';
 
-const START_TIMER_DELAY = 500;
 const SHOW_FEEDBACK_DELAY = 3000;
 
 @Component({
@@ -28,6 +29,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
+    unitTesting: boolean = false;
+
+    playerLeftSubscription: Subscription;
+    getPlayersSubscription: Subscription;
+    startTimerSubscription: Subscription;
+    stopTimerSubscription: Subscription;
+    nextQuestionSubscription: Subscription;
+    qcmStatsSubscription: Subscription;
+    timerEndedSubscription: Subscription;
+    endGameSubscription: Subscription;
+    updatePlayerSubscription: Subscription;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -36,32 +48,34 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private router: Router,
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
+        private snackBar: MatSnackBar,
     ) {
-        this.socketService.getPlayers().subscribe((players: Player[]) => {
+        this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
+            this.players = players;
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+
+        this.startTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManagerService.game.duration as number;
             this.timeService.startTimer(this.timer);
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
+
+        this.stopTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
             this.timeService.stopTimer();
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
+
+        this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
             setTimeout(() => {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
-            setTimeout(
-                () => {
-                    this.questionIndex++;
-                    this.currentQuestion = this.gameManagerService.goNextQuestion();
-                    if (this.gameManagerService.endGame) {
-                        this.onLastQuestion = true;
-                    }
-                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
-                },
-                2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY,
-            );
+            setTimeout(() => {
+                this.questionIndex++;
+                this.currentQuestion = this.gameManagerService.goNextQuestion();
+                if (this.gameManagerService.onLastQuestion()) {
+                    this.onLastQuestion = true;
+                }
+                this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+            }, 2 * SHOW_FEEDBACK_DELAY);
         });
     }
 
@@ -74,26 +88,47 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.currentQuestion = this.gameManagerService.firstQuestion();
 
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
+        this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
         });
 
-        this.timeService.timerEnded.subscribe(() => {
+        this.timerEndedSubscription = this.timeService.timerEnded.subscribe(() => {
             this.notifyNextQuestion();
         });
 
-        this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
+        this.endGameSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
             this.openResultsPage();
         });
 
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER).subscribe((playerWithRoom) => {
-            const { room, ...player } = playerWithRoom as Player & { room: string };
-            this.playerService.addGamePlayers(player as Player);
+        this.updatePlayerSubscription = this.socketService
+            .listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER)
+            .subscribe((playerWithRoom) => {
+                const { room, ...player } = playerWithRoom as Player & { room: string };
+                this.playerService.addGamePlayers(player as Player);
+            });
+
+        this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
+            const username = (data as { user: string }).user;
+            this.players = this.players.filter((p) => p.name !== username);
+
+            const player = this.playerService.playersInGame.find((p) => p.name === username);
+            if (player) {
+                player.leftGame = true;
+            }
+
+            if (this.players.length === 0) {
+                this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 3000,
+                });
+                setTimeout(() => {
+                    this.socketService.endGame();
+                }, SHOW_FEEDBACK_DELAY);
+            }
         });
 
-        this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
-            this.openResultsPage();
-        });
+        window.addEventListener('hashchange', this.onLocationChange);
+        window.addEventListener('popstate', this.onLocationChange);
     }
 
     async updateBarChartData(stat: QCMStats): Promise<void> {
@@ -152,12 +187,13 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     }
     notifyEndGame() {
         this.showResults();
-        setTimeout(() => {
-            this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
-        }, SHOW_FEEDBACK_DELAY);
+        this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
     }
 
     openResultsPage(): void {
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
+
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             this.router.navigate(['/game', gameId, 'results']);
@@ -166,10 +202,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
     }
 
-    ngOnDestroy() {
-        this.timeService.stopTimer();
-        this.gameManagerService.reset();
-    }
+    onLocationChange = () => {
+        this.socketService.endGame();
+    };
 
     choseNextQuestion(): void {
         if (this.gameManagerService.endGame) {
@@ -178,5 +213,25 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         } else if (!this.gameManagerService.endGame) {
             this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
         }
+    }
+
+    ngOnDestroy() {
+        this.timeService.stopTimer();
+        this.gameManagerService.reset();
+
+        if (!this.unitTesting) {
+            this.playerLeftSubscription.unsubscribe();
+            this.getPlayersSubscription.unsubscribe();
+            this.startTimerSubscription.unsubscribe();
+            this.stopTimerSubscription.unsubscribe();
+            this.nextQuestionSubscription.unsubscribe();
+            this.qcmStatsSubscription.unsubscribe();
+            this.timerEndedSubscription.unsubscribe();
+            this.endGameSubscription.unsubscribe();
+            this.updatePlayerSubscription.unsubscribe();
+        }
+
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
     }
 }

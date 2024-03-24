@@ -31,6 +31,7 @@ describe('WaitingPageComponent', () => {
             'leaveRoom',
             'sendMessage',
             'requestPlayers',
+            'listenForMessages',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -41,6 +42,7 @@ describe('WaitingPageComponent', () => {
         socketMock.disconnectSubscribe.and.returnValue(of(undefined));
         socketMock.roomLockedSubscribe.and.returnValue(of(true));
         socketMock.kickSubscribe.and.returnValue(of('Reason for kick'));
+        socketMock.listenForMessages.and.returnValue(of({}));
 
         routerMock = jasmine.createSpyObj('Router', ['navigate']);
 

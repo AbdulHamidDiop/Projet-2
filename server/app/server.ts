@@ -117,6 +117,14 @@ export class Server {
                 gameNamespace.in(room).emit(Events.SHOW_RESULTS);
             });
 
+            socket.on(Events.PLAYER_LEFT, (data) => {
+                gameNamespace.in(data.room).emit(Events.PLAYER_LEFT, data);
+            });
+
+            socket.on(Events.PLAYER_JOINED, (data) => {
+                gameNamespace.in(data.room).emit(Events.PLAYER_JOINED, data);
+            });
+
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
                 gameNamespace.in(room).emit(Events.NEXT_QUESTION);
             });
