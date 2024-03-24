@@ -51,6 +51,13 @@ export class GameManagerService {
         return {} as Question;
     }
 
+    onLastQuestion(): boolean {
+        if (this.game) {
+            return this.currentQuestionIndex === this.game.questions.length - 1;
+        }
+        return false;
+    }
+
     async isCorrectAnswer(answer: string[], questionID: string): Promise<boolean> {
         return await this.gameSessionService.checkAnswer(answer, this.gamePin, questionID);
     }

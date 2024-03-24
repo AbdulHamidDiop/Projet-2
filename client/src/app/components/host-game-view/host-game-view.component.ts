@@ -11,7 +11,6 @@ import { BarChartChoiceStats, BarChartQuestionStats, QCMStats } from '@common/ga
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
-const START_TIMER_DELAY = 500;
 const SHOW_FEEDBACK_DELAY = 3000;
 
 @Component({
@@ -30,16 +29,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
+    unitTesting: boolean = false;
 
-    private playerLeftSubscription: Subscription;
-    private getPlayersSubscription: Subscription;
-    private startTimerSubscription: Subscription;
-    private stopTimerSubscription: Subscription;
-    private nextQuestionSubscription: Subscription;
-    private qcmStatsSubscription: Subscription;
-    private timerEndedSubscription: Subscription;
-    private endGameSubscription: Subscription;
-    private updatePlayerSubscription: Subscription;
+    playerLeftSubscription: Subscription;
+    getPlayersSubscription: Subscription;
+    startTimerSubscription: Subscription;
+    stopTimerSubscription: Subscription;
+    nextQuestionSubscription: Subscription;
+    qcmStatsSubscription: Subscription;
+    timerEndedSubscription: Subscription;
+    endGameSubscription: Subscription;
+    updatePlayerSubscription: Subscription;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -68,17 +68,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
-            setTimeout(
-                () => {
-                    this.questionIndex++;
-                    this.currentQuestion = this.gameManagerService.goNextQuestion();
-                    if (this.gameManagerService.endGame) {
-                        this.onLastQuestion = true;
-                    }
-                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
-                },
-                2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY,
-            );
+            setTimeout(() => {
+                this.questionIndex++;
+                this.currentQuestion = this.gameManagerService.goNextQuestion();
+                if (this.gameManagerService.onLastQuestion()) {
+                    this.onLastQuestion = true;
+                }
+                this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+            }, 2 * SHOW_FEEDBACK_DELAY);
         });
     }
 
@@ -190,9 +187,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     }
     notifyEndGame() {
         this.showResults();
-        setTimeout(() => {
-            this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
-        }, SHOW_FEEDBACK_DELAY);
+        this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
     }
 
     openResultsPage(): void {
@@ -224,15 +219,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.timeService.stopTimer();
         this.gameManagerService.reset();
 
-        this.playerLeftSubscription.unsubscribe();
-        this.getPlayersSubscription.unsubscribe();
-        this.startTimerSubscription.unsubscribe();
-        this.stopTimerSubscription.unsubscribe();
-        this.nextQuestionSubscription.unsubscribe();
-        this.qcmStatsSubscription.unsubscribe();
-        this.timerEndedSubscription.unsubscribe();
-        this.endGameSubscription.unsubscribe();
-        this.updatePlayerSubscription.unsubscribe();
+        if (!this.unitTesting) {
+            this.playerLeftSubscription.unsubscribe();
+            this.getPlayersSubscription.unsubscribe();
+            this.startTimerSubscription.unsubscribe();
+            this.stopTimerSubscription.unsubscribe();
+            this.nextQuestionSubscription.unsubscribe();
+            this.qcmStatsSubscription.unsubscribe();
+            this.timerEndedSubscription.unsubscribe();
+            this.endGameSubscription.unsubscribe();
+            this.updatePlayerSubscription.unsubscribe();
+        }
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);

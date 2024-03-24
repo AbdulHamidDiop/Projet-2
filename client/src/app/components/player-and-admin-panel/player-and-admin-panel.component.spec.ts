@@ -22,11 +22,15 @@ describe('PlayerAndAdminPanelComponent', () => {
             'startGame',
             'getChatMessages',
             'sendChatMessage',
+            'endGame',
+            'listenForMessages',
         ]);
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
 
         const mockChatMessage = { author: 'room', message: 'testRoom', timeStamp: new Date().toISOString() };
         socketMock.getChatMessages.and.returnValue(of(mockChatMessage));
+        socketMock.endGame.and.returnValue();
+        socketMock.listenForMessages.and.returnValue(of({}));
 
         await TestBed.configureTestingModule({
             declarations: [PlayerAndAdminPanelComponent],

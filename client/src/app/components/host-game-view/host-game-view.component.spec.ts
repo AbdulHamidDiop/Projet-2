@@ -1,5 +1,7 @@
 import { EventEmitter } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GameManagerService } from '@app/services/game-manager.service';
@@ -9,7 +11,7 @@ import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
-import { of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { HostGameViewComponent } from './host-game-view.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -25,6 +27,7 @@ describe('HostGameViewComponent', () => {
     let mockStat: QCMStats;
     let mockFeedback: Feedback[];
     const SHOW_FEEDBACK_DELAY = 3000;
+    const START_TIMER_DELAY = 500;
 
     beforeEach(async () => {
         gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
@@ -38,9 +41,10 @@ describe('HostGameViewComponent', () => {
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
+        socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);
         socketServiceSpy.getPlayers.and.returnValue(of([]));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
+        socketServiceSpy.endGame.and.returnValue();
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer'], {
             timerEnded: new EventEmitter<void>(),
         });
@@ -75,7 +79,7 @@ describe('HostGameViewComponent', () => {
         ];
 
         await TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
+            imports: [RouterTestingModule, MatSnackBarModule, NoopAnimationsModule],
             declarations: [HostGameViewComponent],
             providers: [
                 { provide: GameManagerService, useValue: gameManagerServiceSpy },
@@ -100,11 +104,13 @@ describe('HostGameViewComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(HostGameViewComponent);
         component = fixture.componentInstance;
+        component.unitTesting = true;
         gameManagerServiceSpy.firstQuestion.and.returnValue(mockQuestion);
         socketServiceSpy.getPlayers.and.returnValue(of(mockPlayers));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
         fixture.detectChanges();
         spyOn(component, 'notifyNextQuestion');
+        jasmine.getEnv().allowRespy(true);
     });
 
     it('should create', () => {
@@ -120,7 +126,8 @@ describe('HostGameViewComponent', () => {
             return of({});
         });
         component.ngOnInit();
-        tick();
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY); // couvrir le max de delay
+        flush();
         expect(openResultsPageSpy).toHaveBeenCalled();
     }));
 
@@ -134,12 +141,14 @@ describe('HostGameViewComponent', () => {
             return of({});
         });
         component.ngOnInit();
-        tick();
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+        flush();
     }));
 
     it('should initialize game and set current question on ngOnInit', fakeAsync(() => {
         component.ngOnInit();
-        tick();
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+        flush();
         expect(gameManagerServiceSpy.initialize).toHaveBeenCalled();
         expect(component.currentQuestion).toEqual(mockQuestion);
     }));
@@ -210,6 +219,19 @@ describe('HostGameViewComponent', () => {
         expect(component.currentQuestion).toEqual(mockQuestion);
     }));
 
+    it('should handle NEXT_QUESTION event correctly', fakeAsync(() => {
+        const nextQuestionSpy = spyOn(component.gameManagerService, 'goNextQuestion');
+        socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
+            if (namespace === Namespaces.GAME && event === Events.NEXT_QUESTION) {
+                return of({});
+            }
+            return of({});
+        });
+        tick(2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+        flush();
+        expect(nextQuestionSpy).not.toHaveBeenCalled();
+    }));
+
     it('should call showResults and send SHOW_RESULTS and STOP_TIMER messages', () => {
         component.showResults();
         expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.SHOW_RESULTS, Namespaces.GAME);
@@ -241,5 +263,22 @@ describe('HostGameViewComponent', () => {
 
         expect(component.showResults).toHaveBeenCalled();
         expect(component.onLastQuestion).toBeTrue();
+    });
+
+    it('should unsubscribe after ngOnDestroy', () => {
+        spyOn(component.gameManagerService, 'reset');
+        component.unitTesting = false;
+        component.playerLeftSubscription = new Subscription();
+        component.getPlayersSubscription = new Subscription();
+        component.startTimerSubscription = new Subscription();
+        component.stopTimerSubscription = new Subscription();
+        component.nextQuestionSubscription = new Subscription();
+        component.qcmStatsSubscription = new Subscription();
+        component.timerEndedSubscription = new Subscription();
+        component.endGameSubscription = new Subscription();
+        component.updatePlayerSubscription = new Subscription();
+
+        component.ngOnDestroy();
+        expect(component.gameManagerService.reset).toHaveBeenCalled();
     });
 });

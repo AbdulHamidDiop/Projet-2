@@ -77,8 +77,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             await this.countPointsAndNextQuestion();
         });
 
-        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(() => {
-            this.endGame();
+        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
+            await this.confirmAnswers();
+            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            await this.countPointsAndNextQuestion();
+            setTimeout(() => {
+                this.endGame();
+            }, SHOW_FEEDBACK_DELAY);
         });
 
         this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
