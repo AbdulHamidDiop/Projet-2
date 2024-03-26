@@ -311,6 +311,7 @@ export class SocketRoomService implements OnDestroy {
         }
         this.leaveRoom();
         this.room = '';
+        this.playerService.playersInGame = [];
     }
 
     connectNamespace(namespace: string): Socket | undefined {

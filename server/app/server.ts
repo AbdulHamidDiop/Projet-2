@@ -129,6 +129,18 @@ export class Server {
                 gameNamespace.in(room).emit(Events.NEXT_QUESTION);
             });
 
+            socket.on(Events.QRL_ANSWER, (data) => {
+                socket.in(data.room).emit(Events.QRL_ANSWER, data);
+            });
+
+            socket.on(Events.SEND_QRL_ANSWER, ({ room }) => {
+                gameNamespace.to(room).emit(Events.SEND_QRL_ANSWER);
+            });
+
+            socket.on(Events.QRL_GRADE, (data) => {
+                socket.in(data.room).emit(Events.QRL_GRADE, data);
+            });
+
             socket.on(Events.END_GAME, ({ room }: { room: string }) => {
                 gameNamespace.in(room).emit(Events.END_GAME);
             });

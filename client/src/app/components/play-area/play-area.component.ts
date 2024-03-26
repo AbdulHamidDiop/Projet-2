@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -11,11 +12,11 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
-import { QCMStats } from '@common/game-stats';
+import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
-import { BONUS_MULTIPLIER, ERROR_INDEX, SHOW_FEEDBACK_DELAY } from './const';
+import { BONUS_MULTIPLIER, ERROR_INDEX, MAX_QRL_LENGTH, QRL_TIMER, SHOW_FEEDBACK_DELAY } from './const';
 
 @Component({
     selector: 'app-play-area',
@@ -29,6 +30,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     question: Question = {} as Question;
 
     answer: string[] = [];
+    qrlAnswer: string = '';
     nbChoices: number;
     score = 0;
 
@@ -49,6 +51,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private abortGameSubscription: Subscription;
     private bonusSubscription: Subscription;
     private bonusGivenSubscription: Subscription;
+    private sendQRLAnswerSubscription: Subscription;
+    private qrlGradeSubscription: Subscription;
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
 
@@ -73,13 +77,17 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers();
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.question.type === Type.QCM) {
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            }
             await this.countPointsAndNextQuestion();
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
             await this.confirmAnswers();
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.question.type === Type.QCM) {
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            }
             await this.countPointsAndNextQuestion();
             setTimeout(() => {
                 this.endGame();
@@ -87,12 +95,28 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
 
         this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.gameManager.game.duration as number;
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.stopTimer();
             this.timeService.startTimer(this.timer);
         });
 
         this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
             this.timeService.stopTimer();
+        });
+
+        this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
+            this.sendQRLAnswer();
+        });
+
+        this.qrlGradeSubscription = this.socketService.listenForMessages(nsp.GAME, Events.QRL_GRADE).subscribe((grade: unknown) => {
+            const qrlGrade = grade as QRLGrade;
+            if (qrlGrade.author === this.player.name) {
+                this.score += qrlGrade.grade;
+                this.player.score = this.score;
+                this.bonusGiven = false;
+                this.gotBonus = false;
+            }
+            this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
         });
 
         this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
@@ -125,10 +149,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         return this.score;
     }
 
+    get charsLeft(): number {
+        return MAX_QRL_LENGTH - this.qrlAnswer.length;
+    }
+
     @HostListener('keydown', ['$event'])
     detectButton(event: KeyboardEvent) {
         this.buttonPressed = event.key;
-        if (this.buttonPressed === 'Enter') {
+        if (this.buttonPressed === 'Enter' && this.question.type === Type.QCM && !this.choiceDisabled) {
             this.confirmAnswers();
         } else if (
             this.buttonPressed >= '1' &&
@@ -153,6 +181,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
         this.question = this.gameManager.firstQuestion();
         this.nbChoices = this.question.choices?.length ?? 0;
+        if (this.inTestMode) {
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        }
 
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
@@ -168,6 +200,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.abortGameSubscription.unsubscribe();
         this.startTimerSubscription.unsubscribe();
         this.stopTimerSubscription.unsubscribe();
+        this.qrlGradeSubscription.unsubscribe();
+        this.sendQRLAnswerSubscription.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
@@ -179,6 +213,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     goNextQuestion() {
         this.answer = [];
+        this.qrlAnswer = '';
         this.endGameTest();
         const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
@@ -186,6 +221,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.nbChoices = this.question.choices.length;
         }
         this.changeDetector.detectChanges();
+        if (this.inTestMode) {
+            this.timeService.stopTimer();
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        }
     }
 
     handleQCMChoice(answer: string) {
@@ -217,16 +257,38 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async confirmAnswers() {
+        this.timeService.stopTimer();
         this.choiceDisabled = true;
 
         if (this.inTestMode) {
-            this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.question.type === Type.QCM) {
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            }
             this.countPointsAndNextQuestion();
+            return;
         }
     }
 
+    sendQRLAnswer() {
+        this.timeService.stopTimer();
+        this.choiceDisabled = true;
+
+        const qrlAnswer: QRLAnswer = {
+            questionId: this.question.id,
+            author: this.player.name,
+            answer: this.qrlAnswer,
+        };
+        this.socketService.sendMessage(Events.QRL_ANSWER, nsp.GAME, qrlAnswer);
+        this.snackBar.open('Votre réponse a été envoyée pour correction, veuillez patienter', 'Fermer', {
+            duration: 5000,
+            verticalPosition: 'top',
+        });
+    }
+
     async countPointsAndNextQuestion() {
-        await this.updateScore();
+        if (this.question.type === Type.QCM || this.inTestMode) {
+            await this.updateScore();
+        }
         setTimeout(
             () => {
                 this.choiceDisabled = false;
@@ -247,7 +309,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
     }
     async updateScore() {
-        if (this.question.type === Type.QRL) {
+        if (this.question.type === Type.QRL && this.inTestMode) {
             this.score += this.question.points;
             return;
         }
