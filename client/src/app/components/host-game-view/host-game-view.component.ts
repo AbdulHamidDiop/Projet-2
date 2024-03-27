@@ -8,12 +8,15 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Game, Player, Question, Type } from '@common/game';
-import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
+import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
 const SHOW_FEEDBACK_DELAY = 3000;
 const RECEIVE_ANSWERS_DELAY = 2000;
+const ZERO_GRADE_MULTIPLER = 0;
+const HALF_GRADE_MULTIPLER = 0.5;
+const FULL_GRADE_MULTIPLER = 1;
 
 @Component({
     selector: 'app-host-game-view',
@@ -36,6 +39,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     players: Player[] = [];
     unitTesting: boolean = false;
     disableControls: boolean = false;
+    questionLoaded: boolean = false;
 
     playerLeftSubscription: Subscription;
     getPlayersSubscription: Subscription;
@@ -43,6 +47,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     stopTimerSubscription: Subscription;
     nextQuestionSubscription: Subscription;
     qcmStatsSubscription: Subscription;
+    qrlStatsSubscription: Subscription;
     qrlAnswersSubscription: Subscription;
     timerEndedSubscription: Subscription;
     endGameSubscription: Subscription;
@@ -73,21 +78,24 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
-            setTimeout(() => {
-                this.openCountDownModal();
-            }, SHOW_FEEDBACK_DELAY);
-            setTimeout(() => {
-                this.questionIndex++;
-                this.currentQuestion = this.gameManagerService.goNextQuestion();
-                this.gradingAnswers = false;
-                this.qRLAnswers = [];
-                this.disableControls = false;
+            if (!this.questionLoaded) {
+                setTimeout(() => {
+                    this.openCountDownModal();
+                }, SHOW_FEEDBACK_DELAY);
+                setTimeout(() => {
+                    this.questionIndex++;
+                    this.currentQuestion = this.gameManagerService.goNextQuestion();
+                    this.gradingAnswers = false;
+                    this.qRLAnswers = [];
+                    this.disableControls = false;
 
-                if (this.gameManagerService.onLastQuestion()) {
-                    this.onLastQuestion = true;
-                }
-                this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
-            }, 2 * SHOW_FEEDBACK_DELAY);
+                    if (this.gameManagerService.onLastQuestion()) {
+                        this.onLastQuestion = true;
+                    }
+                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+                }, 2 * SHOW_FEEDBACK_DELAY);
+                this.questionLoaded = true;
+            }
         });
     }
 
@@ -102,6 +110,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
+        });
+
+        this.qrlStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QRL_STATS).subscribe((stat: unknown) => {
+            this.updateQRLBarChartData(stat as QRLStats);
         });
 
         this.qrlAnswersSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.QRL_ANSWER).subscribe((answer: unknown) => {
@@ -180,6 +192,91 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.barChartData = this.statisticsData[this.questionIndex]?.data;
     }
 
+    async updateQRLBarChartData(stat: QRLStats): Promise<void> {
+        const index = this.statisticsData.findIndex((questionStat) => questionStat.questionID === stat.questionId);
+        if (index >= 0) {
+            if (stat.edited) {
+                this.statisticsData[index].data[0].data[0]++;
+            } else if (this.statisticsData[index].data[0].data[0] > 0) {
+                this.statisticsData[index].data[0].data[0]--;
+            }
+        } else {
+            const initialCount = stat.edited ? 1 : 0;
+            this.statisticsData.push({
+                questionID: stat.questionId,
+                data: [
+                    {
+                        data: [initialCount],
+                        label: 'Nombre de personnes ayant modifié leur réponse dans les 5 dernières secondes',
+                        backgroundColor: '#FFCE56',
+                    },
+                ],
+            });
+        }
+
+        this.barChartData = this.statisticsData[this.questionIndex]?.data;
+    }
+
+    updateQRLGradeData(multiplier: number): void {
+        let barIndex;
+        switch (multiplier) {
+            case ZERO_GRADE_MULTIPLER:
+                barIndex = 0;
+                break;
+            case HALF_GRADE_MULTIPLER:
+                barIndex = 1;
+                break;
+            case FULL_GRADE_MULTIPLER:
+                barIndex = 2;
+                break;
+            default:
+                return;
+        }
+
+        this.statisticsData[this.questionIndex].data[barIndex].data[0]++;
+    }
+
+    gradeAnswers(): void {
+        this.disableControls = true;
+        this.socketService.sendMessage(Events.SEND_QRL_ANSWER, Namespaces.GAME);
+        this.timeService.stopTimer();
+        setTimeout(() => {
+            this.gradingAnswers = true;
+            this.qRLAnswers.sort((a, b) => a.author.localeCompare(b.author));
+            this.currentQRLAnswer = this.qRLAnswers[0];
+        }, RECEIVE_ANSWERS_DELAY);
+
+        this.statisticsData[this.questionIndex] = {
+            questionID: this.currentQuestion.id,
+            data: [
+                { data: [0], label: 'nombre de personnes ayant eu 0', backgroundColor: '#FF4C4C' },
+                { data: [0], label: 'nombre de personnes ayant eu la moitié des points', backgroundColor: '#FFCE56' },
+                { data: [0], label: 'nombre de personnes ayant eu la totalité des points', backgroundColor: '#4CAF50' },
+            ],
+        };
+    }
+
+    sendQRLGrade(multiplier: number): void {
+        this.updateQRLGradeData(multiplier);
+
+        const qrlGrade: QRLGrade = {
+            author: this.currentQRLAnswer.author,
+            grade: multiplier * this.currentQuestion.points,
+        };
+
+        this.socketService.sendMessage(Events.QRL_GRADE, Namespaces.GAME, qrlGrade);
+        this.qRLAnswers.shift();
+        this.currentQRLAnswer = this.qRLAnswers[0];
+        if (this.qRLAnswers.length === 0) {
+            if (this.gameManagerService.onLastQuestion()) {
+                this.notifyEndGame();
+                return;
+            }
+            this.gradingAnswers = false;
+            this.notifyNextQuestion();
+        }
+    }
+
     showResults(): void {
         this.socketService.sendMessage(Events.SHOW_RESULTS, Namespaces.GAME);
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
@@ -193,6 +290,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             };
         }
         this.disableControls = true;
+        this.questionLoaded = false;
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
         this.choseNextQuestion();
     }
@@ -226,41 +324,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     };
 
     choseNextQuestion(): void {
-        if (this.gameManagerService.endGame) {
-            this.showResults();
-            this.onLastQuestion = true;
-        } else {
-            this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
-        }
-    }
-
-    gradeAnswers(): void {
-        this.disableControls = true;
-        this.socketService.sendMessage(Events.SEND_QRL_ANSWER, Namespaces.GAME);
-        this.timeService.stopTimer();
-        setTimeout(() => {
-            this.gradingAnswers = true;
-            this.qRLAnswers.sort((a, b) => a.author.localeCompare(b.author));
-            this.currentQRLAnswer = this.qRLAnswers[0];
-        }, RECEIVE_ANSWERS_DELAY);
-    }
-
-    sendQRLGrade(multiplier: number): void {
-        const qrlGrade: QRLGrade = {
-            author: this.currentQRLAnswer.author,
-            grade: multiplier * this.currentQuestion.points,
-        };
-        this.socketService.sendMessage(Events.QRL_GRADE, Namespaces.GAME, qrlGrade);
-        this.qRLAnswers.shift();
-        this.currentQRLAnswer = this.qRLAnswers[0];
-        if (this.qRLAnswers.length === 0) {
-            if (this.gameManagerService.onLastQuestion()) {
-                this.notifyEndGame();
-                return;
-            }
-            this.gradingAnswers = false;
-            this.notifyNextQuestion();
-        }
+        this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
     }
 
     ngOnDestroy() {
@@ -274,10 +338,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.stopTimerSubscription.unsubscribe();
             this.nextQuestionSubscription.unsubscribe();
             this.qcmStatsSubscription.unsubscribe();
+            this.qrlStatsSubscription.unsubscribe();
+            this.qrlAnswersSubscription.unsubscribe();
             this.timerEndedSubscription.unsubscribe();
             this.endGameSubscription.unsubscribe();
             this.updatePlayerSubscription.unsubscribe();
-            this.qrlAnswersSubscription.unsubscribe();
         }
 
         window.removeEventListener('popstate', this.onLocationChange);

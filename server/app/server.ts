@@ -126,7 +126,7 @@ export class Server {
             });
 
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
-                gameNamespace.in(room).emit(Events.NEXT_QUESTION);
+                gameNamespace.to(room).emit(Events.NEXT_QUESTION);
             });
 
             socket.on(Events.QRL_ANSWER, (data) => {

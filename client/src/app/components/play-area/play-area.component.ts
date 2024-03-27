@@ -8,11 +8,12 @@ import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-d
 import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { PlayerService } from '@app/services/player.service';
+import { QRLStatService } from '@app/services/qrl-stats.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
-import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
+import { QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -63,6 +64,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         readonly gameManager: GameManagerService,
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
+        private qrlStatsService: QRLStatService,
         private changeDetector: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
@@ -180,6 +182,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             await this.gameManager.initialize(this.socketService.room);
         }
         this.question = this.gameManager.firstQuestion();
+        if (this.question.type === Type.QRL) {
+            this.qrlStatsService.startTimer(this.question.id);
+        }
         this.nbChoices = this.question.choices?.length ?? 0;
         if (this.inTestMode) {
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
@@ -191,6 +196,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
     ngOnDestroy() {
         this.timeService.stopTimer();
+        this.qrlStatsService.stopTimer();
         this.gameManager.reset();
 
         this.nextQuestionSubscription.unsubscribe();
@@ -219,6 +225,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.question = newQuestion;
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
+        }
+        if (newQuestion && newQuestion.type === 'QRL') {
+            this.qrlStatsService.startTimer(newQuestion.id);
         }
         this.changeDetector.detectChanges();
         if (this.inTestMode) {
@@ -271,6 +280,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     sendQRLAnswer() {
         this.timeService.stopTimer();
+        this.qrlStatsService.stopTimer();
         this.choiceDisabled = true;
 
         const qrlAnswer: QRLAnswer = {
@@ -283,6 +293,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             duration: 5000,
             verticalPosition: 'top',
         });
+    }
+
+    send(bool: boolean) {
+        const qrlStat: QRLStats = {
+            questionId: this.question.id,
+            edited: bool,
+        };
+        this.socketService.sendMessage(Events.QRL_STATS, nsp.GAME_STATS, qrlStat);
     }
 
     async countPointsAndNextQuestion() {
@@ -301,6 +319,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
         }
+    }
+
+    onQRLAnswerChange() {
+        this.qrlStatsService.notifyEdit();
     }
 
     onFinalAnswer() {
