@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { GameService } from '@app/services/game.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
 import { Events, Namespaces as nsp } from '@common/sockets';
@@ -25,11 +25,44 @@ export class WaitingPageComponent implements OnDestroy {
     showCountDown: boolean = false;
     // eslint-disable-next-line max-params
     constructor(
-        private gameService: GameService,
+        private gameSessionService: GameSessionService,
         private socket: SocketRoomService,
         readonly router: Router,
         private snackBar: MatSnackBar,
     ) {
+        this.setSockets();
+    }
+
+    ngOnDestroy() {
+        this.socket.leaveRoom();
+    }
+
+    gameStartSubscribe() {
+        this.socket.gameStartSubscribe().subscribe(() => {
+            this.openCountDownModal();
+            setTimeout(() => {
+                if (this.player.isHost) {
+                    setTimeout(() => {
+                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                        this.socket.requestPlayers();
+                    }, START_TIMER_DELAY);
+                    this.router.navigate(['/hostView/' + this.game.id]);
+                } else {
+                    this.router.navigate(['/game/' + this.game.id]);
+                }
+            }, START_GAME_DELAY);
+        });
+    }
+
+    openCountDownModal(): void {
+        this.showCountDown = true;
+    }
+
+    onCountDownModalClosed(): void {
+        this.showCountDown = false;
+    }
+
+    private setSockets(): void {
         this.socket.leaveRoomSubscribe().subscribe(() => {
             this.fullView = false;
             this.roomIdEntryView = true;
@@ -62,13 +95,19 @@ export class WaitingPageComponent implements OnDestroy {
             });
         });
 
-        this.socket.getGameId().subscribe((id) => {
-            this.game = this.gameService.getGameByID(id);
+        this.socket.getChatMessages().subscribe(async (message) => {
+            if (message.author === 'room') {
+                this.socket.room = message.message;
+                this.gameSessionService.getGameWithoutCorrectShown(this.socket.room).then((game: Game) => {
+                    this.game = game;
+                });
+            }
         });
 
         this.gameStartSubscribe();
 
         this.socket.getPlayers().subscribe((players) => {
+            console.log(players);
             this.players = players;
         });
 
@@ -92,34 +131,5 @@ export class WaitingPageComponent implements OnDestroy {
         this.socket.disconnectSubscribe().subscribe(() => {
             this.router.navigate(['/waiting']);
         });
-    }
-
-    ngOnDestroy() {
-        this.socket.leaveRoom();
-    }
-
-    gameStartSubscribe() {
-        this.socket.gameStartSubscribe().subscribe(() => {
-            this.openCountDownModal();
-            setTimeout(() => {
-                if (this.player.isHost) {
-                    setTimeout(() => {
-                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
-                        this.socket.requestPlayers();
-                    }, START_TIMER_DELAY);
-                    this.router.navigate(['/hostView/' + this.game.id]);
-                } else {
-                    this.router.navigate(['/game/' + this.game.id]);
-                }
-            }, START_GAME_DELAY);
-        });
-    }
-
-    openCountDownModal(): void {
-        this.showCountDown = true;
-    }
-
-    onCountDownModalClosed(): void {
-        this.showCountDown = false;
     }
 }

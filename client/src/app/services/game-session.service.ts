@@ -9,7 +9,7 @@ import { Game } from '@common/game';
 export class GameSessionService {
     constructor(public fetchService: FetchService) {}
 
-    async getQuestionsWithoutCorrectShown(pin: string): Promise<Game> {
+    async getGameWithoutCorrectShown(pin: string): Promise<Game> {
         const response = await this.fetchService.fetch(API_URL + 'gameSession/questionswithoutcorrect/' + pin);
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);

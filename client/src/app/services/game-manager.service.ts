@@ -21,7 +21,7 @@ export class GameManagerService {
 
     async initialize(pin: string) {
         this.gamePin = pin;
-        const game = await this.gameSessionService.getQuestionsWithoutCorrectShown(pin);
+        const game = await this.gameSessionService.getGameWithoutCorrectShown(pin);
         if (game) {
             this.game = game;
         }
