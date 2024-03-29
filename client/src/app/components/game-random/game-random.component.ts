@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
+import { PlayerService } from '@app/services/player.service';
 import { QuestionsService } from '@app/services/questions.service';
-import { Question } from '@common/game';
+import { SocketRoomService } from '@app/services/socket-room.service';
+import { Game, Question } from '@common/game';
 
 const NUMBER_RANDOM_QUESTIONS = 5;
 
@@ -12,21 +14,30 @@ const NUMBER_RANDOM_QUESTIONS = 5;
 export class GameRandomComponent {
     show: boolean = false;
     questions: Question[];
+    game: Game;
 
-    constructor(private questionService: QuestionsService) {
+    constructor(
+        private questionService: QuestionsService,
+        private socket: SocketRoomService,
+        private playerService: PlayerService,
+    ) {
         this.setQuestions();
     }
 
     launchGame(): void {
-        console.log(this.selectRandomQuestions());
+        this.socket.leaveRoom();
+        this.playerService.player.isHost = true;
+        this.playerService.player.name = 'Organisateur';
+        this.socket.createRoom(this.game);
     }
 
     private setQuestions(): void {
-        // Get all QCM necessaires ou filter QLR
+        // Get all QCM depuis service ou filtrer QLR
         this.questionService.getAllQuestions().then((questions) => {
             if (questions.length >= NUMBER_RANDOM_QUESTIONS) {
                 this.questions = questions;
                 this.show = true;
+                this.game = this.createGame();
             }
         });
     }
@@ -40,5 +51,13 @@ export class GameRandomComponent {
     private selectRandomQuestions(): Question[] {
         this.shuffleQuestions();
         return this.questions.slice(0, NUMBER_RANDOM_QUESTIONS);
+    }
+
+    private createGame(): Game {
+        return {
+            id: crypto.randomUUID() + 'aleatoire',
+            title: 'Mode Aléatoire',
+            questions: this.selectRandomQuestions(),
+        };
     }
 }

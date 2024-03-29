@@ -59,11 +59,17 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
                     duration: 5000,
                 });
             }
-        } else {
-            this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
-                verticalPosition: 'top',
-                duration: 5000,
-            });
+        } else if (this.game.id.slice(-9) === 'aleatoire') {
+            this.player.isHost = false;
+            if (this.roomLocked === true) {
+                GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
+                this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
+            } else {
+                this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 5000,
+                });
+            }
         }
     }
 

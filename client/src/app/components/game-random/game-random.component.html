@@ -11,5 +11,5 @@
         joueurs.
     </p>
 
-    <button mat-fab (click)="launchGame()" extended color="primary">Lancer une partie</button>
+    <button mat-fab (click)="launchGame()" extended color="primary" [routerLink]="['/waiting']">Lancer une partie</button>
 </mat-expansion-panel>
