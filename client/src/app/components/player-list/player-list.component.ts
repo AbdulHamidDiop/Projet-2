@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
@@ -8,11 +8,15 @@ import { Player } from '@common/game';
     templateUrl: './player-list.component.html',
     styleUrls: ['./player-list.component.scss'],
 })
-export class PlayerListComponent {
+export class PlayerListComponent implements OnInit {
     @Input() players: Player[] = [];
 
     protected sortedData: Player[];
     constructor(private socket: SocketRoomService) {
+        this.sortedData = this.players.slice();
+    }
+
+    ngOnInit(): void {
         this.sortedData = this.players.slice();
     }
 
@@ -41,7 +45,7 @@ export class PlayerListComponent {
                 return 'Réponse envoyée';
             }
             case BLACK: {
-                return 'Le joueur a abandonné la partie';
+                return 'Abandon';
             }
             default: {
                 return 'Erreur du coté du serveur'; // Ne devrait jamais afficher ça, mais reste utile.
@@ -56,31 +60,31 @@ export class PlayerListComponent {
         const BLACK = 0x000000;
         switch (player.color) {
             case RED: {
-                return 'color=#FF0000';
+                return 'red-text';
             }
             case YELLOW: {
-                return 'color=#FFFF00';
+                return 'yellow-text';
             }
             case GREEN: {
-                return 'color=#0000FF';
+                return 'green-text';
             }
             case BLACK: {
-                return 'color=#000000';
+                return 'black-text';
             }
             default: {
-                return 'color=#00FF00'; // Ne devrait jamais afficher ça, mais reste utile.
+                return 'blue-text'; // Ne devrait jamais afficher ça, mais reste utile.
             }
         }
     }
 
     sortData(sort: Sort) {
-        const data = this.sortedData.slice();
+        const data = this.players.slice();
         if (!sort.active || sort.direction === '') {
             this.sortedData = data;
             return;
         }
 
-        this.sortedData = data.sort((a, b) => {
+        this.players = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
                 case 'name':

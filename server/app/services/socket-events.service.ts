@@ -48,7 +48,17 @@ export class SocketEvents {
             await this.gameSessionService.createSession(room, game);
             // leaveAllRooms(socket); À ajouter plus tard.
             socket.join(room);
-            const player: Player = { name: 'Organisateur', score: 0, isHost: true, id: '', bonusCount: 0, chatEnabled: true, outOfRoom: false };
+            const GREEN = 0x0000ff;
+            const player: Player = {
+                name: 'Organisateur',
+                score: 0,
+                isHost: true,
+                id: '',
+                bonusCount: 0,
+                color: GREEN,
+                chatEnabled: true,
+                outOfRoom: false,
+            };
             this.liveRooms.push(room);
             this.socketIdRoom.set(socket.id, room);
             this.playerSocketId.set(socket.id, player);
@@ -152,24 +162,6 @@ export class SocketEvents {
                     this.mapOfPlayersInRoom.set(room, players);
                     socket.to(room).emit(Events.GET_PLAYERS, players);
                     socket.emit(Events.LEAVE_ROOM);
-                }
-            }
-        });
-    }
-    listenForChatMessageEvent(socket: Socket) {
-        socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
-            const room = this.socketIdRoom.get(socket.id);
-            if (room !== undefined && this.chatHistories.get(room) !== undefined) {
-                socket.to(room).emit(Events.CHAT_MESSAGE, message);
-                this.chatHistories.get(room).push(message);
-            }
-        });
-        socket.on(Events.CHAT_HISTORY, () => {
-            const room = this.socketIdRoom.get(socket.id);
-            if (room !== undefined) {
-                const chatHistory = this.chatHistories.get(room);
-                if (chatHistory !== undefined) {
-                    socket.emit(Events.CHAT_HISTORY, chatHistory);
                 }
             }
         });
@@ -292,23 +284,27 @@ export class SocketEvents {
         });
     }
     listenForAbandonGame(socket: Socket) {
-        if (this.socketInRoom(socket) && this.roomCreated(socket)) {
-            const player = this.playerSocketId.get(socket.id);
-            const room = this.socketIdRoom.get(socket.id);
-            if (player.isHost) {
-                // À revoir + tard.
-            } else {
-                const players = this.mapOfPlayersInRoom.get(room);
-                for (const play of players) {
-                    if (play.name === player.name) {
-                        play.outOfRoom = true;
+        socket.on('abandonGame', () => {
+            if (this.socketInRoom(socket) && this.roomCreated(socket)) {
+                const player = this.playerSocketId.get(socket.id);
+                const room = this.socketIdRoom.get(socket.id);
+                if (player.isHost) {
+                    // À revoir + tard.
+                } else {
+                    const BLACK = 0x000000;
+                    const players = this.mapOfPlayersInRoom.get(room);
+                    for (const play of players) {
+                        if (play.name === player.name) {
+                            play.outOfRoom = true;
+                            play.color = BLACK;
+                        }
                     }
+                    this.mapOfPlayersInRoom.set(room, players);
+                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                    socket.emit('abandonGame'); // Mettre le event dans Events.
                 }
-                this.mapOfPlayersInRoom.set(room, players);
-                socket.to(room).emit(Events.GET_PLAYERS, players);
-                socket.emit('abandonGame'); // Mettre le event dans Events.
             }
-        }
+        });
     }
     listenForExcludeFromChat(socket: Socket) {
         socket.on('excludeFromChat', ({ player }) => {
@@ -322,6 +318,25 @@ export class SocketEvents {
                             play.chatEnabled = false;
                         }
                     }
+                    const message: ChatMessage = {
+                        message: 'Vous avez été exclu du clavardage',
+                        author: sysmsg.AUTHOR,
+                        timeStamp: new Date().toLocaleTimeString(),
+                    };
+                    // Très mauvaise idée en terme de performances, mais on est pas noté sur les performances.
+                    for (const socketId of this.playerSocketId.keys()) {
+                        if (this.playerSocketId.get(socketId).name === player.name) {
+                            if (this.socketIdRoom.get(socketId) === room) {
+                                socket.to(socketId).emit(Events.CHAT_MESSAGE, message);
+                                const playerProfile = this.playerSocketId.get(socketId);
+                                playerProfile.chatEnabled = false;
+                                this.playerSocketId.set(socketId, playerProfile);
+                                socket.to(socketId).emit(Events.GET_PLAYER_PROFILE, playerProfile);
+                            }
+                        }
+                    }
+                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                    socket.emit(Events.GET_PLAYERS, players);
                 }
             }
         });
@@ -335,9 +350,28 @@ export class SocketEvents {
                     const players = this.mapOfPlayersInRoom.get(room);
                     for (const play of players) {
                         if (play.name === player.name) {
-                            play.chatEnabled = true;
+                            play.chatEnabled = false;
                         }
                     }
+                    const message: ChatMessage = {
+                        message: 'Vous pouvez à nouveau poster dans le clavardage',
+                        author: sysmsg.AUTHOR,
+                        timeStamp: new Date().toLocaleTimeString(),
+                    };
+                    // Très mauvaise idée en terme de performances, mais on est pas noté sur les performances.
+                    for (const socketId of this.playerSocketId.keys()) {
+                        if (this.playerSocketId.get(socketId).name === player.name) {
+                            if (this.socketIdRoom.get(socketId) === room) {
+                                socket.to(socketId).emit(Events.CHAT_MESSAGE, message);
+                                const playerProfile = this.playerSocketId.get(socketId);
+                                playerProfile.chatEnabled = true;
+                                this.playerSocketId.set(socketId, playerProfile);
+                                socket.to(socketId).emit(Events.GET_PLAYER_PROFILE, playerProfile);
+                            }
+                        }
+                    }
+                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                    socket.emit(Events.GET_PLAYERS, players);
                 }
             }
         });

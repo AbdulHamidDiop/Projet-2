@@ -95,7 +95,10 @@ export class WaitingPageComponent implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.socket.leaveRoom();
+        const FALSE_CONDITION = 3 < 2; // À supprimer + tard
+        if (FALSE_CONDITION) {
+            return;
+        }
     }
 
     gameStartSubscribe() {

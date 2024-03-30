@@ -31,8 +31,7 @@
                         <button mat-button>
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
-                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()"
-                            class="confirm-button">
+                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()" class="confirm-button">
                             <h3 class="next-button">prochaine question</h3>
                         </button>
                         <button *ngIf="onLastQuestion" mat-button (click)="notifyEndGame()" class="confirm-button">
@@ -47,26 +46,7 @@
             <app-sidebar> </app-sidebar>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <h2 class="title"> <strong>Liste des joueurs</strong> </h2>
-            <div>
-                <table class="players-table">
-                    <thead>
-                        <tr>
-                            <th>Nom du joueur</th>
-                            <th>Score</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr *ngFor="let player of playerService.playersInGame">
-                            <td>{{ player.name }}</td>
-                            <td>{{ player.score }} points</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-        </mat-grid-tile>
+        <app-player-list *ngIf="displayPlayerList" [players]="players"></app-player-list>
 
         <mat-grid-tile [colspan]="2" [rowspan]="1">
             <h2 class="title"><strong>Zone Statistiques </strong></h2>

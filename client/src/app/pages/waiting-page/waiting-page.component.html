@@ -1,9 +1,12 @@
 <main *ngIf="this.fullView">
     <app-select-room *ngIf="this.roomIdEntryView"></app-select-room>
     <app-select-username *ngIf="this.usernameEntryView"></app-select-username>
-    <app-player-and-admin-panel *ngIf="this.playerPanelView" [players]="this.players" [player]="this.player"
-        [game]="this.game"></app-player-and-admin-panel>
+    <app-player-and-admin-panel
+        *ngIf="this.playerPanelView"
+        [players]="this.players"
+        [player]="this.player"
+        [game]="this.game"
+    ></app-player-and-admin-panel>
     <app-sidebar *ngIf="this.playerPanelView" [player]="this.player" id="sidebar"></app-sidebar>
 </main>
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"
-    [countdown]="5"></app-countdown-modal>
+<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="5"></app-countdown-modal>

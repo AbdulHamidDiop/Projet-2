@@ -28,6 +28,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
+    displayPlayerList = false;
 
     constructor(
         public gameManagerService: GameManagerService,
@@ -38,7 +39,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly playerService: PlayerService,
     ) {
         this.socketService.getPlayers().subscribe((players: Player[]) => {
+            this.displayPlayerList = false;
             this.playerService.setGamePlayers(players);
+            this.players = players;
+            this.displayPlayerList = true;
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.gameManagerService.game.duration as number;

@@ -51,9 +51,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private bonusGivenSubscription: Subscription;
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
+    private getProfileSubscription: Subscription;
 
+    // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
-    // On a besoin de tout ces injections pour l'instant. Nous n'avons pas encore trouvé de moyen pour découpler ce component.
     constructor(
         readonly timeService: TimeService,
         readonly gameManager: GameManagerService,
@@ -156,6 +157,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.abortGameSubscription.unsubscribe();
         this.startTimerSubscription.unsubscribe();
         this.stopTimerSubscription.unsubscribe();
+        this.getProfileSubscription.unsubscribe();
     }
 
     shouldRender(text: string) {
@@ -193,6 +195,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
+            player: this.player,
         };
         this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmStat);
     }
@@ -256,7 +259,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
     }
 
+    // Le chargé aime pas le nom donné à la fonction.
     handleAbort(): void {
+        // Messages à mettre dans des constantes.
         const message = 'Êtes-vous sûr de vouloir abandonner la partie?';
 
         const dialogData = new ConfirmDialogModel('Abandon', message);
@@ -277,6 +282,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                     timeStamp: new Date().toLocaleTimeString(),
                 };
                 this.socketService.sendChatMessage(chatMessage);
+                this.socketService.abandonGame();
                 this.router.navigate(['/']);
             }
         });

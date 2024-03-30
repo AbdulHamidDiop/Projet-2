@@ -22,4 +22,27 @@ export class SocketFunctions {
         const room = context.socketIdRoom.get(socket.id);
         return context.liveRooms.includes(room) && context.mapOfPlayersInRoom.has(room);
     }
+    /*
+        listenForChatMessageEvent(socket: Socket) {
+        socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
+            const room = this.socketIdRoom.get(socket.id);
+            const player = this.playerSocketId.get(socket.id);
+            if (room !== undefined && this.chatHistories.get(room) !== undefined) {
+                if (player !== undefined && player.chatEnabled) {
+                    socket.to(room).emit(Events.CHAT_MESSAGE, message);
+                    this.chatHistories.get(room).push(message);
+                }
+            }
+        });
+        socket.on(Events.CHAT_HISTORY, () => {
+            const room = this.socketIdRoom.get(socket.id);
+            if (room !== undefined) {
+                const chatHistory = this.chatHistories.get(room);
+                if (chatHistory !== undefined) {
+                    socket.emit(Events.CHAT_HISTORY, chatHistory);
+                }
+            }
+        });
+    }
+*/
 }

@@ -11,6 +11,8 @@ export class PlayerService {
         id: '',
         score: 0,
         bonusCount: 0,
+        chatEnabled: true,
+        outOfRoom: false,
     };
 
     playersInGame: Player[];
