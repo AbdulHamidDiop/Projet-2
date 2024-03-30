@@ -88,14 +88,44 @@ export class Server {
             this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.QCM_STATS, (data) => {
                 socket.to(data.room).emit(Events.QCM_STATS, data);
+                const YELLOW = 0xffff00;
+                const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
+                if (playerMap) {
+                    for (const player of playerMap) {
+                        if (data.payload.player.name === player.name) {
+                            player.color = YELLOW;
+                        }
+                    }
+                    this.io.to(data.room).emit(Events.GET_PLAYERS, playerMap);
+                }
             });
 
             socket.on(Events.QRL_STATS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.QRL_STATS, data);
+                const YELLOW = 0xffff00;
+                const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
+                if (playerMap) {
+                    for (const player of playerMap) {
+                        if (data.payload.player.name === player.name) {
+                            player.color = YELLOW;
+                        }
+                    }
+                    this.io.to(data.room).emit(Events.GET_PLAYERS, playerMap);
+                }
             });
 
             socket.on(Events.GAME_RESULTS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.GAME_RESULTS, data);
+                const GREEN = 0x0000ff;
+                const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
+                if (playerMap) {
+                    for (const player of playerMap) {
+                        if (data.payload.player.name === player.name) {
+                            player.color = GREEN;
+                        }
+                    }
+                    this.io.to(data.room).emit(Events.GET_PLAYERS, playerMap);
+                }
             });
 
             socket.on(Events.UPDATE_CHART, (data) => {

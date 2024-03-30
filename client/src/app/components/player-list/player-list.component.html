@@ -1,0 +1,22 @@
+<table matSort (matSortChange)="sortData($event)">
+    <tr>
+        <th mat-sort-header="name">Nom du joueur</th>
+        <th mat-sort-header="score">Score</th>
+        <th mat-sort-header="state">État</th>
+        <th mat-sort-header="name" disabled="true">Droit de clavardage</th>
+    </tr>
+    <tr *ngFor="let player of sortedData">
+        <td [style]="getStyle(player)">
+            <!-- Changer ça par une constante globale -->
+            <s *ngIf="player.color === 0"> {{ player.name }} </s>
+            <div *ngIf="player.color !== 0">{{ player.name }}</div>
+        </td>
+        <td>{{ player.score }}</td>
+        <td>{{ colorToState(player.color) }}</td>
+        <td>
+            <!-- Peut-être trouver un meilleur affichage plus tard -->
+            <button *ngIf="player.chatEnabled">Exclure du clavardage</button>
+            <button *ngIf="!player.chatEnabled">Inclure dans le clavardage</button>
+        </td>
+    </tr>
+</table>
