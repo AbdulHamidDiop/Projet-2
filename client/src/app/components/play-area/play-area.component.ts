@@ -73,7 +73,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             await this.countPointsAndNextQuestion();
         });
@@ -121,7 +121,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     detectButton(event: KeyboardEvent) {
         this.buttonPressed = event.key;
         if (this.buttonPressed === 'Enter') {
-            this.confirmAnswers();
+            this.confirmAnswers(true);
         } else if (
             this.buttonPressed >= '1' &&
             this.buttonPressed <= '4' &&
@@ -135,7 +135,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.timeService.timerEnded.subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
         });
         const gameID = this.route.snapshot.paramMap.get('id');
         if (this.inTestMode && gameID) {
@@ -204,9 +204,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         return this.answer.includes(choice);
     }
 
-    async confirmAnswers() {
+    async confirmAnswers(fromUserInput: boolean) {
+        // true : appelé par input utilisateur, false : appelé par serveur,
         this.choiceDisabled = true;
-
+        if (fromUserInput) {
+            this.socketService.confirmAnswer(this.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
+        }
         if (this.inTestMode) {
             this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             this.countPointsAndNextQuestion();

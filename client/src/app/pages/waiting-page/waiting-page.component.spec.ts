@@ -31,8 +31,6 @@ describe('WaitingPageComponent', () => {
             'disconnectSubscribe',
             'leaveRoom',
             'sendMessage',
-            'requestPlayers',
-            'requestPlayers',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -92,7 +90,6 @@ describe('WaitingPageComponent', () => {
         component.player.isHost = true;
         component.gameStartSubscribe();
 
-        socketMock.requestPlayers.and.returnValue();
         tick(DELAY + 1);
         tick(DELAY_THREE_SEC + 1);
 

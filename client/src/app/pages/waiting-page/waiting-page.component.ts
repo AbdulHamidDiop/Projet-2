@@ -108,7 +108,7 @@ export class WaitingPageComponent implements OnDestroy {
                 if (this.player.isHost) {
                     setTimeout(() => {
                         this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
-                        this.socket.requestPlayers();
+                        // this.socket.requestPlayers(); Supprimé par git.
                     }, START_TIMER_DELAY);
                     this.router.navigate(['/hostView/' + this.game.id]);
                 } else {

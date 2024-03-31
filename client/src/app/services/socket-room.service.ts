@@ -14,10 +14,9 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
-    readonly socket: Socket;
-    readonly url = 'http://localhost:3000';
-    // 'http://ec2-35-183-71-164.ca-central-1.compute.amazonaws.com:3000'; // Your Socket.IO server URL
-    readonly namespaces: Map<string, Socket> = new Map();
+    private socket: Socket;
+    private url = 'http://localhost:3000'; // Your Socket.IO server URL
+    private namespaces: Map<string, Socket> = new Map();
 
     constructor(
         private io: IoService,
@@ -31,19 +30,24 @@ export class SocketRoomService implements OnDestroy {
         return this.socket.connected;
     }
 
-    abandonGame() {
-        // Ajouter au enum Events + tard.
-        this.socket.emit('abandonGame');
+    confirmAnswer(player: Player) {
+        // À ajouter au enum + tard
+        this.sendMessage('confirmAnswer' as Events, Namespaces.GAME_STATS, { player });
     }
 
     excludeFromChat(player: Player) {
-        // Ajouter au enum Events + tard.
+        // À ajouter au enum + tard
         this.socket.emit('excludeFromChat', { player });
     }
 
     includeInChat(player: Player) {
-        // Ajouter au enum Events + tard.
+        // À ajouter au enum + tard
         this.socket.emit('includeInChat', { player });
+    }
+
+    abandonGame() {
+        // À ajouter au enum + tard
+        this.socket.emit('abandonGame');
     }
 
     createRoom(game: Game) {
@@ -153,9 +157,6 @@ export class SocketRoomService implements OnDestroy {
                 observer.next(players);
             });
         });
-    }
-    requestPlayers(): void {
-        this.socket.emit(Events.GET_PLAYERS);
     }
 
     getProfile(): Observable<Player> {

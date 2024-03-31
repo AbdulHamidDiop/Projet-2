@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines */
+
 import { EventEmitter } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -35,9 +36,10 @@ describe('PlayAreaComponent', () => {
         timeServiceSpy.startTimer.and.returnValue();
         timeServiceSpy.timerEnded = new EventEmitter<void>();
 
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage', 'sendChatMessage']);
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage', 'sendChatMessage', 'confirmAnswer']);
         socketMock.listenForMessages.and.returnValue(of({} as any));
         socketMock.sendMessage.and.returnValue({} as any);
+        socketMock.confirmAnswer.and.returnValue();
 
         matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
         matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
@@ -303,7 +305,7 @@ describe('PlayAreaComponent', () => {
     it('confirmAnswers should update score and proceed after delay', fakeAsync(() => {
         spyOn(component, 'updateScore').and.returnValue({} as any);
         spyOn(component, 'goNextQuestion').and.returnValue();
-        component.confirmAnswers();
+        component.confirmAnswers(true);
         tick(SHOW_FEEDBACK_DELAY * 2);
         expect(component.updateScore).toHaveBeenCalled();
         expect(component.choiceDisabled).toBeFalse();
@@ -326,7 +328,7 @@ describe('PlayAreaComponent', () => {
         component.question = { id: '123', type: Type.QCM } as Question;
         component.answer = ['Option 1'];
         spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
-        component.confirmAnswers();
+        component.confirmAnswers(false);
         expect(gameManager.getFeedBack).toHaveBeenCalledWith('123', ['Option 1']);
         flush();
     }));

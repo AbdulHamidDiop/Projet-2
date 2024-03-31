@@ -92,21 +92,34 @@ export class Server {
                 const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
                 if (playerMap) {
                     for (const player of playerMap) {
-                        if (data.payload.player.name === player.name) {
+                        if (data.player.name === player.name) {
                             player.color = YELLOW;
+                            player.score = data.player.score;
                         }
                     }
                     this.io.to(data.room).emit(Events.GET_PLAYERS, playerMap);
                 }
             });
-
+            socket.on('confirmAnswer', (data) => {
+                const GREEN = 0x00ff00;
+                const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
+                if (playerMap) {
+                    for (const player of playerMap) {
+                        if (data.player.name === player.name) {
+                            player.color = GREEN;
+                            player.score = data.player.score;
+                        }
+                    }
+                    this.io.to(data.room).emit(Events.GET_PLAYERS, playerMap);
+                }
+            });
             socket.on(Events.QRL_STATS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.QRL_STATS, data);
                 const YELLOW = 0xffff00;
                 const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
                 if (playerMap) {
                     for (const player of playerMap) {
-                        if (data.payload.player.name === player.name) {
+                        if (data.player.name === player.name) {
                             player.color = YELLOW;
                         }
                     }
@@ -116,16 +129,6 @@ export class Server {
 
             socket.on(Events.GAME_RESULTS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.GAME_RESULTS, data);
-                const GREEN = 0x0000ff;
-                const playerMap = this.socketEvents.mapOfPlayersInRoom.get(data.room);
-                if (playerMap) {
-                    for (const player of playerMap) {
-                        if (data.payload.player.name === player.name) {
-                            player.color = GREEN;
-                        }
-                    }
-                    this.io.to(data.room).emit(Events.GET_PLAYERS, playerMap);
-                }
             });
 
             socket.on(Events.UPDATE_CHART, (data) => {

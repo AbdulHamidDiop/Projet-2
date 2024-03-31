@@ -32,7 +32,7 @@ export class PlayerListComponent implements OnInit {
         // Devrait être des constantes globales.
         const RED = 0xff0000;
         const YELLOW = 0xffff00;
-        const GREEN = 0x0000ff;
+        const GREEN = 0x00ff00;
         const BLACK = 0x000000;
         switch (color) {
             case RED: {
@@ -48,7 +48,7 @@ export class PlayerListComponent implements OnInit {
                 return 'Abandon';
             }
             default: {
-                return 'Erreur du coté du serveur'; // Ne devrait jamais afficher ça, mais reste utile.
+                return 'Erreur'; // Ne devrait jamais afficher ça, mais reste utile.
             }
         }
     }
@@ -56,7 +56,7 @@ export class PlayerListComponent implements OnInit {
     getStyle(player: Player) {
         const RED = 0xff0000;
         const YELLOW = 0xffff00;
-        const GREEN = 0x0000ff;
+        const GREEN = 0x00ff00;
         const BLACK = 0x000000;
         switch (player.color) {
             case RED: {
@@ -107,15 +107,13 @@ export class PlayerListComponent implements OnInit {
         if (a.length === 1 && b.length === 1) {
             // Code material, peut être amélioré plus tard
             return (a[0] < b[0] ? SORT_DECREASE : SORT_INCREASE) * (isAsc ? SORT_INCREASE : SORT_DECREASE);
-        } else if (a.length === 2 && b.length === 2) {
+        } else {
+            // Deux paramètres, 0 = score ou etat, 1 = name
             if (a[0] !== b[0]) {
                 return (a[0] < b[0] ? SORT_DECREASE : SORT_INCREASE) * (isAsc ? SORT_INCREASE : SORT_DECREASE);
             } else {
-                return (a[1] < b[1] ? SORT_DECREASE : SORT_INCREASE) * (isAsc ? SORT_INCREASE : SORT_DECREASE);
+                return (a[1] < b[1] ? SORT_DECREASE : SORT_INCREASE) * SORT_INCREASE;
             }
-        } else {
-            // Ne devrait jamais rentrer ici, mais reste utile.
-            return 0;
         }
     }
 }

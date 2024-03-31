@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Player } from '@common/game';
+const RED = 0xff0000; // Mettre dans un fichier
 
 @Injectable({
     providedIn: 'root',
@@ -11,6 +12,7 @@ export class PlayerService {
         id: '',
         score: 0,
         bonusCount: 0,
+        color: RED,
         chatEnabled: true,
         outOfRoom: false,
     };

@@ -40,7 +40,7 @@ describe('SelectUsernameComponent', () => {
     });
 
     it('Should call socket.sendPlayerName if name is valid', () => {
-        const validName = 'validname';
+        const validName = 'Validname';
         component.sendUsername({ value: validName } as HTMLInputElement);
         expect(socketMock.sendPlayerName).toHaveBeenCalledWith(validName);
     });

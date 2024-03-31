@@ -1,3 +1,4 @@
+/*
 import { Socket } from 'socket.io';
 import { SocketEvents } from './socket-events.service';
 export class SocketFunctions {
@@ -22,7 +23,7 @@ export class SocketFunctions {
         const room = context.socketIdRoom.get(socket.id);
         return context.liveRooms.includes(room) && context.mapOfPlayersInRoom.has(room);
     }
-    /*
+    
         listenForChatMessageEvent(socket: Socket) {
         socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
             const room = this.socketIdRoom.get(socket.id);
@@ -44,5 +45,6 @@ export class SocketFunctions {
             }
         });
     }
-*/
+
 }
+*/

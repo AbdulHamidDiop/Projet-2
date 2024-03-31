@@ -33,8 +33,7 @@
                 <button mat-button (click)="handleAbort()">
                     <h3 class="abort-button">Abandonner</h3>
                 </button>
-                <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="choiceDisabled"
-                    class="confirm-button">
+                <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>
@@ -44,9 +43,12 @@
     <br />
     <mat-selection-list #choices [disabled]="choiceDisabled">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFunction">
-            <mat-list-item (click)="!choiceDisabled && handleQCMChoice(choice.text)"
+            <mat-list-item
+                (click)="!choiceDisabled && handleQCMChoice(choice.text)"
                 (keydown)="!choiceDisabled && $event.stopPropagation(); !choiceDisabled && detectButton($event)"
-                (keyup)="!choiceDisabled && $event.stopPropagation()" *ngIf="shouldRender(choice.text)">
+                (keyup)="!choiceDisabled && $event.stopPropagation()"
+                *ngIf="shouldRender(choice.text)"
+            >
                 <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
                     <span>
                         Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>
@@ -56,5 +58,9 @@
         </div>
     </mat-selection-list>
 </div>
-<app-countdown-modal [showModal]="showCountDown" [countdown]="3" [message]="'Prochaine question dans'"
-    (modalClosed)="onCountDownModalClosed()"></app-countdown-modal>
+<app-countdown-modal
+    [showModal]="showCountDown"
+    [countdown]="3"
+    [message]="'Prochaine question dans'"
+    (modalClosed)="onCountDownModalClosed()"
+></app-countdown-modal>

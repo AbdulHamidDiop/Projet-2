@@ -36,7 +36,7 @@ describe('Socket Events Service', () => {
                 socket = serverSocket;
                 socketIdStub = stub(socket, 'id').value('');
                 socketOnStub = stub(socket, 'on').callsFake((eventName: any, callBackFn: any) => {
-                    callBackFn({ id: '0', room: LOBBY, name: '' });
+                    callBackFn({ id: '0', room: LOBBY, name: '', player: { name: '' } });
                     return socket;
                 });
                 socketEmitStub = stub(socket, 'emit').callsFake(() => {
@@ -110,6 +110,49 @@ describe('Socket Events Service', () => {
         });
     });
 
+    it('Should call socket.to on call to listenForExcludeFromChat', () => {
+        socket.on('listenForExcludeFromChat', () => {
+            socketEvents.socketIdRoom.set(socket.id, undefined);
+            socketEvents.listenForExcludeFromChat(socket);
+            socketEvents.socketIdRoom.set(socket.id, LOBBY);
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: '' } as Player]);
+            socketEvents.playerSocketId.set('.', { name: '.' } as Player);
+            socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+            socketEvents.listenForExcludeFromChat(socket);
+            socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
+            socketEvents.listenForExcludeFromChat(socket);
+            expect(socketToStub.called).to.equal(true);
+        });
+    });
+
+    it('Should call socket.emit on call to listenForIncludeInChat', () => {
+        socket.on('listenForIncludeInChat', () => {
+            socketEvents.socketIdRoom.set(socket.id, undefined);
+            socketEvents.listenForIncludeInChat(socket);
+            socketEvents.socketIdRoom.set(socket.id, LOBBY);
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: '' } as Player]);
+            socketEvents.playerSocketId.set('.', { name: '.' } as Player);
+            socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+            socketEvents.listenForIncludeInChat(socket);
+            socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
+            socketEvents.listenForIncludeInChat(socket);
+            expect(socketToStub.called).to.equal(true);
+        });
+    });
+
+    it('Should call socket.to on call to listenForAbandonGame', () => {
+        socket.on('listenForAbandonGame', () => {
+            socketEvents.socketIdRoom.set(socket.id, undefined);
+            socketEvents.listenForAbandonGame(socket);
+            socketEvents.socketIdRoom.set(socket.id, LOBBY);
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: '' } as Player]);
+            socketEvents.playerSocketId.set('.', { name: '.' } as Player);
+            socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+            socketEvents.listenForAbandonGame(socket);
+            expect(socketToStub.called).to.equal(true);
+        });
+    });
+
     it('Should call socket.on on call to listenForDeleteRoom', () => {
         socket.on('listenForDeleteRoom', () => {
             socketEvents.listenForDeleteRoomEvent(socket);
@@ -131,19 +174,6 @@ describe('Socket Events Service', () => {
             socketEvents.socketIdRoom.set('.', '');
             socketEvents.listenForLeaveRoomEvent(socket);
             expect(socketOnStub.called).to.equal(true);
-            expect(socketToStub.called).to.equal(true);
-        });
-    });
-
-    it('Should call socket.emit on call to listenForChatMessage', () => {
-        socket.on('listenForChatMessage', () => {
-            socketEvents.socketIdRoom.set(socket.id, undefined);
-            socketEvents.listenForChatMessageEvent(socket);
-            socketEvents.socketIdRoom.set(socket.id, LOBBY);
-            socketEvents.listenForChatMessageEvent(socket);
-            socketEvents.chatHistories.set(LOBBY, [{} as ChatMessage]);
-            socketEvents.listenForChatMessageEvent(socket);
-            expect(socketEmitStub.called).to.equal(true);
             expect(socketToStub.called).to.equal(true);
         });
     });

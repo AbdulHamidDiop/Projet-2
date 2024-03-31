@@ -80,10 +80,12 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
+            this.updatePlayerFromServer(stat as QCMStats);
         });
 
         this.timeService.timerEnded.subscribe(() => {
-            this.notifyNextQuestion();
+            // Mène probablement à des bugs.
+            // this.notifyNextQuestion();
         });
 
         this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
@@ -161,6 +163,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
         }, SHOW_FEEDBACK_DELAY);
+    }
+
+    updatePlayerFromServer(stats: QCMStats) {
+        for (const player of this.players) {
+            if (stats.player && player.name === stats.player.name) {
+                player.score = stats.player.score;
+            }
+        }
     }
 
     openResultsPage(): void {

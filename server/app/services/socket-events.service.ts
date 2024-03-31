@@ -25,7 +25,6 @@ export class SocketEvents {
         this.listenForCreateRoomEvent(socket);
         this.listenForDeleteRoomEvent(socket);
         this.listenForJoinRoomEvent(socket);
-        this.listenForChatMessageEvent(socket);
         this.listenForIncludeInChat(socket);
         this.listenForExcludeFromChat(socket);
         this.listenForSetPlayerNameEvent(socket);
@@ -288,21 +287,17 @@ export class SocketEvents {
             if (this.socketInRoom(socket) && this.roomCreated(socket)) {
                 const player = this.playerSocketId.get(socket.id);
                 const room = this.socketIdRoom.get(socket.id);
-                if (player.isHost) {
-                    // À revoir + tard.
-                } else {
-                    const BLACK = 0x000000;
-                    const players = this.mapOfPlayersInRoom.get(room);
-                    for (const play of players) {
-                        if (play.name === player.name) {
-                            play.outOfRoom = true;
-                            play.color = BLACK;
-                        }
+                const BLACK = 0x000000;
+                const players = this.mapOfPlayersInRoom.get(room);
+                for (const play of players) {
+                    if (play.name === player.name) {
+                        play.outOfRoom = true;
+                        play.color = BLACK;
                     }
-                    this.mapOfPlayersInRoom.set(room, players);
-                    socket.to(room).emit(Events.GET_PLAYERS, players);
-                    socket.emit('abandonGame'); // Mettre le event dans Events.
                 }
+                this.mapOfPlayersInRoom.set(room, players);
+                socket.to(room).emit(Events.GET_PLAYERS, players);
+                socket.emit('abandonGame'); // Mettre le event dans Events.
             }
         });
     }
@@ -316,6 +311,7 @@ export class SocketEvents {
                     for (const play of players) {
                         if (play.name === player.name) {
                             play.chatEnabled = false;
+                            play.score = player.score;
                         }
                     }
                     const message: ChatMessage = {
@@ -330,6 +326,7 @@ export class SocketEvents {
                                 socket.to(socketId).emit(Events.CHAT_MESSAGE, message);
                                 const playerProfile = this.playerSocketId.get(socketId);
                                 playerProfile.chatEnabled = false;
+                                playerProfile.score = player.score;
                                 this.playerSocketId.set(socketId, playerProfile);
                                 socket.to(socketId).emit(Events.GET_PLAYER_PROFILE, playerProfile);
                             }
@@ -351,6 +348,7 @@ export class SocketEvents {
                     for (const play of players) {
                         if (play.name === player.name) {
                             play.chatEnabled = false;
+                            play.score = player.score;
                         }
                     }
                     const message: ChatMessage = {
@@ -365,6 +363,7 @@ export class SocketEvents {
                                 socket.to(socketId).emit(Events.CHAT_MESSAGE, message);
                                 const playerProfile = this.playerSocketId.get(socketId);
                                 playerProfile.chatEnabled = true;
+                                playerProfile.score = player.score;
                                 this.playerSocketId.set(socketId, playerProfile);
                                 socket.to(socketId).emit(Events.GET_PLAYER_PROFILE, playerProfile);
                             }

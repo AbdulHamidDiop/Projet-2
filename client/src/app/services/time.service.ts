@@ -4,6 +4,7 @@ import { EventEmitter, Injectable } from '@angular/core';
     providedIn: 'root',
 })
 export class TimeService {
+    // Limite de 1 timer, pour avoir + de 1 timer faut déclarer les éléments comme des tableaux.
     timerEnded: EventEmitter<void> = new EventEmitter<void>();
     private interval: number | undefined;
     private readonly tick = 1000;

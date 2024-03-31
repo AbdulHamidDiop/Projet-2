@@ -149,6 +149,13 @@ describe('HostGameViewComponent', () => {
         expect(component.time).toBe(0);
     });
 
+    it('should update player info on receiving QCM_STATS event', () => {
+        component.players = [{ name: 'A', score: 0 } as Player];
+        mockStat.player = { name: 'A', score: 2 } as Player;
+        component.updatePlayerFromServer(mockStat);
+        expect(component.players[0].score).toEqual(2);
+    });
+
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {
         gameManagerServiceSpy.getFeedBack.and.returnValue(Promise.resolve(mockFeedback));
         component.currentQuestion = mockQuestion;
