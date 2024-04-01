@@ -25,7 +25,7 @@ describe('GameSessionService', () => {
         const responseData: Game = {} as Game;
         const mockResponse: Response = { ok: true, json: async () => Promise.resolve(responseData) } as Response;
         fetchService.fetch.withArgs(API_URL + 'gameSession/questionswithoutcorrect/' + pin).and.returnValue(Promise.resolve(mockResponse));
-        const result = await service.getQuestionsWithoutCorrectShown(pin);
+        const result = await service.getGameWithoutCorrectShown(pin);
         expect(result).toEqual(responseData);
         expect(fetchService.fetch).toHaveBeenCalledWith(API_URL + 'gameSession/questionswithoutcorrect/' + pin);
     });
@@ -34,7 +34,7 @@ describe('GameSessionService', () => {
         const pin = '1234';
         const mockResponse: Response = { ok: false, status: StatusCodes.NOT_FOUND } as Response;
         fetchService.fetch.withArgs(API_URL + 'gameSession/questionswithoutcorrect/' + pin).and.returnValue(Promise.resolve(mockResponse));
-        await expectAsync(service.getQuestionsWithoutCorrectShown(pin)).toBeRejectedWithError(`Error: ${mockResponse.status}`);
+        await expectAsync(service.getGameWithoutCorrectShown(pin)).toBeRejectedWithError(`Error: ${mockResponse.status}`);
     });
 
     it('should call checkAnswer and return true if answer is correct', async () => {

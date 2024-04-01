@@ -41,11 +41,12 @@ export class GameRandomComponent {
             }
         });
     }
-    private shuffleQuestions(): void {
-        for (let i = this.questions.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
-        }
+    private createGame(): Game {
+        return {
+            id: crypto.randomUUID() + 'aleatoire',
+            title: 'Mode Aléatoire',
+            questions: this.selectRandomQuestions(),
+        };
     }
 
     private selectRandomQuestions(): Question[] {
@@ -53,11 +54,10 @@ export class GameRandomComponent {
         return this.questions.slice(0, NUMBER_RANDOM_QUESTIONS);
     }
 
-    private createGame(): Game {
-        return {
-            id: crypto.randomUUID() + 'aleatoire',
-            title: 'Mode Aléatoire',
-            questions: this.selectRandomQuestions(),
-        };
+    private shuffleQuestions(): void {
+        for (let i = this.questions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [this.questions[i], this.questions[j]] = [this.questions[j], this.questions[i]];
+        }
     }
 }
