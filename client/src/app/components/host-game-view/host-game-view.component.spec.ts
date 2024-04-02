@@ -363,7 +363,7 @@ describe('HostGameViewComponent', () => {
 
     it('should increment data when stat is edited', async () => {
         const stat: QRLStats = { questionId: '1', edited: true };
-        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }] as BarChartChoiceStats[] }];
+        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
 
         await component.updateQRLBarChartData(stat);
 
@@ -372,7 +372,7 @@ describe('HostGameViewComponent', () => {
 
     it('should decrement data when stat is not edited and data is greater than 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false };
-        component.statisticsData = [{ questionID: '1', data: [{ data: [1] }] as BarChartChoiceStats[] }];
+        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
 
         await component.updateQRLBarChartData(stat);
 
@@ -381,7 +381,7 @@ describe('HostGameViewComponent', () => {
 
     it('should not change data when stat is not edited and data is 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false } as QRLStats;
-        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }] as BarChartChoiceStats[] }];
+        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
 
         await component.updateQRLBarChartData(stat);
 

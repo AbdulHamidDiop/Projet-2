@@ -130,6 +130,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (this.question.type === Type.QRL) {
             this.qrlStatsService.startTimer(this.question.id);
         }
+
+        this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+        this.timeService.startTimer(this.timer);
+
         this.nbChoices = this.question.choices?.length ?? 0;
         if (this.inTestMode) {
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
@@ -195,6 +199,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.socketService.endGame();
         });
 
+        this.timeService.deactivatePanicMode();
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
     }
@@ -212,7 +217,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.stopTimerSubscription?.unsubscribe();
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
-        this.pauseTimerSubscription.unsubscribe();
+        this.pauseTimerSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);

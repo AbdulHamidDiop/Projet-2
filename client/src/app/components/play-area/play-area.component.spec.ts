@@ -31,7 +31,11 @@ describe('PlayAreaComponent', () => {
     let matDialogRefSpy: SpyObj<MatDialogRef<any, any>>;
 
     beforeEach(async () => {
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'time', 'timerEnded'], ['counter', 'interval']);
+        timeServiceSpy = jasmine.createSpyObj(
+            'TimeService',
+            ['startTimer', 'stopTimer', 'time', 'timerEnded', 'pauseTimer'],
+            ['counter', 'interval'],
+        );
         timeServiceSpy.startTimer.and.returnValue();
         timeServiceSpy.timerEnded = new EventEmitter<void>();
 

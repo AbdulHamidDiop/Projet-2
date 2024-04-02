@@ -169,6 +169,15 @@ export class Server {
             socket.on(Events.PAUSE_TIMER, ({ room }) => {
                 gameNamespace.in(room).emit(Events.PAUSE_TIMER);
             });
+
+            socket.on(Events.PANIC_MODE, (data) => {
+                gameNamespace.in(data.room).emit(Events.PANIC_MODE, data);
+            });
+
+            socket.on(Events.PANIC_MODE_OFF, ({ room }) => {
+                gameNamespace.to(room).emit(Events.PANIC_MODE_OFF);
+            });
+
             socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
                 socket.emit(Events.BONUS);
                 socket.to(room).emit(Events.BONUS_GIVEN);

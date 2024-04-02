@@ -43,6 +43,8 @@ export enum Events {
     START_TIMER = 'startTimer',
     STOP_TIMER = 'stopTimer',
     PAUSE_TIMER = 'pauseTimer',
+    PANIC_MODE = 'panicMode',
+    PANIC_MODE_OFF = 'panicModeOff',
     SHOW_RESULTS = 'showResults',
     UPDATE_CHART = 'updateChart',
     UPDATE_PLAYER = 'updateScore',
