@@ -99,6 +99,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
             this.socketsService.sendChatMessage(message);
             this.socketsService.leaveRoom();
             this.socketsService.room = '';
+            this.playerService.playersInGame = [];
             this.router.navigate(['/']);
         } else {
             this.socketsService.endGame('À la prochaine partie!');

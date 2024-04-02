@@ -47,7 +47,15 @@ export class BarChartComponent implements OnInit {
             this.updateData();
         });
 
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QRL_STATS).subscribe(() => {
+            this.updateData();
+        });
+
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_CHART).subscribe(() => {
+            this.updateData();
+        });
+
+        this.socketService.listenForMessages(Namespaces.GAME, Events.QRL_GRADE).subscribe(() => {
             this.updateData();
         });
     }

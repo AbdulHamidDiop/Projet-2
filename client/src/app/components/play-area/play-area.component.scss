@@ -107,6 +107,24 @@ app-countdown-modal {
     animation: fadeOut 3s forwards;
 }
 
+.main {
+    padding-right: 10px;
+}
+
+.qrl-question {
+    width: 100%;
+    max-height: 300px;
+}
+
+.qrl-textarea {
+    width: 100%;
+}
+
+.chars-left {
+    color: #6c757d;
+}
+
+
 @keyframes fadeOut {
     from {
         opacity: 1;
