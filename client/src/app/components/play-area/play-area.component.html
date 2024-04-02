@@ -36,12 +36,6 @@
                 <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
-                <button mat-button (click)="send(true)" [disabled]="choiceDisabled" class="confirm-button">
-                    <h3 class="confirm-text">send</h3>
-                </button>
-                <button mat-button (click)="send(false)" [disabled]="choiceDisabled" class="confirm-button">
-                    <h3 class="abort-button">send</h3>
-                </button>
             </mat-card-actions>
         </mat-card>
     </section>

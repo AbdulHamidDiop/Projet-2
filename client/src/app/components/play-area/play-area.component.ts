@@ -13,7 +13,7 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
 import { Player, Question, Type } from '@common/game';
-import { QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
+import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -76,6 +76,64 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;
         }
+    }
+
+    get time(): number {
+        return this.timeService.time;
+    }
+
+    get point(): number {
+        return this.points;
+    }
+
+    get playerScore(): number {
+        return this.score;
+    }
+
+    get charsLeft(): number {
+        return MAX_QRL_LENGTH - this.qrlAnswer.length;
+    }
+
+    @HostListener('keydown', ['$event'])
+    detectButton(event: KeyboardEvent) {
+        this.buttonPressed = event.key;
+        if (this.buttonPressed === 'Enter' && this.question.type === Type.QCM && !this.choiceDisabled) {
+            this.confirmAnswers();
+        } else if (
+            this.buttonPressed >= '1' &&
+            this.buttonPressed <= '4' &&
+            this.question.type === Type.QCM &&
+            this.buttonPressed <= this.nbChoices.toString()
+        ) {
+            const index = parseInt(this.buttonPressed, 10);
+            this.handleQCMChoice(this.question.choices[index - 1].text);
+        }
+    }
+
+    async ngOnInit() {
+        this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        });
+
+        this.timeService.timerEnded.subscribe(async () => {
+            await this.confirmAnswers();
+        });
+        const gameID = this.route.snapshot.paramMap.get('id');
+        if (this.inTestMode && gameID) {
+            await this.gameManager.initialize(gameID);
+        } else {
+            await this.gameManager.initialize(this.socketService.room);
+        }
+        this.question = this.gameManager.firstQuestion();
+        if (this.question.type === Type.QRL) {
+            this.qrlStatsService.startTimer(this.question.id);
+        }
+        this.nbChoices = this.question.choices?.length ?? 0;
+        if (this.inTestMode) {
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        }
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers();
@@ -94,12 +152,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
-        });
-
-        this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
-            this.timeService.stopTimer();
-            this.timeService.startTimer(this.timer);
         });
 
         this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
@@ -137,59 +189,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.router.navigate(['/']);
             this.socketService.endGame();
         });
-    }
-
-    get time(): number {
-        return this.timeService.time;
-    }
-
-    get point(): number {
-        return this.points;
-    }
-
-    get playerScore(): number {
-        return this.score;
-    }
-
-    get charsLeft(): number {
-        return MAX_QRL_LENGTH - this.qrlAnswer.length;
-    }
-
-    @HostListener('keydown', ['$event'])
-    detectButton(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
-        if (this.buttonPressed === 'Enter' && this.question.type === Type.QCM && !this.choiceDisabled) {
-            this.confirmAnswers();
-        } else if (
-            this.buttonPressed >= '1' &&
-            this.buttonPressed <= '4' &&
-            this.question.type === Type.QCM &&
-            this.buttonPressed <= this.nbChoices.toString()
-        ) {
-            const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices[index - 1].text);
-        }
-    }
-
-    async ngOnInit() {
-        this.timeService.timerEnded.subscribe(async () => {
-            await this.confirmAnswers();
-        });
-        const gameID = this.route.snapshot.paramMap.get('id');
-        if (this.inTestMode && gameID) {
-            await this.gameManager.initialize(gameID);
-        } else {
-            await this.gameManager.initialize(this.socketService.room);
-        }
-        this.question = this.gameManager.firstQuestion();
-        if (this.question.type === Type.QRL) {
-            this.qrlStatsService.startTimer(this.question.id);
-        }
-        this.nbChoices = this.question.choices?.length ?? 0;
-        if (this.inTestMode) {
-            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
-            this.timeService.startTimer(this.timer);
-        }
 
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
@@ -199,15 +198,15 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qrlStatsService.stopTimer();
         this.gameManager.reset();
 
-        this.nextQuestionSubscription.unsubscribe();
-        this.endGameSubscription.unsubscribe();
-        this.bonusSubscription.unsubscribe();
-        this.bonusGivenSubscription.unsubscribe();
-        this.abortGameSubscription.unsubscribe();
-        this.startTimerSubscription.unsubscribe();
-        this.stopTimerSubscription.unsubscribe();
-        this.qrlGradeSubscription.unsubscribe();
-        this.sendQRLAnswerSubscription.unsubscribe();
+        this.nextQuestionSubscription?.unsubscribe();
+        this.endGameSubscription?.unsubscribe();
+        this.bonusSubscription?.unsubscribe();
+        this.bonusGivenSubscription?.unsubscribe();
+        this.abortGameSubscription?.unsubscribe();
+        this.startTimerSubscription?.unsubscribe();
+        this.stopTimerSubscription?.unsubscribe();
+        this.qrlGradeSubscription?.unsubscribe();
+        this.sendQRLAnswerSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
@@ -293,14 +292,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             duration: 5000,
             verticalPosition: 'top',
         });
-    }
-
-    send(bool: boolean) {
-        const qrlStat: QRLStats = {
-            questionId: this.question.id,
-            edited: bool,
-        };
-        this.socketService.sendMessage(Events.QRL_STATS, nsp.GAME_STATS, qrlStat);
     }
 
     async countPointsAndNextQuestion() {

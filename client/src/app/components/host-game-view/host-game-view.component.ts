@@ -68,11 +68,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.players = players;
         });
 
-        this.startTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
-            this.timeService.startTimer(this.timer);
-        });
-
         this.stopTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
             this.timeService.stopTimer();
         });
@@ -105,8 +100,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
-
         this.currentQuestion = this.gameManagerService.firstQuestion();
+
+        this.startTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        });
+
+        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
 
         this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
@@ -121,7 +122,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
 
         this.timerEndedSubscription = this.timeService.timerEnded.subscribe(() => {
-            this.notifyNextQuestion();
+            if (this.currentQuestion.type === Type.QCM) {
+                this.notifyNextQuestion();
+            } else {
+                this.gradeAnswers();
+            }
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
@@ -332,17 +337,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.gameManagerService.reset();
 
         if (!this.unitTesting) {
-            this.playerLeftSubscription.unsubscribe();
-            this.getPlayersSubscription.unsubscribe();
-            this.startTimerSubscription.unsubscribe();
-            this.stopTimerSubscription.unsubscribe();
-            this.nextQuestionSubscription.unsubscribe();
-            this.qcmStatsSubscription.unsubscribe();
-            this.qrlStatsSubscription.unsubscribe();
-            this.qrlAnswersSubscription.unsubscribe();
-            this.timerEndedSubscription.unsubscribe();
-            this.endGameSubscription.unsubscribe();
-            this.updatePlayerSubscription.unsubscribe();
+            this.playerLeftSubscription?.unsubscribe();
+            this.getPlayersSubscription?.unsubscribe();
+            this.startTimerSubscription?.unsubscribe();
+            this.stopTimerSubscription?.unsubscribe();
+            this.nextQuestionSubscription?.unsubscribe();
+            this.qcmStatsSubscription?.unsubscribe();
+            this.qrlStatsSubscription?.unsubscribe();
+            this.qrlAnswersSubscription?.unsubscribe();
+            this.timerEndedSubscription?.unsubscribe();
+            this.endGameSubscription?.unsubscribe();
+            this.updatePlayerSubscription?.unsubscribe();
         }
 
         window.removeEventListener('popstate', this.onLocationChange);
