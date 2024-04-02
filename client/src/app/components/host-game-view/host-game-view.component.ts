@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';

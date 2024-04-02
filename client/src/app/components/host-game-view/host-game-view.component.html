@@ -35,20 +35,18 @@
                         <button mat-button>
                             <h3 class=" panic-button">Mode Panique</h3>
                         </button>
-                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()"
-                            class="confirm-button">
-                            <button *ngIf="!onLastQuestion && currentQuestion.type === 'QCM'" mat-button
-                                (click)="notifyNextQuestion()" class="confirm-button" [disabled]="disableControls">
-                                <h3 class="next-button">prochaine question</h3>
-                            </button>
-                            <button *ngIf="currentQuestion.type === 'QRL'" mat-button (click)="gradeAnswers()"
-                                class="confirm-button" [disabled]="disableControls">
-                                <h3 class="next-button">procéder à la correction</h3>
-                            </button>
-                            <button *ngIf="onLastQuestion && currentQuestion.type === 'QCM'" mat-button
-                                (click)="notifyEndGame()" class="confirm-button">
-                                <h3 class="end-button">Terminer le jeu</h3>
-                            </button>
+                        <button *ngIf="!onLastQuestion && currentQuestion.type === 'QCM'" mat-button
+                            (click)="notifyNextQuestion()" class="confirm-button" [disabled]="disableControls">
+                            <h3 class="next-button">prochaine question</h3>
+                        </button>
+                        <button *ngIf="currentQuestion.type === 'QRL'" mat-button (click)="gradeAnswers()"
+                            class="confirm-button" [disabled]="disableControls">
+                            <h3 class="next-button">procéder à la correction</h3>
+                        </button>
+                        <button *ngIf="onLastQuestion && currentQuestion.type === 'QCM'" mat-button
+                            (click)="notifyEndGame()" class="confirm-button">
+                            <h3 class="end-button">Terminer le jeu</h3>
+                        </button>
                     </mat-card-actions>
                 </section>
             </div>
