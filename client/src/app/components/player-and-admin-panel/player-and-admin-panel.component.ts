@@ -57,7 +57,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     startGame() {
         if (this.players.length > 0) {
             this.socket.startGame();
-            if (this.roomLocked === true) {
+            if (this.roomLocked) {
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
                 this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
             } else {

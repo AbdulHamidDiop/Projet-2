@@ -51,6 +51,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private bonusGivenSubscription: Subscription;
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
+    private pauseTimerSubscription: Subscription;
 
     // eslint-disable-next-line max-params
     // On a besoin de tout ces injections pour l'instant. Nous n'avons pas encore trouvé de moyen pour découpler ce component.
@@ -93,6 +94,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
             this.timeService.stopTimer();
+        });
+
+        this.pauseTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.PAUSE_TIMER).subscribe(() => {
+            this.timeService.pauseTimer();
         });
 
         this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
@@ -168,6 +173,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.abortGameSubscription.unsubscribe();
         this.startTimerSubscription.unsubscribe();
         this.stopTimerSubscription.unsubscribe();
+        this.pauseTimerSubscription.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);

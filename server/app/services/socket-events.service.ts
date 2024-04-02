@@ -49,7 +49,7 @@ export class SocketEvents {
             this.socketIdRoom.set(socket.id, room);
             this.playerSocketId.set(socket.id, player);
             this.mapOfPlayersInRoom.set(room, []);
-            this.bannedNamesInRoom.set(room, ['organisateur']); // Le nom organisateur est banni dans toute les rooms.
+            this.bannedNamesInRoom.set(room, ['organisateur', 'Organisateur']); // Le nom organisateur est banni dans toute les rooms.
             this.chatHistories.set(room, []);
             this.roomGameId.set(room, id);
             socket.emit(Events.JOIN_ROOM, true);
@@ -154,12 +154,12 @@ export class SocketEvents {
                 const gameId = this.roomGameId.get(room);
                 if (
                     playerList.some((playerInRoom) => {
-                        return playerInRoom.name === name;
+                        return playerInRoom.name.toLowerCase() === name.toLowerCase();
                     })
                 ) {
                     socket.emit(Events.NAME_NOT_AVAILABLE);
                 } else if (this.bannedNamesInRoom.get(room).includes(name)) {
-                    socket.emit(Events.KICK_PLAYER, name);
+                    socket.emit(Events.BANNED_NAME, name);
                 } else if (this.lockedRooms.includes(room)) {
                     socket.emit(Events.LOCK_ROOM);
                     this.socketIdRoom.set(socket.id, LOBBY);

@@ -35,6 +35,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     getPlayersSubscription: Subscription;
     startTimerSubscription: Subscription;
     stopTimerSubscription: Subscription;
+    pauseTimerSubscription: Subscription;
     nextQuestionSubscription: Subscription;
     qcmStatsSubscription: Subscription;
     timerEndedSubscription: Subscription;
@@ -62,6 +63,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.stopTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
             this.timeService.stopTimer();
+        });
+
+        this.pauseTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PAUSE_TIMER).subscribe(() => {
+            this.timeService.pauseTimer();
         });
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
@@ -178,6 +183,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.choseNextQuestion();
     }
 
+    sendTimerControlMessage(): void {
+        this.socketService.sendMessage(Events.PAUSE_TIMER, Namespaces.GAME);
+        // this.timeService.pauseTimer();
+    }
+
     openCountDownModal(): void {
         this.showCountDown = true;
     }
@@ -229,6 +239,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.timerEndedSubscription.unsubscribe();
             this.endGameSubscription.unsubscribe();
             this.updatePlayerSubscription.unsubscribe();
+            this.pauseTimerSubscription.unsubscribe();
         }
 
         window.removeEventListener('popstate', this.onLocationChange);

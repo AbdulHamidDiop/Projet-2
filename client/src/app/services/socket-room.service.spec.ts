@@ -232,9 +232,15 @@ describe('SocketRoomService', () => {
         expect(socketMock.disconnect).toHaveBeenCalled();
     });
 
-    it('Should call socket.on on call to nameAvailable', () => {
-        service.nameAvailable().subscribe(() => {
+    it('Should call socket.on on call to onNameNotAvailable', () => {
+        service.onNameNotAvailable().subscribe(() => {
             expect(socketMock.on).toHaveBeenCalledWith(Events.NAME_NOT_AVAILABLE, jasmine.any(Function));
+        });
+    });
+
+    it('Should call socket.on on call to nameBanned', () => {
+        service.onNameBanned().subscribe(() => {
+            expect(socketMock.on).toHaveBeenCalledWith(Events.BANNED_NAME, jasmine.any(Function));
         });
     });
 
