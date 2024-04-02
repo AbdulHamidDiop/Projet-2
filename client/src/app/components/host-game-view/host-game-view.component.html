@@ -1,8 +1,11 @@
 <app-nav-bar></app-nav-bar>
 
 <main>
-    <mat-grid-list cols="4" rowHeight="30vh">
-        <mat-grid-tile [colspan]="3" [rowspan]="1">
+    <button mat-button>
+        <h3 class="panic-button" (click)="onLocationChange()">Quitter la partie</h3>
+    </button>
+    <mat-grid-list cols="4" rowHeight="50vh">
+        <mat-grid-tile #controlsTile *ngIf="!gradingAnswers" [colspan]="3" [rowspan]="1">
             <div id="grid-container">
                 <section id="question-container">
                     <mat-card *ngIf="currentQuestion">
@@ -26,36 +29,113 @@
                     </mat-card>
                     <mat-card-actions align="end">
                         <button mat-button>
-                            <h3 class="pause-button">Pause Compteur</h3>
+                            <h3 class="pause-button" mat-button (click)="sendTimerControlMessage()">Pause Compteur</h3>
                         </button>
                         <button mat-button>
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
-                        <button *ngIf="!onLastQuestion" mat-button (click)="notifyNextQuestion()" class="confirm-button">
-                            <h3 class="confirm-text">prochaine question</h3>
+                        <button
+                            *ngIf="!onLastQuestion && currentQuestion.type === 'QCM'"
+                            mat-button
+                            (click)="notifyNextQuestion()"
+                            class="confirm-button"
+                            [disabled]="disableControls"
+                        >
+                            <h3 class="next-button">prochaine question</h3>
                         </button>
-                        <button *ngIf="onLastQuestion" mat-button (click)="notifyEndGame()" class="confirm-button">
-                            <h3 class="confirm-text">Terminer le jeu</h3>
+                        <button
+                            *ngIf="currentQuestion.type === 'QRL'"
+                            mat-button
+                            (click)="gradeAnswers()"
+                            class="confirm-button"
+                            [disabled]="disableControls"
+                        >
+                            <h3 class="next-button">procéder à la correction</h3>
+                        </button>
+                        <button *ngIf="onLastQuestion && currentQuestion.type === 'QCM'" mat-button (click)="notifyEndGame()" class="confirm-button">
+                            <h3 class="end-button">Terminer le jeu</h3>
                         </button>
                     </mat-card-actions>
                 </section>
             </div>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="1" [rowspan]="3">
-            <app-sidebar> </app-sidebar>
-        </mat-grid-tile>
-
         <mat-grid-tile [colspan]="3" [rowspan]="1">
             <app-player-list *ngIf="displayPlayerList" [players]="players"></app-player-list>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="2" [rowspan]="1">
-            <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
-            </ng-container>
+        <mat-grid-tile #gradingTile *ngIf="gradingAnswers" [colspan]="3" [rowspan]="1">
+            <div>
+                <mat-card *ngIf="currentQuestion" class="grading-container">
+                    <mat-card-header>
+                        <mat-card-title>
+                            <h2>Correction des réponses</h2>
+                        </mat-card-title>
+                        <mat-card-subtitle>
+                            <h3>{{ this.currentQuestion.text }}</h3>
+                        </mat-card-subtitle>
+                    </mat-card-header>
+                    <mat-card-subtitle class="player-name">
+                        <h3>réponse de {{ currentQRLAnswer.author }}</h3>
+                    </mat-card-subtitle>
+                    <h3 class="player-answer">
+                        {{ currentQRLAnswer.answer }}
+                    </h3>
+                    <mat-card-actions class="grading-controls">
+                        <small>% des points accordé:</small>
+                        <button mat-icon-button class="grade1" (click)="sendQRLGrade(0)">
+                            <h3>0</h3>
+                        </button>
+                        <button mat-icon-button class="grade2" (click)="sendQRLGrade(0.5)">
+                            <h3>50</h3>
+                        </button>
+                        <button mat-icon-button class="grade3" (click)="sendQRLGrade(1)">
+                            <h3>100</h3>
+                        </button>
+                    </mat-card-actions>
+                </mat-card>
+            </div>
+        </mat-grid-tile>
+
+        <mat-grid-tile #sidebarTile [colspan]="1" [rowspan]="2">
+            <app-sidebar> </app-sidebar>
+        </mat-grid-tile>
+        <!-- Mis en commentaire parceque la liste des joueurs fait ça, 
+        <mat-grid-tile #playersTile [colspan]="1" [rowspan]="1">
+            <h2 class="title"><strong>Liste des joueurs</strong></h2>
+            <div>
+                <table class="players-table">
+                    <thead>
+                        <tr>
+                            <th>Nom du joueur</th>
+                            <th>Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let player of playerService.playersInGame">
+                            <td [ngClass]="{ leftGame: player.leftGame }">{{ player.name }}</td>
+                            <td>{{ player.score }} points</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </mat-grid-tile>
+        -->
+
+        <mat-grid-tile #statsTile [colspan]="2" [rowspan]="1">
+            <h2 class="title"><strong>Zone Statistiques </strong></h2>
+            <div>
+                <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
+                    <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                </ng-container>
+            </div>
         </mat-grid-tile>
     </mat-grid-list>
 </main>
 
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="5"></app-countdown-modal>
+<app-countdown-modal
+    [showModal]="showCountDown"
+    (modalClosed)="onCountDownModalClosed()"
+    [message]="'Prochaine question dans'"
+    [countdown]="3"
+></app-countdown-modal>

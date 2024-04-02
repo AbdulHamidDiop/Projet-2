@@ -87,7 +87,14 @@ describe('ResultsPageComponent', () => {
 
     beforeEach(async () => {
         mockGameService = jasmine.createSpyObj('GameService', ['getGameByID']);
-        mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'getChatMessages', 'sendMessage']);
+        mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', [
+            'listenForMessages',
+            'getChatMessages',
+            'sendMessage',
+            'endGame',
+            'sendChatMessage',
+            'leaveRoom',
+        ]);
         mockActivatedRoute = {
             paramMap: of({
                 get: (key: string) => 'test-game-id',
@@ -107,13 +114,17 @@ describe('ResultsPageComponent', () => {
 
     beforeEach(() => {
         mockSocketRoomService.listenForMessages.and.returnValues(of(PLAYER_DATA), of(GAME_RESULTS_DATA));
-
         mockSocketRoomService.getChatMessages.and.returnValue(of(CHAT_MESSAGE));
+        mockSocketRoomService.sendChatMessage.and.returnValue();
 
         mockGameService.getGameByID.and.returnValue(FAKE_GAME);
         fixture = TestBed.createComponent(ResultsPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+    });
+
+    afterEach(() => {
+        component.ngOnDestroy();
     });
 
     it('should create', () => {
@@ -136,9 +147,9 @@ describe('ResultsPageComponent', () => {
     });
 
     it('should navigate to initial view when returnToInitialView is called', () => {
-        const routerSpy = spyOn(component.router, 'navigate');
+        const leaveSpy = spyOn(component, 'leaveWithoutKickingPlayers');
         component.returnToInitialView();
-        expect(routerSpy).toHaveBeenCalledWith(['/home']);
+        expect(leaveSpy).toHaveBeenCalled();
     });
 
     it('should sort players by score in descending order and by name in ascending order if scores are equal', () => {
@@ -149,5 +160,14 @@ describe('ResultsPageComponent', () => {
             { name: 'Alice', isHost: false, id: '1', score: 10, bonusCount: 0 },
             { name: 'Bob', isHost: false, id: '2', score: 10, bonusCount: 0 },
         ]);
+    });
+
+    it('should leave without kicking players if player is not the host', () => {
+        component.leaveWithoutKickingPlayers();
+        expect(mockSocketRoomService.endGame).toHaveBeenCalledWith('À la prochaine partie!');
+
+        component.playerService.player.name = 'Organisateur';
+        component.leaveWithoutKickingPlayers();
+        expect(mockSocketRoomService.sendMessage).toHaveBeenCalledWith(Events.CLEANUP_GAME, Namespaces.GAME);
     });
 });

@@ -1,4 +1,4 @@
-<div id="grid-container">
+<div #main id="grid-container" class="main">
     <section id="question-container">
         <mat-card *ngIf="shouldRender(this.question.text)">
             <mat-card-header>
@@ -34,6 +34,7 @@
                     <h3 class="abort-button">Abandonner</h3>
                 </button>
                 <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button">
+                    <!--    <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button"> -->
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>
@@ -41,7 +42,7 @@
     </section>
 
     <br />
-    <mat-selection-list #choices [disabled]="choiceDisabled">
+    <mat-selection-list *ngIf="question.type === 'QCM'" #choices [disabled]="choiceDisabled">
         <div *ngFor="let choice of question.choices; let index = index; trackBy: trackByFunction">
             <mat-list-item
                 (click)="!choiceDisabled && handleQCMChoice(choice.text)"
@@ -57,6 +58,18 @@
             </mat-list-item>
         </div>
     </mat-selection-list>
+    <mat-form-field *ngIf="question.type === 'QRL'" class="qrl-question">
+        <div class="chars-left">{{ charsLeft }} caractères restants</div>
+        <textarea
+            matInput
+            [disabled]="choiceDisabled"
+            [(ngModel)]="qrlAnswer"
+            [maxlength]="200"
+            placeholder="Votre réponse"
+            class="qrl-textarea"
+            (input)="onQRLAnswerChange()"
+        ></textarea>
+    </mat-form-field>
 </div>
 <app-countdown-modal
     [showModal]="showCountDown"

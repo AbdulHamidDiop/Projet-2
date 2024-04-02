@@ -150,8 +150,28 @@ export class Server {
                 gameNamespace.in(room).emit(Events.SHOW_RESULTS);
             });
 
+            socket.on(Events.PLAYER_LEFT, (data) => {
+                gameNamespace.in(data.room).emit(Events.PLAYER_LEFT, data);
+            });
+
+            socket.on(Events.PLAYER_JOINED, (data) => {
+                gameNamespace.in(data.room).emit(Events.PLAYER_JOINED, data);
+            });
+
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
-                gameNamespace.in(room).emit(Events.NEXT_QUESTION);
+                gameNamespace.to(room).emit(Events.NEXT_QUESTION);
+            });
+
+            socket.on(Events.QRL_ANSWER, (data) => {
+                socket.in(data.room).emit(Events.QRL_ANSWER, data);
+            });
+
+            socket.on(Events.SEND_QRL_ANSWER, ({ room }) => {
+                gameNamespace.to(room).emit(Events.SEND_QRL_ANSWER);
+            });
+
+            socket.on(Events.QRL_GRADE, (data) => {
+                socket.in(data.room).emit(Events.QRL_GRADE, data);
             });
 
             socket.on(Events.END_GAME, ({ room }: { room: string }) => {
@@ -178,6 +198,9 @@ export class Server {
             });
             socket.on(Events.STOP_TIMER, ({ room }) => {
                 gameNamespace.in(room).emit(Events.STOP_TIMER);
+            });
+            socket.on(Events.PAUSE_TIMER, ({ room }) => {
+                gameNamespace.in(room).emit(Events.PAUSE_TIMER);
             });
             socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
                 socket.emit(Events.BONUS);

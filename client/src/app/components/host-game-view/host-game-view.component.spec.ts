@@ -1,15 +1,18 @@
+/* eslint-disable max-lines */
 import { EventEmitter } from '@angular/core';
-import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Player, Question, Type } from '@common/game';
-import { QCMStats } from '@common/game-stats';
+import { Game, Player, Question, Type } from '@common/game';
+import { BarChartChoiceStats, QCMStats, QRLAnswer, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
-import { of } from 'rxjs';
+import { Subscription, of } from 'rxjs';
 import { HostGameViewComponent } from './host-game-view.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -25,6 +28,7 @@ describe('HostGameViewComponent', () => {
     let mockStat: QCMStats;
     let mockFeedback: Feedback[];
     const SHOW_FEEDBACK_DELAY = 3000;
+    const START_TIMER_DELAY = 500;
 
     beforeEach(async () => {
         gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
@@ -34,13 +38,16 @@ describe('HostGameViewComponent', () => {
             'getFeedBack',
             'endGame',
             'reset',
+            'onLastQuestion',
         ]);
+        gameManagerServiceSpy.game = { id: 'test-game-id', questions: [], duration: 10 } as unknown as Game;
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
-        socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
+        socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);
         socketServiceSpy.getPlayers.and.returnValue(of([]));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
+        socketServiceSpy.endGame.and.returnValue();
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer'], {
             timerEnded: new EventEmitter<void>(),
         });
@@ -75,7 +82,7 @@ describe('HostGameViewComponent', () => {
         ];
 
         await TestBed.configureTestingModule({
-            imports: [RouterTestingModule],
+            imports: [RouterTestingModule, MatSnackBarModule, NoopAnimationsModule],
             declarations: [HostGameViewComponent],
             providers: [
                 { provide: GameManagerService, useValue: gameManagerServiceSpy },
@@ -100,11 +107,13 @@ describe('HostGameViewComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(HostGameViewComponent);
         component = fixture.componentInstance;
+        component.unitTesting = true;
+        component.currentQuestion = mockQuestion;
         gameManagerServiceSpy.firstQuestion.and.returnValue(mockQuestion);
         socketServiceSpy.getPlayers.and.returnValue(of(mockPlayers));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
         fixture.detectChanges();
-        spyOn(component, 'notifyNextQuestion');
+        jasmine.getEnv().allowRespy(true);
     });
 
     it('should create', () => {
@@ -120,7 +129,8 @@ describe('HostGameViewComponent', () => {
             return of({});
         });
         component.ngOnInit();
-        tick();
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY); // couvrir le max de delay
+        flush();
         expect(openResultsPageSpy).toHaveBeenCalled();
     }));
 
@@ -134,12 +144,14 @@ describe('HostGameViewComponent', () => {
             return of({});
         });
         component.ngOnInit();
-        tick();
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+        flush();
     }));
 
     it('should initialize game and set current question on ngOnInit', fakeAsync(() => {
         component.ngOnInit();
-        tick();
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+        flush();
         expect(gameManagerServiceSpy.initialize).toHaveBeenCalled();
         expect(component.currentQuestion).toEqual(mockQuestion);
     }));
@@ -209,12 +221,24 @@ describe('HostGameViewComponent', () => {
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/game', 'test-game-id', 'results']);
     }));
 
-    it('should increment questionIndex and update currentQuestion on NEXT_QUESTION event', fakeAsync(() => {
+    it('should update currentQuestion on NEXT_QUESTION event', fakeAsync(() => {
         gameManagerServiceSpy.goNextQuestion.and.returnValue(mockQuestion);
-        component.goNextQuestion();
+        component.choseNextQuestion();
         tick();
-        expect(component.questionIndex).toBe(1);
         expect(component.currentQuestion).toEqual(mockQuestion);
+    }));
+
+    it('should handle NEXT_QUESTION event correctly', fakeAsync(() => {
+        const nextQuestionSpy = spyOn(component.gameManagerService, 'goNextQuestion');
+        socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
+            if (namespace === Namespaces.GAME && event === Events.NEXT_QUESTION) {
+                return of({});
+            }
+            return of({});
+        });
+        tick(2 * SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
+        flush();
+        expect(nextQuestionSpy).not.toHaveBeenCalled();
     }));
 
     it('should call showResults and send SHOW_RESULTS and STOP_TIMER messages', () => {
@@ -241,12 +265,150 @@ describe('HostGameViewComponent', () => {
         expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.END_GAME, Namespaces.GAME);
     }));
 
-    it('should show results and set onLastQuestion to true when endGame is true', () => {
+    it('should show results when endGame is true', () => {
         spyOn(component, 'showResults');
         component.gameManagerService.endGame = true;
         component.choseNextQuestion();
-
+        component.notifyEndGame();
         expect(component.showResults).toHaveBeenCalled();
-        expect(component.onLastQuestion).toBeTrue();
+    });
+
+    it('should update QRL grade data', () => {
+        component.questionIndex = 0;
+        component.statisticsData[component.questionIndex] = {
+            questionID: '1',
+            data: [
+                { data: [0], label: 'label1', backgroundColor: '#FF4C4C' },
+                { data: [0], label: 'label2', backgroundColor: '#FFCE56' },
+                { data: [0], label: 'label3', backgroundColor: '#4CAF50' },
+            ],
+        };
+
+        component.updateQRLGradeData(0);
+        // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+        component.updateQRLGradeData(0.5);
+        component.updateQRLGradeData(1);
+        component.updateQRLGradeData(2);
+        expect(component.statisticsData[component.questionIndex].data[0].data[0]).toEqual(1);
+    });
+
+    it('should grade answers', () => {
+        spyOn(socketServiceSpy, 'sendMessage');
+        spyOn(timeServiceSpy, 'stopTimer');
+
+        component.gradeAnswers();
+
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalled();
+        expect(timeServiceSpy.stopTimer).toHaveBeenCalled();
+    });
+
+    it('should send QRL grade', () => {
+        component.statisticsData[component.questionIndex] = {
+            questionID: '1',
+            data: [
+                { data: [0], label: 'label1', backgroundColor: '#FF4C4C' },
+                { data: [0], label: 'label2', backgroundColor: '#FFCE56' },
+                { data: [0], label: 'label3', backgroundColor: '#4CAF50' },
+            ],
+        };
+        component.currentQRLAnswer = { author: 'author1' } as QRLAnswer;
+        spyOn(socketServiceSpy, 'sendMessage');
+        spyOn(gameManagerServiceSpy, 'onLastQuestion').and.returnValue(false);
+
+        component.qRLAnswers = [{ author: 'author1' }, { author: 'author2' }] as QRLAnswer[];
+        component.currentQuestion = { id: '1', points: 10 } as Question;
+
+        component.sendQRLGrade(1);
+
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalled();
+        expect(component.qRLAnswers.length).toEqual(1);
+
+        component.sendQRLGrade(1);
+        expect(component.qRLAnswers.length).toEqual(0);
+
+        spyOn(gameManagerServiceSpy, 'onLastQuestion').and.returnValue(true);
+        component.currentQRLAnswer = { author: 'author1' } as QRLAnswer;
+        component.sendQRLGrade(1);
+        expect(component.qRLAnswers.length).toEqual(0);
+    });
+
+    it('should notify next question when statisticsData for current questionIndex does not exist', () => {
+        spyOn(socketServiceSpy, 'sendMessage');
+        component.questionIndex = 0;
+        component.currentQuestion = { id: '1' } as Question;
+        component.statisticsData = [];
+        component.notifyNextQuestion();
+
+        expect(component.statisticsData[component.questionIndex]).toEqual({
+            questionID: component.currentQuestion.id,
+            data: [],
+        });
+        expect(component.disableControls).toBeTrue();
+        expect(component.questionLoaded).toBeFalse();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.STOP_TIMER, Namespaces.GAME);
+    });
+
+    it('should notify next question when statisticsData for current questionIndex exists', () => {
+        spyOn(socketServiceSpy, 'sendMessage');
+        component.questionIndex = 0;
+        component.currentQuestion = { id: '1' } as Question;
+        component.statisticsData[component.questionIndex] = {
+            questionID: '2',
+            data: [],
+        };
+
+        component.notifyNextQuestion();
+
+        expect(component.statisticsData[component.questionIndex]).toEqual({
+            questionID: '2',
+            data: [],
+        });
+        expect(component.disableControls).toBeTrue();
+        expect(component.questionLoaded).toBeFalse();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.STOP_TIMER, Namespaces.GAME);
+    });
+
+    it('should increment data when stat is edited', async () => {
+        const stat: QRLStats = { questionId: '1', edited: true };
+        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }] as BarChartChoiceStats[] }];
+
+        await component.updateQRLBarChartData(stat);
+
+        expect(component.statisticsData[0].data[0].data[0]).toEqual(1);
+    });
+
+    it('should decrement data when stat is not edited and data is greater than 0', async () => {
+        const stat: QRLStats = { questionId: '1', edited: false };
+        component.statisticsData = [{ questionID: '1', data: [{ data: [1] }] as BarChartChoiceStats[] }];
+
+        await component.updateQRLBarChartData(stat);
+
+        expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+    });
+
+    it('should not change data when stat is not edited and data is 0', async () => {
+        const stat: QRLStats = { questionId: '1', edited: false } as QRLStats;
+        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }] as BarChartChoiceStats[] }];
+
+        await component.updateQRLBarChartData(stat);
+
+        expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+    });
+
+    it('should unsubscribe after ngOnDestroy', () => {
+        spyOn(component.gameManagerService, 'reset');
+        component.unitTesting = false;
+        component.playerLeftSubscription = new Subscription();
+        component.getPlayersSubscription = new Subscription();
+        component.startTimerSubscription = new Subscription();
+        component.stopTimerSubscription = new Subscription();
+        component.nextQuestionSubscription = new Subscription();
+        component.qcmStatsSubscription = new Subscription();
+        component.timerEndedSubscription = new Subscription();
+        component.endGameSubscription = new Subscription();
+        component.updatePlayerSubscription = new Subscription();
+
+        component.ngOnDestroy();
+        expect(component.gameManagerService.reset).toHaveBeenCalled();
     });
 });

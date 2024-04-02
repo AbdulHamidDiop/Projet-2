@@ -15,9 +15,10 @@ describe('SelectUsernameComponent', () => {
     let snackBarMock: SpyObj<MatSnackBar>;
 
     beforeEach(async () => {
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['sendPlayerName', 'nameAvailable']);
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['sendPlayerName', 'onNameNotAvailable', 'onNameBanned']);
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
-        socketMock.nameAvailable.and.returnValue(of(undefined));
+        socketMock.onNameNotAvailable.and.returnValue(of(undefined));
+        socketMock.onNameBanned.and.returnValue(of(undefined));
 
         snackBarMock.open.and.returnValue({} as any);
         await TestBed.configureTestingModule({
@@ -56,10 +57,20 @@ describe('SelectUsernameComponent', () => {
     });
 
     it('Should call snackBar.open if name is already in use', () => {
-        socketMock.nameAvailable.and.returnValue(of(undefined));
+        socketMock.onNameNotAvailable.and.returnValue(of(undefined));
         component.sendUsername({ value: 'UsedName' } as HTMLInputElement);
         fixture.detectChanges();
         expect(snackBarMock.open).toHaveBeenCalledWith('Le nom choisi est déjà utilisé', 'Fermer', {
+            verticalPosition: 'top',
+            duration: 5000,
+        });
+    });
+
+    it('Should call snackBar.open if name is banned', () => {
+        socketMock.onNameBanned.and.returnValue(of(undefined));
+        component.sendUsername({ value: 'Organisateur' } as HTMLInputElement);
+        fixture.detectChanges();
+        expect(snackBarMock.open).toHaveBeenCalledWith('Le nom choisi est banni et ne peut-être utilisé', 'Fermer', {
             verticalPosition: 'top',
             duration: 5000,
         });

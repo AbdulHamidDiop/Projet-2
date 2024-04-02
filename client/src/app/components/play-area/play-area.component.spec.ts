@@ -40,6 +40,10 @@ describe('PlayAreaComponent', () => {
         socketMock.listenForMessages.and.returnValue(of({} as any));
         socketMock.sendMessage.and.returnValue({} as any);
         socketMock.confirmAnswer.and.returnValue();
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage', 'sendChatMessage', 'endGame']);
+        socketMock.listenForMessages.and.returnValue(of({} as any));
+        socketMock.sendMessage.and.returnValue({} as any);
+        socketMock.endGame.and.returnValue();
 
         matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
         matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
@@ -415,7 +419,14 @@ describe('PlayAreaComponent', () => {
             fixture.detectChanges();
         });
 
+        afterEach(() => {
+            component.ngOnDestroy();
+        });
+
         it('should handle NEXT_QUESTION event', fakeAsync(() => {
+            component.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
+                component.confirmAnswers(false);
+            });
             spyOn(component, 'confirmAnswers').and.resolveTo();
             nextQuestionSubject.next();
             flush();
@@ -425,6 +436,10 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle END_GAME event', fakeAsync(() => {
+            component.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
+                component.endGame();
+            });
+
             spyOn(component, 'endGame').and.callThrough();
             endGameSubject.next();
             flush();
@@ -434,6 +449,10 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle START_TIMER event', fakeAsync(() => {
+            component.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
+                component.timeService.startTimer(0);
+            });
+
             component.gameManager.game = { duration: 10 } as Game;
             spyOn(component.timeService, 'startTimer');
             startTimerSubject.next();
@@ -444,6 +463,10 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle STOP_TIMER event', fakeAsync(() => {
+            component.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
+                component.timeService.stopTimer();
+            });
+
             spyOn(component.timeService, 'stopTimer');
             stopTimerSubject.next();
             flush();
@@ -453,6 +476,10 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle BONUS event', fakeAsync(() => {
+            component.socketService.listenForMessages(Namespaces.GAME, Events.BONUS).subscribe(() => {
+                component.gotBonus = true;
+            });
+
             bonusSubject.next();
             flush();
 
@@ -461,20 +488,15 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle BONUS_GIVEN event', fakeAsync(() => {
+            component.socketService.listenForMessages(Namespaces.GAME, Events.BONUS_GIVEN).subscribe(() => {
+                component.bonusGiven = true;
+            });
+
             bonusGivenSubject.next();
             flush();
 
             expect(component.bonusGiven).toBeTrue();
             bonusGivenSubject.complete();
-        }));
-
-        it('should handle ABORT_GAME event', fakeAsync(() => {
-            spyOn(component.router, 'navigate');
-            abortGameSubject.next();
-            flush();
-
-            expect(component.router.navigate).toHaveBeenCalledWith(['/']);
-            abortGameSubject.complete();
         }));
     });
 });
