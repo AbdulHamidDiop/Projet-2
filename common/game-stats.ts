@@ -21,3 +21,14 @@ export interface QRLStats {
     questionId: string;
     edited: boolean;
 }
+
+export interface QRLAnswer {
+    questionId: string;
+    author: string;
+    answer: string;
+}
+
+export interface QRLGrade {
+    author: string;
+    grade: number;
+}

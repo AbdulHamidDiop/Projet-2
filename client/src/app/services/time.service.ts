@@ -5,6 +5,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 })
 export class TimeService {
     timerEnded: EventEmitter<void> = new EventEmitter<void>();
+    private readonly tick = 1000;
     private interval: number | undefined;
     private readonly defaultTick = 1000;
     private readonly panicTick = 250;

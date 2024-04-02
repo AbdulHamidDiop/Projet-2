@@ -13,6 +13,8 @@ describe('BarChartComponent', () => {
         mockSocketRoomService.listenForMessages.and.returnValues(
             of({}), // Mock data for QCM_STATS event
             of({}), // Mock data for UPDATE_CHART event
+            of({}), // Mock data for QRL_STATS event
+            of({}), // Mock data for QRL_GRADE event
         );
         await TestBed.configureTestingModule({
             declarations: [BarChartComponent],
@@ -21,7 +23,7 @@ describe('BarChartComponent', () => {
     });
 
     beforeEach(() => {
-        mockSocketRoomService.listenForMessages.and.returnValues(of({}), of({}));
+        mockSocketRoomService.listenForMessages.and.returnValues(of({}), of({}), of({}), of({}));
         fixture = TestBed.createComponent(BarChartComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
