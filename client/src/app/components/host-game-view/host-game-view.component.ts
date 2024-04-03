@@ -152,6 +152,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
+            const playerCopy = this.players.filter((p) => p.name !== username);
             // this.players = this.players.filter((p) => p.name !== username);
             // Quand le joueur abandonne la partie son nom est supposé être raturé mais toujours affiché.
 
@@ -160,7 +161,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 player.leftGame = true;
             }
 
-            if (this.players.length === 0) {
+            if (playerCopy.length === 0) {
                 this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                     verticalPosition: 'top',
                     duration: 3000,
@@ -341,7 +342,12 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
-            this.router.navigate(['/game', gameId, 'results']);
+            const RESPONSE_FROM_SERVER_DELAY = 500;
+            // Le score n'est pas mis à jour dans la vue des résultats parceque la réponse du serveur se fait avant que le score soit mis à jour.
+            // C'est peut-etre possible de regler ça en mettant les appels socket dans playerservice.
+            setTimeout(() => {
+                this.router.navigate(['/game', gameId, 'results']);
+            }, RESPONSE_FROM_SERVER_DELAY);
         }
         this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
         this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
