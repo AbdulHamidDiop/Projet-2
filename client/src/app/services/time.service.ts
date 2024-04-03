@@ -19,6 +19,9 @@ export class TimeService implements OnDestroy {
 
     private counter: number;
 
+    private startTimerSubscription: Subscription;
+    private stopTimerSubscription: Subscription;
+    private pauseTimerSubscription: Subscription;
     private panicModeSubscription: Subscription;
     private panicModeOffSubscription: Subscription;
 
@@ -31,6 +34,19 @@ export class TimeService implements OnDestroy {
         this.panicModeOffSubscription = socketService.listenForMessages(Namespaces.GAME, Events.PANIC_MODE_OFF).subscribe(() => {
             this.deactivatePanicMode();
         });
+
+        this.startTimerSubscription = socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe((data: unknown) => {
+            const payload = data as { time: number };
+            this.startTimer(payload.time);
+        });
+
+        this.stopTimerSubscription = socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.stopTimer();
+        });
+
+        this.pauseTimerSubscription = socketService.listenForMessages(Namespaces.GAME, Events.PAUSE_TIMER).subscribe(() => {
+            this.pauseTimer();
+        });
     }
 
     get time() {
@@ -41,6 +57,11 @@ export class TimeService implements OnDestroy {
     }
     set time(newTime: number) {
         this.counter = newTime;
+    }
+
+    init() {
+        this.stopTimer();
+        this.deactivatePanicMode();
     }
 
     startTimer(startValue: number) {
@@ -77,7 +98,9 @@ export class TimeService implements OnDestroy {
         } else if (type === Type.QRL && this.counter > PANIC_TRESHOLD * 2) {
             this.panicMode = true;
         }
-        this.startTimer(this.counter);
+        if (!this.pauseFlag) {
+            this.startTimer(this.counter);
+        }
     }
 
     deactivatePanicMode() {
@@ -85,9 +108,13 @@ export class TimeService implements OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.panicModeSubscription.unsubscribe();
-        this.panicModeOffSubscription.unsubscribe();
+        this.panicModeSubscription?.unsubscribe();
+        this.panicModeOffSubscription?.unsubscribe();
+        this.startTimerSubscription?.unsubscribe();
+        this.stopTimerSubscription?.unsubscribe();
+        this.pauseTimerSubscription?.unsubscribe();
         this.stopTimer();
+        this.deactivatePanicMode();
     }
 
     private getCurrentTick(): number {

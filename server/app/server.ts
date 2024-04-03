@@ -160,9 +160,10 @@ export class Server {
                 gameNamespace.in(room).emit(Events.ABORT_GAME);
             });
 
-            socket.on(Events.START_TIMER, ({ room }) => {
-                gameNamespace.in(room).emit(Events.START_TIMER);
+            socket.on(Events.START_TIMER, (data) => {
+                gameNamespace.in(data.room).emit(Events.START_TIMER, data);
             });
+
             socket.on(Events.STOP_TIMER, ({ room }) => {
                 gameNamespace.in(room).emit(Events.STOP_TIMER);
             });

@@ -45,9 +45,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
     playerLeftSubscription: Subscription;
     getPlayersSubscription: Subscription;
-    startTimerSubscription: Subscription;
-    stopTimerSubscription: Subscription;
-    pauseTimerSubscription: Subscription;
     nextQuestionSubscription: Subscription;
     qcmStatsSubscription: Subscription;
     qrlStatsSubscription: Subscription;
@@ -71,14 +68,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.players = players;
         });
 
-        this.stopTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
-            this.timeService.stopTimer();
-        });
-
-        this.pauseTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PAUSE_TIMER).subscribe(() => {
-            this.timeService.pauseTimer();
-        });
-
         this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
             if (!this.questionLoaded) {
                 setTimeout(() => {
@@ -94,7 +83,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                     if (this.gameManagerService.onLastQuestion()) {
                         this.onLastQuestion = true;
                     }
-                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+                    this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
+                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
                 }, 2 * SHOW_FEEDBACK_DELAY);
                 this.questionLoaded = true;
             }
@@ -108,11 +98,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
         this.currentQuestion = this.gameManagerService.firstQuestion();
+        this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
 
-        this.startTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
-            this.timeService.startTimer(this.timer);
-        });
+        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
 
         this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
@@ -366,8 +354,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.playerLeftSubscription?.unsubscribe();
         this.getPlayersSubscription?.unsubscribe();
-        this.startTimerSubscription?.unsubscribe();
-        this.stopTimerSubscription?.unsubscribe();
         this.nextQuestionSubscription?.unsubscribe();
         this.qcmStatsSubscription?.unsubscribe();
         this.qrlStatsSubscription?.unsubscribe();
@@ -375,7 +361,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.timerEndedSubscription?.unsubscribe();
         this.endGameSubscription?.unsubscribe();
         this.updatePlayerSubscription?.unsubscribe();
-        this.pauseTimerSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);

@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { TimeService } from '@app/services/time.service';
 import { Game, Player } from '@common/game';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -39,6 +40,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     // eslint-disable-next-line max-params
     constructor(
         private gameService: GameService,
+        private timeService: TimeService,
         private socket: SocketRoomService,
         readonly router: Router,
         private snackBar: MatSnackBar,
@@ -106,6 +108,8 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             const username = (data as { user: string }).user;
             this.players = this.players.filter((p) => p.name !== username);
         });
+
+        this.timeService.init(); // instanciating the service now to set up subscriptions early
     }
 
     ngOnInit(): void {
@@ -138,7 +142,6 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             setTimeout(() => {
                 if (this.player.isHost) {
                     setTimeout(() => {
-                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
                         this.socket.requestPlayers();
                     }, START_TIMER_DELAY);
                     this.router.navigate(['/hostView/' + this.game.id]);
