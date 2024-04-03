@@ -98,8 +98,6 @@ export class Server {
             });
             socket.on(Events.QRL_STATS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.QRL_STATS, data);
-                const YELLOW = 0xffff00;
-                this.setPlayerColor(data.room, data.player, YELLOW);
             });
 
             socket.on(Events.GAME_RESULTS, (data) => {
