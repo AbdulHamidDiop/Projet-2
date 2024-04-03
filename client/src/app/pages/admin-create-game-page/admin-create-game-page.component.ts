@@ -27,7 +27,8 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     questions: Question[] = [];
     isAuthentificated: boolean;
 
-    // On a besoin de tout ces paramètres qui sont notamment des élèments d'Angular.
+    // Pas utilisé dans le sprint 2.
+    // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         private formBuilder: FormBuilder,

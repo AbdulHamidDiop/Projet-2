@@ -42,13 +42,12 @@ describe('HostGameViewComponent', () => {
         ]);
         gameManagerServiceSpy.game = { id: 'test-game-id', questions: [], duration: 10 } as unknown as Game;
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);
         socketServiceSpy.getPlayers.and.returnValue(of([]));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
         socketServiceSpy.endGame.and.returnValue();
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer'], {
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded', 'deactivatePanicMode'], {
             timerEnded: new EventEmitter<void>(),
         });
 
@@ -89,7 +88,6 @@ describe('HostGameViewComponent', () => {
                 { provide: SocketRoomService, useValue: socketServiceSpy },
                 { provide: TimeService, useValue: timeServiceSpy },
                 { provide: Router, useValue: routerSpy },
-                { provide: TimeService, useValue: timeServiceSpy },
                 {
                     provide: ActivatedRoute,
                     useValue: {
@@ -161,6 +159,13 @@ describe('HostGameViewComponent', () => {
         expect(component.time).toBe(0);
     });
 
+    it('should update player info on receiving QCM_STATS event', () => {
+        component.players = [{ name: 'A', score: 0 } as Player];
+        mockStat.player = { name: 'A', score: 2 } as Player;
+        component.updatePlayerFromServer(mockStat);
+        expect(component.players[0].score).toEqual(2);
+    });
+
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {
         gameManagerServiceSpy.getFeedBack.and.returnValue(Promise.resolve(mockFeedback));
         component.currentQuestion = mockQuestion;
@@ -210,7 +215,8 @@ describe('HostGameViewComponent', () => {
 
     it('should navigate to results page on receiving END_GAME event', fakeAsync(() => {
         component.openResultsPage();
-        tick();
+        const SERVER_RESPONSE_DELAY = 500;
+        tick(SERVER_RESPONSE_DELAY);
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/game', 'test-game-id', 'results']);
     }));
 
@@ -372,7 +378,7 @@ describe('HostGameViewComponent', () => {
 
     it('should decrement data when stat is not edited and data is greater than 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false };
-        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
+        component.statisticsData = [{ questionID: '1', data: [{ data: [1] }, { data: [0] }] as BarChartChoiceStats[] }];
 
         await component.updateQRLBarChartData(stat);
 
@@ -393,6 +399,8 @@ describe('HostGameViewComponent', () => {
         component.unitTesting = false;
         component.playerLeftSubscription = new Subscription();
         component.getPlayersSubscription = new Subscription();
+        //        component.startTimerSubscription = new Subscription();
+        //        component.stopTimerSubscription = new Subscription();
         component.nextQuestionSubscription = new Subscription();
         component.qcmStatsSubscription = new Subscription();
         component.timerEndedSubscription = new Subscription();

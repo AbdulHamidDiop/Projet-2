@@ -60,6 +60,10 @@
             </div>
         </mat-grid-tile>
 
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
+            <app-player-list *ngIf="displayPlayerList" [players]="players"></app-player-list>
+        </mat-grid-tile>
+
         <mat-grid-tile #gradingTile *ngIf="gradingAnswers" [colspan]="3" [rowspan]="1">
             <div>
                 <mat-card *ngIf="currentQuestion" class="grading-container">
@@ -96,7 +100,7 @@
         <mat-grid-tile #sidebarTile [colspan]="1" [rowspan]="2">
             <app-sidebar> </app-sidebar>
         </mat-grid-tile>
-
+        <!-- Mis en commentaire parceque la liste des joueurs fait ça, 
         <mat-grid-tile #playersTile [colspan]="1" [rowspan]="1">
             <h2 class="title"><strong>Liste des joueurs</strong></h2>
             <div>
@@ -116,6 +120,7 @@
                 </table>
             </div>
         </mat-grid-tile>
+        -->
 
         <mat-grid-tile #statsTile [colspan]="2" [rowspan]="1">
             <h2 class="title"><strong>Zone Statistiques </strong></h2>

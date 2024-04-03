@@ -1,9 +1,12 @@
+import { Player } from './game';
+
 export interface QCMStats {
     questionId: string;
     choiceAmount: number;
     correctIndex: number;
     choiceIndex: number;
     selected: boolean;
+    player?: Player; // Pour changer la couleur du joueur quand il envoie une réponse.
 }
 
 export interface BarChartChoiceStats {

@@ -54,9 +54,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private bonusGivenSubscription: Subscription;
     private sendQRLAnswerSubscription: Subscription;
     private qrlGradeSubscription: Subscription;
+    private startTimerSubscription: Subscription;
+    private stopTimerSubscription: Subscription;
+    //    private getProfileSubscription: Subscription;
+    private pauseTimerSubscription: Subscription;
 
+    // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
-    // On a besoin de tout ces injections pour l'instant. Nous n'avons pas encore trouvé de moyen pour découpler ce component.
     constructor(
         readonly timeService: TimeService,
         readonly gameManager: GameManagerService,
@@ -70,6 +74,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         private snackBar: MatSnackBar,
     ) {
         this.player = this.playerService.player;
+        this.playerService.player.score = 0;
         this.answer = [];
         if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;
@@ -96,7 +101,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     detectButton(event: KeyboardEvent) {
         this.buttonPressed = event.key;
         if (this.buttonPressed === 'Enter' && this.question.type === Type.QCM && !this.choiceDisabled) {
-            this.confirmAnswers();
+            this.confirmAnswers(true);
         } else if (
             this.buttonPressed >= '1' &&
             this.buttonPressed <= '4' &&
@@ -109,8 +114,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
+        this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        });
+
         this.timeService.timerEnded.subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
         });
         const gameID = this.route.snapshot.paramMap.get('id');
         if (this.inTestMode && gameID) {
@@ -122,7 +132,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (this.question.type === Type.QRL) {
             this.qrlStatsService.startTimer(this.question.id);
         }
-
         this.nbChoices = this.question.choices?.length ?? 0;
         if (this.inTestMode) {
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
@@ -130,7 +139,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
@@ -138,7 +147,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
@@ -146,6 +155,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
+        });
+
+        this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.timeService.stopTimer();
+        });
+
+        this.pauseTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.PAUSE_TIMER).subscribe(() => {
+            this.timeService.pauseTimer();
         });
 
         this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
@@ -159,6 +176,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.player.score = this.score;
                 this.bonusGiven = false;
                 this.gotBonus = false;
+                this.playerService.player = this.player;
             }
             this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
         });
@@ -180,7 +198,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.socketService.endGame();
         });
 
-        this.timeService.deactivatePanicMode();
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
     }
@@ -194,8 +211,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusSubscription?.unsubscribe();
         this.bonusGivenSubscription?.unsubscribe();
         this.abortGameSubscription?.unsubscribe();
+        this.startTimerSubscription?.unsubscribe();
+        this.stopTimerSubscription?.unsubscribe();
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
+        this.pauseTimerSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
@@ -245,6 +265,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
+            player: this.player,
         };
         this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmStat);
     }
@@ -253,10 +274,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         return this.answer.includes(choice);
     }
 
-    async confirmAnswers() {
+    async confirmAnswers(fromUserInput: boolean) {
+        // true : appelé par input utilisateur, false : appelé par serveur,
         this.timeService.stopTimer();
         this.choiceDisabled = true;
-
+        if (fromUserInput) {
+            this.socketService.confirmAnswer(this.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
+        }
         if (this.inTestMode) {
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -303,6 +327,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     onQRLAnswerChange() {
         this.qrlStatsService.notifyEdit();
+        this.socketService.sendMessage(Events.NOTIFY_QRL_INPUT, nsp.GAME_STATS, this.player);
     }
 
     onFinalAnswer() {
@@ -332,10 +357,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.bonusGiven = false;
             this.gotBonus = false;
         }
-        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
+        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.player });
     }
 
+    // Le chargé aime pas le nom donné à la fonction.
     handleAbort(): void {
+        // Messages à mettre dans des constantes.
         const message = 'Êtes-vous sûr de vouloir abandonner la partie?';
 
         const dialogData = new ConfirmDialogModel('Abandon', message);
@@ -356,6 +383,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                     timeStamp: new Date().toLocaleTimeString(),
                 };
                 this.socketService.sendChatMessage(chatMessage);
+                this.socketService.abandonGame();
                 this.router.navigate(['/']);
                 this.onLocationChange();
             }
