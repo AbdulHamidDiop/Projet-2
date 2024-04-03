@@ -54,13 +54,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private bonusGivenSubscription: Subscription;
     private sendQRLAnswerSubscription: Subscription;
     private qrlGradeSubscription: Subscription;
-<<<<<<< HEAD
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
     //    private getProfileSubscription: Subscription;
     private pauseTimerSubscription: Subscription;
-=======
->>>>>>> d68b2bcb659fb3f167ad6fef17dbd3bbc78df4fe
 
     // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
@@ -117,6 +114,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
+        this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
+            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timeService.startTimer(this.timer);
+        });
+
         this.timeService.timerEnded.subscribe(async () => {
             await this.confirmAnswers(false);
         });
@@ -130,7 +132,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         if (this.question.type === Type.QRL) {
             this.qrlStatsService.startTimer(this.question.id);
         }
-
         this.nbChoices = this.question.choices?.length ?? 0;
         if (this.inTestMode) {
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
@@ -154,6 +155,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
+        });
+
+        this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.timeService.stopTimer();
+        });
+
+        this.pauseTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.PAUSE_TIMER).subscribe(() => {
+            this.timeService.pauseTimer();
         });
 
         this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
@@ -189,7 +198,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.socketService.endGame();
         });
 
-        this.timeService.deactivatePanicMode();
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
     }
@@ -203,12 +211,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusSubscription?.unsubscribe();
         this.bonusGivenSubscription?.unsubscribe();
         this.abortGameSubscription?.unsubscribe();
+        this.startTimerSubscription?.unsubscribe();
+        this.stopTimerSubscription?.unsubscribe();
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
-<<<<<<< HEAD
         this.pauseTimerSubscription?.unsubscribe();
-=======
->>>>>>> d68b2bcb659fb3f167ad6fef17dbd3bbc78df4fe
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
