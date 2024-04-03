@@ -38,6 +38,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
+    playersLeft: number;
     displayPlayerList = true;
     unitTesting: boolean = false;
     disableControls: boolean = false;
@@ -65,6 +66,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private snackBar: MatSnackBar,
     ) {
         this.players = this.playerService.playersInGame;
+        this.playersLeft = this.players.length;
 
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
@@ -139,7 +141,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
-            const playerCopy = this.players.filter((p) => p.name !== username);
+            const playersCopy = this.players.filter((p) => p.name !== username);
+            if (playersCopy.length < this.players.length) {
+                this.playersLeft--;
+            }
             // this.players = this.players.filter((p) => p.name !== username);
             // Quand le joueur abandonne la partie son nom est supposé être raturé mais toujours affiché.
 
@@ -148,7 +153,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 player.leftGame = true;
             }
 
-            if (playerCopy.length === 0) {
+            if (this.playersLeft === 0) {
                 this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                     verticalPosition: 'top',
                     duration: 3000,
