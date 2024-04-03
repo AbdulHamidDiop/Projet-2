@@ -308,7 +308,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
     sendTimerControlMessage(): void {
         this.socketService.sendMessage(Events.PAUSE_TIMER, Namespaces.GAME);
-        // this.timeService.pauseTimer();
     }
 
     openCountDownModal(): void {
