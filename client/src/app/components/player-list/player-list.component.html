@@ -12,8 +12,8 @@
     <tr *ngFor="let player of players">
         <td [ngClass]="getStyle(player)">
             <!-- Changer ça par une constante globale -->
-            <s *ngIf="player.color === 0"> {{ player.name }} </s>
-            <div *ngIf="player.color !== 0">{{ player.name }}</div>
+            <s *ngIf="player.color === 0" [ngClass]="{ leftGame: player.leftGame }"> {{ player.name }} </s>
+            <div *ngIf="player.color !== 0" [ngClass]="{ leftGame: player.leftGame }">{{ player.name }}</div>
         </td>
         <td>{{ player.score }}</td>
         <td>{{ colorToState(player.color) }}</td>

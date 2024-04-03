@@ -61,7 +61,7 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="3" [rowspan]="1">
-            <app-player-list *ngIf="displayPlayerList" [players]="players"></app-player-list>
+            <app-player-list *ngIf="displayPlayerList" [players]="playerService.playersInGame"></app-player-list>
         </mat-grid-tile>
 
         <mat-grid-tile #gradingTile *ngIf="gradingAnswers" [colspan]="3" [rowspan]="1">
