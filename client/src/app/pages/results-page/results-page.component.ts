@@ -32,7 +32,9 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         private gameService: GameService,
         private route: ActivatedRoute,
         public router: Router,
-    ) {}
+    ) {
+        this.players = this.playerService.playersInGame;
+    }
 
     ngOnInit(): void {
         this.routeSubscription = this.route.paramMap.subscribe((params) => {

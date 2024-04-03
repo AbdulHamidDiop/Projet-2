@@ -58,14 +58,14 @@ describe('SocketRoomService', () => {
         const gameTest: Game = { id: '1', title: 'Game 1', isHidden: false, questions: [] };
         service.createRoom(gameTest);
         expect(socketMock.emit).toHaveBeenCalledWith(Events.CREATE_ROOM, { game: gameTest });
-        expect(socketMock.emit).toHaveBeenCalledTimes(2);
+        expect(socketMock.emit).toHaveBeenCalledTimes(1); // En lisant le code ça devrait être appelé 1 seule fois.
     });
 
     it('Should call socket.emit on call to joinRoom', () => {
         const roomId = '1111';
         service.joinRoom(roomId);
         expect(socketMock.emit).toHaveBeenCalledWith(Events.JOIN_ROOM, { room: roomId });
-        expect(socketMock.emit).toHaveBeenCalledTimes(2);
+        expect(socketMock.emit).toHaveBeenCalledTimes(1); // En lisant le code ça devrait être appelé 1 seule fois.
     });
 
     it('Should call socket.emit on call to leaveRoom', () => {

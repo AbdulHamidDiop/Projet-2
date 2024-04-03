@@ -38,6 +38,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
+    playersLeft: number;
+    displayPlayerList = true;
     unitTesting: boolean = false;
     disableControls: boolean = false;
     questionLoaded: boolean = false;
@@ -63,6 +65,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly playerService: PlayerService,
         private snackBar: MatSnackBar,
     ) {
+        this.players = this.playerService.playersInGame;
+        this.playersLeft = this.players.length;
+
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
             this.players = players;
@@ -104,6 +109,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
+            this.updatePlayerFromServer(stat as QCMStats);
         });
 
         this.qrlStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QRL_STATS).subscribe((stat: unknown) => {
@@ -131,14 +137,19 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
-            this.players = this.players.filter((p) => p.name !== username);
+            const playersCopy = this.players.filter((p) => p.name !== username);
+            if (playersCopy.length < this.players.length) {
+                this.playersLeft--;
+            }
+            // this.players = this.players.filter((p) => p.name !== username);
+            // Quand le joueur abandonne la partie son nom est supposé être raturé mais toujours affiché.
 
             const player = this.playerService.playersInGame.find((p) => p.name === username);
             if (player) {
                 player.leftGame = true;
             }
 
-            if (this.players.length === 0) {
+            if (this.playersLeft === 0) {
                 this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                     verticalPosition: 'top',
                     duration: 3000,
@@ -322,13 +333,26 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
     }
 
+    updatePlayerFromServer(stats: QCMStats) {
+        for (const player of this.players) {
+            if (stats.player && player.name === stats.player.name) {
+                player.score = stats.player.score;
+            }
+        }
+    }
+
     openResultsPage(): void {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
 
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
-            this.router.navigate(['/game', gameId, 'results']);
+            const RESPONSE_FROM_SERVER_DELAY = 500;
+            // Le score n'est pas mis à jour dans la vue des résultats parceque la réponse du serveur se fait avant que le score soit mis à jour.
+            // C'est peut-etre possible de regler ça en mettant les appels socket dans playerservice.
+            setTimeout(() => {
+                this.router.navigate(['/game', gameId, 'results']);
+            }, RESPONSE_FROM_SERVER_DELAY);
         }
         this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
         this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);

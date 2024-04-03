@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { GameService } from '@app/services/game.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Game, Player } from '@common/game';
@@ -44,6 +45,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         private socket: SocketRoomService,
         readonly router: Router,
         private snackBar: MatSnackBar,
+        private playerService: PlayerService,
     ) {
         this.leaveRoomSubscription = this.socket.leaveRoomSubscribe().subscribe(() => {
             this.fullView = false;
@@ -85,6 +87,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
 
         this.playersSubscription = this.socket.getPlayers().subscribe((players) => {
             this.players = players;
+            this.playerService.setGamePlayers(players);
         });
 
         this.profileSubscription = this.socket.getProfile().subscribe((player) => {
@@ -142,7 +145,8 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             setTimeout(() => {
                 if (this.player.isHost) {
                     setTimeout(() => {
-                        this.socket.requestPlayers();
+                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                        // this.socket.requestPlayers(); Supprimé par git.
                     }, START_TIMER_DELAY);
                     this.router.navigate(['/hostView/' + this.game.id]);
                 } else {

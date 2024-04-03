@@ -25,7 +25,7 @@ export class SocketRoomService implements OnDestroy {
         private io: IoService,
         public playerService: PlayerService,
         private router: Router,
-        private snackBar: MatSnackBar,
+        private snackBar: MatSnackBar, // Peut-être mettre dans un component.
     ) {
         this.socket = io.io(this.url);
         window.addEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
@@ -37,6 +37,22 @@ export class SocketRoomService implements OnDestroy {
 
     get connected() {
         return this.socket.connected;
+    }
+
+    confirmAnswer(player: Player) {
+        this.sendMessage(Events.CONFIRM_ANSWERS, Namespaces.GAME_STATS, { player });
+    }
+
+    excludeFromChat(player: Player) {
+        this.socket.emit(Events.EXCLUDE_FROM_CHAT, { player });
+    }
+
+    includeInChat(player: Player) {
+        this.socket.emit(Events.INCLUDE_IN_CHAT, { player });
+    }
+
+    abandonGame() {
+        this.socket.emit(Events.ABANDON_GAME);
     }
 
     createRoom(game: Game) {
@@ -63,7 +79,6 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
-    // La validation devra se faire du coté du serveur.
     lockRoom(): void {
         this.socket.emit(Events.LOCK_ROOM);
     }
@@ -154,9 +169,6 @@ export class SocketRoomService implements OnDestroy {
                 observer.next(players);
             });
         });
-    }
-    requestPlayers(): void {
-        this.socket.emit(Events.GET_PLAYERS);
     }
 
     getProfile(): Observable<Player> {
@@ -317,7 +329,8 @@ export class SocketRoomService implements OnDestroy {
             this.sendChatMessage(message);
             this.sendMessage(Events.PLAYER_LEFT, Namespaces.GAME, { user: this.playerService.player.name });
         }
-        this.leaveRoom();
+        //   this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
+        // faudra un nouvel event ex. leaveGame.
         this.room = '';
         this.playerService.playersInGame = [];
     }
