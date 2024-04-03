@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { API_URL } from '@common/consts';
 import { Feedback } from '@common/feedback';
 import { Game, Question } from '@common/game';
+import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { GameSessionService } from './game-session.service';
 
@@ -56,7 +56,7 @@ export class GameManagerService {
     }
 
     async getFeedBack(questionId: string, answer: string[]): Promise<Feedback[]> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/feedback', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/feedback', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention

@@ -37,7 +37,7 @@ export class Server {
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
-        const corsOptions: CorsOptions = { origin: ['http://localhost:4200'] };
+        const corsOptions: CorsOptions = { origin: '*' };
         this.io = new SocketIOServer(this.server, { cors: corsOptions });
         this.liveRooms.push(LOBBY);
         this.chatHistories.set(LOBBY, []);

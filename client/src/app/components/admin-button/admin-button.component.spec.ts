@@ -3,8 +3,8 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CommunicationService } from '@app/services/communication.service';
-import { API_URL } from '@common/consts';
 import { of } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { AdminButtonComponent } from './admin-button.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -50,7 +50,7 @@ describe('AdminButtonComponent', () => {
         expect(component.communicationService.updateSharedVariable).toHaveBeenCalledWith(true);
 
         expect(window.fetch).toHaveBeenCalledWith(
-            API_URL + 'admin/password',
+            environment.serverUrl + 'admin/password',
             jasmine.objectContaining({
                 method: 'POST',
                 body: JSON.stringify({ password: component.userInput }),

@@ -6,6 +6,7 @@ import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 import { IoService } from './ioservice.service';
 
 @Injectable({
@@ -15,14 +16,13 @@ import { IoService } from './ioservice.service';
 export class SocketRoomService implements OnDestroy {
     room: string;
     readonly socket: Socket;
-    readonly url = 'http://ec2-35-183-71-164.ca-central-1.compute.amazonaws.com:3000'; // Your Socket.IO server URL
     readonly namespaces: Map<string, Socket> = new Map();
 
     constructor(
         private io: IoService,
         public playerService: PlayerService,
     ) {
-        this.socket = io.io(this.url);
+        this.socket = io.io(environment.ws);
         window.addEventListener('beforeunload', this.handleUnload.bind(this));
     }
 
@@ -284,7 +284,7 @@ export class SocketRoomService implements OnDestroy {
 
     connectNamespace(namespace: string): Socket | undefined {
         if (!this.namespaces.has(namespace)) {
-            const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
+            const namespaceSocket = this.io.io(`${environment.ws}/${namespace}`);
             this.namespaces.set(namespace, namespaceSocket);
         }
         return this.namespaces.get(namespace);
