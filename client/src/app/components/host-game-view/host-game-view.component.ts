@@ -152,7 +152,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
-            this.players = this.players.filter((p) => p.name !== username);
+            // this.players = this.players.filter((p) => p.name !== username);
+            // Quand le joueur abandonne la partie son nom est supposé être raturé mais toujours affiché.
 
             const player = this.playerService.playersInGame.find((p) => p.name === username);
             if (player) {

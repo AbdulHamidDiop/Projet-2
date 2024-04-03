@@ -334,7 +334,8 @@ export class SocketRoomService implements OnDestroy {
             this.sendChatMessage(message);
             this.sendMessage(Events.PLAYER_LEFT, Namespaces.GAME, { user: this.playerService.player.name });
         }
-        this.leaveRoom();
+        //    this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
+        // faudra un nouvel event ex.  leaveGame.
         this.room = '';
         this.playerService.playersInGame = [];
     }

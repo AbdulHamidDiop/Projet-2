@@ -40,14 +40,19 @@ describe('PlayAreaComponent', () => {
         timeServiceSpy.startTimer.and.returnValue();
         timeServiceSpy.timerEnded = new EventEmitter<void>();
 
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage', 'sendChatMessage', 'confirmAnswer']);
+        socketMock = jasmine.createSpyObj('SocketRoomService', [
+            'listenForMessages',
+            'sendMessage',
+            'sendChatMessage',
+            'confirmAnswer',
+            'endGame',
+            'abandonGame',
+        ]);
         socketMock.listenForMessages.and.returnValue(of({} as any));
         socketMock.sendMessage.and.returnValue({} as any);
         socketMock.confirmAnswer.and.returnValue();
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages', 'sendMessage', 'sendChatMessage', 'endGame']);
-        socketMock.listenForMessages.and.returnValue(of({} as any));
-        socketMock.sendMessage.and.returnValue({} as any);
         socketMock.endGame.and.returnValue();
+        socketMock.abandonGame.and.returnValue();
 
         matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
         matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
