@@ -5,10 +5,8 @@ import { ChatMessage, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@c
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
 import { Service } from 'typedi';
-import { SocketFunctions } from './socket-functions';
 @Service()
 export class SocketEvents {
-    socketFunctions: SocketFunctions;
     chatHistories: Map<string, ChatMessage[]> = new Map();
     roomGameId: Map<string, string> = new Map();
     socketIdRoom: Map<string, string> = new Map(); // Gauche : socketId, droite : room.
@@ -379,8 +377,12 @@ export class SocketEvents {
         socket.on(Events.GET_PLAYERS, () => {
             const room = this.socketIdRoom.get(socket.id);
             const players = this.mapOfPlayersInRoom.get(room);
-            socket.to(room).emit(Events.GET_PLAYERS, players);
-            socket.emit(Events.GET_PLAYERS, players);
+            if (room && players) {
+                socket.to(room).emit(Events.GET_PLAYERS, players);
+                socket.emit(Events.GET_PLAYERS, players);
+            } else {
+                socket.emit(Events.GET_PLAYERS, []);
+            }
         });
     }
     makeRoomId(): string {

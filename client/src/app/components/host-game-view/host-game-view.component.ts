@@ -38,7 +38,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
-    displayPlayerList = false;
+    displayPlayerList = true;
     unitTesting: boolean = false;
     disableControls: boolean = false;
     questionLoaded: boolean = false;
@@ -66,6 +66,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly playerService: PlayerService,
         private snackBar: MatSnackBar,
     ) {
+        this.players = this.playerService.playersInGame;
+
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
             this.players = players;
