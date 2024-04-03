@@ -31,7 +31,7 @@
                         <button mat-button>
                             <h3 class="pause-button" mat-button (click)="sendTimerControlMessage()">Pause Compteur</h3>
                         </button>
-                        <button mat-button>
+                        <button mat-button (click)="activatePanicMode()" [disabled]="disableControls || inPanicMode">
                             <h3 class="panic-button">Mode Panique</h3>
                         </button>
                         <button

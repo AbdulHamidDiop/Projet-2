@@ -1,3 +1,4 @@
+import { Game, Player, Question, Type } from './../../../../../common/game';
 /* eslint-disable max-lines */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -8,7 +9,6 @@ import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -42,12 +42,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     unitTesting: boolean = false;
     disableControls: boolean = false;
     questionLoaded: boolean = false;
+    inPanicMode: boolean = false;
 
     playerLeftSubscription: Subscription;
     getPlayersSubscription: Subscription;
-    startTimerSubscription: Subscription;
-    stopTimerSubscription: Subscription;
-    pauseTimerSubscription: Subscription;
     nextQuestionSubscription: Subscription;
     qcmStatsSubscription: Subscription;
     qrlStatsSubscription: Subscription;
@@ -73,14 +71,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.players = players;
         });
 
-        this.stopTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
-            this.timeService.stopTimer();
-        });
-
-        this.pauseTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PAUSE_TIMER).subscribe(() => {
-            this.timeService.pauseTimer();
-        });
-
         this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
             if (!this.questionLoaded) {
                 setTimeout(() => {
@@ -96,7 +86,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                     if (this.gameManagerService.onLastQuestion()) {
                         this.onLastQuestion = true;
                     }
-                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+                    this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
+                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
                 }, 2 * SHOW_FEEDBACK_DELAY);
                 this.questionLoaded = true;
             }
@@ -110,13 +101,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     async ngOnInit(): Promise<void> {
         await this.gameManagerService.initialize(this.socketService.room);
         this.currentQuestion = this.gameManagerService.firstQuestion();
+        this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
 
-        this.startTimerSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
-            this.timeService.startTimer(this.timer);
-        });
-
-        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME);
+        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
 
         this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
@@ -171,7 +158,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 }, SHOW_FEEDBACK_DELAY);
             }
         });
-
+        this.timeService.deactivatePanicMode();
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
     }
@@ -217,6 +204,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             } else if (this.statisticsData[index].data[0].data[0] > 0) {
                 this.statisticsData[index].data[0].data[0]--;
             }
+            this.statisticsData[index].data[1].data[0] = this.players.length - this.statisticsData[index].data[0].data[0];
         } else {
             const initialCount = stat.edited ? 1 : 0;
             this.statisticsData.push({
@@ -225,6 +213,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                     {
                         data: [initialCount],
                         label: 'Nombre de personnes ayant modifié leur réponse dans les 5 dernières secondes',
+                        backgroundColor: '#4CAF50',
+                    },
+                    {
+                        data: [this.players.length - initialCount],
+                        label: "Nombre de personnes n'ayant pas modifié leur réponse dans les 5 dernières secondes",
                         backgroundColor: '#FFCE56',
                     },
                 ],
@@ -308,12 +301,23 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
         this.disableControls = true;
         this.questionLoaded = false;
+        this.deactivatePanicMode();
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
         this.choseNextQuestion();
     }
 
     sendTimerControlMessage(): void {
         this.socketService.sendMessage(Events.PAUSE_TIMER, Namespaces.GAME);
+    }
+
+    activatePanicMode(): void {
+        this.inPanicMode = true;
+        this.socketService.sendMessage(Events.PANIC_MODE, Namespaces.GAME, { type: this.currentQuestion.type });
+    }
+
+    deactivatePanicMode(): void {
+        this.inPanicMode = false;
+        this.socketService.sendMessage(Events.PANIC_MODE_OFF, Namespaces.GAME);
     }
 
     openCountDownModal(): void {
@@ -363,22 +367,19 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.timeService.stopTimer();
+        this.deactivatePanicMode();
+        this.timeService.deactivatePanicMode();
         this.gameManagerService.reset();
 
-        if (!this.unitTesting) {
-            this.playerLeftSubscription?.unsubscribe();
-            this.getPlayersSubscription?.unsubscribe();
-            this.startTimerSubscription?.unsubscribe();
-            this.stopTimerSubscription?.unsubscribe();
-            this.nextQuestionSubscription?.unsubscribe();
-            this.qcmStatsSubscription?.unsubscribe();
-            this.qrlStatsSubscription?.unsubscribe();
-            this.qrlAnswersSubscription?.unsubscribe();
-            this.timerEndedSubscription?.unsubscribe();
-            this.endGameSubscription?.unsubscribe();
-            this.updatePlayerSubscription?.unsubscribe();
-            this.pauseTimerSubscription.unsubscribe();
-        }
+        this.playerLeftSubscription?.unsubscribe();
+        this.getPlayersSubscription?.unsubscribe();
+        this.nextQuestionSubscription?.unsubscribe();
+        this.qcmStatsSubscription?.unsubscribe();
+        this.qrlStatsSubscription?.unsubscribe();
+        this.qrlAnswersSubscription?.unsubscribe();
+        this.timerEndedSubscription?.unsubscribe();
+        this.endGameSubscription?.unsubscribe();
+        this.updatePlayerSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);

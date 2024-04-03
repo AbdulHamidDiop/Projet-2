@@ -1,20 +1,53 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
+import { Type } from '@common/game';
+import { Events, Namespaces } from '@common/sockets';
+import { Subscription } from 'rxjs';
+import { SocketRoomService } from './socket-room.service';
+
+const PANIC_TRESHOLD = 10;
+const DEFAULT_TICK = 1000;
+const PANIC_TICK = 250;
 
 @Injectable({
     providedIn: 'root',
 })
-export class TimeService {
-    // Limite de 1 timer, pour avoir + de 1 timer faut déclarer les éléments comme des tableaux.
+export class TimeService implements OnDestroy {
     timerEnded: EventEmitter<void> = new EventEmitter<void>();
     private interval: number | undefined;
-    private readonly defaultTick = 1000;
-    private readonly panicTick = 250;
     private pauseFlag: boolean = false;
-    private readonly panicThresholdQCM = 10;
-    // private readonly panicThresholdQRL = 20;
     private panicMode: boolean = false;
 
     private counter: number;
+
+    private startTimerSubscription: Subscription;
+    private stopTimerSubscription: Subscription;
+    private pauseTimerSubscription: Subscription;
+    private panicModeSubscription: Subscription;
+    private panicModeOffSubscription: Subscription;
+
+    constructor(socketService: SocketRoomService) {
+        this.panicModeSubscription = socketService.listenForMessages(Namespaces.GAME, Events.PANIC_MODE).subscribe((data: unknown) => {
+            const payload = data as { type: Type; room: string };
+            this.activatePanicMode(payload.type);
+        });
+
+        this.panicModeOffSubscription = socketService.listenForMessages(Namespaces.GAME, Events.PANIC_MODE_OFF).subscribe(() => {
+            this.deactivatePanicMode();
+        });
+
+        this.startTimerSubscription = socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe((data: unknown) => {
+            const payload = data as { time: number };
+            this.startTimer(payload.time);
+        });
+
+        this.stopTimerSubscription = socketService.listenForMessages(Namespaces.GAME, Events.STOP_TIMER).subscribe(() => {
+            this.stopTimer();
+        });
+
+        this.pauseTimerSubscription = socketService.listenForMessages(Namespaces.GAME, Events.PAUSE_TIMER).subscribe(() => {
+            this.pauseTimer();
+        });
+    }
 
     get time() {
         return this.counter;
@@ -24,6 +57,11 @@ export class TimeService {
     }
     set time(newTime: number) {
         this.counter = newTime;
+    }
+
+    init() {
+        this.stopTimer();
+        this.deactivatePanicMode();
     }
 
     startTimer(startValue: number) {
@@ -42,7 +80,6 @@ export class TimeService {
     stopTimer() {
         clearInterval(this.interval);
         this.interval = undefined;
-        this.panicMode = false;
     }
 
     pauseTimer() {
@@ -54,15 +91,33 @@ export class TimeService {
         }
     }
 
-    activatePanicMode() {
-        if (this.time > this.panicThresholdQCM && !this.panicMode) {
+    activatePanicMode(type: Type) {
+        this.stopTimer();
+        if (type === Type.QCM && this.counter > PANIC_TRESHOLD) {
             this.panicMode = true;
-            this.interval = undefined;
+        } else if (type === Type.QRL && this.counter > PANIC_TRESHOLD * 2) {
+            this.panicMode = true;
+        }
+        if (!this.pauseFlag) {
             this.startTimer(this.counter);
         }
     }
 
+    deactivatePanicMode() {
+        this.panicMode = false;
+    }
+
+    ngOnDestroy(): void {
+        this.panicModeSubscription?.unsubscribe();
+        this.panicModeOffSubscription?.unsubscribe();
+        this.startTimerSubscription?.unsubscribe();
+        this.stopTimerSubscription?.unsubscribe();
+        this.pauseTimerSubscription?.unsubscribe();
+        this.stopTimer();
+        this.deactivatePanicMode();
+    }
+
     private getCurrentTick(): number {
-        return this.panicMode ? this.panicTick : this.defaultTick;
+        return this.panicMode ? PANIC_TICK : DEFAULT_TICK;
     }
 }
