@@ -74,6 +74,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         private snackBar: MatSnackBar,
     ) {
         this.player = this.playerService.player;
+        this.playerService.player.score = 0;
         this.answer = [];
         if (this.route.snapshot.queryParams.testMode === 'true') {
             this.inTestMode = true;

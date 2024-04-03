@@ -98,7 +98,7 @@ export class Server {
             });
 
             socket.on(Events.NOTIFY_QRL_INPUT, (data) => {
-                console.log(data);
+                // console.log(data) dans un jeu QRL cet event est appelé très souvent.
                 const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data, YELLOW);
             });
@@ -117,7 +117,6 @@ export class Server {
 
             socket.on(Events.UPDATE_PLAYER, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.UPDATE_PLAYER, data);
-                // console.log(data);
                 const RED = 0xff0000;
                 this.setPlayerColor(data.room, data, RED);
             });
