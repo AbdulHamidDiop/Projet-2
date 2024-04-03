@@ -48,7 +48,7 @@ describe('HostGameViewComponent', () => {
         socketServiceSpy.getPlayers.and.returnValue(of([]));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
         socketServiceSpy.endGame.and.returnValue();
-        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer'], {
+        timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'activatePanicMode', 'deactivatePanicMode'], {
             timerEnded: new EventEmitter<void>(),
         });
 
@@ -136,7 +136,6 @@ describe('HostGameViewComponent', () => {
 
     it('should handle UPDATE_PLAYER event from SocketRoomService', fakeAsync(() => {
         const mockPlayerWithRoom = { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0, room: 'test-room' };
-        //        const updatePlayersSpy = spyOn(component, 'updatePlayers');
         socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
             if (namespace === Namespaces.GAME_STATS && event === Events.UPDATE_PLAYER) {
                 return of(mockPlayerWithRoom);
@@ -386,6 +385,63 @@ describe('HostGameViewComponent', () => {
         await component.updateQRLBarChartData(stat);
 
         expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+    });
+
+    it('should decrement the first data point of the first data set', () => {
+        const stat: QRLStats = {
+            questionId: '1',
+            edited: false,
+        };
+
+        component.updateQRLBarChartData(stat);
+
+        expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+    });
+
+    it('should send SHOW_RESULTS message', () => {
+        spyOn(socketServiceSpy, 'sendMessage');
+        component.showResults();
+
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.SHOW_RESULTS, Namespaces.GAME);
+    });
+
+    it('should send PAUSE_TIMER message', () => {
+        spyOn(socketServiceSpy, 'sendMessage');
+        component.sendTimerControlMessage();
+
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.PAUSE_TIMER, Namespaces.GAME);
+    });
+
+    it('should activate panic mode and send PANIC_MODE message', () => {
+        spyOn(socketServiceSpy, 'sendMessage');
+        component.currentQuestion = { type: Type.QCM } as Question;
+
+        component.activatePanicMode();
+
+        expect(component.inPanicMode).toBeTrue();
+        expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.PANIC_MODE, Namespaces.GAME, { type: Type.QCM });
+    });
+
+    it('should call notifyNextQuestion for QCM type', () => {
+        spyOn(component, 'notifyNextQuestion');
+        spyOn(component, 'gradeAnswers');
+        component.currentQuestion = { type: Type.QCM } as Question;
+
+        component.handleTimerEnd();
+
+        expect(component.notifyNextQuestion).toHaveBeenCalled();
+        expect(component.gradeAnswers).not.toHaveBeenCalled();
+    });
+
+    it('should call gradeAnswers for non-QCM type', () => {
+        spyOn(component, 'gradeAnswers');
+        spyOn(component, 'notifyNextQuestion');
+        component.currentQuestion = { type: Type.QRL } as Question;
+
+        component.handleTimerEnd();
+
+        expect(component.notifyNextQuestion).not.toHaveBeenCalled();
+        expect(component.gradeAnswers).toHaveBeenCalled();
     });
 
     it('should unsubscribe after ngOnDestroy', () => {

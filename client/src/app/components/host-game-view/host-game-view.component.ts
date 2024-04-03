@@ -115,11 +115,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
 
         this.timerEndedSubscription = this.timeService.timerEnded.subscribe(() => {
-            if (this.currentQuestion.type === Type.QCM) {
-                this.notifyNextQuestion();
-            } else {
-                this.gradeAnswers();
-            }
+            this.handleTimerEnd();
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
@@ -344,6 +340,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
     choseNextQuestion(): void {
         this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+    }
+
+    handleTimerEnd(): void {
+        if (this.currentQuestion.type === Type.QCM) {
+            this.notifyNextQuestion();
+        } else {
+            this.gradeAnswers();
+        }
     }
 
     ngOnDestroy() {

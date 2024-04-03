@@ -12,11 +12,11 @@ const PANIC_SOUND_URL = '@app/../assets/audio/pop.mp3';
 })
 export class TimeService implements OnDestroy {
     timerEnded: EventEmitter<void> = new EventEmitter<void>();
-    private counter: number;
+    pauseFlag: boolean = false;
+    counter: number;
+    panicMode: boolean = false;
+    panicSound = new Audio(PANIC_SOUND_URL);
     private interval: number | undefined;
-    private pauseFlag: boolean = false;
-    private panicMode: boolean = false;
-    private panicSound = new Audio(PANIC_SOUND_URL);
 
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
