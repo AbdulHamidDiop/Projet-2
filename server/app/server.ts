@@ -92,10 +92,17 @@ export class Server {
                 const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data.player, YELLOW);
             });
-            socket.on('confirmAnswer', (data) => {
+            socket.on(Events.CONFIRM_ANSWERS, (data) => {
                 const GREEN = 0x00ff00;
                 this.setPlayerColor(data.room, data.player, GREEN);
             });
+
+            socket.on(Events.NOTIFY_QRL_INPUT, (data) => {
+                console.log(data);
+                const YELLOW = 0xffff00;
+                this.setPlayerColor(data.room, data, YELLOW);
+            });
+
             socket.on(Events.QRL_STATS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.QRL_STATS, data);
             });

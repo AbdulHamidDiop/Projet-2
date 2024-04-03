@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 import { GameSessionService } from '@app/services/game-session.service';
-import { Game, Player } from '@common/game';
+import { BLACK, GREEN, Game, Player, RED } from '@common/game';
 import { ChatMessage, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
@@ -45,7 +45,6 @@ export class SocketEvents {
             await this.gameSessionService.createSession(room, game);
             // leaveAllRooms(socket); À ajouter plus tard.
             socket.join(room);
-            const GREEN = 0x0000ff;
             const player: Player = {
                 name: 'Organisateur',
                 score: 0,
@@ -86,7 +85,6 @@ export class SocketEvents {
             if (this.lockedRooms.includes(room)) {
                 socket.emit(Events.LOCK_ROOM);
             } else if (this.liveRooms.includes(room)) {
-                const RED = 0xff0000; // À mettre dans un fichier global.
                 this.socketIdRoom.set(socket.id, room);
                 const playerProfile: Player = {
                     id: '',
@@ -109,7 +107,6 @@ export class SocketEvents {
     }
     listenForDeleteRoomEvent(socket: Socket) {
         socket.on(Events.DELETE_ROOM, (room: string) => {
-            this.liveRooms = this.liveRooms.filter((liveRoom) => liveRoom !== room);
             this.bannedNamesInRoom.delete(room);
             this.liveRooms = this.liveRooms.filter((liveRoom) => {
                 return liveRoom !== room;
@@ -285,7 +282,6 @@ export class SocketEvents {
             if (this.socketInRoom(socket) && this.roomCreated(socket)) {
                 const player = this.playerSocketId.get(socket.id);
                 const room = this.socketIdRoom.get(socket.id);
-                const BLACK = 0x000000;
                 const players = this.mapOfPlayersInRoom.get(room);
                 for (const play of players) {
                     if (play.name === player.name) {

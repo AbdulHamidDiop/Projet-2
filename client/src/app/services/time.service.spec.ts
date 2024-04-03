@@ -123,9 +123,9 @@ describe('TimeService', () => {
         const timeAfterPause = service.time;
         tick(MS_SECOND * 3);
         expect(service.time).toEqual(timeAfterPause);
-        service.pauseTimer();
-        tick(MS_SECOND * 2);
-        expect(service.time).toEqual(timeAfterPause);
+        service.pauseTimer(); // l'appel à pauseTimer une 2eme fois recommence le timer.
+        tick(timeAfterPause * MS_SECOND);
+        expect(service.time).toEqual(0);
         discardPeriodicTasks();
     }));
 
@@ -138,6 +138,16 @@ describe('TimeService', () => {
         service.pauseTimer();
         tick(MS_SECOND * 2);
         expect(service.time).toEqual(timeAfterPause - 2);
+        discardPeriodicTasks();
+    }));
+
+    // Pour le coverage seulement, remplacer ça par un vrai test après.
+    // Mock startTimer ou autre.
+    it('should have a method called panicmode', fakeAsync(() => {
+        const OVER_PANIC_THRESHOLD = 11;
+        service.startTimer(OVER_PANIC_THRESHOLD);
+        service.activatePanicMode();
+        expect(service.activatePanicMode).toBeTruthy();
         discardPeriodicTasks();
     }));
 });

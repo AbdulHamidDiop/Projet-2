@@ -326,6 +326,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     onQRLAnswerChange() {
         this.qrlStatsService.notifyEdit();
+        this.socketService.sendMessage(Events.NOTIFY_QRL_INPUT, nsp.GAME_STATS, this.player);
     }
 
     onFinalAnswer() {

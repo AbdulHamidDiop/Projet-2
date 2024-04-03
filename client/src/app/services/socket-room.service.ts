@@ -40,23 +40,19 @@ export class SocketRoomService implements OnDestroy {
     }
 
     confirmAnswer(player: Player) {
-        // À ajouter au enum + tard
-        this.sendMessage('confirmAnswer' as Events, Namespaces.GAME_STATS, { player });
+        this.sendMessage(Events.CONFIRM_ANSWERS, Namespaces.GAME_STATS, { player });
     }
 
     excludeFromChat(player: Player) {
-        // À ajouter au enum + tard
-        this.socket.emit('excludeFromChat', { player });
+        this.socket.emit(Events.EXCLUDE_FROM_CHAT, { player });
     }
 
     includeInChat(player: Player) {
-        // À ajouter au enum + tard
-        this.socket.emit('includeInChat', { player });
+        this.socket.emit(Events.INCLUDE_IN_CHAT, { player });
     }
 
     abandonGame() {
-        // À ajouter au enum + tard
-        this.socket.emit('abandonGame');
+        this.socket.emit(Events.ABANDON_GAME);
     }
 
     createRoom(game: Game) {
@@ -83,7 +79,6 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
-    // La validation devra se faire du coté du serveur.
     lockRoom(): void {
         this.socket.emit(Events.LOCK_ROOM);
     }
@@ -334,8 +329,8 @@ export class SocketRoomService implements OnDestroy {
             this.sendChatMessage(message);
             this.sendMessage(Events.PLAYER_LEFT, Namespaces.GAME, { user: this.playerService.player.name });
         }
-        //    this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
-        // faudra un nouvel event ex.  leaveGame.
+        //   this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
+        // faudra un nouvel event ex. leaveGame.
         this.room = '';
         this.playerService.playersInGame = [];
     }
