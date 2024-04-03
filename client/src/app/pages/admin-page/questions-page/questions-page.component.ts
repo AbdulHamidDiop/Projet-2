@@ -15,7 +15,10 @@ export class QuestionsPageComponent implements OnInit {
     questions: Question[];
     isAuthentificated: boolean;
 
-    // On a besoin de ces paramètres, notamment des élèments d'angular.
+    // Les services ont tous des fonctionnalités différentes, ce n'est pas possible
+    // de réduire le nombre de dépendances sans perdre en fonctionnalités,
+    // et la classe a déja très peu de code.
+    // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
         readonly communicationService: CommunicationService,

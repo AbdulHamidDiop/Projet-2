@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { Application } from '@app/app';
+import { Player } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY, Namespaces } from '@common/sockets';
 import { CorsOptions } from 'cors';
@@ -88,10 +89,17 @@ export class Server {
             this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.QCM_STATS, (data) => {
                 socket.to(data.room).emit(Events.QCM_STATS, data);
+                const YELLOW = 0xffff00;
+                this.setPlayerColor(data.room, data.player, YELLOW);
             });
-
+            socket.on('confirmAnswer', (data) => {
+                const GREEN = 0x00ff00;
+                this.setPlayerColor(data.room, data.player, GREEN);
+            });
             socket.on(Events.QRL_STATS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.QRL_STATS, data);
+                const YELLOW = 0xffff00;
+                this.setPlayerColor(data.room, data.player, YELLOW);
             });
 
             socket.on(Events.GAME_RESULTS, (data) => {
@@ -104,6 +112,9 @@ export class Server {
 
             socket.on(Events.UPDATE_PLAYER, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.UPDATE_PLAYER, data);
+                // console.log(data);
+                const RED = 0xff0000;
+                this.setPlayerColor(data.room, data, RED);
             });
 
             socket.on(Events.GET_PLAYERS, (data) => {
@@ -202,5 +213,18 @@ export class Server {
         const addr = this.server.address() as AddressInfo;
         const bind: string = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
         console.log(`Listening on ${bind}`);
+    }
+
+    private setPlayerColor(room: string, player: Player, color: number) {
+        const playerMap = this.socketEvents.mapOfPlayersInRoom.get(room);
+        if (playerMap) {
+            for (const play of playerMap) {
+                if (player.name === play.name) {
+                    play.color = color;
+                    play.score = player.score;
+                }
+            }
+            this.io.to(room).emit(Events.GET_PLAYERS, playerMap);
+        }
     }
 }

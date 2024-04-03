@@ -25,7 +25,7 @@ export class SocketRoomService implements OnDestroy {
         private io: IoService,
         public playerService: PlayerService,
         private router: Router,
-        private snackBar: MatSnackBar,
+        private snackBar: MatSnackBar, // Peut-être mettre dans un component.
     ) {
         this.socket = io.io(this.url);
         window.addEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
@@ -37,6 +37,26 @@ export class SocketRoomService implements OnDestroy {
 
     get connected() {
         return this.socket.connected;
+    }
+
+    confirmAnswer(player: Player) {
+        // À ajouter au enum + tard
+        this.sendMessage('confirmAnswer' as Events, Namespaces.GAME_STATS, { player });
+    }
+
+    excludeFromChat(player: Player) {
+        // À ajouter au enum + tard
+        this.socket.emit('excludeFromChat', { player });
+    }
+
+    includeInChat(player: Player) {
+        // À ajouter au enum + tard
+        this.socket.emit('includeInChat', { player });
+    }
+
+    abandonGame() {
+        // À ajouter au enum + tard
+        this.socket.emit('abandonGame');
     }
 
     createRoom(game: Game) {
@@ -154,9 +174,6 @@ export class SocketRoomService implements OnDestroy {
                 observer.next(players);
             });
         });
-    }
-    requestPlayers(): void {
-        this.socket.emit(Events.GET_PLAYERS);
     }
 
     getProfile(): Observable<Player> {

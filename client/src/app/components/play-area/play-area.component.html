@@ -33,7 +33,8 @@
                 <button mat-button (click)="handleAbort()">
                     <h3 class="abort-button">Abandonner</h3>
                 </button>
-                <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button">
+                <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button">
+                    <!--    <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button"> -->
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
-import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { ChatMessage } from '@common/message';
@@ -13,23 +13,25 @@ describe('SidebarComponent', () => {
     let component: SidebarComponent;
     let fixture: ComponentFixture<SidebarComponent>;
     let socketMock: SpyObj<SocketRoomService>;
-
+    let snackBarMock: SpyObj<MatSnackBar>;
     beforeEach(async () => {
-        socketMock = jasmine.createSpyObj('SocketRoomService', [
-            'getChatMessages',
-            'sendChatMessage',
-            'listenForMessages',
-            'sendMessage',
-            'joinAllNamespaces',
-        ]);
+        socketMock = jasmine.createSpyObj(
+            'SocketRoomService',
+            ['getChatMessages', 'sendChatMessage', 'listenForMessages', 'sendMessage', 'joinAllNamespaces'],
+            ['room'],
+        );
+        snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+
         socketMock.getChatMessages.and.returnValue(of({} as ChatMessage));
         socketMock.listenForMessages.and.returnValue(of({}));
         socketMock.sendMessage.and.returnValue({} as any);
 
         await TestBed.configureTestingModule({
             declarations: [SidebarComponent],
-            providers: [{ provide: SocketRoomService, useValue: socketMock }],
-            imports: [MatSnackBarModule],
+            providers: [
+                { provide: SocketRoomService, useValue: socketMock },
+                { provide: MatSnackBar, useValue: snackBarMock },
+            ],
         }).compileComponents();
     });
 

@@ -56,10 +56,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private qrlGradeSubscription: Subscription;
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
+    //    private getProfileSubscription: Subscription;
     private pauseTimerSubscription: Subscription;
 
+    // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
-    // On a besoin de tout ces injections pour l'instant. Nous n'avons pas encore trouvé de moyen pour découpler ce component.
     constructor(
         readonly timeService: TimeService,
         readonly gameManager: GameManagerService,
@@ -99,7 +100,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     detectButton(event: KeyboardEvent) {
         this.buttonPressed = event.key;
         if (this.buttonPressed === 'Enter' && this.question.type === Type.QCM && !this.choiceDisabled) {
-            this.confirmAnswers();
+            this.confirmAnswers(true);
         } else if (
             this.buttonPressed >= '1' &&
             this.buttonPressed <= '4' &&
@@ -118,7 +119,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
 
         this.timeService.timerEnded.subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
         });
         const gameID = this.route.snapshot.paramMap.get('id');
         if (this.inTestMode && gameID) {
@@ -137,7 +138,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
@@ -145,7 +146,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
-            await this.confirmAnswers();
+            await this.confirmAnswers(false);
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
@@ -262,6 +263,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
+            player: this.player,
         };
         this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmStat);
     }
@@ -270,10 +272,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         return this.answer.includes(choice);
     }
 
-    async confirmAnswers() {
+    async confirmAnswers(fromUserInput: boolean) {
+        // true : appelé par input utilisateur, false : appelé par serveur,
         this.timeService.stopTimer();
         this.choiceDisabled = true;
-
+        if (fromUserInput) {
+            this.socketService.confirmAnswer(this.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
+        }
         if (this.inTestMode) {
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -349,10 +354,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.bonusGiven = false;
             this.gotBonus = false;
         }
-        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
+        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.player });
     }
 
+    // Le chargé aime pas le nom donné à la fonction.
     handleAbort(): void {
+        // Messages à mettre dans des constantes.
         const message = 'Êtes-vous sûr de vouloir abandonner la partie?';
 
         const dialogData = new ConfirmDialogModel('Abandon', message);
@@ -373,6 +380,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                     timeStamp: new Date().toLocaleTimeString(),
                 };
                 this.socketService.sendChatMessage(chatMessage);
+                this.socketService.abandonGame();
                 this.router.navigate(['/']);
                 this.onLocationChange();
             }

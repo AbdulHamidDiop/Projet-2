@@ -62,12 +62,13 @@ export class SidebarComponent implements OnDestroy {
     }
 
     handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
-        if (event.key === 'Enter' && this.currentMessage.message) {
+        if (event.key === 'Enter' && this.currentMessage.message && this.player.chatEnabled) {
             this.currentMessage.author = this.player.name;
             this.currentMessage.timeStamp = new Date().toLocaleTimeString();
             if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
                 this.messageHistory.push(this.currentMessage);
                 this.socketsService.sendChatMessage(this.currentMessage);
+                this.messageHistory.push(this.currentMessage);
             } else {
                 this.snackBar.open('Le message ne peut pas excéder 200 caractères', 'Fermer', {
                     verticalPosition: 'top',

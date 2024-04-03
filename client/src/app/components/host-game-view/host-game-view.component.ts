@@ -38,6 +38,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
     players: Player[] = [];
+    displayPlayerList = true;
     unitTesting: boolean = false;
     disableControls: boolean = false;
     questionLoaded: boolean = false;
@@ -65,6 +66,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly playerService: PlayerService,
         private snackBar: MatSnackBar,
     ) {
+        this.players = this.playerService.playersInGame;
+
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.setGamePlayers(players);
             this.players = players;
@@ -117,6 +120,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
 
         this.qcmStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
             this.updateBarChartData(stat as QCMStats);
+            this.updatePlayerFromServer(stat as QCMStats);
         });
 
         this.qrlStatsSubscription = this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QRL_STATS).subscribe((stat: unknown) => {
@@ -320,6 +324,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     notifyEndGame() {
         this.showResults();
         this.socketService.sendMessage(Events.END_GAME, Namespaces.GAME);
+    }
+
+    updatePlayerFromServer(stats: QCMStats) {
+        for (const player of this.players) {
+            if (stats.player && player.name === stats.player.name) {
+                player.score = stats.player.score;
+            }
+        }
     }
 
     openResultsPage(): void {
