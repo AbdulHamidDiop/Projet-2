@@ -258,6 +258,15 @@ export class SocketEvents {
                     } else {
                         socket.emit(Events.UNLOCK_ROOM);
                     }
+                } else if (room.slice(-9) === 'aleatoire') {
+                    if (this.lockedRooms.includes(room)) {
+                        socket.to(room).emit(Events.START_GAME);
+                        socket.emit(Events.START_GAME);
+                        socket.to(room).emit(Events.GET_PLAYERS, players);
+                        socket.emit(Events.GET_PLAYERS, players);
+                    } else {
+                        socket.emit(Events.UNLOCK_ROOM);
+                    }
                 }
             }
         });

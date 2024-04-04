@@ -61,7 +61,9 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
             }
         } else if (this.game.id.slice(-9) === 'aleatoire') {
             this.player.isHost = false;
+            this.players.push(this.player);
             if (this.roomLocked === true) {
+                this.socket.startGame();
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
                 this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
             } else {
