@@ -34,7 +34,7 @@ describe('PlayAreaComponent', () => {
     beforeEach(async () => {
         timeServiceSpy = jasmine.createSpyObj(
             'TimeService',
-            ['startTimer', 'stopTimer', 'time', 'timerEnded', 'pauseTimer'],
+            ['startTimer', 'stopTimer', 'time', 'timerEnded', 'pauseTimer', 'deactivatePanicMode', 'activatePanicMode'],
             ['counter', 'interval'],
         );
         timeServiceSpy.startTimer.and.returnValue();

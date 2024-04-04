@@ -3,21 +3,20 @@ import { Type } from '@common/game';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 import { SocketRoomService } from './socket-room.service';
-
 const PANIC_TRESHOLD = 10;
 const DEFAULT_TICK = 1000;
 const PANIC_TICK = 250;
-
+const PANIC_SOUND_URL = '@app/../assets/audio/pop.mp3';
 @Injectable({
     providedIn: 'root',
 })
 export class TimeService implements OnDestroy {
     timerEnded: EventEmitter<void> = new EventEmitter<void>();
+    pauseFlag: boolean = false;
+    counter: number;
+    panicMode: boolean = false;
+    panicSound = new Audio(PANIC_SOUND_URL);
     private interval: number | undefined;
-    private pauseFlag: boolean = false;
-    private panicMode: boolean = false;
-
-    private counter: number;
 
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
@@ -95,8 +94,10 @@ export class TimeService implements OnDestroy {
         this.stopTimer();
         if (type === Type.QCM && this.counter > PANIC_TRESHOLD) {
             this.panicMode = true;
+            this.panicSound.play();
         } else if (type === Type.QRL && this.counter > PANIC_TRESHOLD * 2) {
             this.panicMode = true;
+            this.panicSound.play();
         }
         if (!this.pauseFlag) {
             this.startTimer(this.counter);
