@@ -319,7 +319,8 @@ export class SocketRoomService implements OnDestroy {
                 verticalPosition: 'top',
             });
             if (!this.unitTests) {
-                this.router.navigate(['/home']);
+                // this.router.navigate(['/home'], { queryParams: { init: true } });
+                this.router.navigate(['/createGame']);
             }
             const message: ChatMessage = {
                 author: SystemMessages.AUTHOR,

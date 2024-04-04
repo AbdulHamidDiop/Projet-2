@@ -47,12 +47,12 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         private snackBar: MatSnackBar,
         private playerService: PlayerService,
     ) {
+        // if init is true in the queryParams, call a function
+        if (this.router.url.includes('?init=true')) {
+            this.setInitailView();
+        }
         this.leaveRoomSubscription = this.socket.leaveRoomSubscribe().subscribe(() => {
-            this.fullView = false;
-            this.roomIdEntryView = true;
-            this.usernameEntryView = false;
-            this.playerPanelView = false;
-            this.fullView = true;
+            this.setInitailView();
         });
 
         this.roomJoinSubscription = this.socket.roomJoinSubscribe().subscribe((res) => {
@@ -154,6 +154,14 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
                 }
             }, START_GAME_DELAY);
         });
+    }
+
+    setInitailView(): void {
+        this.fullView = false;
+        this.roomIdEntryView = true;
+        this.usernameEntryView = false;
+        this.playerPanelView = false;
+        this.fullView = true;
     }
 
     onLocationChange = () => {
