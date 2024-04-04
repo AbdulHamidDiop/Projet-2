@@ -1,14 +1,12 @@
 import { TestBed, discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { Type } from '@common/game';
-import { of } from 'rxjs';
 import { SocketRoomService } from './socket-room.service';
 import { TimeService } from './time.service';
-import SpyObj = jasmine.SpyObj;
+const PANIC_TRESHOLD = 10;
 
 const INVALID_TIME = -1;
 describe('TimeService', () => {
-    let socketMock: SpyObj<SocketRoomService>;
-
     let service: TimeService;
     let socketService: SocketRoomService;
     // let listenForMessagesSpy: jasmine.Spy;
@@ -17,16 +15,11 @@ describe('TimeService', () => {
     const MS_SECOND = 1000;
 
     beforeEach(() => {
-        socketMock = jasmine.createSpyObj('SocketRoomService', ['listenForMessages']);
-        socketMock.listenForMessages.and.returnValue(of({ time: TIMEOUT }));
         TestBed.configureTestingModule({
-            providers: [
-                {
-                    provide: SocketRoomService,
-                    useValue: socketMock,
-                },
-            ],
+            imports: [MatSnackBarModule],
+            providers: [TimeService, { provide: SocketRoomService }],
         });
+
         service = TestBed.inject(TimeService);
         socketService = TestBed.inject(SocketRoomService);
         spyOn(service, 'deactivatePanicMode');
