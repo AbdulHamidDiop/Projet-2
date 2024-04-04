@@ -426,5 +426,64 @@
       ],
       "isHidden": false
     }
+  },
+  {
+    "pin": "2731",
+    "game": {
+      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
+      "lastModification": "2024-03-25T00:13:29.616Z",
+      "title": "Quiz QRL",
+      "description": "Tester un jeu QRL",
+      "duration": 35,
+      "questions": [
+        {
+          "type": "QRL",
+          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
+          "points": 10,
+          "addToBank": false,
+          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
+          "lastModification": "2024-03-25T00:12:06.103Z"
+        },
+        {
+          "type": "QRL",
+          "text": "calculez la moyenne",
+          "points": 20,
+          "addToBank": false,
+          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
+          "lastModification": "2024-03-25T00:12:35.476Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la capitale de France?",
+          "points": 10,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": true
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "London",
+              "isCorrect": false
+            }
+          ],
+          "id": "test",
+          "lastModification": "2024-02-14T00:36:59.038Z"
+        },
+        {
+          "type": "QRL",
+          "text": "qui etait descartes",
+          "points": 20,
+          "addToBank": false,
+          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
+          "lastModification": "2024-03-25T00:13:06.127Z"
+        }
+      ],
+      "isHidden": false
+    }
   }
 ]

@@ -344,18 +344,20 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     openResultsPage(): void {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
+        const RESPONSE_FROM_SERVER_DELAY = 500;
 
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
-            const RESPONSE_FROM_SERVER_DELAY = 500;
             // Le score n'est pas mis à jour dans la vue des résultats parceque la réponse du serveur se fait avant que le score soit mis à jour.
             // C'est peut-etre possible de regler ça en mettant les appels socket dans playerservice.
             setTimeout(() => {
                 this.router.navigate(['/game', gameId, 'results']);
             }, RESPONSE_FROM_SERVER_DELAY);
         }
-        this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
-        this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
+        setTimeout(() => {
+            this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
+            this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
+        }, RESPONSE_FROM_SERVER_DELAY * 2);
     }
 
     onLocationChange = () => {
