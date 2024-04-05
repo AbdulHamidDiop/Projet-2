@@ -46,6 +46,7 @@ export class GameRandomComponent {
             id: crypto.randomUUID() + 'aleatoire',
             title: 'Mode Aléatoire',
             questions: this.selectRandomQuestions(),
+            duration: 20,
         };
     }
 

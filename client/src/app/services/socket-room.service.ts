@@ -46,10 +46,10 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
-    getGameId(): Observable<string> {
+    getGamePin(): Observable<string> {
         return new Observable((observer) => {
-            this.socket.on(Events.GET_GAME_ID, (id) => {
-                observer.next(id);
+            this.socket.on(Events.GET_GAME_PIN, (pin) => {
+                observer.next(pin);
             });
         });
     }

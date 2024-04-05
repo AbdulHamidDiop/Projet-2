@@ -1,28 +1,26 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
 import { GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from '@common/message';
-import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-player-and-admin-panel',
     templateUrl: './player-and-admin-panel.component.html',
     styleUrls: ['./player-and-admin-panel.component.scss'],
 })
-export class PlayerAndAdminPanelComponent implements OnDestroy {
+export class PlayerAndAdminPanelComponent {
     @Input() player: Player = {} as Player;
     @Input() game: Game = {} as Game;
     @Input() players: Player[] = [];
     room: string;
     roomLocked: boolean = false;
-    private globalChatSubscription: Subscription;
 
     constructor(
         private socket: SocketRoomService,
         private snackBar: MatSnackBar,
     ) {
-        this.globalChatSubscription = this.socket.getChatMessages().subscribe((message) => {
+        this.socket.getChatMessages().subscribe((message) => {
             if (message.author === 'room') {
                 this.room = message.message;
             }
@@ -80,9 +78,5 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
 
     leaveRoom() {
         this.socket.leaveRoom();
-    }
-
-    ngOnDestroy() {
-        this.globalChatSubscription.unsubscribe();
     }
 }

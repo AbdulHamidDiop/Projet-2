@@ -38,7 +38,7 @@ describe('WaitingPageComponent', () => {
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
-        socketMock.getGameId.and.returnValue(of('123'));
+        socketMock.getGamePin.and.returnValue(of('123'));
         socketMock.getPlayers.and.returnValue(of([]));
         socketMock.getProfile.and.returnValue(of({ isHost: true } as Player));
         socketMock.gameStartSubscribe.and.returnValue(of(undefined));

@@ -117,6 +117,12 @@ export class WaitingPageComponent implements OnDestroy {
 
         this.gameStartSubscribe();
 
+        this.socket.getGamePin().subscribe((pin) => {
+            this.gameSessionService.getGameWithoutCorrectShown(pin).then((game) => {
+                this.game = game;
+            });
+        });
+
         this.socket.getPlayers().subscribe((players) => {
             this.players = players;
         });

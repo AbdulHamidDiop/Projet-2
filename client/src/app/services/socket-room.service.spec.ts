@@ -167,8 +167,8 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.on on call to getGameId', () => {
-        service.getGameId().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_GAME_ID, jasmine.any(Function));
+        service.getGamePin().subscribe(() => {
+            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_GAME_PIN, jasmine.any(Function));
         });
     });
 
