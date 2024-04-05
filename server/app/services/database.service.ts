@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-imports */
 import { Db, MongoClient } from 'mongodb';
 import { Service } from 'typedi';
-import { DB_DB } from 'utils/env';
+import { DB_DB } from '../../utils/env';
 
 @Service()
 export class DatabaseService {

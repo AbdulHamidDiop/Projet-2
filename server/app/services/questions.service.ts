@@ -2,7 +2,7 @@
 import { Choices, Question } from '@common/game';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-import { DB_COLLECTION_QUESTIONS } from 'utils/env';
+import { DB_COLLECTION_QUESTIONS } from '../../utils/env';
 import { DatabaseService } from './database.service';
 
 @Service()
