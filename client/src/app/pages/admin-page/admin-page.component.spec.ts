@@ -443,7 +443,7 @@ describe('AdminPageComponent', () => {
         ];
         component.sessions = sessions;
     
-        const event = { value: 'option1' } as MatSelectChange;
+        const event = { value: 'ascending-alphabetically' } as MatSelectChange;
         component.sortList(event);
     
         expect(component.sessions).toEqual([
@@ -461,7 +461,7 @@ describe('AdminPageComponent', () => {
         ];
         component.sessions = sessions;
     
-        const event = { value: 'option2' } as MatSelectChange;
+        const event = { value: 'descending-alphabetically' } as MatSelectChange;
         component.sortList(event);
     
         expect(component.sessions).toEqual([
@@ -479,7 +479,7 @@ describe('AdminPageComponent', () => {
         ];
         component.sessions = sessions;
     
-        const event = { value: 'option3' } as MatSelectChange;
+        const event = { value: 'ascending-date' } as MatSelectChange;
         component.sortList(event);
     
         expect(component.sessions).toEqual([
@@ -497,7 +497,7 @@ describe('AdminPageComponent', () => {
         ];
         component.sessions = sessions;
     
-        const event = { value: 'option4' } as MatSelectChange;
+        const event = { value: 'descending-date' } as MatSelectChange;
         component.sortList(event);
     
         expect(component.sessions).toEqual([
