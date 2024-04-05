@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
@@ -8,9 +8,10 @@ import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
     templateUrl: './player-list.component.html',
     styleUrls: ['./player-list.component.scss'],
 })
-export class PlayerListComponent implements OnInit {
+export class PlayerListComponent implements OnInit, OnChanges {
     @Input() players: Player[] = [];
 
+    sortOption: Sort;
     protected sortedData: Player[];
     constructor(private socket: SocketRoomService) {
         this.sortedData = this.players.slice();
@@ -18,6 +19,10 @@ export class PlayerListComponent implements OnInit {
 
     ngOnInit(): void {
         this.sortedData = this.players.slice();
+    }
+
+    ngOnChanges(): void {
+        this.sortData(this.sortOption);
     }
 
     excludeFromChat(player: Player) {
@@ -69,6 +74,7 @@ export class PlayerListComponent implements OnInit {
     }
 
     sortData(sort: Sort) {
+        this.sortOption = sort;
         const data = this.players.slice();
         if (!sort.active || sort.direction === '') {
             this.sortedData = data;
