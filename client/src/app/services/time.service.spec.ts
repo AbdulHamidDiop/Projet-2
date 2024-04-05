@@ -1,15 +1,32 @@
 import { TestBed, discardPeriodicTasks, fakeAsync, flush, tick } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { Type } from '@common/game';
+import { SocketRoomService } from './socket-room.service';
 import { TimeService } from './time.service';
+const PANIC_TRESHOLD = 10;
 
 const INVALID_TIME = -1;
 describe('TimeService', () => {
     let service: TimeService;
+    let socketService: SocketRoomService;
+    // let listenForMessagesSpy: jasmine.Spy;
+
     const TIMEOUT = 5;
     const MS_SECOND = 1000;
 
     beforeEach(() => {
-        TestBed.configureTestingModule({});
+        TestBed.configureTestingModule({
+            imports: [MatSnackBarModule],
+            providers: [TimeService, { provide: SocketRoomService }],
+        });
+
         service = TestBed.inject(TimeService);
+        socketService = TestBed.inject(SocketRoomService);
+        spyOn(service, 'deactivatePanicMode');
+        spyOn(service, 'startTimer');
+        spyOn(service, 'stopTimer');
+        spyOn(service, 'pauseTimer');
+        service = new TimeService(socketService);
     });
 
     it('should be created', () => {
@@ -116,19 +133,6 @@ describe('TimeService', () => {
         flush();
     }));
 
-    it('pauseTimer should pause and resume the timer', fakeAsync(() => {
-        service.startTimer(TIMEOUT);
-        tick(MS_SECOND * 2);
-        service.pauseTimer();
-        const timeAfterPause = service.time;
-        tick(MS_SECOND * 3);
-        expect(service.time).toEqual(timeAfterPause);
-        service.pauseTimer();
-        tick(MS_SECOND * 2);
-        expect(service.time).toEqual(timeAfterPause);
-        discardPeriodicTasks();
-    }));
-
     it('pauseTimer should resume the timer if it was paused', fakeAsync(() => {
         service.startTimer(TIMEOUT);
         tick(MS_SECOND * 2);
@@ -140,4 +144,45 @@ describe('TimeService', () => {
         expect(service.time).toEqual(timeAfterPause - 2);
         discardPeriodicTasks();
     }));
+
+    it('should stop timer and start it again if not paused', () => {
+        spyOn(service, 'startTimer');
+        spyOn(service, 'stopTimer');
+        service.pauseFlag = false;
+        service.counter = 0;
+
+        service.activatePanicMode(Type.QCM);
+
+        expect(service.stopTimer).toHaveBeenCalled();
+        expect(service.startTimer).toHaveBeenCalledWith(0);
+    });
+
+    it('should activate panic mode and play sound for QCM type', () => {
+        spyOn(service.panicSound, 'play');
+        service.pauseFlag = false;
+        service.counter = PANIC_TRESHOLD + 1;
+
+        service.activatePanicMode(Type.QCM);
+
+        expect(service.panicMode).toBeTrue();
+        expect(service.panicSound.play).toHaveBeenCalled();
+    });
+
+    it('should activate panic mode and play sound for QRL type', () => {
+        spyOn(service.panicSound, 'play');
+        service.pauseFlag = false;
+        service.counter = PANIC_TRESHOLD * 2 + 1;
+
+        service.activatePanicMode(Type.QRL);
+
+        expect(service.panicMode).toBeTrue();
+        expect(service.panicSound.play).toHaveBeenCalled();
+    });
+
+    it('should return wether or not it is paused', () => {
+        service.pauseFlag = true;
+        expect(service.isPaused).toBeTrue();
+        service.pauseFlag = false;
+        expect(service.isPaused).toBeFalse();
+    });
 });

@@ -37,6 +37,7 @@ import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
 import { SessionComponent } from './components/session/session.component';
+import { PlayerListComponent } from './components/player-list/player-list.component';
 
 /**
  * Main module that is used in main.ts.
@@ -79,6 +80,7 @@ import { SessionComponent } from './components/session/session.component';
         AdminButtonComponent,
         FooterComponent,
         SessionComponent,
+        PlayerListComponent,
     ],
     imports: [
         AppMaterialModule,

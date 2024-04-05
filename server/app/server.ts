@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { Application } from '@app/app';
+import { Player } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY, Namespaces } from '@common/sockets';
 import { CorsOptions } from 'cors';
@@ -97,6 +98,18 @@ export class Server {
             this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.QCM_STATS, (data) => {
                 socket.to(data.room).emit(Events.QCM_STATS, data);
+                const YELLOW = 0xffff00;
+                this.setPlayerColor(data.room, data.player, YELLOW);
+            });
+            socket.on(Events.CONFIRM_ANSWERS, (data) => {
+                const GREEN = 0x00ff00;
+                this.setPlayerColor(data.room, data.player, GREEN);
+            });
+
+            socket.on(Events.NOTIFY_QRL_INPUT, (data) => {
+                // console.log(data) dans un jeu QRL cet event est appelé très souvent.
+                const YELLOW = 0xffff00;
+                this.setPlayerColor(data.room, data, YELLOW);
             });
 
             socket.on(Events.QRL_STATS, (data) => {
@@ -113,6 +126,8 @@ export class Server {
 
             socket.on(Events.UPDATE_PLAYER, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.UPDATE_PLAYER, data);
+                const RED = 0xff0000;
+                this.setPlayerColor(data.room, data, RED);
             });
 
             socket.on(Events.GET_PLAYERS, (data) => {
@@ -126,8 +141,28 @@ export class Server {
                 gameNamespace.in(room).emit(Events.SHOW_RESULTS);
             });
 
+            socket.on(Events.PLAYER_LEFT, (data) => {
+                gameNamespace.in(data.room).emit(Events.PLAYER_LEFT, data);
+            });
+
+            socket.on(Events.PLAYER_JOINED, (data) => {
+                gameNamespace.in(data.room).emit(Events.PLAYER_JOINED, data);
+            });
+
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
-                gameNamespace.in(room).emit(Events.NEXT_QUESTION);
+                gameNamespace.to(room).emit(Events.NEXT_QUESTION);
+            });
+
+            socket.on(Events.QRL_ANSWER, (data) => {
+                socket.in(data.room).emit(Events.QRL_ANSWER, data);
+            });
+
+            socket.on(Events.SEND_QRL_ANSWER, ({ room }) => {
+                gameNamespace.to(room).emit(Events.SEND_QRL_ANSWER);
+            });
+
+            socket.on(Events.QRL_GRADE, (data) => {
+                socket.in(data.room).emit(Events.QRL_GRADE, data);
             });
 
             socket.on(Events.END_GAME, ({ room }: { room: string }) => {
@@ -149,12 +184,25 @@ export class Server {
                 gameNamespace.in(room).emit(Events.ABORT_GAME);
             });
 
-            socket.on(Events.START_TIMER, ({ room }) => {
-                gameNamespace.in(room).emit(Events.START_TIMER);
+            socket.on(Events.START_TIMER, (data) => {
+                gameNamespace.in(data.room).emit(Events.START_TIMER, data);
             });
+
             socket.on(Events.STOP_TIMER, ({ room }) => {
                 gameNamespace.in(room).emit(Events.STOP_TIMER);
             });
+            socket.on(Events.PAUSE_TIMER, ({ room }) => {
+                gameNamespace.in(room).emit(Events.PAUSE_TIMER);
+            });
+
+            socket.on(Events.PANIC_MODE, (data) => {
+                gameNamespace.in(data.room).emit(Events.PANIC_MODE, data);
+            });
+
+            socket.on(Events.PANIC_MODE_OFF, ({ room }) => {
+                gameNamespace.to(room).emit(Events.PANIC_MODE_OFF);
+            });
+
             socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
                 socket.emit(Events.BONUS);
                 socket.to(room).emit(Events.BONUS_GIVEN);
@@ -188,5 +236,18 @@ export class Server {
         const addr = this.server.address() as AddressInfo;
         const bind: string = typeof addr === 'string' ? `pipe ${addr}` : `port ${addr.port}`;
         console.log(`Listening on ${bind}`);
+    }
+
+    private setPlayerColor(room: string, player: Player, color: number) {
+        const playerMap = this.socketEvents.mapOfPlayersInRoom.get(room);
+        if (playerMap) {
+            for (const play of playerMap) {
+                if (player.name === play.name) {
+                    play.color = color;
+                    play.score = player.score;
+                }
+            }
+            this.io.to(room).emit(Events.GET_PLAYERS, playerMap);
+        }
     }
 }

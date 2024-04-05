@@ -88,3 +88,45 @@ main {
     padding: 8px; /* Espacement intérieur des cellules */
     text-align: left; /* Alignement du texte à gauche */
 }
+
+.grading-container {
+    padding: 10px;
+}
+
+.player-name {
+    padding: 10px;
+}
+.player-answer {
+    background-color: rgba(223, 218, 218, 0.618);
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.grading-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.grade1 {
+    background-color: salmon;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    margin-left: 15px;
+}
+.grade2 {
+    background-color: rgb(240, 240, 109);
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.grade3 {
+    background-color: lightgreen;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+}

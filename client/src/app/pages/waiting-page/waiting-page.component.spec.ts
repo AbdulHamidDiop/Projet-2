@@ -16,6 +16,7 @@ describe('WaitingPageComponent', () => {
     let gameServiceMock: SpyObj<GameService>;
     let snackBarMock: SpyObj<MatSnackBar>;
     const DELAY = 5000;
+    const DELAY_THREE_SEC = 3000;
 
     beforeEach(async () => {
         socketMock = jasmine.createSpyObj('SocketRoomService', [
@@ -31,6 +32,7 @@ describe('WaitingPageComponent', () => {
             'leaveRoom',
             'sendMessage',
             'requestPlayers',
+            'listenForMessages',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -41,6 +43,7 @@ describe('WaitingPageComponent', () => {
         socketMock.disconnectSubscribe.and.returnValue(of(undefined));
         socketMock.roomLockedSubscribe.and.returnValue(of(true));
         socketMock.kickSubscribe.and.returnValue(of('Reason for kick'));
+        socketMock.listenForMessages.and.returnValue(of({}));
 
         routerMock = jasmine.createSpyObj('Router', ['navigate']);
 
@@ -90,9 +93,8 @@ describe('WaitingPageComponent', () => {
         component.player.isHost = true;
         component.gameStartSubscribe();
 
-        socketMock.requestPlayers.and.returnValue();
         tick(DELAY + 1);
-        tick(DELAY + 1);
+        tick(DELAY_THREE_SEC + 1);
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['/hostView/123']);
     }));

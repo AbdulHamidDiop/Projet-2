@@ -20,6 +20,8 @@ export class AdminPageComponent implements OnInit {
     selectedFile: File;
     isAuthentificated: boolean;
     errors: string;
+    // Pas utilisé dans le sprint 2
+    // eslint-disable-next-line max-params
     constructor(
         readonly router: Router,
         readonly communicationService: CommunicationService,

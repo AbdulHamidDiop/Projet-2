@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
 import { GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from '@common/message';
+import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -17,6 +18,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     room: string;
     roomLocked: boolean = false;
     private globalChatSubscription: Subscription;
+    private playerLeftSubscription: Subscription;
 
     constructor(
         private socket: SocketRoomService,
@@ -26,6 +28,11 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
             if (message.author === 'room') {
                 this.room = message.message;
             }
+        });
+
+        this.playerLeftSubscription = this.socket.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
+            const username = (data as { user: string }).user;
+            this.players = this.players.filter((p) => p.name !== username);
         });
     }
 
@@ -50,7 +57,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     startGame() {
         if (this.players.length > 0) {
             this.socket.startGame();
-            if (this.roomLocked === true) {
+            if (this.roomLocked) {
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
                 this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
             } else {
@@ -69,13 +76,16 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
 
     kickPlayer(playerName: string) {
         this.socket.kickPlayer(playerName);
+        this.players = this.players.filter((p) => p.name !== playerName);
     }
 
     leaveRoom() {
         this.socket.leaveRoom();
+        this.socket.endGame();
     }
 
     ngOnDestroy() {
         this.globalChatSubscription.unsubscribe();
+        this.playerLeftSubscription.unsubscribe();
     }
 }

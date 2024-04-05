@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { TestBed, fakeAsync } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { Game } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
@@ -22,6 +24,7 @@ describe('SocketRoomService', () => {
         ioMock = jasmine.createSpyObj('IoService', ['io']);
         ioMock.io.and.returnValue(socketMock);
         TestBed.configureTestingModule({
+            imports: [MatSnackBarModule, BrowserAnimationsModule],
             providers: [
                 {
                     provide: Socket,
@@ -34,7 +37,18 @@ describe('SocketRoomService', () => {
             ],
         });
         service = TestBed.inject(SocketRoomService);
+        service.unitTests = true;
     });
+
+    const createMockNamespaceSocket = (emitSuccess: boolean, emitResponse = { success: true }): any => {
+        return {
+            emit: (event: any, data: any, callback: any) => {
+                if (emitSuccess) {
+                    callback(emitResponse);
+                }
+            },
+        };
+    };
 
     it('Should be a mock object', () => {
         expect(service.connected).toBeFalsy();
@@ -44,14 +58,14 @@ describe('SocketRoomService', () => {
         const gameTest: Game = { id: '1', title: 'Game 1', isHidden: false, questions: [] };
         service.createRoom(gameTest);
         expect(socketMock.emit).toHaveBeenCalledWith(Events.CREATE_ROOM, { game: gameTest });
-        expect(socketMock.emit).toHaveBeenCalledTimes(1);
+        expect(socketMock.emit).toHaveBeenCalledTimes(1); // En lisant le code ça devrait être appelé 1 seule fois.
     });
 
     it('Should call socket.emit on call to joinRoom', () => {
         const roomId = '1111';
         service.joinRoom(roomId);
         expect(socketMock.emit).toHaveBeenCalledWith(Events.JOIN_ROOM, { room: roomId });
-        expect(socketMock.emit).toHaveBeenCalledTimes(1);
+        expect(socketMock.emit).toHaveBeenCalledTimes(1); // En lisant le code ça devrait être appelé 1 seule fois.
     });
 
     it('Should call socket.emit on call to leaveRoom', () => {
@@ -218,9 +232,15 @@ describe('SocketRoomService', () => {
         expect(socketMock.disconnect).toHaveBeenCalled();
     });
 
-    it('Should call socket.on on call to nameAvailable', () => {
-        service.nameAvailable().subscribe(() => {
+    it('Should call socket.on on call to onNameNotAvailable', () => {
+        service.onNameNotAvailable().subscribe(() => {
             expect(socketMock.on).toHaveBeenCalledWith(Events.NAME_NOT_AVAILABLE, jasmine.any(Function));
+        });
+    });
+
+    it('Should call socket.on on call to nameBanned', () => {
+        service.onNameBanned().subscribe(() => {
+            expect(socketMock.on).toHaveBeenCalledWith(Events.BANNED_NAME, jasmine.any(Function));
         });
     });
 
@@ -234,9 +254,9 @@ describe('SocketRoomService', () => {
         expect(ioMock.io).toHaveBeenCalled();
     });
 
-    it('Should call sendMessage on call to handleUnload', () => {
+    it('Should call sendMessage on call to endGame', () => {
         service.playerService.player.name = 'Organisateur';
-        service.handleUnload();
+        service.endGame();
         expect(ioMock.io).toHaveBeenCalled();
     });
 
@@ -254,4 +274,52 @@ describe('SocketRoomService', () => {
         service.joinRoomInNamespace('', '');
         expect(socketMock.emit).toHaveBeenCalled();
     }));
+
+    it('should notify other players when a player leaves the room', () => {
+        spyOn(service, 'sendChatMessage');
+        service.unitTests = true;
+        service.room = 'room';
+        service.endGame();
+        expect(service.sendChatMessage).toHaveBeenCalled();
+    });
+
+    it('joins a room successfully', (done) => {
+        spyOn(service, 'connectNamespace').and.returnValue(createMockNamespaceSocket(true));
+
+        service
+            .joinRoomInNamespace('namespace', 'room')
+            .then(() => {
+                expect(service.connectNamespace).toHaveBeenCalledWith('namespace');
+                done();
+            })
+            .catch(done.fail);
+    });
+
+    it('fails to join a room due to server error', (done) => {
+        spyOn(service, 'connectNamespace').and.returnValue(createMockNamespaceSocket(true, { success: false }));
+
+        service.joinRoomInNamespace('namespace', 'room').then(
+            () => {
+                done.fail('Expected method to reject.');
+            },
+            (error) => {
+                expect(error.message).toBe('Failed to join room');
+                done();
+            },
+        );
+    });
+
+    it('fails due to undefined namespace socket', (done) => {
+        spyOn(service, 'connectNamespace').and.returnValue(undefined);
+
+        service.joinRoomInNamespace('namespace', 'room').then(
+            () => {
+                done.fail('Expected method to reject.');
+            },
+            (error) => {
+                expect(error.message).toBe('Namespace socket is undefined');
+                done();
+            },
+        );
+    });
 });

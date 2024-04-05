@@ -23,8 +23,9 @@
                 #input
                 matInput
                 (keyup)="$event.stopPropagation(); handleKeyboardPress($event, input)"
-                placeholder="Vous pouvez laisser un message ici, appuyer sur entrée pour envoyer le message."
+                placeholder="Vous pouvez laisser un message ici, appuyez sur entrée pour envoyer le message."
                 [value]="currentMessage.message"
+                [disabled]="!player.chatEnabled"
             />
         </mat-form-field>
     </div>

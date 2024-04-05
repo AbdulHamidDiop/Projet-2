@@ -1,15 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { Player } from '@common/game';
+import { of } from 'rxjs';
 import { GamePageComponent } from './game-page.component';
+import SpyObj = jasmine.SpyObj;
 
 describe('GamePageComponent', () => {
     let component: GamePageComponent;
     let fixture: ComponentFixture<GamePageComponent>;
+    let socketMock: SpyObj<SocketRoomService>;
 
     beforeEach(async () => {
+        socketMock = jasmine.createSpyObj('SocketRoomService', ['getProfile']);
+        socketMock.getProfile.and.returnValue(of({} as Player));
         await TestBed.configureTestingModule({
+            imports: [MatSnackBarModule],
             declarations: [GamePageComponent],
-            providers: [SocketRoomService],
+            providers: [
+                {
+                    provide: SocketRoomService,
+                    useValue: socketMock,
+                },
+            ],
         }).compileComponents();
     });
 

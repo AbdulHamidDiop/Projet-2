@@ -1,8 +1,10 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 import { PlayerService } from '@app/services/player.service';
 import { Game, Player, Question } from '@common/game';
 import { QCMStats } from '@common/game-stats';
-import { ChatMessage } from '@common/message';
+import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
@@ -14,20 +16,43 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
-    readonly socket: Socket;
-    readonly url = 'http://localhost:3000'; // Your Socket.IO server URL
-    readonly namespaces: Map<string, Socket> = new Map();
+    unitTests: boolean = false;
+    private socket: Socket;
+    private url = 'http://localhost:3000'; // Your Socket.IO server URL
+    private namespaces: Map<string, Socket> = new Map();
 
     constructor(
-        readonly io: IoService,
-        readonly playerService: PlayerService,
+        private io: IoService,
+        public playerService: PlayerService,
+        private router: Router,
+        private snackBar: MatSnackBar, // Peut-être mettre dans un component.
     ) {
         this.socket = io.io(this.url);
-        window.addEventListener('beforeunload', this.handleUnload.bind(this));
+        window.addEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
+
+        this.listenForMessages(Namespaces.GAME, Events.ABORT_GAME).subscribe(() => {
+            this.endGame();
+        });
     }
 
     get connected() {
         return this.socket.connected;
+    }
+
+    confirmAnswer(player: Player) {
+        this.sendMessage(Events.CONFIRM_ANSWERS, Namespaces.GAME_STATS, { player });
+    }
+
+    excludeFromChat(player: Player) {
+        this.socket.emit(Events.EXCLUDE_FROM_CHAT, { player });
+    }
+
+    includeInChat(player: Player) {
+        this.socket.emit(Events.INCLUDE_IN_CHAT, { player });
+    }
+
+    abandonGame() {
+        this.socket.emit(Events.ABANDON_GAME);
     }
 
     createRoom(game: Game) {
@@ -54,7 +79,6 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
-    // La validation devra se faire du coté du serveur.
     lockRoom(): void {
         this.socket.emit(Events.LOCK_ROOM);
     }
@@ -75,9 +99,17 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
-    nameAvailable(): Observable<void> {
+    onNameNotAvailable(): Observable<void> {
         return new Observable((observer) => {
             this.socket.on(Events.NAME_NOT_AVAILABLE, () => {
+                observer.next();
+            });
+        });
+    }
+
+    onNameBanned(): Observable<void> {
+        return new Observable((observer) => {
+            this.socket.on(Events.BANNED_NAME, () => {
                 observer.next();
             });
         });
@@ -137,9 +169,6 @@ export class SocketRoomService implements OnDestroy {
                 observer.next(players);
             });
         });
-    }
-    requestPlayers(): void {
-        this.socket.emit(Events.GET_PLAYERS);
     }
 
     getProfile(): Observable<Player> {
@@ -272,14 +301,39 @@ export class SocketRoomService implements OnDestroy {
     }
 
     ngOnDestroy() {
-        window.removeEventListener('beforeunload', this.handleUnload.bind(this));
+        window.removeEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
     }
 
-    handleUnload(): void {
+    endGame(snckMessage?: string): void {
+        const snackMessage = snckMessage ? snckMessage : 'La partie a été interrompue';
+
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
             this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
+            if (!this.unitTests) {
+                this.router.navigate(['/createGame']);
+            }
+        } else if (this.room) {
+            this.snackBar.open(snackMessage, 'Fermer', {
+                duration: 5000,
+                verticalPosition: 'top',
+            });
+            if (!this.unitTests) {
+                // this.router.navigate(['/home'], { queryParams: { init: true } });
+                this.router.navigate(['/createGame']);
+            }
+            const message: ChatMessage = {
+                author: SystemMessages.AUTHOR,
+                message: this.playerService.player.name + ' ' + SystemMessages.PLAYER_LEFT,
+                timeStamp: new Date().toLocaleTimeString(),
+            };
+            this.sendChatMessage(message);
+            this.sendMessage(Events.PLAYER_LEFT, Namespaces.GAME, { user: this.playerService.player.name });
         }
+        //   this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
+        // faudra un nouvel event ex. leaveGame.
+        this.room = '';
+        this.playerService.playersInGame = [];
     }
 
     connectNamespace(namespace: string): Socket | undefined {

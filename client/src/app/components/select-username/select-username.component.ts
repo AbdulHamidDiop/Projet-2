@@ -14,8 +14,15 @@ export class SelectUsernameComponent {
         private playerService: PlayerService,
         private snackBar: MatSnackBar,
     ) {
-        this.socket.nameAvailable().subscribe(() => {
+        this.socket.onNameNotAvailable().subscribe(() => {
             this.snackBar.open('Le nom choisi est déjà utilisé', 'Fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
+        });
+
+        this.socket.onNameBanned().subscribe(() => {
+            this.snackBar.open('Le nom choisi est banni et ne peut-être utilisé', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
             });
@@ -23,9 +30,9 @@ export class SelectUsernameComponent {
     }
 
     sendUsername(input: HTMLInputElement) {
-        const regex = /^[a-zA-Z]+$/;
+        const regex = /^[a-zA-Z0-9]+$/;
         if (regex.test(input.value) && input.value.length > 1) {
-            const username = input.value;
+            const username = input.value.charAt(0).toUpperCase() + input.value.slice(1).toLowerCase();
             this.socket.sendPlayerName(username);
             this.playerService.player.name = username;
         } else {

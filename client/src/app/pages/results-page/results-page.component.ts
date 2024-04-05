@@ -1,41 +1,51 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Game, GameService } from '@app/services/game.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
-import { ChatMessage } from '@common/message';
+import { ChatMessage, SystemMessages } from '@common/message';
 import { Player } from '@common/player';
 import { Events, Namespaces } from '@common/sockets';
+import { Subscription } from 'rxjs';
 
 @Component({
     selector: 'app-results-page',
     templateUrl: './results-page.component.html',
     styleUrls: ['./results-page.component.scss'],
 })
-export class ResultsPageComponent implements OnInit {
+export class ResultsPageComponent implements OnInit, OnDestroy {
     game: Game;
     players: Player[] = [];
-    chatMessages: string[] = [];
     statisticsData: BarChartQuestionStats[] = [];
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
 
+    private routeSubscription: Subscription;
+    private playersSubscription: Subscription;
+    private gameResultsSubscription: Subscription;
+
     // On a besoin de ces injections.
     constructor(
         private socketsService: SocketRoomService,
+        public playerService: PlayerService,
         private gameService: GameService,
         private route: ActivatedRoute,
         public router: Router,
-    ) {}
+    ) {
+        this.players = this.playerService.playersInGame;
+    }
 
     ngOnInit(): void {
-        this.route.paramMap.subscribe((params) => {
+        this.routeSubscription = this.route.paramMap.subscribe((params) => {
             const id = params.get('id');
             if (id) {
                 this.game = this.gameService.getGameByID(id);
             }
         });
         this.connectToServer();
+        window.addEventListener('popstate', this.onLocationChange);
+        window.addEventListener('hashchange', this.onLocationChange);
     }
 
     sortPlayers(): void {
@@ -49,7 +59,7 @@ export class ResultsPageComponent implements OnInit {
     }
 
     returnToInitialView(): void {
-        this.router.navigate(['/home']);
+        this.leaveWithoutKickingPlayers();
     }
 
     showNextHistogram(): void {
@@ -66,13 +76,45 @@ export class ResultsPageComponent implements OnInit {
         }
     }
 
+    onLocationChange(): void {
+        this.leaveWithoutKickingPlayers();
+    }
+
+    ngOnDestroy(): void {
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
+
+        this.routeSubscription.unsubscribe();
+        this.playersSubscription.unsubscribe();
+        this.gameResultsSubscription.unsubscribe();
+        this.socketsService.endGame();
+    }
+
+    leaveWithoutKickingPlayers() {
+        if (this.playerService.player.name === 'Organisateur') {
+            this.socketsService.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
+            const message: ChatMessage = {
+                author: SystemMessages.AUTHOR,
+                message: "L'organisateur" + ' ' + SystemMessages.PLAYER_LEFT,
+                timeStamp: new Date().toLocaleTimeString(),
+            };
+            this.socketsService.sendChatMessage(message);
+            this.socketsService.leaveRoom();
+            this.socketsService.room = '';
+            this.playerService.playersInGame = [];
+            this.router.navigate(['/']);
+        } else {
+            this.socketsService.endGame('À la prochaine partie!');
+        }
+    }
+
     private updateChart(): void {
         this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
         this.socketsService.sendMessage(Events.UPDATE_CHART, Namespaces.GAME_STATS);
     }
 
     private connectToServer(): void {
-        this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_PLAYERS).subscribe({
+        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_PLAYERS).subscribe({
             next: (playersData: unknown) => {
                 const playersObj = playersData as { [key: string]: Player };
                 const players: Player[] = [];
@@ -87,7 +129,7 @@ export class ResultsPageComponent implements OnInit {
         });
 
         // Écouter les QCMSTATS
-        this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GAME_RESULTS).subscribe({
+        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GAME_RESULTS).subscribe({
             next: (stats: unknown) => {
                 const statsObj = stats as { [key: string]: BarChartQuestionStats };
                 const statisticsData: BarChartQuestionStats[] = [];
@@ -99,10 +141,6 @@ export class ResultsPageComponent implements OnInit {
                 this.statisticsData = statisticsData;
                 this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
             },
-        });
-
-        this.socketsService.getChatMessages().subscribe((message: ChatMessage) => {
-            this.chatMessages.push(message.message);
         });
     }
 }
