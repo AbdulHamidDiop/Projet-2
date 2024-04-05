@@ -57,6 +57,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private startTimerSubscription: Subscription;
     private stopTimerSubscription: Subscription;
     //    private getProfileSubscription: Subscription;
+    private otherPlayersSubscription: Subscription;
+
     private pauseTimerSubscription: Subscription;
 
     // À réecrire en décomposant ça en components.
@@ -114,6 +116,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
+
+        this.otherPlayersSubscription = this.socketService.getPlayers().subscribe((players) => {
+            this.playerService.playersInGame = players
+        })
+
         this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
             this.timeService.startTimer(this.timer);
@@ -216,6 +223,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
         this.pauseTimerSubscription?.unsubscribe();
+        this.otherPlayersSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
