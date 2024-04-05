@@ -396,7 +396,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     };
 
     endGameTest() {
-        if (this.gameManager.endGame && this.inTestMode) {
+        if (this.gameManager.onLastQuestion() && this.inTestMode) {
             this.router.navigate(['/createGame']);
         }
     }
