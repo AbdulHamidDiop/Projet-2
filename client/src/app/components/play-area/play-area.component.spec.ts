@@ -47,12 +47,14 @@ describe('PlayAreaComponent', () => {
             'confirmAnswer',
             'endGame',
             'abandonGame',
+            'getPlayers'
         ]);
         socketMock.listenForMessages.and.returnValue(of({} as any));
         socketMock.sendMessage.and.returnValue({} as any);
         socketMock.confirmAnswer.and.returnValue();
         socketMock.endGame.and.returnValue();
         socketMock.abandonGame.and.returnValue();
+        socketMock.getPlayers.and.returnValue(of([]))
 
         matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
         matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);

@@ -345,6 +345,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
         const RESPONSE_FROM_SERVER_DELAY = 500;
+        const PLAYER_COMPONENT_INIT_DELAY = 3500;
 
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
@@ -358,7 +359,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
             this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
-        }, RESPONSE_FROM_SERVER_DELAY * 2);
+        }, PLAYER_COMPONENT_INIT_DELAY);
     }
 
     onLocationChange = () => {

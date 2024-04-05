@@ -223,8 +223,8 @@ describe('HostGameViewComponent', () => {
 
     it('should navigate to results page on receiving END_GAME event', fakeAsync(() => {
         component.openResultsPage();
-        const SERVER_RESPONSE_DELAY = 500;
-        tick(SERVER_RESPONSE_DELAY);
+        const PLAYER_COMPONENT_INIT_DELAY = 3500;
+        tick(PLAYER_COMPONENT_INIT_DELAY);
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/game', 'test-game-id', 'results']);
     }));
 
