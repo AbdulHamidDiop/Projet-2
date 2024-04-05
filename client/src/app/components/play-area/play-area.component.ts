@@ -110,11 +110,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
-            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
-            this.timeService.startTimer(this.timer);
-        });
-
         this.timeService.timerEnded.subscribe(async () => {
             await this.confirmAnswers(false);
         });
