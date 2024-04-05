@@ -180,9 +180,22 @@ export class SocketRoomService implements OnDestroy {
         this.socket.emit(Events.START_GAME);
     }
 
+    startRandomGame(): void {
+        this.socket.emit(Events.START_RANDOM_GAME);
+        console.log(2);
+    }
+
     gameStartSubscribe(): Observable<void> {
         return new Observable((observer) => {
             this.socket.on(Events.START_GAME, () => {
+                observer.next();
+            });
+        });
+    }
+
+    randomGameStartSubscribe(): Observable<void> {
+        return new Observable((observer) => {
+            this.socket.on(Events.START_RANDOM_GAME, () => {
                 observer.next();
             });
         });

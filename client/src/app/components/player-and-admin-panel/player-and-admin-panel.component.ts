@@ -48,7 +48,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     }
 
     startGame() {
-        if (this.players.length > 0) {
+        if (this.players.length > 0 && this.game.id.slice(-9) !== 'aleatoire') {
             this.socket.startGame();
             if (this.roomLocked === true) {
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
@@ -60,10 +60,9 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
                 });
             }
         } else if (this.game.id.slice(-9) === 'aleatoire') {
-            this.player.isHost = false;
-            this.players.push(this.player);
             if (this.roomLocked === true) {
-                this.socket.startGame();
+                console.log(1);
+                this.socket.startRandomGame();
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
                 this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
             } else {

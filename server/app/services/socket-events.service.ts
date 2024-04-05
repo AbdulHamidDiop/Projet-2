@@ -31,6 +31,7 @@ export class SocketEvents {
         this.listenForUnlockRoomEvent(socket);
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
+        this.listenForStartRandomGameEvent(socket);
         this.listenForRequestPlayersEvent(socket);
         this.listenForLeaveRoomEvent(socket);
     }
@@ -252,21 +253,29 @@ export class SocketEvents {
                 if (host && host.isHost && players.length > 0) {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
-                        socket.emit(Events.START_GAME);
                         socket.to(room).emit(Events.GET_PLAYERS, players);
-                        socket.emit(Events.GET_PLAYERS, players);
                     } else {
                         socket.emit(Events.UNLOCK_ROOM);
                     }
-                } else if (room.slice(-9) === 'aleatoire') {
-                    if (this.lockedRooms.includes(room)) {
-                        socket.to(room).emit(Events.START_GAME);
-                        socket.emit(Events.START_GAME);
-                        socket.to(room).emit(Events.GET_PLAYERS, players);
-                        socket.emit(Events.GET_PLAYERS, players);
-                    } else {
-                        socket.emit(Events.UNLOCK_ROOM);
-                    }
+                }
+            }
+        });
+    }
+
+    listenForStartRandomGameEvent(socket: Socket) {
+        socket.on(Events.START_RANDOM_GAME, () => {
+            if (this.socketInRoom(socket) && this.roomCreated(this.socketIdRoom.get(socket.id))) {
+                const host = this.playerSocketId.get(socket.id);
+                const room = this.socketIdRoom.get(socket.id);
+                const players = this.mapOfPlayersInRoom.get(room);
+                if (this.lockedRooms.includes(room)) {
+                    host.isHost = false;
+                    players.push(host);
+                    console.log(3, players);
+                    socket.to(room).emit(Events.START_RANDOM_GAME);
+                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                } else {
+                    socket.emit(Events.UNLOCK_ROOM);
                 }
             }
         });

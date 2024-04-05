@@ -52,6 +52,17 @@ export class WaitingPageComponent implements OnDestroy {
                 }
             }, START_GAME_DELAY);
         });
+
+        this.socket.randomGameStartSubscribe().subscribe(() => {
+            this.openCountDownModal();
+            setTimeout(() => {
+                setTimeout(() => {
+                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                    this.socket.requestPlayers();
+                }, START_TIMER_DELAY);
+                this.router.navigate(['/game/' + this.game.id]);
+            }, START_GAME_DELAY);
+        });
     }
 
     openCountDownModal(): void {

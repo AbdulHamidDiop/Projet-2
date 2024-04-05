@@ -31,6 +31,7 @@ export enum Events {
     GET_GAME_ID = 'getGameId',
     GET_PLAYER_PROFILE = 'playerProfile',
     START_GAME = 'startGame',
+    START_RANDOM_GAME = 'startRandomGame',
     NAME_NOT_AVAILABLE = 'nameNotAvailable',
     GAME_RESULTS = 'gameResults',
     CHAT_HISTORY = 'chatHistory',
