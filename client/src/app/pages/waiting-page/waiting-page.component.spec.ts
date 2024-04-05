@@ -45,7 +45,7 @@ describe('WaitingPageComponent', () => {
         socketMock.kickSubscribe.and.returnValue(of('Reason for kick'));
         socketMock.listenForMessages.and.returnValue(of({}));
 
-        routerMock = jasmine.createSpyObj('Router', ['navigate']);
+        routerMock = jasmine.createSpyObj('Router', ['navigate'], { url: { includes: () => true } });
 
         gameServiceMock = jasmine.createSpyObj('GameService', ['getGameByID']);
         gameServiceMock.getGameByID.and.returnValue({ id: '123' } as Game);
