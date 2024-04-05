@@ -41,7 +41,7 @@ export class GameSessionService {
         let gameFound = false;
         const sessions: GameSession[] = await this.getAllSessions();
         sessions.filter((session) => {
-            if (session.pin === pin && session.isCompleted === false) {
+            if (session.pin === pin && !session.isCompleted) {
                 gameFound = true;
                 return false;
             }
@@ -103,21 +103,14 @@ export class GameSessionService {
             const isSelected = submittedAnswers.includes(choice.text);
             let status: 'correct' | 'incorrect' | 'missed';
 
-            if (isSelected) {
-                if (choice.isCorrect) {
-                    status = 'correct';
-                } else {
-                    status = 'incorrect';
-                }
-            } else if (choice.isCorrect) {
-                status = 'missed';
-            }
+            status = isSelected? (choice.isCorrect ? 'correct' : 'incorrect'): (choice.isCorrect ? 'missed' : undefined);
 
             return { choice: choice.text, status };
         });
 
         return feedback;
     }
+    
     async completeSession(pin: string, bestScore: number): Promise<boolean> {
         let hasChanged = false;
         const sessions: GameSession[] = await this.getAllSessions();

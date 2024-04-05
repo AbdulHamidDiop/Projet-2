@@ -294,7 +294,7 @@ describe('GameSessionService', () => {
         await expectAsync(service.deleteHistory()).toBeRejectedWithError('Error: 404');
     });
 
-    it('should add nunmber of players successfully', async () => {
+    it('should add number of players successfully', async () => {
         const pin = '1234';
         const nbPlayers = 10;
         const mockResponse: Response = { ok: true } as unknown as Response;

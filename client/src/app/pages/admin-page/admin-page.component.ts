@@ -276,16 +276,16 @@ export class AdminPageComponent implements OnInit {
         const sortBy = event.value;
 
         switch (sortBy) {
-          case 'option1':
+          case 'ascending-alphabetically':
             this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));
             break;
-          case 'option2':
+          case 'descending-alphabetically':
             this.sessions.sort((a, b) => b.game.title.localeCompare(a.game.title));
             break;
-          case 'option3':
+          case 'ascending-date':
             this.sessions.sort((a, b) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
             break;
-          case 'option4':
+          case 'descending-date':
             this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
         }
     }
