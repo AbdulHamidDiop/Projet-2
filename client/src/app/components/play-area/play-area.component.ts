@@ -54,10 +54,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private bonusGivenSubscription: Subscription;
     private sendQRLAnswerSubscription: Subscription;
     private qrlGradeSubscription: Subscription;
-    private startTimerSubscription: Subscription;
-    private stopTimerSubscription: Subscription;
-    //    private getProfileSubscription: Subscription;
-    private pauseTimerSubscription: Subscription;
 
     // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
@@ -157,14 +153,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }, SHOW_FEEDBACK_DELAY);
         });
 
-        this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
-            this.timeService.stopTimer();
-        });
-
-        this.pauseTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.PAUSE_TIMER).subscribe(() => {
-            this.timeService.pauseTimer();
-        });
-
         this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
             this.sendQRLAnswer();
         });
@@ -211,11 +199,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusSubscription?.unsubscribe();
         this.bonusGivenSubscription?.unsubscribe();
         this.abortGameSubscription?.unsubscribe();
-        this.startTimerSubscription?.unsubscribe();
-        this.stopTimerSubscription?.unsubscribe();
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
-        this.pauseTimerSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
