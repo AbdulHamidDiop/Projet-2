@@ -69,7 +69,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.playersLeft = this.players.length;
 
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
-            this.playerService.setGamePlayers(players);
+            this.playerService.playersInGame = this.players; // Pb de cohérence entre component et service avec setGamePlayers.
             this.players = players;
         });
 
