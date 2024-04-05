@@ -1,16 +1,17 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Player } from '@common/game';
+import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
 
 @Component({
     selector: 'app-player-list',
     templateUrl: './player-list.component.html',
     styleUrls: ['./player-list.component.scss'],
 })
-export class PlayerListComponent implements OnInit {
+export class PlayerListComponent implements OnInit, OnChanges {
     @Input() players: Player[] = [];
 
+    sortOption: Sort;
     protected sortedData: Player[];
     constructor(private socket: SocketRoomService) {
         this.sortedData = this.players.slice();
@@ -18,6 +19,10 @@ export class PlayerListComponent implements OnInit {
 
     ngOnInit(): void {
         this.sortedData = this.players.slice();
+    }
+
+    ngOnChanges(): void {
+        this.sortData(this.sortOption);
     }
 
     excludeFromChat(player: Player) {
@@ -29,11 +34,6 @@ export class PlayerListComponent implements OnInit {
     }
 
     colorToState(color: number | undefined) {
-        // Devrait être des constantes globales.
-        const RED = 0xff0000;
-        const YELLOW = 0xffff00;
-        const GREEN = 0x00ff00;
-        const BLACK = 0x000000;
         switch (color) {
             case RED: {
                 return 'Aucune réponse';
@@ -54,10 +54,6 @@ export class PlayerListComponent implements OnInit {
     }
 
     getStyle(player: Player) {
-        const RED = 0xff0000;
-        const YELLOW = 0xffff00;
-        const GREEN = 0x00ff00;
-        const BLACK = 0x000000;
         switch (player.color) {
             case RED: {
                 return 'red-text';
@@ -78,6 +74,7 @@ export class PlayerListComponent implements OnInit {
     }
 
     sortData(sort: Sort) {
+        this.sortOption = sort;
         const data = this.players.slice();
         if (!sort.active || sort.direction === '') {
             this.sortedData = data;
