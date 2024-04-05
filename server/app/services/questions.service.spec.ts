@@ -1,8 +1,9 @@
+/* eslint-disable no-restricted-imports */
 import { Question } from '@common/game';
+import { DB_COLLECTION_QUESTIONS } from '@common/utils/env';
 import { expect } from 'chai';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { stub } from 'sinon';
-import { DB_COLLECTION_QUESTIONS } from 'utils/env';
 import { DatabaseService } from './database.service';
 import { QuestionsService } from './questions.service';
 

@@ -3,8 +3,8 @@ import { Game } from '@common/game';
 import { expect } from 'chai';
 // import { stub } from 'sinon';
 import { GameSession } from '@common/game-session';
+import { DB_COLLECTION_HISTORIQUE } from '@common/utils/env';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { DB_COLLECTION_HISTORIQUE } from '../../utils/env';
 import { DatabaseService } from './database.service';
 import { GameSessionService } from './game-session.service';
 

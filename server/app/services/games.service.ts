@@ -1,9 +1,9 @@
 /* eslint-disable no-restricted-imports */
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
+import { DB_COLLECTION_GAMES } from '@common/utils/env';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-import { DB_COLLECTION_GAMES } from 'utils/env';
 import { DatabaseService } from './database.service';
 
 @Service()

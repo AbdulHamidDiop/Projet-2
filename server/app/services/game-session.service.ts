@@ -3,9 +3,9 @@
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
+import { DB_COLLECTION_HISTORIQUE } from '@common/utils/env';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-import { DB_COLLECTION_HISTORIQUE } from '../../utils/env';
 import { DatabaseService } from './database.service';
 
 @Service()

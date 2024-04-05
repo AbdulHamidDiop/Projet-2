@@ -1,8 +1,9 @@
+/* eslint-disable no-restricted-imports */
 import { Game } from '@common/game';
+import { DB_COLLECTION_GAMES } from '@common/utils/env';
 import { expect } from 'chai';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { stub } from 'sinon';
-import { DB_COLLECTION_GAMES } from 'utils/env';
 import { DatabaseService } from './database.service';
 import { GamesService } from './games.service';
 
