@@ -28,7 +28,7 @@ export enum Events {
     LOCK_ROOM = 'lockRoom',
     UNLOCK_ROOM = 'unlockRoom',
     SET_PLAYER_NAME = 'playerName',
-    GET_GAME_ID = 'getGameId',
+    GET_GAME_PIN = 'getGamePin',
     GET_PLAYER_PROFILE = 'playerProfile',
     START_GAME = 'startGame',
     START_RANDOM_GAME = 'startRandomGame',

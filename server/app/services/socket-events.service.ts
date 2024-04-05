@@ -54,7 +54,8 @@ export class SocketEvents {
             this.chatHistories.set(room, []);
             this.roomGameId.set(room, id);
             socket.emit(Events.JOIN_ROOM, true);
-            socket.emit(Events.GET_GAME_ID, id);
+            socket.emit(Events.GET_GAME_PIN, room);
+
             socket.emit(Events.GET_PLAYER_PROFILE, player);
             socket.emit(Events.GET_PLAYERS, []);
             const message: ChatMessage = {
@@ -152,7 +153,6 @@ export class SocketEvents {
                 const room = this.socketIdRoom.get(socket.id);
                 const player = this.playerSocketId.get(socket.id);
                 const playerList = this.mapOfPlayersInRoom.get(room);
-                const gameId = this.roomGameId.get(room);
                 if (
                     playerList.some((playerInRoom) => {
                         return playerInRoom.name === name;
@@ -172,7 +172,7 @@ export class SocketEvents {
                     playerList.push(player);
                     socket.emit(Events.GET_PLAYERS, playerList);
                     socket.to(room).emit(Events.GET_PLAYERS, playerList);
-                    socket.emit(Events.GET_GAME_ID, gameId);
+                    socket.emit(Events.GET_GAME_PIN, room);
                     const message: ChatMessage = {
                         author: sysmsg.AUTHOR,
                         message: name + ' ' + sysmsg.PLAYER_JOINED,
@@ -253,7 +253,9 @@ export class SocketEvents {
                 if (host && host.isHost && players.length > 0) {
                     if (this.lockedRooms.includes(room)) {
                         socket.to(room).emit(Events.START_GAME);
+                        socket.emit(Events.START_GAME);
                         socket.to(room).emit(Events.GET_PLAYERS, players);
+                        socket.emit(Events.START_GAME);
                     } else {
                         socket.emit(Events.UNLOCK_ROOM);
                     }
@@ -271,9 +273,10 @@ export class SocketEvents {
                 if (this.lockedRooms.includes(room)) {
                     host.isHost = false;
                     players.push(host);
-                    console.log(3, players);
                     socket.to(room).emit(Events.START_RANDOM_GAME);
+                    socket.emit(Events.START_RANDOM_GAME);
                     socket.to(room).emit(Events.GET_PLAYERS, players);
+                    socket.emit(Events.START_RANDOM_GAME);
                 } else {
                     socket.emit(Events.UNLOCK_ROOM);
                 }

@@ -1791,5 +1791,988 @@
         }
       ]
     }
+  },
+  {
+    "pin": "3752",
+    "game": {
+      "id": "aef3ae9c-12b9-4638-94d3-4fd91d4e2b44aleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QRL",
+          "text": "Expliquez l'influence de Michael Jackson",
+          "points": 10,
+          "addToBank": true,
+          "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
+          "lastModification": "2024-02-12T00:24:57.430Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        }
+      ]
+    }
+  },
+  {
+    "pin": "7354",
+    "game": {
+      "id": "c00525f0-94cd-4fbf-bdeb-4775813b1e3caleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la capitale de France?",
+          "points": 10,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": true
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "London",
+              "isCorrect": false
+            }
+          ],
+          "id": "test",
+          "lastModification": "2024-02-14T00:36:59.038Z"
+        }
+      ]
+    }
+  },
+  {
+    "pin": "8544",
+    "game": {
+      "id": "ee9ba76d-8d23-431c-ad94-17439375af29aleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        },
+        {
+          "type": "QRL",
+          "text": "Expliquez l'influence de Michael Jackson",
+          "points": 10,
+          "addToBank": true,
+          "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
+          "lastModification": "2024-02-12T00:24:57.430Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la capitale de France?",
+          "points": 10,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": true
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "London",
+              "isCorrect": false
+            }
+          ],
+          "id": "test",
+          "lastModification": "2024-02-14T00:36:59.038Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        }
+      ]
+    }
+  },
+  {
+    "pin": "8663",
+    "game": {
+      "id": "45773352-7051-46f9-882b-26cb2527fa5faleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la capitale de France?",
+          "points": 10,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": true
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "London",
+              "isCorrect": false
+            }
+          ],
+          "id": "test",
+          "lastModification": "2024-02-14T00:36:59.038Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        }
+      ],
+      "duration": 20
+    }
+  },
+  {
+    "pin": "2527",
+    "game": {
+      "id": "66ab84af-d018-4cce-b83f-0c51ea909586aleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la capitale de France?",
+          "points": 10,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": true
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "London",
+              "isCorrect": false
+            }
+          ],
+          "id": "test",
+          "lastModification": "2024-02-14T00:36:59.038Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QRL",
+          "text": "Expliquez l'influence de Michael Jackson",
+          "points": 10,
+          "addToBank": true,
+          "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
+          "lastModification": "2024-02-12T00:24:57.430Z"
+        }
+      ],
+      "duration": 20
+    }
+  },
+  {
+    "pin": "7986",
+    "game": {
+      "id": "8c851c39-2ec0-4559-a3ec-69b6b2b7619ealeatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        },
+        {
+          "type": "QRL",
+          "text": "Expliquez l'influence de Michael Jackson",
+          "points": 10,
+          "addToBank": true,
+          "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
+          "lastModification": "2024-02-12T00:24:57.430Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        }
+      ],
+      "duration": 20
+    }
+  },
+  {
+    "pin": "9383",
+    "game": {
+      "id": "cb1340b9-9722-4005-bb11-2ee87d5b7104aleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Quelle est la capitale de France?",
+          "points": 10,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Paris",
+              "isCorrect": true
+            },
+            {
+              "text": "Berlin",
+              "isCorrect": false
+            },
+            {
+              "text": "London",
+              "isCorrect": false
+            }
+          ],
+          "id": "test",
+          "lastModification": "2024-02-14T00:36:59.038Z"
+        },
+        {
+          "type": "QRL",
+          "text": "Expliquez l'influence de Michael Jackson",
+          "points": 10,
+          "addToBank": true,
+          "id": "eab17cbf-3b51-4bc2-a97a-f6a524796572",
+          "lastModification": "2024-02-12T00:24:57.430Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        }
+      ],
+      "duration": 20
+    }
+  },
+  {
+    "pin": "5225",
+    "game": {
+      "id": "c7b66c87-1987-46d2-a0ad-b5a2831777caaleatoire",
+      "title": "Mode Aléatoire",
+      "questions": [
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle est la différence entre NodeJS et Angular",
+          "points": 20,
+          "addToBank": true,
+          "choices": [
+            {
+              "text": "Angular = front-end, NodeJS = back-end",
+              "isCorrect": true
+            },
+            {
+              "text": "Angular = back-end, NodeJS = front-end",
+              "isCorrect": false
+            },
+            {
+              "text": "Aucune de ces réponses",
+              "isCorrect": false
+            }
+          ],
+          "id": "e6547406-2543-4683-b0a2-dc0f1b01df66",
+          "lastModification": "2024-01-31T16:39:55.649Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 50,
+          "addToBank": true,
+          "id": "2",
+          "choices": [
+            {
+              "text": "Array",
+              "isCorrect": false
+            },
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "const",
+              "isCorrect": true
+            },
+            {
+              "text": "def",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T20:15:04.920Z"
+        }
+      ],
+      "duration": 20
+    }
+  },
+  {
+    "pin": "7412",
+    "game": {
+      "id": "46277881345",
+      "lastModification": "2024-02-01T15:04:41.171Z",
+      "title": "Questionnaire sur le JS",
+      "description": "Questions de pratique sur le langage JavaScript",
+      "duration": 59,
+      "questions": [
+        {
+          "id": "11",
+          "type": "QCM",
+          "text": "Parmi les mots suivants, lesquels sont des mots clés réservés en JS?",
+          "points": 40,
+          "choices": [
+            {
+              "text": "var",
+              "isCorrect": true
+            },
+            {
+              "text": "self",
+              "isCorrect": false
+            },
+            {
+              "text": "this",
+              "isCorrect": true
+            },
+            {
+              "text": "int"
+            }
+          ]
+        },
+        {
+          "id": "12",
+          "type": "QCM",
+          "text": "Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ",
+          "points": 20,
+          "choices": [
+            {
+              "text": "Non",
+              "isCorrect": true
+            },
+            {
+              "text": "Oui",
+              "isCorrect": false
+            }
+          ]
+        }
+      ],
+      "isHidden": false
+    }
   }
 ]

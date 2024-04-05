@@ -25,6 +25,7 @@ import { BONUS_MULTIPLIER, ERROR_INDEX, SHOW_FEEDBACK_DELAY } from './const';
 export class PlayAreaComponent implements OnInit, OnDestroy {
     player: Player;
     inTestMode: boolean = false;
+    inRandomMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
 
@@ -67,9 +68,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     ) {
         this.player = this.playerService.player;
         this.answer = [];
-        if (this.route.snapshot.queryParams.testMode === 'true') {
-            this.inTestMode = true;
-        }
+        this.setInTestMode();
+        this.setInRandomMode();
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers();
@@ -165,12 +165,18 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     goNextQuestion() {
         this.answer = [];
         this.endGameTest();
+        this.endGameRandom();
         const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
         }
         this.changeDetector.detectChanges();
+        if (this.inRandomMode) {
+            this.timeService.stopTimer();
+            this.timer = this.gameManager.game.duration ? this.gameManager.game.duration : 0;
+            this.timeService.startTimer(this.timer);
+        }
     }
 
     handleQCMChoice(answer: string) {
@@ -286,12 +292,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.router.navigate(['results'], { relativeTo: this.route });
     }
 
-    endGameTest() {
-        if (this.gameManager.endGame && this.inTestMode) {
-            this.router.navigate(['/createGame']);
-        }
-    }
-
     mouseHitDetect(event: MouseEvent) {
         if (event.button === MouseButton.Left) {
             this.timeService.stopTimer();
@@ -319,5 +319,24 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     trackByFunction(item: any) {
         return item.id;
+    }
+
+    private setInRandomMode(): void {
+        this.inRandomMode = this.router.url.slice(-9) === 'aleatoire';
+    }
+
+    private setInTestMode(): void {
+        this.inTestMode = this.route.snapshot.queryParams.testMode === 'true';
+    }
+
+    private endGameTest() {
+        if (this.gameManager.endGame && this.inTestMode) {
+            this.router.navigate(['/createGame']);
+        }
+    }
+    private endGameRandom(): void {
+        if (this.gameManager.endGame && this.inRandomMode) {
+            this.endGame();
+        }
     }
 }
