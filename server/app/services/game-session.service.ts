@@ -1,3 +1,5 @@
+/* eslint-disable no-restricted-imports */
+/* eslint-disable prefer-const */
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
@@ -11,10 +13,8 @@ export class GameSessionService {
     constructor(private databaseService: DatabaseService) {}
 
     get collection(): Collection<GameSession> {
-        return this.databaseService.database.collection(
-            DB_COLLECTION_HISTORIQUE
-        );
-      }
+        return this.databaseService.database.collection(DB_COLLECTION_HISTORIQUE);
+    }
 
     async getAllSessions(): Promise<GameSession[]> {
         const games = await this.collection.find({}).toArray();
@@ -27,7 +27,7 @@ export class GameSessionService {
     }
 
     async createSession(pin: string, game: Game): Promise<GameSession> {
-        const isCompleted: boolean = false;
+        const isCompleted = false;
         const session: GameSession = { pin, game, isCompleted };
         const sessions: GameSession[] = await this.getAllSessions();
         if (sessions.find((s) => s.pin === pin)) {
@@ -101,23 +101,27 @@ export class GameSessionService {
 
         const feedback: Feedback[] = question.choices.map((choice) => {
             const isSelected = submittedAnswers.includes(choice.text);
-            let status: 'correct' | 'incorrect' | 'missed';
-
-            status = isSelected? (choice.isCorrect ? 'correct' : 'incorrect'): (choice.isCorrect ? 'missed' : undefined);
+            const status: 'correct' | 'incorrect' | 'missed' = isSelected
+                ? choice.isCorrect
+                    ? 'correct'
+                    : 'incorrect'
+                : choice.isCorrect
+                ? 'missed'
+                : undefined;
 
             return { choice: choice.text, status };
         });
 
         return feedback;
     }
-    
+
     async completeSession(pin: string, bestScore: number): Promise<boolean> {
         let hasChanged = false;
         const sessions: GameSession[] = await this.getAllSessions();
         sessions.map(async (session) => {
             if (session.pin === pin) {
                 hasChanged = true;
-                await this.collection.updateOne({ pin }, { $set: { ...session, isCompleted: true, bestScore: bestScore } });
+                await this.collection.updateOne({ pin }, { $set: { ...session, isCompleted: true, bestScore } });
             }
         });
         return hasChanged;
@@ -133,7 +137,7 @@ export class GameSessionService {
         sessions.map(async (session) => {
             if (session.pin === pin) {
                 hasChanged = true;
-                await this.collection.updateOne({ pin }, { $set: { ...session, nbPlayers: nbPlayers, timeStarted: new Date()} });
+                await this.collection.updateOne({ pin }, { $set: { ...session, nbPlayers, timeStarted: new Date() } });
             }
         });
         return hasChanged;

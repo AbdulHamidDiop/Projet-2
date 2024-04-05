@@ -57,8 +57,8 @@ const SESSION: GameSession = {
         ],
         isHidden: false,
     },
-    isCompleted: false
-} as unknown as GameSession; 
+    isCompleted: false,
+} as unknown as GameSession;
 
 describe('GameSessionService', () => {
     let service: GameSessionService;
@@ -227,7 +227,7 @@ describe('GameSessionService', () => {
 
         const mockResponse: Response = {
             ok: true,
-            json: async () => mockSessions
+            json: async () => mockSessions,
         } as unknown as Response;
 
         fetchService.fetch.and.returnValue(Promise.resolve(mockResponse));
@@ -246,7 +246,7 @@ describe('GameSessionService', () => {
         const pin = '1234';
         const bestScore = 10;
         const mockResponse: Response = { ok: true } as unknown as Response;
-    
+
         // Set up mock response from FetchService
         fetchService.fetch
             .withArgs(API_URL + 'gameSession/completeSession', {
@@ -254,10 +254,10 @@ describe('GameSessionService', () => {
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: pin, bestScore: bestScore }),
+                body: JSON.stringify({ pin, bestScore }),
             })
             .and.returnValue(Promise.resolve(mockResponse));
-    
+
         await expectAsync(service.completeSession(pin, bestScore)).toBeResolved();
     });
 
@@ -265,7 +265,7 @@ describe('GameSessionService', () => {
         const pin = '1234';
         const bestScore = 10;
         const mockErrorResponse: Response = { ok: false, status: 500 } as unknown as Response;
-    
+
         // Set up mock response from FetchService
         fetchService.fetch
             .withArgs(API_URL + 'gameSession/completeSession', {
@@ -273,10 +273,10 @@ describe('GameSessionService', () => {
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ pin: pin, bestScore: bestScore }),
+                body: JSON.stringify({ pin, bestScore }),
             })
             .and.returnValue(Promise.resolve(mockErrorResponse));
-    
+
         await expectAsync(service.completeSession(pin, bestScore)).toBeRejectedWithError('Error: 500');
     });
 
@@ -298,7 +298,7 @@ describe('GameSessionService', () => {
         const pin = '1234';
         const nbPlayers = 10;
         const mockResponse: Response = { ok: true } as unknown as Response;
-    
+
         // Set up mock response from FetchService
         fetchService.fetch
             .withArgs(API_URL + 'gameSession/addNbPlayers', {
@@ -306,10 +306,10 @@ describe('GameSessionService', () => {
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nbPlayers: nbPlayers, pin: pin }),
+                body: JSON.stringify({ nbPlayers, pin }),
             })
             .and.returnValue(Promise.resolve(mockResponse));
-    
+
         await expectAsync(service.addNbPlayers(nbPlayers, pin)).toBeResolved();
     });
 
@@ -317,7 +317,7 @@ describe('GameSessionService', () => {
         const pin = '1234';
         const nbPlayers = 10;
         const mockErrorResponse: Response = { ok: false, status: 500 } as unknown as Response;
-    
+
         // Set up mock response from FetchService
         fetchService.fetch
             .withArgs(API_URL + 'gameSession/addNbPlayers', {
@@ -325,10 +325,10 @@ describe('GameSessionService', () => {
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nbPlayers: nbPlayers, pin: pin }),
+                body: JSON.stringify({ nbPlayers, pin }),
             })
             .and.returnValue(Promise.resolve(mockErrorResponse));
-    
+
         await expectAsync(service.addNbPlayers(nbPlayers, pin)).toBeRejectedWithError('Error: 500');
     });
 });

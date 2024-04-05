@@ -9,58 +9,59 @@ import { SinonStubbedInstance, createStubInstance } from 'sinon';
 import supertest from 'supertest';
 import { Container } from 'typedi';
 
-let SESSION_DATA: GameSession[] = [{
-    pin: '1122',
-    game: {
-        id: '46277881345',
-        lastModification: '2024-02-01T15:04:41.171Z',
-        title: 'Questionnaire sur le JS',
-        description: 'Questions de pratique sur le langage JavaScript',
-        duration: 59,
-        questions: [
-            {
-                id: '11',
-                type: 'QCM',
-                text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
-                points: 40,
-                choices: [
-                    {
-                        text: 'var',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'self',
-                        isCorrect: false,
-                    },
-                    {
-                        text: 'this',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'int',
-                    },
-                ],
-            },
-            {
-                id: '12',
-                type: 'QCM',
-                text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
-                points: 20,
-                choices: [
-                    {
-                        text: 'Non',
-                        isCorrect: true,
-                    },
-                    {
-                        text: 'Oui',
-                        isCorrect: false,
-                    },
-                ],
-            },
-        ],
-        isHidden: false,
-    },
-} as unknown as GameSession,
+const SESSION_DATA: GameSession[] = [
+    {
+        pin: '1122',
+        game: {
+            id: '46277881345',
+            lastModification: '2024-02-01T15:04:41.171Z',
+            title: 'Questionnaire sur le JS',
+            description: 'Questions de pratique sur le langage JavaScript',
+            duration: 59,
+            questions: [
+                {
+                    id: '11',
+                    type: 'QCM',
+                    text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+                    points: 40,
+                    choices: [
+                        {
+                            text: 'var',
+                            isCorrect: true,
+                        },
+                        {
+                            text: 'self',
+                            isCorrect: false,
+                        },
+                        {
+                            text: 'this',
+                            isCorrect: true,
+                        },
+                        {
+                            text: 'int',
+                        },
+                    ],
+                },
+                {
+                    id: '12',
+                    type: 'QCM',
+                    text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
+                    points: 20,
+                    choices: [
+                        {
+                            text: 'Non',
+                            isCorrect: true,
+                        },
+                        {
+                            text: 'Oui',
+                            isCorrect: false,
+                        },
+                    ],
+                },
+            ],
+            isHidden: false,
+        },
+    } as unknown as GameSession,
 ];
 
 const GAME: Game = {
@@ -263,51 +264,47 @@ describe('GameSessionController', () => {
         const pin = '1122';
         const bestScore = 10;
         await supertest(expressApp)
-          .patch('/api/gameSession/completeSession')
-          .set('Content', 'application/json')
-          .send({ pin, bestScore })
-          .expect(StatusCodes.NO_CONTENT);
-      });
+            .patch('/api/gameSession/completeSession')
+            .set('Content', 'application/json')
+            .send({ pin, bestScore })
+            .expect(StatusCodes.NO_CONTENT);
+    });
 
-      it('should not complete session of an unexisting session', async () => {
+    it('should not complete session of an unexisting session', async () => {
         gameSessionService.completeSession.resolves(false);
         const pin = '5235';
         const bestScore = 10;
         await supertest(expressApp)
-          .patch('/api/gameSession/completeSession')
-          .set('Content', 'application/json')
-          .send({ pin, bestScore })
-          .expect(StatusCodes.BAD_REQUEST);
-      });
+            .patch('/api/gameSession/completeSession')
+            .set('Content', 'application/json')
+            .send({ pin, bestScore })
+            .expect(StatusCodes.BAD_REQUEST);
+    });
 
-      it('should delete all sessions from history', async () => {
+    it('should delete all sessions from history', async () => {
         gameSessionService.deleteHistory.resolves();
-        await supertest(expressApp)
-          .delete('/api/gameSession/deleteHistory')
-          .set('Content', 'application/json')
-          .send()
-          .expect(StatusCodes.NO_CONTENT);
-      });
-    
-      it('should add number of players to an existing session', async () => {
+        await supertest(expressApp).delete('/api/gameSession/deleteHistory').set('Content', 'application/json').send().expect(StatusCodes.NO_CONTENT);
+    });
+
+    it('should add number of players to an existing session', async () => {
         gameSessionService.addNbPlayers.resolves(true);
         const pin = '1122';
         const nbPlayers = 4;
         await supertest(expressApp)
-          .patch('/api/gameSession/addNbPlayers')
-          .set('Content', 'application/json')
-          .send({ pin, nbPlayers })
-          .expect(StatusCodes.NO_CONTENT);
-      });
+            .patch('/api/gameSession/addNbPlayers')
+            .set('Content', 'application/json')
+            .send({ pin, nbPlayers })
+            .expect(StatusCodes.NO_CONTENT);
+    });
 
-      it('should not add number of players to an unexisting session', async () => {
+    it('should not add number of players to an unexisting session', async () => {
         gameSessionService.addNbPlayers.resolves(false);
         const pin = '5235';
         const nbPlayers = 4;
         await supertest(expressApp)
-          .patch('/api/gameSession/addNbPlayers')
-          .set('Content', 'application/json')
-          .send({ pin, nbPlayers })
-          .expect(StatusCodes.BAD_REQUEST);
-      });
+            .patch('/api/gameSession/addNbPlayers')
+            .set('Content', 'application/json')
+            .send({ pin, nbPlayers })
+            .expect(StatusCodes.BAD_REQUEST);
+    });
 });

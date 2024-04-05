@@ -1,3 +1,4 @@
+/* eslint-disable no-restricted-imports */
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { Player } from '@common/game';
@@ -23,11 +24,12 @@ export class Server {
     private chatHistories: Map<string, ChatMessage[]> = new Map();
     private liveRooms: string[] = [];
 
+    // eslint-disable-next-line max-params
     constructor(
         private readonly application: Application,
         private socketEvents: SocketEvents,
         private gameSessionService: GameSessionService,
-        private databaseService: DatabaseService
+        private databaseService: DatabaseService,
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {
@@ -48,11 +50,11 @@ export class Server {
         this.configureStaticNamespaces();
         try {
             await this.databaseService.start(DB_URL);
-            console.log("Database connection successful !");
-          } catch {
-            console.error("Database connection failed !");
+            console.log('Database connection successful !');
+        } catch {
+            console.error('Database connection failed !');
             process.exit(1);
-          }
+        }
     }
 
     private configureGlobalNamespace(): void {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { FetchService } from '@app/services/fetch.service';
 import { API_URL } from '@common/consts';
@@ -55,7 +56,7 @@ export class GameSessionService {
         }
     }
 
-    async getAllSessions() : Promise<GameSession[]> {
+    async getAllSessions(): Promise<GameSession[]> {
         const response = await this.fetchService.fetch(API_URL + 'gameSession');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -64,13 +65,13 @@ export class GameSessionService {
         return sessions;
     }
 
-    async completeSession(pin: string, bestScore: number) : Promise<void> {
+    async completeSession(pin: string, bestScore: number): Promise<void> {
         const response = await this.fetchService.fetch(API_URL + 'gameSession/completeSession', {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ pin: pin, bestScore: bestScore }),
+            body: JSON.stringify({ pin, bestScore }),
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
@@ -92,7 +93,7 @@ export class GameSessionService {
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ nbPlayers: nbPlayers, pin: pin }),
+            body: JSON.stringify({ nbPlayers, pin }),
         });
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);

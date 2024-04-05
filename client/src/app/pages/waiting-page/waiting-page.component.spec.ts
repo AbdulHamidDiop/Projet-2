@@ -30,7 +30,7 @@ describe('WaitingPageComponent', () => {
             'disconnectSubscribe',
             'leaveRoom',
             'sendMessage',
-            'listenForMessages'
+            'listenForMessages',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -41,10 +41,9 @@ describe('WaitingPageComponent', () => {
         socketMock.disconnectSubscribe.and.returnValue(of(undefined));
         socketMock.roomLockedSubscribe.and.returnValue(of(true));
         socketMock.kickSubscribe.and.returnValue(of('Reason for kick'));
-        socketMock.listenForMessages.and.returnValue(of({} as any));
-        
+        socketMock.listenForMessages.and.returnValue(of({} as unknown));
 
-        routerMock = jasmine.createSpyObj('Router', ['navigate'], {url: ''});
+        routerMock = jasmine.createSpyObj('Router', ['navigate'], { url: '' });
 
         gameServiceMock = jasmine.createSpyObj('GameService', ['getGameByID']);
         gameServiceMock.getGameByID.and.returnValue({ id: '123' } as Game);
@@ -92,7 +91,7 @@ describe('WaitingPageComponent', () => {
         component.player.isHost = true;
         component.gameStartSubscribe();
 
-//        socketMock.requestPlayers.and.returnValue();
+        //        socketMock.requestPlayers.and.returnValue();
         tick(DELAY + 1);
         tick(DELAY + 1);
 

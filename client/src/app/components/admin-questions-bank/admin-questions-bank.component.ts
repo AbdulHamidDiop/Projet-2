@@ -40,7 +40,9 @@ export class AdminQuestionsBankComponent {
             this.displayQuestions = this.questions;
         } else {
             const selectedType = this.selectedTypes.values().next().value;
-            this.displayQuestions = this.questions.filter(question => question.type === selectedType);
+            this.displayQuestions = this.questions.filter((question) => {
+                return question.type === selectedType;
+            });
         }
     }
 

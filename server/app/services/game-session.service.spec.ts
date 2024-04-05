@@ -1,6 +1,6 @@
 import { Game } from '@common/game';
 import { expect } from 'chai';
-//import { stub } from 'sinon';
+// import { stub } from 'sinon';
 import { GameSession } from '@common/game-session';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { DB_COLLECTION_HISTORIQUE } from 'utils/env';
@@ -92,8 +92,8 @@ const SESSION: GameSession = {
         ],
         isHidden: false,
     },
-    isCompleted: false
-} as unknown as GameSession; 
+    isCompleted: false,
+} as unknown as GameSession;
 
 describe('GameSession Service', () => {
     let gameSessionService: GameSessionService;
@@ -109,12 +109,12 @@ describe('GameSession Service', () => {
     });
 
     afterEach(async () => {
-        if (databaseService["client"]) {
-            await databaseService["client"].close();
+        if (databaseService['client']) {
+            await databaseService['client'].close();
         }
     });
 
-    it("getAllSessions should return all sessions", async () => {
+    it('getAllSessions should return all sessions', async () => {
         await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertMany([SESSION]);
         const sessions = await gameSessionService.getAllSessions();
         expect(sessions.length).to.deep.equal(1);
@@ -127,7 +127,7 @@ describe('GameSession Service', () => {
         expect(result).to.deep.equal(SESSION);
     });
 
-     it('should add session to database', async () => {
+    it('should add session to database', async () => {
         const pin = '2222';
         await gameSessionService.createSession(pin, GAME);
         const sessions = await gameSessionService.getAllSessions();
@@ -260,9 +260,10 @@ describe('GameSession Service', () => {
     });
 
     it('should delete all sessions from db', async () => {
-        const isCompleted: boolean = false;
+        const isCompleted = false;
         const pin = '2222';
-        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertMany([SESSION, {pin, GAME, isCompleted}]);
+        const gameCopy = { ...GAME };
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertMany([SESSION, { pin, gameCopy, isCompleted }]);
         await gameSessionService.deleteHistory();
         const sessions = await gameSessionService.getAllSessions();
         expect(sessions.length).to.deep.equal(0);

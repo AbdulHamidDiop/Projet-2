@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
 import { DragDropModule } from '@angular/cdk/drag-drop';

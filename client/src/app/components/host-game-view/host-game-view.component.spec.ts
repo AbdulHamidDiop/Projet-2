@@ -25,7 +25,7 @@ describe('HostGameViewComponent', () => {
     let socketServiceSpy: SpyObj<SocketRoomService>;
     let timeServiceSpy: SpyObj<TimeService>;
     let gameSessionServiceSpy: SpyObj<GameSessionService>;
-    let playerServiceSpy: SpyObj<PlayerService>
+    let playerServiceSpy: SpyObj<PlayerService>;
     let routerSpy: SpyObj<Router>;
     let mockQuestion: Question;
     let mockPlayers: Player[];
@@ -48,7 +48,7 @@ describe('HostGameViewComponent', () => {
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         gameSessionServiceSpy = jasmine.createSpyObj('GameSessionService', ['completeSession', 'addNbPlayers']);
-        playerServiceSpy = jasmine.createSpyObj('PlayerService', ['findBestScore', 'addGamePlayers']);
+        playerServiceSpy = jasmine.createSpyObj('PlayerService', ['findBestScore', 'addGamePlayers'], { playersInGame: [] });
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);
         socketServiceSpy.getPlayers.and.returnValue(of([]));
@@ -68,7 +68,7 @@ describe('HostGameViewComponent', () => {
             choices: [
                 { text: 'Choice 1', isCorrect: true, index: 0 },
                 { text: 'Choice 2', isCorrect: false, index: 1 },
-            ]
+            ],
         };
         mockPlayers = [
             { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0 },
@@ -299,15 +299,16 @@ describe('HostGameViewComponent', () => {
         expect(component.statisticsData[component.questionIndex].data[0].data[0]).toEqual(1);
     });
 
-    it('should grade answers', () => {
+    it('should grade answers', fakeAsync(() => {
         spyOn(socketServiceSpy, 'sendMessage');
         spyOn(timeServiceSpy, 'stopTimer');
 
         component.gradeAnswers();
-
+        const RECEIVE_ANSWERS_DELAY = 2500;
+        tick(RECEIVE_ANSWERS_DELAY);
         expect(socketServiceSpy.sendMessage).toHaveBeenCalled();
         expect(timeServiceSpy.stopTimer).toHaveBeenCalled();
-    });
+    }));
 
     it('should send QRL grade', () => {
         component.statisticsData[component.questionIndex] = {

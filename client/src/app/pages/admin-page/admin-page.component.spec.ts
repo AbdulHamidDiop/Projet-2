@@ -141,7 +141,7 @@ const SESSION: GameSession = {
         isHidden: false,
     },
     isCompleted: false,
-    timeStarted: new Date()
+    timeStarted: new Date(),
 } as unknown as GameSession;
 describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
@@ -374,7 +374,7 @@ describe('AdminPageComponent', () => {
     });
 
     it('isGame should be false when QRL question has attribute choices', () => {
-        mockGameFile.questions[0].type ='QRL';
+        mockGameFile.questions[0].type = 'QRL';
         expect(component.isGame(mockGameFile)).toBeFalse();
     });
 
@@ -442,73 +442,73 @@ describe('AdminPageComponent', () => {
 
     it('should sort sessions by game title in ascending order', () => {
         const sessions = [
-          { ...SESSION, game: {...mockGameFile, title: 'C'} },
-          { ...SESSION, game: {...mockGameFile, title: 'B'} },
-          { ...SESSION, game: {...mockGameFile, title: 'A'} }
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
         ];
         component.sessions = sessions;
-    
+
         const event = { value: 'ascending-alphabetically' } as MatSelectChange;
         component.sortList(event);
-    
+
         expect(component.sessions).toEqual([
-            { ...SESSION, game: {...mockGameFile, title: 'A'} },
-            { ...SESSION, game: {...mockGameFile, title: 'B'} },
-            { ...SESSION, game: {...mockGameFile, title: 'C'} }
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
         ]);
-      });
-    
-      it('should sort sessions by game title in descending order', () => {
+    });
+
+    it('should sort sessions by game title in descending order', () => {
         const sessions = [
-            { ...SESSION, game: {...mockGameFile, title: 'A'} },
-            { ...SESSION, game: {...mockGameFile, title: 'B'} },
-            { ...SESSION, game: {...mockGameFile, title: 'C'} }
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
         ];
         component.sessions = sessions;
-    
+
         const event = { value: 'descending-alphabetically' } as MatSelectChange;
         component.sortList(event);
-    
+
         expect(component.sessions).toEqual([
-            { ...SESSION, game: {...mockGameFile, title: 'C'} },
-            { ...SESSION, game: {...mockGameFile, title: 'B'} },
-            { ...SESSION, game: {...mockGameFile, title: 'A'} }
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
         ]);
-      });
-    
-      it('should sort sessions by timeStarted in ascending order', () => {
+    });
+
+    it('should sort sessions by timeStarted in ascending order', () => {
         const sessions = [
-          { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') }
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
         ];
         component.sessions = sessions;
-    
+
         const event = { value: 'ascending-date' } as MatSelectChange;
         component.sortList(event);
-    
+
         expect(component.sessions).toEqual([
-          { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') }
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
         ]);
-      });
-    
-      it('should sort sessions by timeStarted in descending order', () => {
+    });
+
+    it('should sort sessions by timeStarted in descending order', () => {
         const sessions = [
-          { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') }
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
         ];
         component.sessions = sessions;
-    
+
         const event = { value: 'descending-date' } as MatSelectChange;
         component.sortList(event);
-    
+
         expect(component.sessions).toEqual([
-          { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
-          { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') }
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
         ]);
-      });
+    });
 });

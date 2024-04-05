@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Component, ElementRef, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
@@ -27,7 +29,7 @@ export class AdminPageComponent implements OnInit {
         readonly communicationService: CommunicationService,
         public el: ElementRef,
         readonly gameService: GameService,
-        readonly gameSessionService: GameSessionService
+        readonly gameSessionService: GameSessionService,
     ) {}
 
     async getGames() {
@@ -120,7 +122,7 @@ export class AdminPageComponent implements OnInit {
 
     handleQRLQuestions(qrlQuestions: Question[]) {
         if (!qrlQuestions.every((question: Question) => question.choices === undefined)) {
-            this.errors += "Les questions d'un jeu de type QRL ne doivent pas avoir de choix de réponse."
+            this.errors += "Les questions d'un jeu de type QRL ne doivent pas avoir de choix de réponse.";
         }
     }
     handleChoicesError(questions: Question[]) {
@@ -133,7 +135,7 @@ export class AdminPageComponent implements OnInit {
             } else if (question.type === 'QRL') {
                 qrlQuestions.push(question);
             }
-        }       
+        }
 
         this.handleQCMQuestions(qcmQuestions);
         this.handleQRLQuestions(qrlQuestions);
@@ -167,14 +169,15 @@ export class AdminPageComponent implements OnInit {
 
     validateChoicesForQCM(question: Question): boolean {
         if (question.type === 'QCM') {
-            return  (question.choices?.length ?? 0) >= 2 &&
-                    (question.choices?.length ?? 0) <= MAX_CHOICES &&
-                    Array.isArray(question.choices) &&
-                    question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
-                    !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
-                    !question.choices.every((choice: Choices) => choice.isCorrect === false);
-        }
-        else {
+            return (
+                (question.choices?.length ?? 0) >= 2 &&
+                (question.choices?.length ?? 0) <= MAX_CHOICES &&
+                Array.isArray(question.choices) &&
+                question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
+                !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
+                !question.choices.every((choice: Choices) => choice.isCorrect === false)
+            );
+        } else {
             return question.choices === undefined;
         }
     }
@@ -193,7 +196,7 @@ export class AdminPageComponent implements OnInit {
                     question.points >= MIN_POINTS &&
                     question.points <= MAX_POINTS &&
                     question.points % MIN_POINTS === 0 &&
-                    this.validateChoicesForQCM(question)
+                    this.validateChoicesForQCM(question),
             )
         );
     }
@@ -268,7 +271,7 @@ export class AdminPageComponent implements OnInit {
             reader.readAsText(file);
         });
     }
-    
+
     async onDeleteHistory() {
         await this.gameSessionService.deleteHistory();
         this.sessions = [];
@@ -278,17 +281,17 @@ export class AdminPageComponent implements OnInit {
         const sortBy = event.value;
 
         switch (sortBy) {
-          case 'ascending-alphabetically':
-            this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));
-            break;
-          case 'descending-alphabetically':
-            this.sessions.sort((a, b) => b.game.title.localeCompare(a.game.title));
-            break;
-          case 'ascending-date':
-            this.sessions.sort((a, b) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
-            break;
-          case 'descending-date':
-            this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
+            case 'ascending-alphabetically':
+                this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));
+                break;
+            case 'descending-alphabetically':
+                this.sessions.sort((a, b) => b.game.title.localeCompare(a.game.title));
+                break;
+            case 'ascending-date':
+                this.sessions.sort((a, b) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
+                break;
+            case 'descending-date':
+                this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
         }
     }
 }

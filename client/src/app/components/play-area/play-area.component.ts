@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable max-lines */
 import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -116,10 +117,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-
         this.otherPlayersSubscription = this.socketService.getPlayers().subscribe((players) => {
-            this.playerService.playersInGame = players
-        })
+            this.playerService.playersInGame = players;
+        });
 
         this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;

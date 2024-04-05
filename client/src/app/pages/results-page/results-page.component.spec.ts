@@ -54,7 +54,7 @@ const FAKE_GAME: Game = {
             choices: [
                 { text: 'Choice 1', isCorrect: true, index: 0 },
                 { text: 'Choice 2', isCorrect: false, index: 1 },
-            ]
+            ],
         },
         {
             id: 'test-question-id2',
@@ -65,7 +65,7 @@ const FAKE_GAME: Game = {
             choices: [
                 { text: 'Choice 1', isCorrect: false, index: 0 },
                 { text: 'Choice 2', isCorrect: true, index: 1 },
-            ]
+            ],
         },
     ],
 };

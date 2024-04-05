@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines */
 
@@ -47,14 +48,14 @@ describe('PlayAreaComponent', () => {
             'confirmAnswer',
             'endGame',
             'abandonGame',
-            'getPlayers'
+            'getPlayers',
         ]);
         socketMock.listenForMessages.and.returnValue(of({} as any));
         socketMock.sendMessage.and.returnValue({} as any);
         socketMock.confirmAnswer.and.returnValue();
         socketMock.endGame.and.returnValue();
         socketMock.abandonGame.and.returnValue();
-        socketMock.getPlayers.and.returnValue(of([]))
+        socketMock.getPlayers.and.returnValue(of([]));
 
         matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
         matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);

@@ -27,9 +27,7 @@ export class QuestionsPageComponent implements OnInit {
         readonly communicationService: CommunicationService,
         readonly router: Router,
         readonly questionsService: QuestionsService,
-    ) {
-        
-    }
+    ) {}
 
     async getQuestions() {
         this.questions = await this.questionsService.getAllQuestions();
@@ -75,7 +73,7 @@ export class QuestionsPageComponent implements OnInit {
             this.displayQuestions = this.questions;
         } else {
             const selectedType = this.selectedTypes.values().next().value;
-            this.displayQuestions = this.questions.filter(question => question.type === selectedType);
+            this.displayQuestions = this.questions.filter((question) => question.type === selectedType);
         }
     }
 }

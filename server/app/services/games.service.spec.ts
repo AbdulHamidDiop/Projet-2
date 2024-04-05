@@ -62,7 +62,7 @@ describe('Games Service', () => {
     let gameService: GamesService;
     let databaseService: DatabaseService;
     let mongoServer: MongoMemoryServer;
-      
+
     beforeEach(async () => {
         databaseService = new DatabaseService();
         gameService = new GamesService(databaseService);
@@ -70,19 +70,19 @@ describe('Games Service', () => {
         const mongoUri = mongoServer.getUri();
         await databaseService.start(mongoUri);
     });
-      
+
     afterEach(async () => {
-        if (databaseService["client"]) {
-            await databaseService["client"].close();
+        if (databaseService['client']) {
+            await databaseService['client'].close();
         }
     });
-        
-    it("getAllGames should return all games", async () => {
+
+    it('getAllGames should return all games', async () => {
         await databaseService.db.collection(DB_COLLECTION_GAMES).insertMany([FIRST_QUIZ, SECOND_QUIZ]);
         const games = await gameService.getAllGames();
         expect(games.length).to.deep.equal(2);
     });
-    
+
     it('should add a game to the database', async () => {
         const quiz = { ...FIRST_QUIZ, title: 'Title' } as unknown as Game;
         await gameService.addGame(quiz);

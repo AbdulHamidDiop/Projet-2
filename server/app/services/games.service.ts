@@ -1,8 +1,9 @@
+/* eslint-disable no-restricted-imports */
+import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-import { DB_COLLECTION_GAMES } from '../../utils/env';
-import { Feedback } from './../../../common/feedback';
+import { DB_COLLECTION_GAMES } from 'utils/env';
 import { DatabaseService } from './database.service';
 
 @Service()
@@ -10,10 +11,8 @@ export class GamesService {
     constructor(private databaseService: DatabaseService) {}
 
     get collection(): Collection<Game> {
-        return this.databaseService.database.collection(
-            DB_COLLECTION_GAMES
-        );
-      }
+        return this.databaseService.database.collection(DB_COLLECTION_GAMES);
+    }
 
     async getAllGames(): Promise<Game[]> {
         const games = await this.collection.find({}).toArray();

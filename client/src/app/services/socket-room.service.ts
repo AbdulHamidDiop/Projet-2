@@ -21,6 +21,7 @@ export class SocketRoomService implements OnDestroy {
     private url = 'http://localhost:3000'; // Your Socket.IO server URL
     private namespaces: Map<string, Socket> = new Map();
 
+    // eslint-disable-next-line max-params
     constructor(
         private io: IoService,
         public playerService: PlayerService,

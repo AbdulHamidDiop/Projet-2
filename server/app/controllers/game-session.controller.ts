@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { GameSessionService } from '@app/services/game-session.service';
 import { GameSession } from '@common/game-session';
 import { Request, Response, Router } from 'express';
@@ -275,7 +276,7 @@ export class GameSessionController {
             }
             res.send();
         });
-/**
+        /**
          * @swagger
          *
          * /api/gameSession/completeSession:
@@ -315,7 +316,7 @@ export class GameSessionController {
             }
             res.send();
         });
-                /**
+        /**
          * @swagger
          *
          * /api/gameSession/deleteHistory:

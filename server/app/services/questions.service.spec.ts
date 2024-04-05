@@ -52,13 +52,13 @@ const SECOND_QUESTION = {
     lastModification: '2022-01-31T16:39:55.649Z',
 };
 
-//let QUESTIONS = JSON.stringify([FIRST_QUESTION]);
+// let QUESTIONS = JSON.stringify([FIRST_QUESTION]);
 
 describe('Questions Service', () => {
     let questionService: QuestionsService;
     let databaseService: DatabaseService;
     let mongoServer: MongoMemoryServer;
-      
+
     beforeEach(async () => {
         databaseService = new DatabaseService();
         questionService = new QuestionsService(databaseService);
@@ -66,10 +66,10 @@ describe('Questions Service', () => {
         const mongoUri = mongoServer.getUri();
         await databaseService.start(mongoUri);
     });
-      
+
     afterEach(async () => {
-        if (databaseService["client"]) {
-            await databaseService["client"].close();
+        if (databaseService['client']) {
+            await databaseService['client'].close();
         }
     });
 
@@ -93,14 +93,12 @@ describe('Questions Service', () => {
     it('should get all questions sorted by oldest first', async () => {
         await databaseService.db.collection(DB_COLLECTION_QUESTIONS).insertMany([FIRST_QUESTION, SECOND_QUESTION]);
         const questions = await questionService.sortAllQuestions();
-        expect(questions)
-            .to.be.an('array')
-            .with.lengthOf(2);
+        expect(questions).to.be.an('array').with.lengthOf(2);
         expect(questions).to.deep.equal([SECOND_QUESTION, FIRST_QUESTION]);
     });
 
     it('should change a question from the database, if that question already exists', async () => {
-        const question = {...SECOND_QUESTION, _id: "new id"} as unknown as Question;
+        const question = { ...SECOND_QUESTION, _id: 'new id' } as unknown as Question;
         await databaseService.db.collection(DB_COLLECTION_QUESTIONS).insertOne(question);
         await questionService.addQuestion({ ...SECOND_QUESTION, text: 'Nouveau Texte' } as unknown as Question);
         const questions = await questionService.getAllQuestions();
@@ -118,7 +116,7 @@ describe('Questions Service', () => {
 
     it('should not delete an unexisting question ', async () => {
         await databaseService.db.collection(DB_COLLECTION_QUESTIONS).insertOne(FIRST_QUESTION);
-        await questionService.deleteQuestionByID("Fake id");
+        await questionService.deleteQuestionByID('Fake id');
         const questions = await questionService.getAllQuestions();
         expect(questions.length).to.deep.equal(1);
     });

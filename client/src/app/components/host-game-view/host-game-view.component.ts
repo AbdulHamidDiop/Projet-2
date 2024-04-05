@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Game, Player, Question, Type } from './../../../../../common/game';
 /* eslint-disable max-lines */
 import { Component, OnDestroy, OnInit } from '@angular/core';
@@ -65,8 +66,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
         private gameSessionService: GameSessionService,
-        private snackBar: MatSnackBar
+        private snackBar: MatSnackBar,
     ) {
+        this.players = this.playerService.playersInGame;
+        this.playersLeft = this.players.length;
+
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.playersInGame = this.players; // Pb de cohérence entre component et service avec setGamePlayers.
             this.players = players;
@@ -131,6 +135,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.updatePlayerSubscription = this.socketService
             .listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER)
             .subscribe((playerWithRoom) => {
+                // eslint-disable-next-line no-unused-vars
                 const { room, ...player } = playerWithRoom as Player & { room: string };
                 this.playerService.addGamePlayers(player as Player);
             });
