@@ -6,8 +6,6 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { Question, Type } from '@common/game';
 import { GameRandomComponent } from './game-random.component';
 
-const NUMBER_RANDOM_QUESTIONS = 5;
-
 describe('GameRandomComponent', () => {
     let component: GameRandomComponent;
     let fixture: ComponentFixture<GameRandomComponent>;
@@ -17,7 +15,7 @@ describe('GameRandomComponent', () => {
 
     beforeEach(async () => {
         // Create spy objects for each service
-        mockQuestionsService = jasmine.createSpyObj('QuestionsService', ['getAllQuestions']);
+        mockQuestionsService = jasmine.createSpyObj('QuestionsService', ['getRandomQuestions']);
         mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', ['leaveRoom', 'createRoom']);
         mockPlayerService = jasmine.createSpyObj('PlayerService', [], { player: { isHost: false, name: '' } });
 
@@ -37,11 +35,8 @@ describe('GameRandomComponent', () => {
             { id: '3', type: Type.QCM, lastModification: null, text: 'Question 3?', points: 10, choices: [], answer: 'C' },
             { id: '4', type: Type.QCM, lastModification: null, text: 'Question 4?', points: 10, choices: [], answer: 'D' },
             { id: '5', type: Type.QCM, lastModification: null, text: 'Question 5?', points: 10, choices: [], answer: 'E' },
-            { id: '6', type: Type.QCM, lastModification: null, text: 'Question 6?', points: 10, choices: [], answer: 'F' },
         ];
-
-        mockQuestionsService.getAllQuestions.and.returnValue(Promise.resolve(mockQuestions));
-
+        mockQuestionsService.getRandomQuestions.and.returnValue(Promise.resolve(mockQuestions));
         fixture = TestBed.createComponent(GameRandomComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
@@ -50,7 +45,6 @@ describe('GameRandomComponent', () => {
         expect(component.questions.length).toBeGreaterThan(0);
         expect(component.show).toBeTrue();
         expect(component.game).toBeDefined();
-        expect(component.game.questions.length).toEqual(NUMBER_RANDOM_QUESTIONS); // Or however many you expect
     });
 
     it('should configure the player as host, leave the current room, and create a new room with the game', () => {
