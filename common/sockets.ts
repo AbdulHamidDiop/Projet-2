@@ -48,6 +48,7 @@ export enum Events {
     UPDATE_CHART = 'updateChart',
     UPDATE_PLAYER = 'updateScore',
     CONFIRM_ANSWERS = 'confirmAnswers',
+    CONFIRM_ANSWER_R = 'confirmAnswerR',
     NOTIFY_QRL_INPUT = 'notifyQRLInput',
     EXCLUDE_FROM_CHAT = 'excludeFromChat',
     INCLUDE_IN_CHAT = 'includeInChat',

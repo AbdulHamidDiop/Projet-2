@@ -35,7 +35,7 @@ export class GameRandomComponent {
         // Get all QCM depuis service ou filtrer QLR
         this.questionService.getAllQuestions().then((questions) => {
             if (questions.length >= NUMBER_RANDOM_QUESTIONS) {
-                this.questions = questions;
+                this.questions = questions.filter((question) => question.type === 'QCM');
                 this.show = true;
                 this.game = this.createGame();
             }

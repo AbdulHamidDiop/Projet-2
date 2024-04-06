@@ -216,7 +216,6 @@ export class SocketRoomService implements OnDestroy {
 
     startRandomGame(): void {
         this.socket.emit(Events.START_RANDOM_GAME);
-        console.log(2);
     }
 
     gameStartSubscribe(): Observable<void> {

@@ -1,6 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { PlayerAndAdminPanelComponent } from '@app/components/player-and-admin-panel/player-and-admin-panel.component';
+import { GameManagerService } from '@app/services/game-manager.service';
 import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -18,6 +20,8 @@ const START_GAME_DELAY = 5000;
     styleUrls: ['./waiting-page.component.scss'],
 })
 export class WaitingPageComponent implements OnDestroy, OnInit {
+    @ViewChild(PlayerAndAdminPanelComponent) playerAndAdminPanelComponent: PlayerAndAdminPanelComponent;
+
     fullView: boolean = true;
     roomIdEntryView: boolean = true;
     usernameEntryView: boolean = false;
@@ -33,6 +37,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     roomLockedSubscription: Subscription;
     gamePinSubscription: Subscription;
     gameStartSubscription: Subscription;
+    randDomGameStartSubscription: Subscription;
     playersSubscription: Subscription;
     profileSubscription: Subscription;
     kickSubscription: Subscription;
@@ -41,6 +46,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     // eslint-disable-next-line max-params
     constructor(
         private gameSessionService: GameSessionService,
+        private gameManagerService: GameManagerService,
         private timeService: TimeService,
         private playerService: PlayerService,
         private socket: SocketRoomService,
@@ -56,7 +62,6 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             setTimeout(() => {
                 if (this.player.isHost) {
                     setTimeout(() => {
-                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
                         this.socket.requestPlayers();
                     }, START_TIMER_DELAY);
                     this.router.navigate(['/hostView/' + this.game.id]);
@@ -66,13 +71,12 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             }, START_GAME_DELAY);
         });
 
-        this.socket.randomGameStartSubscribe().subscribe(() => {
-            this.router.navigate(['/game/' + this.game.id]);
-
+        this.randDomGameStartSubscription = this.socket.randomGameStartSubscribe().subscribe(() => {
+            this.gameManagerService.initRandomGame(this.players);
             this.openCountDownModal();
             setTimeout(() => {
                 setTimeout(() => {
-                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
+                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME, { time: this.game.duration });
                     this.socket.requestPlayers();
                 }, START_TIMER_DELAY);
                 this.router.navigate(['/game/' + this.game.id]);
@@ -88,16 +92,17 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
 
-        this.leaveRoomSubscription.unsubscribe();
-        this.roomJoinSubscription.unsubscribe();
-        this.roomLockedSubscription.unsubscribe();
-        this.gamePinSubscription.unsubscribe();
-        this.gameStartSubscription.unsubscribe();
-        this.playersSubscription.unsubscribe();
-        this.profileSubscription.unsubscribe();
-        this.kickSubscription.unsubscribe();
-        this.disconnectSubscription.unsubscribe();
-        this.playerLeftSubscription.unsubscribe();
+        this.leaveRoomSubscription?.unsubscribe();
+        this.roomJoinSubscription?.unsubscribe();
+        this.roomLockedSubscription?.unsubscribe();
+        this.gamePinSubscription?.unsubscribe();
+        this.gameStartSubscription?.unsubscribe();
+        this.randDomGameStartSubscription?.unsubscribe();
+        this.playersSubscription?.unsubscribe();
+        this.profileSubscription?.unsubscribe();
+        this.kickSubscription?.unsubscribe();
+        this.disconnectSubscription?.unsubscribe();
+        this.playerLeftSubscription?.unsubscribe();
     }
 
     setInitailView(): void {
@@ -158,6 +163,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
                 this.socket.room = message.message;
                 this.gameSessionService.getGameWithoutCorrectShown(this.socket.room).then((game: Game) => {
                     this.game = game;
+                    this.playerAndAdminPanelComponent.initializeGame(game);
                 });
             }
         });

@@ -19,6 +19,8 @@ import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
 import { BONUS_MULTIPLIER, ERROR_INDEX, MAX_QRL_LENGTH, QRL_TIMER, SHOW_FEEDBACK_DELAY } from './const';
 
+const RANDOM_INDICATOR = -9;
+
 @Component({
     selector: 'app-play-area',
     templateUrl: './play-area.component.html',
@@ -27,6 +29,7 @@ import { BONUS_MULTIPLIER, ERROR_INDEX, MAX_QRL_LENGTH, QRL_TIMER, SHOW_FEEDBACK
 export class PlayAreaComponent implements OnInit, OnDestroy {
     player: Player;
     inTestMode: boolean = false;
+    inRandomMode: boolean = false;
     buttonPressed = '';
     question: Question = {} as Question;
 
@@ -48,12 +51,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private points = 0;
 
     private nextQuestionSubscription: Subscription;
+    private nextRandomQuestionSubscription: Subscription;
     private endGameSubscription: Subscription;
     private abortGameSubscription: Subscription;
     private bonusSubscription: Subscription;
     private bonusGivenSubscription: Subscription;
     private sendQRLAnswerSubscription: Subscription;
     private qrlGradeSubscription: Subscription;
+    private timerEndedSubscription: Subscription;
 
     // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
@@ -72,9 +77,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.player = this.playerService.player;
         this.playerService.player.score = 0;
         this.answer = [];
-        if (this.route.snapshot.queryParams.testMode === 'true') {
-            this.inTestMode = true;
-        }
+        this.setInTestMode();
+        this.setInRandomMode();
     }
 
     get time(): number {
@@ -110,7 +114,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        this.timeService.timerEnded.subscribe(async () => {
+        this.timerEndedSubscription = this.timeService.timerEnded.subscribe(async () => {
             await this.confirmAnswers(false);
         });
         const gameID = this.route.snapshot.paramMap.get('id');
@@ -190,12 +194,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.gameManager.reset();
 
         this.nextQuestionSubscription?.unsubscribe();
+        this.nextRandomQuestionSubscription?.unsubscribe();
         this.endGameSubscription?.unsubscribe();
         this.bonusSubscription?.unsubscribe();
         this.bonusGivenSubscription?.unsubscribe();
         this.abortGameSubscription?.unsubscribe();
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
+        this.timerEndedSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
@@ -218,7 +224,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.qrlStatsService.startTimer(newQuestion.id);
         }
         this.changeDetector.detectChanges();
-        if (this.inTestMode) {
+        if (this.inTestMode || this.inRandomMode) {
             this.timeService.stopTimer();
             this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
             this.timeService.startTimer(this.timer);
@@ -258,10 +264,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         // true : appelé par input utilisateur, false : appelé par serveur,
         this.timeService.stopTimer();
         this.choiceDisabled = true;
-        if (fromUserInput) {
+        if (fromUserInput || this.inRandomMode) {
             this.socketService.confirmAnswer(this.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
         }
-        if (this.inTestMode) {
+        if (this.inTestMode || (this.inRandomMode && this.time === 0)) {
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
@@ -377,12 +383,14 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     onLocationChange = () => {
-        // this.socketService.endGame();
+        this.socketService.endGame();
     };
 
     endGameTest() {
-        if (this.gameManager.endGame && this.inTestMode) {
+        if (this.gameManager.onLastQuestion() && this.inTestMode) {
             this.router.navigate(['/createGame']);
+        } else if (this.gameManager.onLastQuestion() && this.inRandomMode) {
+            this.endGame();
         }
     }
 
@@ -410,8 +418,24 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.showCountDown = false;
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-undef
     trackByFunction(item: any) {
         return item.id;
+    }
+
+    private setInRandomMode(): void {
+        this.inRandomMode = this.router.url.slice(RANDOM_INDICATOR) === 'aleatoire';
+
+        if (this.inRandomMode) {
+            this.nextRandomQuestionSubscription = this.gameManager.nextQuestionSignal$.subscribe(async () => {
+                await this.confirmAnswers(false);
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+                await this.countPointsAndNextQuestion();
+            });
+        }
+    }
+
+    private setInTestMode(): void {
+        this.inTestMode = this.route.snapshot.queryParams.testMode === 'true';
     }
 }

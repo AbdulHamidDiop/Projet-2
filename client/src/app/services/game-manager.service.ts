@@ -1,22 +1,35 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Feedback } from '@common/feedback';
-import { Game, Question } from '@common/game';
+import { Game, Player, Question } from '@common/game';
+import { Events, Namespaces } from '@common/sockets';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { GameSessionService } from './game-session.service';
+import { SocketRoomService } from './socket-room.service';
 
 @Injectable({
-    providedIn: 'root', // SPRINT 2: might have to not be a singleton
+    providedIn: 'root',
 })
-export class GameManagerService {
+export class GameManagerService implements OnDestroy {
     game: Game;
     gamePin: string;
     currentQuestionIndex: number = 0;
     endGame: boolean = false;
+    inRandomMode: boolean = false;
+    playersInRandomGame: Player[] = [];
+    lastPlayerThatConfirmed: string = '';
+    numberOfAnswers: number = 0;
+    nextQuestionSignal$: Observable<void>;
+
+    private nextQuestionSignal: Subject<void>;
+    private playerLeftSubscription: Subscription;
+    private answerConfirmationSubscription: Subscription;
 
     constructor(
         private gameSessionService: GameSessionService,
         private fetchService: FetchService,
+        private socketService: SocketRoomService,
     ) {}
 
     async initialize(pin: string) {
@@ -27,6 +40,34 @@ export class GameManagerService {
         }
     }
 
+    initRandomGame(players: Player[]) {
+        this.playersInRandomGame = players;
+        this.inRandomMode = true;
+        this.nextQuestionSignal = new Subject<void>();
+        this.nextQuestionSignal$ = this.nextQuestionSignal.asObservable();
+
+        this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
+            const username = (data as { user: string }).user;
+            this.playersInRandomGame = this.playersInRandomGame.filter((player) => player.name !== username);
+        });
+
+        this.answerConfirmationSubscription = this.socketService
+            .listenForMessages(Namespaces.GAME_STATS, Events.CONFIRM_ANSWER_R)
+            .subscribe((data: unknown) => {
+                const payload = data as { room: string; player: Player };
+                const username = payload.player.name;
+
+                if (this.lastPlayerThatConfirmed === username) {
+                    return;
+                }
+                if (++this.numberOfAnswers === this.playersInRandomGame.length + 1) {
+                    this.numberOfAnswers = 0;
+                    this.lastPlayerThatConfirmed = '';
+                    this.nextQuestionSignal.next();
+                }
+                this.lastPlayerThatConfirmed = username;
+            });
+    }
     reset() {
         this.currentQuestionIndex = 0;
         this.endGame = false;
@@ -40,6 +81,9 @@ export class GameManagerService {
     }
 
     goNextQuestion(): Question {
+        this.numberOfAnswers = 0;
+        this.lastPlayerThatConfirmed = '';
+
         if (this.game) {
             if (this.currentQuestionIndex + 1 === this.game.questions.length) {
                 this.endGame = true;
@@ -73,5 +117,10 @@ export class GameManagerService {
         });
         const feedback = await response.json();
         return feedback;
+    }
+
+    ngOnDestroy() {
+        this.playerLeftSubscription?.unsubscribe();
+        this.answerConfirmationSubscription?.unsubscribe();
     }
 }

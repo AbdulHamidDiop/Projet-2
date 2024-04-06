@@ -6,6 +6,8 @@ import { GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
+const RANDOM_INDICATOR = -9;
+
 @Component({
     selector: 'app-player-and-admin-panel',
     templateUrl: './player-and-admin-panel.component.html',
@@ -17,6 +19,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     @Input() players: Player[] = [];
     room: string;
     roomLocked: boolean = false;
+    inRandomMode: boolean = false;
     private globalChatSubscription: Subscription;
     private playerLeftSubscription: Subscription;
 
@@ -61,7 +64,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     }
 
     startGame() {
-        if (this.players.length > 0 && this.game.id.slice(-9) !== 'aleatoire') {
+        if (this.players.length > 0 && !this.inRandomMode) {
             this.socket.startGame();
             if (this.roomLocked) {
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
@@ -72,14 +75,18 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
                     duration: 5000,
                 });
             }
-        } else if (this.game.id.slice(-9) === 'aleatoire') {
+        } else if (this.players.length <= 0 && !this.inRandomMode) {
+            this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
+                verticalPosition: 'top',
+                duration: 5000,
+            });
+        } else if (this.inRandomMode) {
             if (this.roomLocked === true) {
-                console.log(1);
                 this.socket.startRandomGame();
                 GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
                 this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
             } else {
-                this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
+                this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
                     verticalPosition: 'top',
                     duration: 5000,
                 });
@@ -95,6 +102,13 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     leaveRoom() {
         this.socket.leaveRoom();
         this.socket.endGame();
+    }
+
+    initializeGame(game: Game) {
+        this.game = game;
+        if (this.game.id.slice(RANDOM_INDICATOR) === 'aleatoire') {
+            this.inRandomMode = true;
+        }
     }
 
     ngOnDestroy() {
