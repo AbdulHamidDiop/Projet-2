@@ -1,5 +1,6 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
 import { Question } from '@common/game';
@@ -60,6 +61,7 @@ describe('GameManagerService', () => {
         const spyGameSessionService = jasmine.createSpyObj('GameSessionService', ['getGameWithoutCorrectShown', 'checkAnswer']);
         const spyFetchService = jasmine.createSpyObj('FetchService', ['fetch']);
         TestBed.configureTestingModule({
+            imports: [MatSnackBarModule],
             providers: [
                 { provide: GameSessionService, useValue: spyGameSessionService },
                 { provide: FetchService, useValue: spyFetchService },
