@@ -57,7 +57,7 @@ describe('GameManagerService', () => {
     let fetchServiceSpy: jasmine.SpyObj<FetchService>;
 
     beforeEach(() => {
-        const spyGameSessionService = jasmine.createSpyObj('GameSessionService', ['getQuestionsWithoutCorrectShown', 'checkAnswer']);
+        const spyGameSessionService = jasmine.createSpyObj('GameSessionService', ['getGameWithoutCorrectShown', 'checkAnswer']);
         const spyFetchService = jasmine.createSpyObj('FetchService', ['fetch']);
         TestBed.configureTestingModule({
             providers: [
@@ -76,7 +76,7 @@ describe('GameManagerService', () => {
 
     it('should initialize game data correctly', async () => {
         const mockGame = { id: 'gameId', questions: [] } as unknown as Game;
-        gameSessionServiceSpy.getQuestionsWithoutCorrectShown.and.resolveTo(mockGame);
+        gameSessionServiceSpy.getGameWithoutCorrectShown.and.resolveTo(mockGame);
         await service.initialize('gameId');
         expect(service.game).toEqual(mockGame);
     });

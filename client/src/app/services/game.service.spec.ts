@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
+import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { GameService } from './game.service';
 
@@ -193,7 +193,7 @@ describe('GameService', () => {
         tick();
 
         expect(service.fetchService.fetch).toHaveBeenCalledWith(
-            API_URL + 'game/importgame',
+            environment.serverUrl + 'game/importgame',
             jasmine.objectContaining({
                 method: 'POST',
                 body: JSON.stringify(mockData),
@@ -230,7 +230,7 @@ describe('GameService', () => {
         tick();
 
         expect(service.fetchService.fetch).toHaveBeenCalledWith(
-            API_URL + 'game/togglehidden',
+            environment.serverUrl + 'game/togglehidden',
             jasmine.objectContaining({
                 method: 'PATCH',
                 body: JSON.stringify({ id: mockGameId }),
@@ -247,7 +247,10 @@ describe('GameService', () => {
         service.deleteGameByID('1');
         tick();
 
-        expect(service.fetchService.fetch).toHaveBeenCalledWith(API_URL + 'game/delete/1', jasmine.objectContaining({ method: 'DELETE' }));
+        expect(service.fetchService.fetch).toHaveBeenCalledWith(
+            environment.serverUrl + 'game/delete/1',
+            jasmine.objectContaining({ method: 'DELETE' }),
+        );
     }));
 
     it('should throw an error when response to deleteGameByID is not OK', fakeAsync(() => {
@@ -258,7 +261,7 @@ describe('GameService', () => {
     it('should fetch questions without correct shown for a game', async () => {
         const result = await service.getQuestionsWithoutCorrectShown(mockGameId);
         expect(result).toEqual(mockData);
-        expect(service.fetchService.fetch).toHaveBeenCalledWith(API_URL + 'game/questionswithoutcorrect/' + mockGameId);
+        expect(service.fetchService.fetch).toHaveBeenCalledWith(environment.serverUrl + 'game/questionswithoutcorrect/' + mockGameId);
     });
 
     it('should throw an error when getQuestionsWithoutCorrectShown response is not OK', fakeAsync(() => {
@@ -277,7 +280,7 @@ describe('GameService', () => {
 
         expect(result).toEqual(true);
         expect(service.fetchService.fetch).toHaveBeenCalledWith(
-            API_URL + 'game/check',
+            environment.serverUrl + 'game/check',
             jasmine.objectContaining({
                 method: 'POST',
                 headers: jasmine.objectContaining({
@@ -320,7 +323,7 @@ describe('GameService', () => {
 
         expect(result).toEqual(true);
         expect(service.fetchService.fetch).toHaveBeenCalledWith(
-            API_URL + 'game/availability/' + game.id,
+            environment.serverUrl + 'game/availability/' + game.id,
             jasmine.objectContaining({
                 method: 'GET',
                 headers: jasmine.objectContaining({

@@ -31,6 +31,7 @@ export class SocketEvents {
         this.listenForUnlockRoomEvent(socket);
         this.listenForKickPlayerEvent(socket);
         this.listenForStartGameEvent(socket);
+        this.listenForStartRandomGameEvent(socket);
         this.listenForRequestPlayersEvent(socket);
         this.listenForLeaveRoomEvent(socket);
         this.listenForAbandonGame(socket);
@@ -63,7 +64,8 @@ export class SocketEvents {
             this.chatHistories.set(room, []);
             this.roomGameId.set(room, id);
             socket.emit(Events.JOIN_ROOM, true);
-            socket.emit(Events.GET_GAME_ID, id);
+            socket.emit(Events.GET_GAME_PIN, room);
+
             socket.emit(Events.GET_PLAYER_PROFILE, player);
             socket.emit(Events.GET_PLAYERS, []);
             const message: ChatMessage = {
@@ -166,7 +168,6 @@ export class SocketEvents {
                 const room = this.socketIdRoom.get(socket.id);
                 const player = this.playerSocketId.get(socket.id);
                 const playerList = this.mapOfPlayersInRoom.get(room);
-                const gameId = this.roomGameId.get(room);
                 if (
                     playerList.some((playerInRoom) => {
                         return playerInRoom.name.toLowerCase() === name.toLowerCase();
@@ -186,7 +187,7 @@ export class SocketEvents {
                     playerList.push(player);
                     socket.emit(Events.GET_PLAYERS, playerList);
                     socket.to(room).emit(Events.GET_PLAYERS, playerList);
-                    socket.emit(Events.GET_GAME_ID, gameId);
+                    socket.emit(Events.GET_GAME_PIN, room);
                     const message: ChatMessage = {
                         author: sysmsg.AUTHOR,
                         message: name + ' ' + sysmsg.PLAYER_JOINED,
@@ -269,10 +270,30 @@ export class SocketEvents {
                         socket.to(room).emit(Events.START_GAME);
                         socket.emit(Events.START_GAME);
                         socket.to(room).emit(Events.GET_PLAYERS, players);
-                        socket.emit(Events.GET_PLAYERS, players);
+                        socket.emit(Events.START_GAME);
                     } else {
                         socket.emit(Events.UNLOCK_ROOM);
                     }
+                }
+            }
+        });
+    }
+
+    listenForStartRandomGameEvent(socket: Socket) {
+        socket.on(Events.START_RANDOM_GAME, () => {
+            if (this.socketInRoom(socket) && this.roomCreated(socket)) {
+                const host = this.playerSocketId.get(socket.id);
+                const room = this.socketIdRoom.get(socket.id);
+                const players = this.mapOfPlayersInRoom.get(room);
+                if (this.lockedRooms.includes(room)) {
+                    host.isHost = false;
+                    players.push(host);
+                    socket.to(room).emit(Events.START_RANDOM_GAME);
+                    socket.emit(Events.START_RANDOM_GAME);
+                    socket.to(room).emit(Events.GET_PLAYERS, players);
+                    socket.emit(Events.START_RANDOM_GAME);
+                } else {
+                    socket.emit(Events.UNLOCK_ROOM);
                 }
             }
         });

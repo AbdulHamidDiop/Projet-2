@@ -1,13 +1,15 @@
+/* eslint-disable max-lines */
 import { Injectable, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { PlayerService } from '@app/services/player.service';
-import { Game, Player, Question } from '@common/game';
+import { Game, Player, Question, RED } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Observable } from 'rxjs';
 import { Socket } from 'socket.io-client';
+import { environment } from 'src/environments/environment';
 import { IoService } from './ioservice.service';
 
 @Injectable({
@@ -16,10 +18,9 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
+    readonly socket: Socket;
+    readonly namespaces: Map<string, Socket> = new Map();
     unitTests: boolean = false;
-    private socket: Socket;
-    private url = 'http://localhost:3000'; // Your Socket.IO server URL
-    private namespaces: Map<string, Socket> = new Map();
 
     constructor(
         private io: IoService,
@@ -27,7 +28,7 @@ export class SocketRoomService implements OnDestroy {
         private router: Router,
         private snackBar: MatSnackBar, // Peut-être mettre dans un component.
     ) {
-        this.socket = io.io(this.url);
+        this.socket = io.io(environment.ws);
         window.addEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
 
         this.listenForMessages(Namespaces.GAME, Events.ABORT_GAME).subscribe(() => {
@@ -71,10 +72,10 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
-    getGameId(): Observable<string> {
+    getGamePin(): Observable<string> {
         return new Observable((observer) => {
-            this.socket.on(Events.GET_GAME_ID, (id) => {
-                observer.next(id);
+            this.socket.on(Events.GET_GAME_PIN, (pin) => {
+                observer.next(pin);
             });
         });
     }
@@ -171,6 +172,10 @@ export class SocketRoomService implements OnDestroy {
         });
     }
 
+    requestPlayers(): void {
+        this.socket.emit(Events.GET_PLAYERS);
+    }
+
     getProfile(): Observable<Player> {
         return new Observable((observer) => {
             this.socket.on(Events.GET_PLAYER_PROFILE, (player) => {
@@ -209,9 +214,22 @@ export class SocketRoomService implements OnDestroy {
         this.socket.emit(Events.START_GAME);
     }
 
+    startRandomGame(): void {
+        this.socket.emit(Events.START_RANDOM_GAME);
+        console.log(2);
+    }
+
     gameStartSubscribe(): Observable<void> {
         return new Observable((observer) => {
             this.socket.on(Events.START_GAME, () => {
+                observer.next();
+            });
+        });
+    }
+
+    randomGameStartSubscribe(): Observable<void> {
+        return new Observable((observer) => {
+            this.socket.on(Events.START_RANDOM_GAME, () => {
                 observer.next();
             });
         });
@@ -334,11 +352,21 @@ export class SocketRoomService implements OnDestroy {
         // faudra un nouvel event ex. leaveGame.
         this.room = '';
         this.playerService.playersInGame = [];
+        this.playerService.player = {
+            name: '',
+            isHost: false,
+            id: '',
+            score: 0,
+            bonusCount: 0,
+            color: RED,
+            chatEnabled: true,
+            outOfRoom: false,
+        };
     }
 
     connectNamespace(namespace: string): Socket | undefined {
         if (!this.namespaces.has(namespace)) {
-            const namespaceSocket = this.io.io(`${this.url}/${namespace}`);
+            const namespaceSocket = this.io.io(`${environment.ws}/${namespace}`);
             this.namespaces.set(namespace, namespaceSocket);
         }
         return this.namespaces.get(namespace);

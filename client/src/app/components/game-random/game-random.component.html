@@ -1,0 +1,15 @@
+<mat-expansion-panel *ngIf="show" hideToggle>
+    <mat-expansion-panel-header>
+        <mat-panel-title>
+            <a> Mode aléatoire </a>
+        </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <strong>Détails du jeu</strong>
+    <p>
+        5 QCM choisies au hazard seront selectionnées lorsque vous lancez le jeu. Dans ce mode, l'organisateur fait partie du Quickzz et rejoint les
+        joueurs.
+    </p>
+
+    <button mat-fab (click)="launchGame()" extended color="primary" [routerLink]="['/waiting']">Lancer une partie</button>
+</mat-expansion-panel>

@@ -1,8 +1,8 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { VALID_QUESTION } from '@common/test-interfaces';
+import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { QuestionsService } from './questions.service';
 
@@ -122,7 +122,7 @@ describe('QuestionsService', () => {
         tick();
 
         expect(fetchSpy).toHaveBeenCalledWith(
-            API_URL + 'questions/add',
+            environment.serverUrl + 'questions/add',
             jasmine.objectContaining({
                 method: 'POST',
                 body: JSON.stringify(VALID_QUESTION),
@@ -135,7 +135,7 @@ describe('QuestionsService', () => {
         tick();
 
         expect(fetchSpy).toHaveBeenCalledWith(
-            API_URL + 'questions/edit',
+            environment.serverUrl + 'questions/edit',
             jasmine.objectContaining({
                 method: 'PUT',
                 body: JSON.stringify(VALID_QUESTION),
