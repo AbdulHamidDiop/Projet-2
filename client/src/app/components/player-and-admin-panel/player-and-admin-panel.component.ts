@@ -64,33 +64,22 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     }
 
     startGame() {
-        if (this.players.length > 0 && !this.inRandomMode) {
-            this.socket.startGame();
-            if (this.roomLocked) {
-                GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
-                this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
+        if (this.roomLocked) {
+            if (this.inRandomMode) {
+                this.startRandomGame();
+            } else if (this.players.length > 0) {
+                this.startNormalGame();
             } else {
-                this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
+                this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
                     verticalPosition: 'top',
                     duration: 5000,
                 });
             }
-        } else if (this.players.length <= 0 && !this.inRandomMode) {
-            this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
+        } else {
+            this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
             });
-        } else if (this.inRandomMode) {
-            if (this.roomLocked === true) {
-                this.socket.startRandomGame();
-                GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
-                this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
-            } else {
-                this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
-                    verticalPosition: 'top',
-                    duration: 5000,
-                });
-            }
         }
     }
 
@@ -114,5 +103,17 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     ngOnDestroy() {
         this.globalChatSubscription.unsubscribe();
         this.playerLeftSubscription.unsubscribe();
+    }
+
+    private startNormalGame(): void {
+        this.socket.startGame();
+        GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
+        this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
+    }
+
+    private startRandomGame(): void {
+        this.socket.startRandomGame();
+        GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
+        this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
     }
 }
