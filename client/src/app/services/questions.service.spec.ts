@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { Question } from '@common/game';

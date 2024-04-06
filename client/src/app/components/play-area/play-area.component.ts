@@ -219,8 +219,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.question = newQuestion;
         if (newQuestion && newQuestion.type === 'QCM') {
             this.nbChoices = this.question.choices.length;
-        }
-        if (newQuestion && newQuestion.type === 'QRL') {
+        } else if (newQuestion && newQuestion.type === 'QRL') {
             this.qrlStatsService.startTimer(newQuestion.id);
         }
         this.changeDetector.detectChanges();
@@ -389,7 +388,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     endGameTest() {
         if (this.gameManager.onLastQuestion() && this.inTestMode) {
             this.router.navigate(['/createGame']);
-        } else if (this.gameManager.onLastQuestion() && this.inRandomMode) {
+        } else if (this.gameManager.endGame && this.inRandomMode) {
             this.endGame();
         }
     }

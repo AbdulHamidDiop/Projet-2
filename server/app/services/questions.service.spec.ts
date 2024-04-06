@@ -1,4 +1,5 @@
-import { Question } from '@common/game';
+/* eslint-disable @typescript-eslint/no-magic-numbers */
+import { Question, Type } from '@common/game';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import { SinonStub, stub } from 'sinon';
@@ -159,5 +160,31 @@ describe('Questions Service', () => {
         stub(questionsService, 'getAllQuestions').resolves([{ type: 'QRL' } as unknown as Question]);
         const isCorrectQRL = await questionsService.isCorrectAnswer(['qrl answer'], 'qrl id');
         expect(isCorrectQRL).to.equal(true);
+    });
+
+    it('should throw an error if there are not enough QCM questions', async () => {
+        try {
+            await questionsService.getRandomQuestions();
+            expect.fail('Expected method to throw.');
+        } catch (error) {
+            expect(error).to.be.an('error').with.property('message', 'Not enough QCM questions');
+        }
+    });
+
+    it('should get 5 random questions if there are 5', async () => {
+        // Modify the stub to resolve with different data or reject
+        readFileStub.resolves(
+            JSON.stringify([
+                { id: 1, type: Type.QCM },
+                { id: 2, type: Type.QCM },
+                { id: 3, type: Type.QCM },
+                { id: 4, type: Type.QCM },
+                { id: 5, type: Type.QCM },
+                { id: 6, type: Type.QRL },
+            ]),
+        );
+
+        const randomQuestions = await questionsService.getRandomQuestions();
+        expect(randomQuestions).to.be.an('array').with.lengthOf(5);
     });
 });

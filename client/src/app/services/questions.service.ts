@@ -93,6 +93,17 @@ export class QuestionsService {
         return questions;
     }
 
+    async getRandomQuestions(): Promise<Question[]> {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/random');
+        if (response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
+            return [];
+        } else if (!response.ok) {
+            throw Error(`Error: ${response.status}`);
+        }
+        const questions: Question[] = await response.json();
+        return questions;
+    }
+
     async checkAnswer(answer: string[], id: string): Promise<boolean> {
         try {
             const response = await this.fetchService.fetch(environment.serverUrl + 'questions/check', {

@@ -166,6 +166,38 @@ export class QuestionsController {
             }
             res.send();
         });
+
+        /**
+         * @swagger
+         *
+         * /api/questions/random:
+         *   get:
+         *     summary: Get 5 random questions
+         *     description: Return 5 random questions
+         *     tags:
+         *       - Question
+         *     produces:
+         *      - application/json
+         *     responses:
+         *       200:
+         *         description: Random questions
+         *         schema:
+         *           type: array
+         *           items:
+         *             $ref: '#/components/schemas/Question'
+         */
+        this.router.get('/random', async (req: Request, res: Response) => {
+            try {
+                const questions = await this.questionsService.getRandomQuestions();
+                res.json(questions);
+            } catch (error) {
+                // Not enough QCM questions
+                if (error.message === 'Not enough QCM questions') {
+                    res.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ message: 'Not enough QCM questions available.' });
+                }
+            }
+            res.send();
+        });
     }
 }
 
