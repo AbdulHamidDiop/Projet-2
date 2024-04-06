@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { GameManagerService } from '@app/services/game-manager.service';
 import { GameSessionService } from '@app/services/game-session.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
@@ -15,6 +16,7 @@ describe('WaitingPageComponent', () => {
     let socketMock: SpyObj<SocketRoomService>;
     let routerMock: SpyObj<Router>;
     let gameSessionServiceMock: SpyObj<GameSessionService>;
+    let gameManagerServiceMock: SpyObj<GameManagerService>;
     let snackBarMock: SpyObj<MatSnackBar>;
     const DELAY = 5000;
     const DELAY_THREE_SEC = 3000;
@@ -24,7 +26,7 @@ describe('WaitingPageComponent', () => {
             'roomLockedSubscribe',
             'leaveRoomSubscribe',
             'roomJoinSubscribe',
-            'getGameId',
+            'getGamePin',
             'getPlayers',
             'getProfile',
             'gameStartSubscribe',
@@ -35,6 +37,7 @@ describe('WaitingPageComponent', () => {
             'requestPlayers',
             'listenForMessages',
             'getChatMessages',
+            'randomGameStartSubscribe',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -42,12 +45,13 @@ describe('WaitingPageComponent', () => {
         socketMock.getPlayers.and.returnValue(of([]));
         socketMock.getProfile.and.returnValue(of({ isHost: true } as Player));
         socketMock.gameStartSubscribe.and.returnValue(of(undefined));
+        socketMock.randomGameStartSubscribe.and.returnValue(of(undefined));
         socketMock.disconnectSubscribe.and.returnValue(of(undefined));
         socketMock.roomLockedSubscribe.and.returnValue(of(true));
         socketMock.kickSubscribe.and.returnValue(of('Reason for kick'));
         socketMock.getChatMessages.and.returnValue(
             of({
-                author: 'test',
+                author: 'room',
                 message: {
                     author: 'room',
                     message: 'john',
@@ -61,6 +65,9 @@ describe('WaitingPageComponent', () => {
 
         gameSessionServiceMock = jasmine.createSpyObj('GameSessionService', ['getGameWithoutCorrectShown']);
         gameSessionServiceMock.getGameWithoutCorrectShown.and.returnValue(Promise.resolve({ id: '123' } as Game));
+
+        gameManagerServiceMock = jasmine.createSpyObj('GameManagerService', ['initRandomGame']);
+        gameManagerServiceMock.initRandomGame.and.returnValue();
 
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
 
