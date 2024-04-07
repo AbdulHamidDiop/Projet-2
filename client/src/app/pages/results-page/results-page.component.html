@@ -38,7 +38,7 @@
             <app-sidebar> </app-sidebar>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="4" [rowspan]="7">
+        <mat-grid-tile [colspan]="4" [rowspan]="7" *ngIf="game?.questions">
             <!-- Affichage des histogrammes -->
             <div>
                 <h2>{{ game.questions[currentHistogramIndex].text }}</h2>
