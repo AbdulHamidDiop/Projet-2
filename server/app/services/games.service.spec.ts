@@ -1,10 +1,11 @@
+/* eslint-disable no-restricted-imports */
 import { Game } from '@common/game';
+import { DB_COLLECTION_GAMES } from '@common/utils/env';
 import { expect } from 'chai';
-import * as fs from 'fs';
-import { SinonStub, stub } from 'sinon';
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import { stub } from 'sinon';
+import { DatabaseService } from './database.service';
 import { GamesService } from './games.service';
-
-const DATA_LENGTH = 0;
 
 const FIRST_QUIZ = {
     id: '00000000-1111-2222-test-000000000000',
@@ -58,109 +59,80 @@ const SECOND_QUIZ = {
     isHidden: true,
 };
 
-let QUIZ = '[]';
-
 describe('Games Service', () => {
-    let gamesService: GamesService;
-    let readFileStub: SinonStub;
-    let writeFileStub: SinonStub;
+    let gameService: GamesService;
+    let databaseService: DatabaseService;
+    let mongoServer: MongoMemoryServer;
 
     beforeEach(async () => {
-        readFileStub = stub(fs.promises, 'readFile').resolves(QUIZ);
-        writeFileStub = stub(fs.promises, 'writeFile').callsFake(async (path: fs.PathLike, data: string) => {
-            return new Promise<void>((resolve) => {
-                QUIZ = data;
-                resolve();
-            });
-        });
-
-        gamesService = new GamesService();
+        databaseService = new DatabaseService();
+        gameService = new GamesService(databaseService);
+        mongoServer = await MongoMemoryServer.create();
+        const mongoUri = mongoServer.getUri();
+        await databaseService.start(mongoUri);
     });
 
-    afterEach(() => {
-        readFileStub.restore();
-        writeFileStub.restore();
+    afterEach(async () => {
+        if (databaseService['client']) {
+            await databaseService['client'].close();
+        }
+    });
+
+    it('getAllGames should return all games', async () => {
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertMany([FIRST_QUIZ, SECOND_QUIZ]);
+        const games = await gameService.getAllGames();
+        expect(games.length).to.deep.equal(2);
     });
 
     it('should add a game to the database', async () => {
         const quiz = { ...FIRST_QUIZ, title: 'Title' } as unknown as Game;
-        await gamesService.addGame(quiz);
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(JSON.parse(QUIZ)[DATA_LENGTH]).to.deep.equal(quiz);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
-    });
-
-    it('should modify a game from the database if that game already exists', async () => {
-        await gamesService.addGame(FIRST_QUIZ as unknown as Game);
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(JSON.parse(QUIZ)[DATA_LENGTH]).to.deep.equal(FIRST_QUIZ);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
-    });
-
-    it('should get all games', async () => {
-        const games = await gamesService.getAllGames();
-        expect(games).to.be.an('array').with.lengthOf(1);
-        expect(games[0]).to.deep.equal(FIRST_QUIZ);
-        expect(readFileStub.called);
+        await gameService.addGame(quiz);
+        const games = await gameService.getAllGames();
+        expect(games.length).to.deep.equal(1);
     });
 
     it('should get a game from the database based on its id', async () => {
-        const game = await gamesService.getGameByID(FIRST_QUIZ.id);
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertOne(FIRST_QUIZ);
+        const game = await gameService.getGameByID(FIRST_QUIZ.id);
         expect(game).to.deep.equal(FIRST_QUIZ);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
     });
 
     it('should return null if the id is not in the database', async () => {
-        const game = await gamesService.getGameByID('fakeID');
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertOne(FIRST_QUIZ);
+        const game = await gameService.getGameByID('fakeID');
         expect(game).to.equal(null);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
     });
 
     it('should not toggle any game if the id is not in the list', async () => {
-        const success = await gamesService.toggleGameHidden('fakeID');
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertOne(FIRST_QUIZ);
+        const success = await gameService.toggleGameHidden('fakeID');
         expect(success).to.equal(false);
-        expect(JSON.parse(QUIZ)).to.deep.equal([FIRST_QUIZ]);
-        expect(readFileStub.called);
-        expect(writeFileStub.notCalled);
     });
 
     it('should toggle a games isHidden in the database based on its id', async () => {
-        const success = await gamesService.toggleGameHidden(FIRST_QUIZ.id);
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertOne(FIRST_QUIZ);
+        const success = await gameService.toggleGameHidden(FIRST_QUIZ.id);
         expect(success).to.equal(true);
-        expect(JSON.parse(QUIZ)[0].id).to.equal(FIRST_QUIZ.id);
-        expect(JSON.parse(QUIZ)[0].title).to.equal(FIRST_QUIZ.title);
-        expect(JSON.parse(QUIZ)[0].isHidden).to.not.equal(FIRST_QUIZ.isHidden);
-        expect(JSON.parse(QUIZ)[0].lastModification).to.not.equal(FIRST_QUIZ.lastModification);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
+    });
+
+    it('should not delete a game from the database if fake id', async () => {
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertOne(FIRST_QUIZ);
+        await gameService.deleteGameByID('FakeID');
+        const games = await gameService.getAllGames();
+        expect(games.length).to.deep.equal(1);
     });
 
     it('should delete a game from the database based on its id', async () => {
-        await gamesService.deleteGameByID('FakeID');
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(1);
-        expect(readFileStub.called);
-        expect(writeFileStub.notCalled);
-    });
-
-    it('should delete a game from the database based on its id', async () => {
-        await gamesService.deleteGameByID(FIRST_QUIZ.id);
-        expect(JSON.parse(QUIZ)).to.be.an('array');
-        expect(JSON.parse(QUIZ)).to.have.lengthOf(0);
-        expect(readFileStub.called);
-        expect(writeFileStub.called);
+        await databaseService.db.collection(DB_COLLECTION_GAMES).insertOne(FIRST_QUIZ);
+        await gameService.deleteGameByID(FIRST_QUIZ.id);
+        const games = await gameService.getAllGames();
+        expect(games.length).to.deep.equal(0);
     });
 
     it('should return questions without correct answers shown', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gameService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
-        const result = await gamesService.getQuestionsWithoutCorrectShown(gameID);
+        const result = await gameService.getQuestionsWithoutCorrectShown(gameID);
         expect(result).to.deep.equal({
             ...FIRST_QUIZ,
             questions: [
@@ -173,40 +145,40 @@ describe('Games Service', () => {
     });
 
     it('should return questions without correct answers shown, including questions without choices', async () => {
-        stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
-        const result = await gamesService.getQuestionsWithoutCorrectShown(SECOND_QUIZ.id);
+        stub(gameService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
+        const result = await gameService.getQuestionsWithoutCorrectShown(SECOND_QUIZ.id);
         expect(result.questions[0].choices).to.equal(undefined);
     });
 
     it('should determine if the answer is correct', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const result = await gamesService.isCorrectAnswer(['Angular = back-end, NodeJS = front-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
+        stub(gameService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        const result = await gameService.isCorrectAnswer(['Angular = back-end, NodeJS = front-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
         expect(result).to.equal(true);
     });
 
     it('should determine if the answer is false', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
-        const result = await gamesService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
+        stub(gameService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        const result = await gameService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], FIRST_QUIZ.id, FIRST_QUIZ.questions[0].id);
         expect(result).to.equal(false);
     });
 
     it('should determine if the answer is correct when the game does not exist', async () => {
-        const result = await gamesService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], 'fakeID', FIRST_QUIZ.questions[0].id);
+        const result = await gameService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], 'fakeID', FIRST_QUIZ.questions[0].id);
         expect(result).to.equal(false);
     });
 
     it('should determine if the answer is correct when there are no choices', async () => {
-        stub(gamesService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
-        const result = await gamesService.isCorrectAnswer(['Answer'], SECOND_QUIZ.id, SECOND_QUIZ.questions[0].id);
+        stub(gameService, 'getGameByID').resolves(SECOND_QUIZ as unknown as Game);
+        const result = await gameService.isCorrectAnswer(['Answer'], SECOND_QUIZ.id, SECOND_QUIZ.questions[0].id);
         expect(result).to.equal(true);
     });
 
     it('should generate feedback for submitted answers', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gameService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const questionID = FIRST_QUIZ.questions[0].id;
         const submittedAnswers = ['Angular = back-end, NodeJS = front-end'];
-        const result = await gamesService.generateFeedback(gameID, questionID, submittedAnswers);
+        const result = await gameService.generateFeedback(gameID, questionID, submittedAnswers);
         const expectedFeedback = [
             { choice: 'Angular = front-end, NodeJS = back-end', status: undefined },
             { choice: 'Angular = back-end, NodeJS = front-end', status: 'correct' },
@@ -216,11 +188,11 @@ describe('Games Service', () => {
     });
 
     it('should generate feedback for submitted answers', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gameService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const questionID = FIRST_QUIZ.questions[0].id;
         const submittedAnswers = ['Angular = front-end, NodeJS = back-end'];
-        const result = await gamesService.generateFeedback(gameID, questionID, submittedAnswers);
+        const result = await gameService.generateFeedback(gameID, questionID, submittedAnswers);
         const expectedFeedback = [
             { choice: 'Angular = front-end, NodeJS = back-end', status: 'incorrect' },
             { choice: 'Angular = back-end, NodeJS = front-end', status: 'missed' },
@@ -230,13 +202,13 @@ describe('Games Service', () => {
     });
 
     it('should generate feedback for submitted answers if the question do not exist', async () => {
-        stub(gamesService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
+        stub(gameService, 'getGameByID').resolves(FIRST_QUIZ as unknown as Game);
         const gameID = FIRST_QUIZ.id;
         const questionId = 'nonexistent-question-id';
         const submittedAnswers = ['Some submitted answer'];
 
         try {
-            await gamesService.generateFeedback(gameID, questionId, submittedAnswers);
+            await gameService.generateFeedback(gameID, questionId, submittedAnswers);
             // If no error is thrown, fail the test
             expect.fail('Expected an error to be thrown');
         } catch (error) {

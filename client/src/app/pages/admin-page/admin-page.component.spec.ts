@@ -2,6 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatSelectChange } from '@angular/material/select';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
@@ -9,6 +10,7 @@ import { CommunicationService } from '@app/services/communication.service';
 import { FetchService } from '@app/services/fetch.service';
 import { GameService } from '@app/services/game.service';
 import { Game } from '@common/game';
+import { GameSession } from '@common/game-session';
 import { of } from 'rxjs';
 import { AdminPageComponent } from './admin-page.component';
 
@@ -86,6 +88,61 @@ async function fetchMock(): Promise<Response> {
         return errorResponse;
     }
 }
+
+const SESSION: GameSession = {
+    pin: '1122',
+    game: {
+        id: '46277881345',
+        lastModification: '2024-02-01T15:04:41.171Z',
+        title: 'Questionnaire sur le JS',
+        description: 'Questions de pratique sur le langage JavaScript',
+        duration: 59,
+        questions: [
+            {
+                id: '11',
+                type: 'QCM',
+                text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+                points: 40,
+                choices: [
+                    {
+                        text: 'var',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'self',
+                        isCorrect: false,
+                    },
+                    {
+                        text: 'this',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'int',
+                    },
+                ],
+            },
+            {
+                id: '12',
+                type: 'QCM',
+                text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
+                points: 20,
+                choices: [
+                    {
+                        text: 'Non',
+                        isCorrect: true,
+                    },
+                    {
+                        text: 'Oui',
+                        isCorrect: false,
+                    },
+                ],
+            },
+        ],
+        isHidden: false,
+    },
+    isCompleted: false,
+    timeStarted: new Date(),
+} as unknown as GameSession;
 describe('AdminPageComponent', () => {
     let component: AdminPageComponent;
     let fixture: ComponentFixture<AdminPageComponent>;
@@ -316,6 +373,11 @@ describe('AdminPageComponent', () => {
         expect(component.isGame(mockGameFile)).toBeFalse();
     });
 
+    it('isGame should be false when QRL question has attribute choices', () => {
+        mockGameFile.questions[0].type = 'QRL';
+        expect(component.isGame(mockGameFile)).toBeFalse();
+    });
+
     it('handleFile should print "Le jeu a été importé correctement." when isGame is true', () => {
         const nativeElementMock = {
             querySelector: jasmine.createSpy('querySelector').and.returnValue({ innerText: '' }),
@@ -370,5 +432,83 @@ describe('AdminPageComponent', () => {
         component.onFileSelected(mockEvent);
 
         expect(component.selectedFile).toEqual(fakeFile);
+    });
+
+    it('should call deleteHistory method', async () => {
+        const deleteHistoryMock = spyOn(component.gameSessionService, 'deleteHistory').and.returnValue(Promise.resolve());
+        await component.onDeleteHistory();
+        expect(deleteHistoryMock).toHaveBeenCalled();
+    });
+
+    it('should sort sessions by game title in ascending order', () => {
+        const sessions = [
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
+        ];
+        component.sessions = sessions;
+
+        const event = { value: 'ascending-alphabetically' } as MatSelectChange;
+        component.sortList(event);
+
+        expect(component.sessions).toEqual([
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
+        ]);
+    });
+
+    it('should sort sessions by game title in descending order', () => {
+        const sessions = [
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
+        ];
+        component.sessions = sessions;
+
+        const event = { value: 'descending-alphabetically' } as MatSelectChange;
+        component.sortList(event);
+
+        expect(component.sessions).toEqual([
+            { ...SESSION, game: { ...mockGameFile, title: 'C' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'B' } },
+            { ...SESSION, game: { ...mockGameFile, title: 'A' } },
+        ]);
+    });
+
+    it('should sort sessions by timeStarted in ascending order', () => {
+        const sessions = [
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
+        ];
+        component.sessions = sessions;
+
+        const event = { value: 'ascending-date' } as MatSelectChange;
+        component.sortList(event);
+
+        expect(component.sessions).toEqual([
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+        ]);
+    });
+
+    it('should sort sessions by timeStarted in descending order', () => {
+        const sessions = [
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+        ];
+        component.sessions = sessions;
+
+        const event = { value: 'descending-date' } as MatSelectChange;
+        component.sortList(event);
+
+        expect(component.sessions).toEqual([
+            { ...SESSION, timeStarted: new Date('2023-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2022-02-01T15:00:00.000Z') },
+            { ...SESSION, timeStarted: new Date('2021-02-01T15:00:00.000Z') },
+        ]);
     });
 });

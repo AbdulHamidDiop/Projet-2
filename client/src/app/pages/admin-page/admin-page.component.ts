@@ -1,8 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Component, ElementRef, OnInit } from '@angular/core';
+import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { GameService } from '@app/services/game.service';
 import { Choices, Game, Question, Type } from '@common/game';
+import { GameSession } from '@common/game-session';
 import { v4 } from 'uuid';
 import { MAX_CHOICES, MAX_DURATION, MAX_POINTS, MIN_CHOICES, MIN_DURATION, MIN_POINTS } from './const';
 
@@ -13,6 +18,7 @@ import { MAX_CHOICES, MAX_DURATION, MAX_POINTS, MIN_CHOICES, MIN_DURATION, MIN_P
 })
 export class AdminPageComponent implements OnInit {
     games: Game[];
+    sessions: GameSession[];
     selectedFile: File;
     isAuthentificated: boolean;
     errors: string;
@@ -23,10 +29,15 @@ export class AdminPageComponent implements OnInit {
         readonly communicationService: CommunicationService,
         public el: ElementRef,
         readonly gameService: GameService,
+        readonly gameSessionService: GameSessionService,
     ) {}
 
     async getGames() {
         this.games = await this.gameService.getAllGames();
+    }
+
+    async getSessions() {
+        this.sessions = await this.gameSessionService.getAllSessions();
     }
 
     async ngOnInit() {
@@ -37,6 +48,7 @@ export class AdminPageComponent implements OnInit {
             this.router.navigate(['/home']);
         }
         await this.getGames();
+        await this.getSessions();
     }
 
     onCreateButtonClick() {
@@ -88,105 +100,142 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
-    handleQuestionErrors(questions: Question[]) {
-        questions.forEach((question: Question) => {
-            this.validateQuestionType(question);
-            this.validateQuestionText(question);
-            this.validateQuestionPoints(question);
-            this.validateQuestionChoices(question);
-            this.validateChoiceText(question);
-            this.validateChoiceValidity(question);
-        });
-    }
-
-    validateQuestionType(question: Question) {
-        const validQuestionTypes = ['QCM', 'QRL'];
-        if (!validQuestionTypes.includes(question.type)) {
-            this.errors += 'Les questions du jeu doivent être de type QCM ou QRL.\n';
+    handleQCMQuestions(qcmQuestions: Question[]) {
+        if (!qcmQuestions.every((question: Question) => question.choices!.length >= MIN_CHOICES && question.choices!.length <= MAX_CHOICES)) {
+            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4. ';
         }
-    }
-
-    validateQuestionText(question: Question) {
-        if (!question.text || typeof question.text !== 'string') {
-            this.errors += 'Les questions doivent avoir un texte de type string.\n';
-        }
-    }
-
-    validateQuestionPoints(question: Question) {
         if (
-            !(
-                question.points &&
-                typeof question.points === 'number' &&
-                question.points >= MIN_POINTS &&
-                question.points <= MAX_POINTS &&
-                question.points % MIN_POINTS === 0
+            !qcmQuestions.every((question: Question) => question.choices!.every((choice: Choices) => choice.text && typeof choice.text === 'string'))
+        ) {
+            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string. ';
+        }
+        if (
+            !qcmQuestions.every(
+                (question: Question) =>
+                    !question.choices!.every((choice: Choices) => choice.isCorrect === true) &&
+                    !question.choices!.every((choiche: Choices) => choiche.isCorrect === false),
             )
         ) {
-            this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10.\n';
+            this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.';
         }
     }
 
-    validateQuestionChoices(question: Question) {
-        if (!(question.choices.length >= MIN_CHOICES && question.choices.length <= MAX_CHOICES)) {
-            this.errors += ' Les questions doivent contenir un nombre de choix compris entre 2 et 4.\n';
+    handleQRLQuestions(qrlQuestions: Question[]) {
+        if (!qrlQuestions.every((question: Question) => question.choices === undefined)) {
+            this.errors += "Les questions d'un jeu de type QRL ne doivent pas avoir de choix de réponse.";
+        }
+    }
+    handleChoicesError(questions: Question[]) {
+        const qcmQuestions = [];
+        const qrlQuestions = [];
+
+        for (const question of questions) {
+            if (question.type === 'QCM') {
+                qcmQuestions.push(question);
+            } else if (question.type === 'QRL') {
+                qrlQuestions.push(question);
+            }
+        }
+
+        this.handleQCMQuestions(qcmQuestions);
+        this.handleQRLQuestions(qrlQuestions);
+    }
+
+    questionErrorsHandling(questions: Question[]) {
+        if (questions === undefined || questions.length === 0) {
+            this.errors += 'Le jeu doit contenir au moins une question. ';
+        } else {
+            if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
+                this.errors += 'Les questions du jeu doivent être de type QCM ou QRL. ';
+            }
+            if (!questions.every((question: Question) => question.text && typeof question.text === 'string')) {
+                this.errors += 'Les questions doivent avoir un texte de type string. ';
+            }
+            if (
+                !questions.every(
+                    (question: Question) =>
+                        question.points &&
+                        typeof question.points === 'number' &&
+                        question.points >= MIN_POINTS &&
+                        question.points <= MAX_POINTS &&
+                        question.points % MIN_POINTS === 0,
+                )
+            ) {
+                this.errors += 'Les questions doivent avoir un nombre de points alloué compris entre 10 et 100 et être un multiple de 10. ';
+            }
+            this.handleChoicesError(questions);
         }
     }
 
-    validateChoiceText(question: Question) {
-        if (!question.choices.every((choice: Choices) => choice.text && typeof choice.text === 'string')) {
-            this.errors += 'Les choix de réponse des questions doivent avoir un texte de type string.\n';
-        }
-    }
-
-    validateChoiceValidity(question: Question) {
-        if (question.choices.every((choice: Choices) => choice.isCorrect) || question.choices.every((choiche: Choices) => !choiche.isCorrect)) {
-            this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.\n';
+    validateChoicesForQCM(question: Question): boolean {
+        if (question.type === 'QCM') {
+            return (
+                (question.choices?.length ?? 0) >= 2 &&
+                (question.choices?.length ?? 0) <= MAX_CHOICES &&
+                Array.isArray(question.choices) &&
+                question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
+                !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
+                !question.choices.every((choice: Choices) => choice.isCorrect === false)
+            );
+        } else {
+            return question.choices === undefined;
         }
     }
 
     isArrayOfQuestions(questions: Question[]): questions is Question[] {
-        return Array.isArray(questions) && questions.every((question: Question) => this.isValidQuestion(question));
-    }
-
-    isValidQuestion(question: Question): boolean {
         return (
-            this.isValidQuestionType(question) &&
-            this.isValidQuestionText(question) &&
-            this.isValidQuestionPoints(question) &&
-            this.isValidQuestionChoices(question)
+            Array.isArray(questions) &&
+            questions.length > 0 &&
+            questions.every(
+                // eslint-disable-next-line complexity
+                (question: Question) =>
+                    typeof question.type === 'string' &&
+                    (question.type === Type.QCM || question.type === Type.QRL) &&
+                    typeof question.text === 'string' &&
+                    typeof question.points === 'number' &&
+                    question.points >= MIN_POINTS &&
+                    question.points <= MAX_POINTS &&
+                    question.points % MIN_POINTS === 0 &&
+                    this.validateChoicesForQCM(question),
+            )
         );
     }
 
-    isValidQuestionType(question: Question): boolean {
-        return question.type === Type.QCM || question.type === Type.QRL;
+    handleGameError(obj: any): void {
+        if (!obj.title || typeof obj.title !== 'string') {
+            this.errors += 'Le jeu importé doit avoir un titre de type string. ';
+        } else {
+            if (this.games.some((game) => game.title === obj.title)) {
+                this.errors += 'Le titre choisi existe déjà. Veuillez en choisir un nouveau. ';
+            }
+        }
+        if (!obj.description || typeof obj.description !== 'string') {
+            this.errors += 'Le jeu importé doit avoir une description de type string. ';
+        }
+        if (!obj.duration || typeof obj.duration !== 'number') {
+            this.errors += 'Le jeu importé doit avoir un temps alloué de type int. ';
+        } else {
+            if (obj.duration < MIN_DURATION || obj.duration > MAX_DURATION) {
+                this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes. ';
+            }
+        }
     }
+    // - cdl
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, complexity
+    isGame(obj: any): obj is Game {
+        this.handleGameError(obj);
+        this.questionErrorsHandling(obj.questions);
 
-    isValidQuestionText(question: Question): boolean {
-        return typeof question.text === 'string';
-    }
-
-    isValidQuestionPoints(question: Question): boolean {
         return (
-            typeof question.points === 'number' &&
-            question.points >= MIN_POINTS &&
-            question.points <= MAX_POINTS &&
-            question.points % MIN_POINTS === 0
+            obj &&
+            typeof obj.title === 'string' &&
+            typeof obj.description === 'string' &&
+            typeof obj.duration === 'number' &&
+            !this.games.some((game) => game.title === obj.title) &&
+            obj.duration >= MIN_DURATION &&
+            obj.duration <= MAX_DURATION &&
+            this.isArrayOfQuestions(obj.questions)
         );
-    }
-
-    isValidQuestionChoices(question: Question): boolean {
-        return (
-            Array.isArray(question.choices) &&
-            (question.choices?.length ?? 0) >= MIN_CHOICES &&
-            (question.choices?.length ?? 0) <= MAX_CHOICES &&
-            question.choices.every((choice: Choices) => this.isValidChoice(choice)) &&
-            !question.choices.every((choice: Choices) => choice.isCorrect) &&
-            !question.choices.every((choice: Choices) => !choice.isCorrect)
-        );
-    }
-
-    isValidChoice(choice: Choices): boolean {
-        return typeof choice.text === 'string' && typeof choice.isCorrect === 'boolean';
     }
 
     onImportButtonClick() {
@@ -222,62 +271,27 @@ export class AdminPageComponent implements OnInit {
             reader.readAsText(file);
         });
     }
-    // - cdl
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    isGame(obj: any): obj is Game {
-        this.validateTitle(obj);
-        this.validateDescription(obj);
-        this.validateDuration(obj);
-        if (!this.validateQuestions(obj)) {
-            return false;
-        }
-        return this.validateGame(obj);
+
+    async onDeleteHistory() {
+        await this.gameSessionService.deleteHistory();
+        this.sessions = [];
     }
 
-    private validateTitle(obj: Game): void {
-        if (!obj.title || typeof obj.title !== 'string') {
-            this.errors += 'Le jeu importé doit avoir un titre de type string.\n';
-        } else {
-            if (this.games.some((game) => game.title === obj.title)) {
-                this.errors += 'Le titre choisi existe déjà. Veuillez en choisir un nouveau.\n';
-            }
-        }
-    }
+    sortList(event: MatSelectChange) {
+        const sortBy = event.value;
 
-    private validateDescription(obj: Game): void {
-        if (!obj.description || typeof obj.description !== 'string') {
-            this.errors += 'Le jeu importé doit avoir une description de type string.\n';
+        switch (sortBy) {
+            case 'ascending-alphabetically':
+                this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));
+                break;
+            case 'descending-alphabetically':
+                this.sessions.sort((a, b) => b.game.title.localeCompare(a.game.title));
+                break;
+            case 'ascending-date':
+                this.sessions.sort((a, b) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
+                break;
+            case 'descending-date':
+                this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
         }
-    }
-
-    private validateDuration(obj: Game): void {
-        if (!obj.duration || typeof obj.duration !== 'number') {
-            this.errors += 'Le jeu importé doit avoir un temps alloué de type int.\n';
-        } else {
-            if (obj.duration < MIN_DURATION || obj.duration > MAX_DURATION) {
-                this.errors += 'Le temps alloué pour une réponse doit être compris entre 10 et 60 secondes.\n';
-            }
-        }
-    }
-
-    private validateQuestions(obj: Game): boolean {
-        if (!obj.questions || obj.questions.length === 0) {
-            this.errors += 'Le jeu doit contenir au moins une question.\n';
-            return false;
-        }
-        this.handleQuestionErrors(obj.questions);
-        return true;
-    }
-
-    private validateGame(obj: Game): boolean {
-        return (
-            typeof obj.title === 'string' &&
-            typeof obj.description === 'string' &&
-            typeof obj.duration === 'number' &&
-            obj.duration >= MIN_DURATION &&
-            obj.duration <= MAX_DURATION &&
-            !this.games.some((game) => game.title === obj.title) &&
-            this.isArrayOfQuestions(obj.questions)
-        );
     }
 }

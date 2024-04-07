@@ -1,14 +1,20 @@
+/* eslint-disable no-restricted-imports */
 import { Choices, Question } from '@common/game';
-import * as fs from 'fs/promises';
+import { DB_COLLECTION_QUESTIONS } from '@common/utils/env';
+import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-
-const QUESTIONS_PATH = './assets/questions-database.json';
+import { DatabaseService } from './database.service';
 
 @Service()
 export class QuestionsService {
+    constructor(private databaseService: DatabaseService) {}
+
+    get collection(): Collection<Question> {
+        return this.databaseService.database.collection(DB_COLLECTION_QUESTIONS);
+    }
+
     async getAllQuestions(): Promise<Question[]> {
-        const data: string = await fs.readFile(QUESTIONS_PATH, 'utf8');
-        const questions: Question[] = JSON.parse(data);
+        const questions = await this.collection.find({}).toArray();
         return questions;
     }
 
@@ -21,22 +27,19 @@ export class QuestionsService {
     async addQuestion(question: Question): Promise<boolean> {
         const questions: Question[] = await this.getAllQuestions();
         if (questions.find((q) => q.id === question.id)) {
-            questions.splice(
-                questions.findIndex((q) => q.id === question.id),
-                1,
-            );
-        } else if (questions.find((q) => q.text === question.text)) {
+            await this.collection.findOneAndDelete({ id: question.id });
+        }
+        if (questions.find((q) => q.text === question.text)) {
             return false;
         }
-        questions.push(question);
-        await fs.writeFile(QUESTIONS_PATH, JSON.stringify(questions, null, 2), 'utf8');
+        await this.collection.insertOne(question);
         return true;
     }
 
     async deleteQuestionByID(id: string): Promise<boolean> {
         let questionFound = false;
         const questions: Question[] = await this.getAllQuestions();
-        const updatedQuestions: Question[] = questions.filter((question) => {
+        questions.filter((question) => {
             if (question.id === id) {
                 questionFound = true;
                 return false;
@@ -44,14 +47,13 @@ export class QuestionsService {
             return true;
         });
         if (questionFound) {
-            await fs.writeFile(QUESTIONS_PATH, JSON.stringify(updatedQuestions, null, 2), 'utf8');
+            await this.collection.findOneAndDelete({ id });
         }
         return questionFound;
     }
 
     async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
-        const data: string = await fs.readFile(QUESTIONS_PATH, 'utf8');
-        const questions: Question[] = JSON.parse(data);
+        const questions: Question[] = await this.getAllQuestions();
         const questionsWithoutCorrect: Question[] = [];
 
         for (const currentQuestion of questions) {

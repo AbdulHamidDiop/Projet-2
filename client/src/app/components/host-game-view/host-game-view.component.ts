@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Game, Player, Question, Type } from './../../../../../common/game';
 /* eslint-disable max-lines */
 import { Component, OnDestroy, OnInit } from '@angular/core';
@@ -5,6 +6,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QRL_TIMER } from '@app/components/play-area/const';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -63,6 +65,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private router: Router,
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
+        private gameSessionService: GameSessionService,
         private snackBar: MatSnackBar,
     ) {
         this.players = this.playerService.playersInGame;
@@ -71,6 +74,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.playersInGame = this.players; // Pb de cohérence entre component et service avec setGamePlayers.
             this.players = players;
+            this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManagerService.gamePin);
         });
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
@@ -131,6 +135,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.updatePlayerSubscription = this.socketService
             .listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER)
             .subscribe((playerWithRoom) => {
+                // eslint-disable-next-line no-unused-vars
                 const { room, ...player } = playerWithRoom as Player & { room: string };
                 this.playerService.addGamePlayers(player as Player);
             });
@@ -181,13 +186,13 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             };
             const correction: Feedback[] = await this.gameManagerService.getFeedBack(
                 this.currentQuestion.id,
-                this.currentQuestion.choices.map((choice) => choice.text),
+                this.currentQuestion.choices!.map((choice) => choice.text),
             );
 
             for (let i = 0; i < stat.choiceAmount; i++) {
                 barChartStat.data.push({
                     data: i === stat.choiceIndex ? [1] : [0],
-                    label: this.currentQuestion.choices[i].text,
+                    label: this.currentQuestion.choices![i].text,
                     backgroundColor: correction[i].status === 'correct' ? '#4CAF50' : '#FF4C4C',
                 });
             }
@@ -345,9 +350,11 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
         const RESPONSE_FROM_SERVER_DELAY = 500;
+        const PLAYER_COMPONENT_INIT_DELAY = 3500;
 
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
+            this.gameSessionService.completeSession(this.gameManagerService.gamePin, this.playerService.findBestScore());
             // Le score n'est pas mis à jour dans la vue des résultats parceque la réponse du serveur se fait avant que le score soit mis à jour.
             // C'est peut-etre possible de regler ça en mettant les appels socket dans playerservice.
             setTimeout(() => {
@@ -357,7 +364,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         setTimeout(() => {
             this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
             this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
-        }, RESPONSE_FROM_SERVER_DELAY * 2);
+        }, PLAYER_COMPONENT_INIT_DELAY);
     }
 
     onLocationChange = () => {

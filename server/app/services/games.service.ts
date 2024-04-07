@@ -1,27 +1,26 @@
-import { LAST_INDEX, QUIZ_PATH } from '@common/consts';
+/* eslint-disable no-restricted-imports */
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
-import * as fs from 'fs/promises';
+import { DB_COLLECTION_GAMES } from '@common/utils/env';
+import { Collection } from 'mongodb';
 import { Service } from 'typedi';
+import { DatabaseService } from './database.service';
 
 @Service()
 export class GamesService {
+    constructor(private databaseService: DatabaseService) {}
+
+    get collection(): Collection<Game> {
+        return this.databaseService.database.collection(DB_COLLECTION_GAMES);
+    }
+
     async getAllGames(): Promise<Game[]> {
-        const data: string = await fs.readFile(QUIZ_PATH, 'utf8');
-        const games: Game[] = JSON.parse(data);
+        const games = await this.collection.find({}).toArray();
         return games;
     }
 
     async addGame(game: Game): Promise<void> {
-        const games: Game[] = await this.getAllGames();
-        const index = games.findIndex((g) => g.id === game.id);
-
-        if (index !== LAST_INDEX) {
-            games.splice(index, 1);
-        }
-
-        games.push(game);
-        await fs.writeFile(QUIZ_PATH, JSON.stringify(games, null, 2), 'utf8');
+        await this.collection.insertOne(game);
     }
 
     async getGameByID(id: string): Promise<Game> {
@@ -34,24 +33,21 @@ export class GamesService {
     }
 
     async toggleGameHidden(id: string): Promise<boolean> {
+        let hasChanged = false;
         const games: Game[] = await this.getAllGames();
-        const gameToUpdate = games.find((game) => game.id === id);
-
-        if (gameToUpdate) {
-            const updatedGame = { ...gameToUpdate, lastModification: new Date(), isHidden: !gameToUpdate.isHidden };
-            const updatedGames = games.map((game) => (game.id === id ? updatedGame : game));
-
-            await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
-            return true;
-        }
-
-        return false;
+        games.map(async (game) => {
+            if (game.id === id) {
+                hasChanged = true;
+                await this.collection.updateOne({ id }, { $set: { ...game, lastModification: new Date(), isHidden: !game.isHidden } });
+            }
+        });
+        return hasChanged;
     }
 
     async deleteGameByID(id: string): Promise<boolean> {
         let gameFound = false;
         const games: Game[] = await this.getAllGames();
-        const updatedGames: Game[] = games.filter((game) => {
+        games.filter((game) => {
             if (game.id === id) {
                 gameFound = true;
                 return false;
@@ -59,7 +55,7 @@ export class GamesService {
             return true;
         });
         if (gameFound) {
-            await fs.writeFile(QUIZ_PATH, JSON.stringify(updatedGames, null, 2), 'utf8');
+            await this.collection.findOneAndDelete({ id });
         }
         return gameFound;
     }

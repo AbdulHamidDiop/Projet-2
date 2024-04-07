@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { QuestionsService } from '@app/services/questions.service';
-import { Question } from '@common/game';
+import { Question, Type } from '@common/game';
 
 @Component({
     selector: 'app-questions-page',
@@ -13,7 +13,10 @@ import { Question } from '@common/game';
 })
 export class QuestionsPageComponent implements OnInit {
     questions: Question[];
+    displayQuestions: Question[];
     isAuthentificated: boolean;
+    selectedTypes: Set<string> = new Set([Type.QCM, Type.QRL]);
+    currentType: string = Type.QCM;
 
     // Les services ont tous des fonctionnalités différentes, ce n'est pas possible
     // de réduire le nombre de dépendances sans perdre en fonctionnalités,
@@ -28,6 +31,7 @@ export class QuestionsPageComponent implements OnInit {
 
     async getQuestions() {
         this.questions = await this.questionsService.getAllQuestions();
+        this.displayQuestions = this.questions;
     }
 
     async ngOnInit() {
@@ -38,9 +42,10 @@ export class QuestionsPageComponent implements OnInit {
             this.router.navigate(['/home']);
         }
         await this.getQuestions();
-        this.questionsService.deleteRequest.subscribe(() => {
-            this.getQuestions();
+        this.questionsService.deleteRequest.subscribe(async () => {
+            await this.getQuestions();
         });
+        this.updateDisplayQuestions();
     }
     openDialog(): void {
         const dialogRef = this.dialog.open(CreateQuestionDialogComponent, {});
@@ -50,5 +55,25 @@ export class QuestionsPageComponent implements OnInit {
                 this.questions.push(result);
             }
         });
+    }
+
+    toggleQuestionType(type: string) {
+        if (this.selectedTypes.has(type)) {
+            this.selectedTypes.delete(type);
+        } else {
+            this.selectedTypes.add(type);
+        }
+        this.updateDisplayQuestions();
+    }
+
+    updateDisplayQuestions() {
+        if (this.selectedTypes.size === 0) {
+            this.displayQuestions = [];
+        } else if (this.selectedTypes.size === 2) {
+            this.displayQuestions = this.questions;
+        } else {
+            const selectedType = this.selectedTypes.values().next().value;
+            this.displayQuestions = this.questions.filter((question) => question.type === selectedType);
+        }
     }
 }
