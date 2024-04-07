@@ -29,6 +29,7 @@ export enum Events {
     CLEANUP_GAME = 'cleanupGame',
     KICK_PLAYER = 'kickPlayer',
     GET_PLAYERS = 'getPlayers',
+    GET_STATS = 'getStats',
     LEAVE_ROOM = 'leaveRoom',
     LOCK_ROOM = 'lockRoom',
     UNLOCK_ROOM = 'unlockRoom',

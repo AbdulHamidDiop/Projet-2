@@ -28,8 +28,8 @@
                         </mat-card-actions>
                     </mat-card>
                     <mat-card-actions align="end">
-                        <button mat-button>
-                            <h3 class="pause-button" mat-button (click)="sendTimerControlMessage()">Pause Compteur</h3>
+                        <button mat-button (click)="sendTimerControlMessage()" [disabled]="disableControls">
+                            <h3 class="pause-button" mat-button>Pause Compteur</h3>
                         </button>
                         <button mat-button (click)="activatePanicMode()" [disabled]="disableControls || inPanicMode">
                             <h3 class="panic-button">Mode Panique</h3>

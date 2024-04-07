@@ -1,4 +1,3 @@
-import { Game, Player, Question, Type } from './../../../../../common/game';
 /* eslint-disable max-lines */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -9,6 +8,7 @@ import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
+import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -55,6 +55,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     endGameSubscription: Subscription;
     updatePlayerSubscription: Subscription;
 
+    // Tous les paramètres du constructeur sont nécessaires
+    // au bon fonctionnement de la classe.
     // eslint-disable-next-line max-params
     constructor(
         public gameManagerService: GameManagerService,
@@ -271,8 +273,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.updateQRLGradeData(multiplier);
 
         const qrlGrade: QRLGrade = {
+            questionId: this.currentQuestion.id,
             author: this.currentQRLAnswer.author,
             grade: multiplier * this.currentQuestion.points,
+            multiplier,
         };
 
         this.socketService.sendMessage(Events.QRL_GRADE, Namespaces.GAME, qrlGrade);
@@ -355,7 +359,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             }, RESPONSE_FROM_SERVER_DELAY);
         }
         setTimeout(() => {
-            this.socketService.sendMessage(Events.GAME_RESULTS, Namespaces.GAME_STATS, this.statisticsData);
             this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
         }, RESPONSE_FROM_SERVER_DELAY * 2);
     }

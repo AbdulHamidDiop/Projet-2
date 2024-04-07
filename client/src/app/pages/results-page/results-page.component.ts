@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Game, GameService } from '@app/services/game.service';
+import { Router } from '@angular/router';
+import { GameSessionService } from '@app/services/game-session.service';
+import { Game } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
@@ -29,20 +30,14 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     constructor(
         private socketsService: SocketRoomService,
         public playerService: PlayerService,
-        private gameService: GameService,
-        private route: ActivatedRoute,
+        private gameSessionService: GameSessionService,
         public router: Router,
     ) {
         this.players = this.playerService.playersInGame;
     }
 
-    ngOnInit(): void {
-        this.routeSubscription = this.route.paramMap.subscribe((params) => {
-            const id = params.get('id');
-            if (id) {
-                this.game = this.gameService.getGameByID(id);
-            }
-        });
+    async ngOnInit(): Promise<void> {
+        this.game = await this.gameSessionService.getGameWithoutCorrectShown(this.socketsService.room);
         this.connectToServer();
         window.addEventListener('popstate', this.onLocationChange);
         window.addEventListener('hashchange', this.onLocationChange);
@@ -84,10 +79,10 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
 
-        this.routeSubscription.unsubscribe();
-        this.playersSubscription.unsubscribe();
-        this.gameResultsSubscription.unsubscribe();
-        this.socketsService.endGame();
+        this.routeSubscription?.unsubscribe();
+        this.playersSubscription?.unsubscribe();
+        this.gameResultsSubscription?.unsubscribe();
+        this.socketsService?.endGame();
     }
 
     leaveWithoutKickingPlayers() {
@@ -109,7 +104,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     private updateChart(): void {
-        this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
+        this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
         this.socketsService.sendMessage(Events.UPDATE_CHART, Namespaces.GAME_STATS);
     }
 
@@ -129,7 +124,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         });
 
         // Écouter les QCMSTATS
-        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GAME_RESULTS).subscribe({
+        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_STATS).subscribe({
             next: (stats: unknown) => {
                 const statsObj = stats as { [key: string]: BarChartQuestionStats };
                 const statisticsData: BarChartQuestionStats[] = [];
@@ -139,8 +134,9 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.statisticsData = statisticsData;
-                this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
+                this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
             },
         });
+        this.socketsService.sendMessage(Events.GET_STATS, Namespaces.GAME_STATS);
     }
 }

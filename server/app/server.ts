@@ -91,6 +91,7 @@ export class Server {
                 socket.to(data.room).emit(Events.QCM_STATS, data);
                 const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data.player, YELLOW);
+                this.gameSessionService.updateStatisticsData(data.room, data);
             });
             socket.on(Events.CONFIRM_ANSWERS, (data) => {
                 const GREEN = 0x00ff00;
@@ -99,7 +100,7 @@ export class Server {
             });
 
             socket.on(Events.NOTIFY_QRL_INPUT, (data) => {
-                // console.log(data) dans un jeu QRL cet event est appelé très souvent.
+                // !!!!!! souvent appelé durant un qrl
                 const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data, YELLOW);
             });
@@ -124,6 +125,11 @@ export class Server {
 
             socket.on(Events.GET_PLAYERS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.GET_PLAYERS, data);
+            });
+
+            socket.on(Events.GET_STATS, async (data) => {
+                const stats = await this.gameSessionService.getStatisticsData(data.room);
+                socket.emit(Events.GET_STATS, stats);
             });
         });
 
@@ -155,6 +161,7 @@ export class Server {
 
             socket.on(Events.QRL_GRADE, (data) => {
                 socket.in(data.room).emit(Events.QRL_GRADE, data);
+                this.gameSessionService.updateQRLGradeData(data.room, data);
             });
 
             socket.on(Events.END_GAME, ({ room }: { room: string }) => {

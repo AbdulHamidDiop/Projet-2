@@ -45,9 +45,12 @@
                 <div>
                     <!-- Affichage de l'histogramme actuel -->
 
-                    <ng-container *ngIf="currentHistogramData.length">
+                    <ng-container *ngIf="currentHistogramData && currentHistogramData.length">
                         <app-bar-chart [labels]="game.questions[currentHistogramIndex].text" [datasets]="currentHistogramData"></app-bar-chart>
                     </ng-container>
+                    <h5 *ngIf="!currentHistogramData || (currentHistogramData && !currentHistogramData.length)">
+                        Il n'y a eu acune réponse à cette question.
+                    </h5>
                 </div>
                 <!-- Boutons pour afficher l'histogramme précédent et suivant -->
                 <div>

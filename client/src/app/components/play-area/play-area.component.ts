@@ -385,11 +385,18 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.socketService.endGame();
     };
 
-    endGameTest() {
+    async endGameTest() {
         if (this.gameManager.onLastQuestion() && this.inTestMode) {
             this.router.navigate(['/createGame']);
-        } else if (this.gameManager.endGame && this.inRandomMode) {
-            this.endGame();
+        } else if (this.gameManager.onLastQuestion() && this.inRandomMode) {
+            await this.confirmAnswers(false);
+            if (this.question.type === Type.QCM) {
+                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            }
+            await this.countPointsAndNextQuestion();
+            setTimeout(() => {
+                this.endGame();
+            }, SHOW_FEEDBACK_DELAY);
         }
     }
 
