@@ -26,7 +26,8 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     private playersSubscription: Subscription;
     private gameResultsSubscription: Subscription;
 
-    // On a besoin de ces injections.
+    // On a besoin de ces injections pour le bon fonctionnement de la page, sans nuire à la complexité du code
+    // eslint-disable-next-line max-params
     constructor(
         private socketsService: SocketRoomService,
         public playerService: PlayerService,
@@ -97,9 +98,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
             };
             this.socketsService.sendChatMessage(message);
             this.socketsService.leaveRoom();
-            this.socketsService.room = '';
-            this.socketsService.showingResults = false;
-            this.playerService.playersInGame = [];
+            this.socketsService.resetGameState();
             this.router.navigate(['/']);
         } else {
             this.socketsService.endGame('À la prochaine partie!');

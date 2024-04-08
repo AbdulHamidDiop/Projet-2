@@ -337,11 +337,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.score += this.question.points * BONUS_MULTIPLIER;
                 this.player.bonusCount++;
             }
-
             this.player.score = this.score;
             this.bonusGiven = false;
             this.gotBonus = false;
         }
+        this.playerService.player = this.player;
         this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.player });
     }
 

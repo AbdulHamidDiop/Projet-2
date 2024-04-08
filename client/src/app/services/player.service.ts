@@ -36,6 +36,7 @@ export class PlayerService {
         } else {
             this.playersInGame.push(player);
         }
+        console.log(this.playersInGame);
     }
 
     resetGamePlayers(): void {

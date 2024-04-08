@@ -355,7 +355,12 @@ export class SocketRoomService implements OnDestroy {
         }
         //   this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
         // faudra un nouvel event ex. leaveGame.
+        this.resetGameState();
+    }
+
+    resetGameState(): void {
         this.room = '';
+        this.showingResults = false;
         this.playerService.playersInGame = [];
         this.playerService.player = {
             name: '',
