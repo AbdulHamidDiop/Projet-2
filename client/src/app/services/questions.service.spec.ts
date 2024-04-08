@@ -198,10 +198,12 @@ describe('QuestionsService', () => {
     it('Should fetch random questions on call to getRandomQuestions', fakeAsync(() => {
         returnQuestion = true;
         responseSetToOk = true;
-        service.questions = [];
-        service.getRandomQuestions();
+        let questions: Question[] = [];
+        service.getRandomQuestions().then((randomQuestions) => {
+            questions = randomQuestions;
+        });
         tick();
-        expect(service.questions).toEqual([VALID_QUESTION]);
+        expect(questions).toEqual([VALID_QUESTION]);
         expect(fetchSpy).toHaveBeenCalled();
     }));
 
@@ -220,6 +222,9 @@ describe('QuestionsService', () => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         service.getAllQuestions().catch((error) => {
+            expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
+        });
+        service.getRandomQuestions().catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         const checkAnswer: boolean = await service.checkAnswer([''], '');
