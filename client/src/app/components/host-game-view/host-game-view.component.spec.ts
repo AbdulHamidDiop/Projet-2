@@ -41,6 +41,7 @@ describe('HostGameViewComponent', () => {
             'onLastQuestion',
         ]);
         gameManagerServiceSpy.game = { id: 'test-game-id', questions: [], duration: 10 } as unknown as Game;
+        gameManagerServiceSpy.onLastQuestion.and.returnValue(true);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);
@@ -217,6 +218,7 @@ describe('HostGameViewComponent', () => {
         const SERVER_RESPONSE_DELAY = 500;
         tick(SERVER_RESPONSE_DELAY);
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/game', 'test-game-id', 'results']);
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
     }));
 
     it('should update currentQuestion on NEXT_QUESTION event', fakeAsync(() => {
