@@ -95,10 +95,8 @@ export class QuestionsService {
 
     async getRandomQuestions(): Promise<Question[]> {
         const response = await this.fetchService.fetch(environment.serverUrl + 'questions/random');
-        if (response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
+        if (!response.ok) {
             return [];
-        } else if (!response.ok) {
-            throw Error(`Error: ${response.status}`);
         }
         const questions: Question[] = await response.json();
         return questions;

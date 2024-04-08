@@ -185,12 +185,25 @@ describe('QuestionsService', () => {
         expect(service.currentQuestionIndex).toEqual(1);
     });
 
-    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', () => {
+    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', fakeAsync(() => {
+        returnQuestion = true;
         responseSetToOk = true;
         service.questions = [];
         service.getQuestionsWithoutCorrectShown();
+        tick();
+        expect(service.questions).toEqual([VALID_QUESTION]);
         expect(fetchSpy).toHaveBeenCalled();
-    });
+    }));
+
+    it('Should fetch random questions on call to getRandomQuestions', fakeAsync(() => {
+        returnQuestion = true;
+        responseSetToOk = true;
+        service.questions = [];
+        service.getRandomQuestions();
+        tick();
+        expect(service.questions).toEqual([VALID_QUESTION]);
+        expect(fetchSpy).toHaveBeenCalled();
+    }));
 
     it('All methods should throw error code when response not ok', async () => {
         responseSetToOk = false;
