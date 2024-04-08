@@ -1,4 +1,6 @@
+/* eslint-disable max-lines */
 import { Game } from '@common/game';
+import { BarChartQuestionStats, QCMStats, QRLGrade } from '@common/game-stats';
 import { expect } from 'chai';
 import * as fs from 'fs';
 import { SinonStub, stub } from 'sinon';
@@ -98,6 +100,7 @@ describe('GameSession Service', () => {
                     ],
                     isHidden: false,
                 },
+                statisticsData: [],
             },
         ]);
         readFileStub = stub(fs.promises, 'readFile').resolves(SESSION_DATA);
@@ -130,16 +133,19 @@ describe('GameSession Service', () => {
     it('should add session to database', async () => {
         const pin = '2222';
         const game = GAME;
+        const statisticsData: BarChartQuestionStats[] = [];
         const result = await gameSessionService.createSession(pin, GAME);
-        expect(result).to.deep.equal({ pin, game });
+        expect(result).to.deep.equal({ pin, game, statisticsData });
         expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(2);
     });
 
     it('should not add session with exisitng pin to database', async () => {
         const pin = JSON.parse(SESSION_DATA)[0].pin;
         const game = GAME;
+        const statisticsData: BarChartQuestionStats[] = [];
+
         const result = await gameSessionService.createSession(pin, GAME);
-        expect(result).to.deep.equal({ pin, game });
+        expect(result).to.deep.equal({ pin, game, statisticsData });
         expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(1);
     });
 
@@ -241,5 +247,129 @@ describe('GameSession Service', () => {
         const questionID = 'fake';
         const result = await gameSessionService.generateFeedback(pin, questionID, answer);
         expect(result).to.deep.equal([]);
+    });
+
+    it('should update bar chart data on receiving QCM_STATS event', async () => {
+        const pin = 'examplePin';
+        const mockStat: QCMStats = {
+            questionId: '1',
+            choiceIndex: 0,
+            selected: true,
+            choiceAmount: 1,
+            correctIndex: 0,
+        };
+        readFileStub.resolves(
+            JSON.stringify([
+                {
+                    pin,
+                    game: {
+                        questions: [
+                            {
+                                id: '1',
+                                choices: [
+                                    {
+                                        text: 'var',
+                                        isCorrect: true,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    statisticsData: [],
+                },
+            ]),
+        );
+
+        await gameSessionService.updateStatisticsData(pin, mockStat);
+
+        const updatedSessions = JSON.parse(SESSION_DATA);
+        expect(updatedSessions[0].statisticsData.length).to.be.greaterThan(0);
+        expect(updatedSessions[0].statisticsData[0].data[0].data[0]).to.equal(1);
+        // should immediatly return if gameSession is not found (mainly for coverage)
+        await gameSessionService.updateStatisticsData('fakePin', mockStat);
+        expect(updatedSessions[0].statisticsData[0].data[0].data[0]).to.equal(1);
+    });
+
+    it('should decrement bar chart data when stat.selected is false and data value is greater than 0', async () => {
+        const pin = 'examplePin';
+        const decrementStat: QCMStats = {
+            questionId: '1',
+            choiceIndex: 0,
+            selected: false,
+            choiceAmount: 2,
+            correctIndex: 0,
+        };
+        readFileStub.resolves(
+            JSON.stringify([
+                {
+                    pin,
+                    game: {
+                        questions: [
+                            {
+                                id: '1',
+                                choices: [
+                                    {
+                                        text: 'var',
+                                        isCorrect: true,
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                    statisticsData: [{ questionID: '1', data: [{ data: [1], label: 'Choice 1' }] }],
+                },
+            ]),
+        );
+
+        await gameSessionService.updateStatisticsData(pin, decrementStat);
+
+        const updatedSessions = JSON.parse(SESSION_DATA);
+        expect(updatedSessions[0].statisticsData[0].data[0].data[0]).to.equal(0);
+    });
+
+    it('should update QRL grade data', async () => {
+        const pin = 'examplePin';
+        const qrlGrade: QRLGrade = { questionId: '1', multiplier: 0, grade: 1, author: 'author' };
+        readFileStub.resolves(JSON.stringify([{ pin, game: { questions: [{ id: '1' }] }, statisticsData: [] }]));
+
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
+        let updatedSessions = JSON.parse(SESSION_DATA);
+        expect(updatedSessions[0].statisticsData[0].data[0].data[0]).to.equal(1);
+
+        qrlGrade.multiplier = 0.5;
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
+        updatedSessions = JSON.parse(SESSION_DATA);
+        expect(updatedSessions[0].statisticsData[0].data[1].data[0]).to.equal(1);
+
+        qrlGrade.multiplier = 1;
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
+        updatedSessions = JSON.parse(SESSION_DATA);
+        expect(updatedSessions[0].statisticsData[0].data[2].data[0]).to.equal(1);
+    });
+
+    it('getStatisticsData should return statistics data', async () => {
+        const pin = 'examplePin';
+        readFileStub.resolves(
+            JSON.stringify([
+                {
+                    pin,
+                    game: { questions: [{ id: '1' }] },
+                    statisticsData: [{ questionID: '1', data: [{ data: [1], label: 'Choice 1' }] }],
+                },
+            ]),
+        );
+
+        const result = await gameSessionService.getStatisticsData(pin);
+        expect(result).to.deep.equal([{ questionID: '1', data: [{ data: [1], label: 'Choice 1' }] }]);
+    });
+
+    it('cleanStatisticsData should fill undefined stats with blank ones', async () => {
+        const data: BarChartQuestionStats[] = [undefined, undefined, undefined];
+        const result = gameSessionService.cleanStatisticsData(data);
+        expect(result).to.deep.equal([
+            { questionID: '', data: [] },
+            { questionID: '', data: [] },
+            { questionID: '', data: [] },
+        ]);
     });
 });

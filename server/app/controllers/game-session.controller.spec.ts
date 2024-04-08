@@ -2,6 +2,7 @@ import { Application } from '@app/app';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
+import { BarChartQuestionStats } from '@common/game-stats';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
 import { SinonStubbedInstance, createStubInstance } from 'sinon';
@@ -148,14 +149,15 @@ describe('GameSessionController', () => {
     it('should create GameSession', async () => {
         const pin = '1111';
         const game = GAME;
-        gameSessionService.createSession.resolves({ pin, game });
+        const statisticsData: BarChartQuestionStats[] = [];
+        gameSessionService.createSession.resolves({ pin, game, statisticsData });
         return supertest(expressApp)
             .post(`/api/gameSession/create/${pin}`)
             .set('Content', 'application/json')
             .send(GAME)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal({ pin, game });
+                expect(response.body).to.deep.equal({ pin, game, statisticsData });
             });
     });
 

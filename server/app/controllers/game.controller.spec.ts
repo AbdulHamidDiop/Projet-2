@@ -332,4 +332,14 @@ describe('GameController', () => {
                 expect(response.body).to.deep.equal(true);
             });
     });
+
+    it('should return 404 if game is not available', async () => {
+        gamesService.getGameByID.resolves(null);
+        return supertest(expressApp)
+            .get(`/api/game/availability/${fakeGame.id}`)
+            .expect(StatusCodes.OK)
+            .then((response) => {
+                expect(response.body).to.deep.equal(false);
+            });
+    });
 });
