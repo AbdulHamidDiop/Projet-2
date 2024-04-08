@@ -18,10 +18,13 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
+    unitTests: boolean = false;
+    showingResults: boolean = false;
     readonly socket: Socket;
     readonly namespaces: Map<string, Socket> = new Map();
-    unitTests: boolean = false;
 
+    // Si l'on met ces paramètres dans dans un service séparé, la complexité du code augmente.
+    // eslint-disable-next-line max-params
     constructor(
         private io: IoService,
         public playerService: PlayerService,
@@ -29,8 +32,11 @@ export class SocketRoomService implements OnDestroy {
         private snackBar: MatSnackBar, // Peut-être mettre dans un component.
     ) {
         this.socket = io.io(environment.ws);
-        window.addEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
-
+        window.addEventListener('beforeunload', () => {
+            if (!this.showingResults) {
+                this.endGame('La partie a été interrompue');
+            }
+        });
         this.listenForMessages(Namespaces.GAME, Events.ABORT_GAME).subscribe(() => {
             this.endGame();
         });

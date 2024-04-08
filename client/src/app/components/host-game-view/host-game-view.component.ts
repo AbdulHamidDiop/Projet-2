@@ -355,6 +355,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             // Le score n'est pas mis à jour dans la vue des résultats parceque la réponse du serveur se fait avant que le score soit mis à jour.
             // C'est peut-etre possible de regler ça en mettant les appels socket dans playerservice.
             setTimeout(() => {
+                this.socketService.showingResults = true;
                 this.router.navigate(['/game', gameId, 'results']);
             }, RESPONSE_FROM_SERVER_DELAY);
         }
