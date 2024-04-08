@@ -185,12 +185,27 @@ describe('QuestionsService', () => {
         expect(service.currentQuestionIndex).toEqual(1);
     });
 
-    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', () => {
+    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', fakeAsync(() => {
+        returnQuestion = true;
         responseSetToOk = true;
         service.questions = [];
         service.getQuestionsWithoutCorrectShown();
+        tick();
+        expect(service.questions).toEqual([VALID_QUESTION]);
         expect(fetchSpy).toHaveBeenCalled();
-    });
+    }));
+
+    it('Should fetch random questions on call to getRandomQuestions', fakeAsync(() => {
+        returnQuestion = true;
+        responseSetToOk = true;
+        let questions: Question[] = [];
+        service.getRandomQuestions().then((randomQuestions) => {
+            questions = randomQuestions;
+        });
+        tick();
+        expect(questions).toEqual([VALID_QUESTION]);
+        expect(fetchSpy).toHaveBeenCalled();
+    }));
 
     it('All methods should throw error code when response not ok', async () => {
         responseSetToOk = false;
@@ -207,6 +222,9 @@ describe('QuestionsService', () => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         service.getAllQuestions().catch((error) => {
+            expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
+        });
+        service.getRandomQuestions().catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         const checkAnswer: boolean = await service.checkAnswer([''], '');

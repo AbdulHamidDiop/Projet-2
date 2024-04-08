@@ -121,6 +121,19 @@ describe('GameManagerService', () => {
         expect(service.currentQuestionIndex).toBe(0);
     });
 
+    it('should check wether it is on the last question with onLastQuestion', () => {
+        service.currentQuestionIndex = 0;
+        service.game = { id: 'gameId', questions: [{}] } as unknown as Game;
+        const onLastQuestion = service.onLastQuestion();
+        expect(onLastQuestion).toBeTruthy();
+    });
+
+    it('should return false if no game with onLastQuestion', () => {
+        service.game = undefined as unknown as Game;
+        const onLastQuestion = service.onLastQuestion();
+        expect(onLastQuestion).toBeFalsy();
+    });
+
     describe('goNextQuestion', () => {
         it('should return the next question if not at the end', () => {
             const mockQuestions = [{ id: 'q1' }, { id: 'q2' }] as unknown as Question[];

@@ -36,8 +36,10 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         this.players = this.playerService.playersInGame;
     }
 
-    async ngOnInit(): Promise<void> {
-        this.game = await this.gameSessionService.getGameWithoutCorrectShown(this.socketsService.room);
+    ngOnInit(): void {
+        this.gameSessionService.getGameWithoutCorrectShown(this.socketsService.room).then((game) => {
+            this.game = game;
+        });
         this.connectToServer();
         window.addEventListener('popstate', this.onLocationChange);
         window.addEventListener('hashchange', this.onLocationChange);
