@@ -356,6 +356,19 @@ describe('PlayAreaComponent', () => {
         gameManager.onLastQuestion = () => false;
     });
 
+    it('should call endGame game ends and this.inRandomMode is true', fakeAsync(() => {
+        spyOn(component, 'endGame');
+        gameManager.onLastQuestion = () => true;
+        gameManager.endGame = true;
+        component.inRandomMode = true;
+        component.inTestMode = false;
+        component.endGameTest();
+        tick(SHOW_FEEDBACK_DELAY);
+        flush();
+        expect(component.endGame()).toHaveBeenCalled();
+        gameManager.onLastQuestion = () => false;
+    }));
+
     it('should set inTestMode to true when queryparams testMode is true', () => {
         const route = TestBed.inject(ActivatedRoute);
         route.snapshot.queryParams = { testMode: 'true' };
