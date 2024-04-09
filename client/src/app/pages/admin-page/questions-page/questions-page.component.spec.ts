@@ -2,6 +2,7 @@
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CreateQuestionDialogComponent } from '@app/components/create-question-dialog/create-question-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
@@ -10,6 +11,7 @@ import { QuestionsService } from '@app/services/questions.service';
 import { Type } from '@common/game';
 import { of } from 'rxjs';
 import { QuestionsPageComponent } from './questions-page.component';
+import SpyObj = jasmine.SpyObj;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockData: any = {};
 
@@ -92,9 +94,12 @@ describe('QuestionsPageComponent', () => {
     let mockDialog: any;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockQuestion: any;
+    let snackBarMock: SpyObj<MatSnackBar>;
 
     beforeEach(() => {
         mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
+        snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+        snackBarMock.open.and.returnValue({} as any);
 
         TestBed.configureTestingModule({
             declarations: [QuestionsPageComponent],
@@ -107,6 +112,7 @@ describe('QuestionsPageComponent', () => {
                         fetch: jasmine.createSpy().and.callFake(fetchMock),
                     },
                 },
+                { provide: MatSnackBar, useValue: snackBarMock },
                 CommunicationService,
                 QuestionsService,
             ],
