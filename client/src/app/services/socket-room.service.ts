@@ -333,18 +333,16 @@ export class SocketRoomService implements OnDestroy {
         if (this.playerService.player.name === 'Organisateur') {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
             this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
-            if (!this.unitTests) {
-                this.router.navigate(['/createGame']);
-            }
+
+            this.router.navigate(['/createGame']);
         } else if (this.room) {
             this.snackBar.open(snackMessage, 'Fermer', {
                 duration: 5000,
                 verticalPosition: 'top',
             });
-            if (!this.unitTests) {
-                // this.router.navigate(['/home'], { queryParams: { init: true } });
-                this.router.navigate(['/createGame']);
-            }
+
+            this.router.navigate(['/createGame']);
+
             const message: ChatMessage = {
                 author: SystemMessages.AUTHOR,
                 message: this.playerService.player.name + ' ' + SystemMessages.PLAYER_LEFT,
