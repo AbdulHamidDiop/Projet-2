@@ -26,6 +26,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     private gameResultsSubscription: Subscription;
 
     // On a besoin de ces injections.
+    // eslint-disable-next-line max-params
     constructor(
         private socketsService: SocketRoomService,
         public playerService: PlayerService,

@@ -1,16 +1,24 @@
+/* eslint-disable no-restricted-imports */
+/* eslint-disable prefer-const */
 import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
-import * as fs from 'fs/promises';
+import { DB_COLLECTION_HISTORIQUE } from '@common/utils/env';
+import { Collection } from 'mongodb';
 import { Service } from 'typedi';
-
-const SESSIONS_PATH = './assets/game-sessions.json';
+import { DatabaseService } from './database.service';
 
 @Service()
 export class GameSessionService {
+    constructor(private databaseService: DatabaseService) {}
+
+    get collection(): Collection<GameSession> {
+        return this.databaseService.database.collection(DB_COLLECTION_HISTORIQUE);
+    }
+
     async getAllSessions(): Promise<GameSession[]> {
-        const data: string = await fs.readFile(SESSIONS_PATH, 'utf8');
-        return JSON.parse(data);
+        const games = await this.collection.find({}).toArray();
+        return games;
     }
 
     async getSessionByPin(pin: string): Promise<GameSession | undefined> {
@@ -19,20 +27,29 @@ export class GameSessionService {
     }
 
     async createSession(pin: string, game: Game): Promise<GameSession> {
-        const session: GameSession = { pin, game };
+        const isCompleted = false;
+        const session: GameSession = { pin, game, isCompleted };
         const sessions: GameSession[] = await this.getAllSessions();
         if (sessions.find((s) => s.pin === pin)) {
             return session;
         }
-        sessions.push(session);
-        await fs.writeFile(SESSIONS_PATH, JSON.stringify(sessions, null, 2), 'utf8');
+        await this.collection.insertOne(session);
         return session;
     }
 
     async deleteSession(pin: string): Promise<void> {
+        let gameFound = false;
         const sessions: GameSession[] = await this.getAllSessions();
-        const updatedSessions = sessions.filter((session) => session.pin !== pin);
-        await fs.writeFile(SESSIONS_PATH, JSON.stringify(updatedSessions, null, 2), 'utf8');
+        sessions.filter((session) => {
+            if (session.pin === pin && !session.isCompleted) {
+                gameFound = true;
+                return false;
+            }
+            return true;
+        });
+        if (gameFound) {
+            await this.collection.findOneAndDelete({ pin });
+        }
     }
 
     async getGameByPin(pin: string): Promise<Game> {
@@ -84,21 +101,45 @@ export class GameSessionService {
 
         const feedback: Feedback[] = question.choices.map((choice) => {
             const isSelected = submittedAnswers.includes(choice.text);
-            let status: 'correct' | 'incorrect' | 'missed';
-
-            if (isSelected) {
-                if (choice.isCorrect) {
-                    status = 'correct';
-                } else {
-                    status = 'incorrect';
-                }
-            } else if (choice.isCorrect) {
-                status = 'missed';
-            }
+            const status: 'correct' | 'incorrect' | 'missed' = isSelected
+                ? choice.isCorrect
+                    ? 'correct'
+                    : 'incorrect'
+                : choice.isCorrect
+                ? 'missed'
+                : undefined;
 
             return { choice: choice.text, status };
         });
 
         return feedback;
+    }
+
+    async completeSession(pin: string, bestScore: number): Promise<boolean> {
+        let hasChanged = false;
+        const sessions: GameSession[] = await this.getAllSessions();
+        sessions.map(async (session) => {
+            if (session.pin === pin) {
+                hasChanged = true;
+                await this.collection.updateOne({ pin }, { $set: { ...session, isCompleted: true, bestScore } });
+            }
+        });
+        return hasChanged;
+    }
+
+    async deleteHistory(): Promise<void> {
+        await this.collection.deleteMany({});
+    }
+
+    async addNbPlayers(pin: string, nbPlayers: number): Promise<boolean> {
+        let hasChanged = false;
+        const sessions: GameSession[] = await this.getAllSessions();
+        sessions.map(async (session) => {
+            if (session.pin === pin) {
+                hasChanged = true;
+                await this.collection.updateOne({ pin }, { $set: { ...session, nbPlayers, timeStarted: new Date() } });
+            }
+        });
+        return hasChanged;
     }
 }

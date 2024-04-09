@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 /* eslint-disable max-lines */
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -186,8 +187,7 @@ describe('AdminCreateGamePageComponent', () => {
             if (
                 game.questions[i].text !== component.game.questions[i].text ||
                 game.questions[i].type !== component.game.questions[i].type ||
-                game.questions[i].points !== component.game.questions[i].points ||
-                game.questions[i].answer !== component.game.questions[i].answer
+                game.questions[i].points !== component.game.questions[i].points
             ) {
                 deepCopyCheck = false;
                 break;
@@ -196,8 +196,8 @@ describe('AdminCreateGamePageComponent', () => {
                 const choices = game.questions[i].choices;
                 const componentChoices = component.game.questions[i].choices;
                 // eslint-disable-next-line @typescript-eslint/prefer-for-of
-                for (let j = 0; j < choices.length; j++) {
-                    if (choices[j].text !== componentChoices[j].text) {
+                for (let j = 0; j < choices!.length; j++) {
+                    if (choices![j].text !== componentChoices![j].text) {
                         deepCopyCheck = false;
                         break;
                     }

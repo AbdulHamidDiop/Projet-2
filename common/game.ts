@@ -14,8 +14,7 @@ export interface Question {
     lastModification: Date | null;
     text: string;
     points: number;
-    choices: Choices[];
-    answer: string;
+    choices?: Choices[] | null;
 }
 export interface Game {
     id: string;

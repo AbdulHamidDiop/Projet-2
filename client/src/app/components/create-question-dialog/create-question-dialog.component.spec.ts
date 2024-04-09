@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -97,8 +98,8 @@ describe('CreateQuestionDialogComponent', () => {
 
         const question: Question = { ...VALID_QUESTION };
         component.populateForm(question);
-        expect(component.choices.length === question.choices.length).toBeTruthy();
-        expect(component.choices.at(0).value.text === question.choices[0].text).toBeTruthy();
+        expect(component.choices.length === question.choices!.length).toBeTruthy();
+        expect(component.choices.at(0).value.text === question.choices![0].text).toBeTruthy();
     });
 
     it('Should let user change the order of questions by calling moveItemInArray on a drag and drop event', () => {

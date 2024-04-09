@@ -32,8 +32,7 @@ export const VALID_QUESTION: Question = {
 
             index: 0,
         },
-    ],
-    answer: 'Choix #1',
+    ]
 };
 
 export const VALID_GAME: Game = {
@@ -63,7 +62,6 @@ export const VALID_GAME: Game = {
                 },
             ],
             lastModification: null,
-            answer: 'Choix #1',
         },
         {
             id: '1',
@@ -85,7 +83,6 @@ export const VALID_GAME: Game = {
                 },
             ],
             lastModification: null,
-            answer: 'Choix #1',
         },
         {
             id: '0',
@@ -107,7 +104,6 @@ export const VALID_GAME: Game = {
                 },
             ],
             lastModification: null,
-            answer: 'Choix #1',
         },
         {
             id: '3',
@@ -129,7 +125,6 @@ export const VALID_GAME: Game = {
                 },
             ],
             lastModification: null,
-            answer: 'Choix #1',
         },
     ],
 };

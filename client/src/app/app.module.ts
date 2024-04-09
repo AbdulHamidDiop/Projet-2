@@ -36,6 +36,7 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
+import { SessionComponent } from './components/session/session.component';
 import { PlayerListComponent } from './components/player-list/player-list.component';
 
 /**
@@ -78,6 +79,7 @@ import { PlayerListComponent } from './components/player-list/player-list.compon
         ResultsPageComponent,
         AdminButtonComponent,
         FooterComponent,
+        SessionComponent,
         PlayerListComponent,
     ],
     imports: [

@@ -12,6 +12,7 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 })
 export class GameListComponent implements OnInit {
     games: Game[];
+    // eslint-disable-next-line max-params
     constructor(
         public gameService: GameService,
         public gameSessionService: GameSessionService,
