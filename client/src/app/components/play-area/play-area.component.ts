@@ -38,6 +38,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     score = 0;
 
     showPoints: boolean = false;
+    pointsGained: number = 0;
     showCountDown: boolean = false;
     countDownKey: number = Date.now(); // to force change dete/ctiosn
     choiceDisabled = false;
@@ -340,16 +341,21 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
         const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.answer, this.question.id);
         if (isCorrectAnswer && this.question.points) {
+            if (this.inTestMode || this.gotBonus) {
+                const pointsWithBonus = this.question.points * (1 + BONUS_MULTIPLIER);
+                this.score += pointsWithBonus;
+                this.pointsGained = pointsWithBonus;
+                this.playerService.player.bonusCount++;
+            } else {
+                this.score += this.question.points;
+                this.pointsGained = this.question.points;
+            }
+
             this.showPoints = true;
             setTimeout(() => {
                 this.showPoints = false;
             }, SHOW_FEEDBACK_DELAY);
 
-            this.score += this.question.points;
-            if (this.inTestMode || this.gotBonus) {
-                this.score += this.question.points * BONUS_MULTIPLIER;
-                this.playerService.player.bonusCount++;
-            }
             this.playerService.player.score = this.score;
             this.bonusGiven = false;
             this.gotBonus = false;
