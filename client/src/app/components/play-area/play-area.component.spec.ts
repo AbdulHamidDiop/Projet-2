@@ -135,6 +135,7 @@ describe('PlayAreaComponent', () => {
         component = fixture.componentInstance;
         component.question = { ...VALID_QUESTION };
         gameManager = TestBed.inject(GameManagerService);
+        gameManager.onLastQuestion = () => false;
         fixture.detectChanges();
     });
 
@@ -348,9 +349,11 @@ describe('PlayAreaComponent', () => {
 
     it('should navigate to createGame if this.GameManager.endGame is true', () => {
         spyOn(component.router, 'navigate');
+        gameManager.onLastQuestion = () => true;
         gameManager.endGame = true;
         component.endGameTest();
         expect(component.router.navigate).toHaveBeenCalledWith(['/createGame']);
+        gameManager.onLastQuestion = () => false;
     });
 
     it('should set inTestMode to true when queryparams testMode is true', () => {

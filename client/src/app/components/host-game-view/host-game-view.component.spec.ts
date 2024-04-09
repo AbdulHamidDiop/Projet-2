@@ -216,6 +216,7 @@ describe('HostGameViewComponent', () => {
         component.openResultsPage();
         const SERVER_RESPONSE_DELAY = 500;
         tick(SERVER_RESPONSE_DELAY);
+        flush();
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/game', 'test-game-id', 'results']);
     }));
 
