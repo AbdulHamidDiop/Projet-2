@@ -363,10 +363,11 @@ describe('PlayAreaComponent', () => {
         component.inRandomMode = true;
         component.inTestMode = false;
         component.endGameTest();
+        tick();
         tick(SHOW_FEEDBACK_DELAY);
-        flush();
-        expect(component.endGame()).toHaveBeenCalled();
+        expect(component.endGame).toHaveBeenCalled();
         gameManager.onLastQuestion = () => false;
+        flush();
     }));
 
     it('should set inTestMode to true when queryparams testMode is true', () => {
