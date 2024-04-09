@@ -12,7 +12,7 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, QCMStats, QRLAnswer, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
-import { Subscription, of } from 'rxjs';
+import { of } from 'rxjs';
 import { HostGameViewComponent } from './host-game-view.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -454,17 +454,6 @@ describe('HostGameViewComponent', () => {
 
     it('should unsubscribe after ngOnDestroy', () => {
         spyOn(component.gameManagerService, 'reset');
-        component.unitTesting = false;
-        component.playerLeftSubscription = new Subscription();
-        component.getPlayersSubscription = new Subscription();
-        //        component.startTimerSubscription = new Subscription();
-        //        component.stopTimerSubscription = new Subscription();
-        component.nextQuestionSubscription = new Subscription();
-        component.qcmStatsSubscription = new Subscription();
-        component.timerEndedSubscription = new Subscription();
-        component.endGameSubscription = new Subscription();
-        component.updatePlayerSubscription = new Subscription();
-
         component.ngOnDestroy();
         expect(component.gameManagerService.reset).toHaveBeenCalled();
     });
