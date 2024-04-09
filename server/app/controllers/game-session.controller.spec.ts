@@ -1,7 +1,7 @@
 import { Application } from '@app/app';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
-import { Game } from '@common/game';
+import { Game, Player } from '@common/game';
 import { BarChartQuestionStats } from '@common/game-stats';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
@@ -53,6 +53,7 @@ describe('GameSessionController', () => {
         SESSION_DATA = JSON.stringify([
             {
                 pin: '1122',
+                isCompleted: false,
                 game: {
                     id: '46277881345',
                     lastModification: '2024-02-01T15:04:41.171Z',
@@ -150,14 +151,16 @@ describe('GameSessionController', () => {
         const pin = '1111';
         const game = GAME;
         const statisticsData: BarChartQuestionStats[] = [];
-        gameSessionService.createSession.resolves({ pin, game, statisticsData });
+        const players: Player[] = [];
+        const isCompleted = false;
+        gameSessionService.createSession.resolves({ pin, game, statisticsData, players, isCompleted });
         return supertest(expressApp)
             .post(`/api/gameSession/create/${pin}`)
             .set('Content', 'application/json')
             .send(GAME)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal({ pin, game, statisticsData });
+                expect(response.body).to.deep.equal({ pin, game, statisticsData, players, isCompleted });
             });
     });
 

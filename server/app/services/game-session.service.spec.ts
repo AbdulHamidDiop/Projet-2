@@ -1,6 +1,6 @@
 /* eslint-disable max-lines */
 /* eslint-disable no-restricted-imports */
-import { Game } from '@common/game';
+import { Game, Player } from '@common/game';
 import { expect } from 'chai';
 // import { stub } from 'sinon';
 import { GameSession } from '@common/game-session';
@@ -389,5 +389,30 @@ describe('GameSession Service', () => {
             { questionID: '', data: [] },
             { questionID: '', data: [] },
         ]);
+    });
+
+    it('should store a new player in the session', async () => {
+        const pin = '1122';
+        const newPlayer = { name: 'New Player', score: 0, bonusCount: 0 } as Player;
+        const session = { pin, game: GAME, players: [] } as GameSession;
+
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(session);
+        await gameSessionService.storePlayer(pin, newPlayer);
+
+        const updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.players).to.include.deep.members([newPlayer]);
+    });
+
+    it('should get all players in the session and retern empty array if session dosnt exist', async () => {
+        const pin = '1122';
+        const newPlayer = { name: 'New Player', score: 0, bonusCount: 0 } as Player;
+        const session = { pin, game: GAME, players: [newPlayer] } as GameSession;
+
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(session);
+        const players = await gameSessionService.getPlayers(pin);
+        expect(players).to.deep.equal([newPlayer]);
+
+        const players2 = await gameSessionService.getPlayers('fakePin');
+        expect(players2).to.deep.equal([]);
     });
 });

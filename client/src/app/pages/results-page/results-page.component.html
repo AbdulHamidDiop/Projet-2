@@ -26,12 +26,10 @@
             </div>
 
             <!-- Affichage de la liste des joueurs -->
-            <div *ngIf="playerService.nActivePlayers()">
+            <div *ngIf="players.length">
                 <h2>Liste des joueurs</h2>
                 <ul>
-                    <li *ngFor="let player of playerService.playersInGame">
-                        {{ player.name }} - Score: {{ player.score }} - Nombre de bonus: {{ player.bonusCount }}
-                    </li>
+                    <li *ngFor="let player of players">{{ player.name }} - Score: {{ player.score }} - Nombre de bonus: {{ player.bonusCount }}</li>
                 </ul>
             </div>
         </mat-grid-tile>

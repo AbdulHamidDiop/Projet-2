@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-restricted-imports */
 import { Choices, Question, Type } from '@common/game';
 import { DB_COLLECTION_QUESTIONS } from '@common/utils/env';

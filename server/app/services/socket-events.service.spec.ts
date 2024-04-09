@@ -1,3 +1,4 @@
+import { DatabaseService } from './database.service';
 /* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -26,6 +27,7 @@ describe('Socket Events Service', () => {
     let socketJoinStub: SinonStub;
     let socketIdStub: SinonSpy;
     let gameSessionService: GameSessionService;
+    const databaseService: DatabaseService = new DatabaseService();
     let server: Server;
     const httpServer = createServer();
 
@@ -98,7 +100,7 @@ describe('Socket Events Service', () => {
             }
             return '5678';
         };
-        gameSessionService = new GameSessionService();
+        gameSessionService = new GameSessionService(databaseService);
         sinon.stub(gameSessionService, 'createSession').resolves({ pin: 'gameId' } as GameSession);
         socketEvents.unitTesting = true;
         await socketEvents.onCreateRoom(socket, { game: { id: 'gameId' } as Game });

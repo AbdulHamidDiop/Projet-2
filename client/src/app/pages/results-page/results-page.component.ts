@@ -20,6 +20,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     statisticsData: BarChartQuestionStats[] = [];
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
+    players: Player[] = [];
 
     private routeSubscription: Subscription;
     private playersSubscription: Subscription;
@@ -51,6 +52,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
                 return a.name.localeCompare(b.name);
             }
         });
+        this.players = this.playerService.playersInGame;
     }
 
     returnToInitialView(): void {

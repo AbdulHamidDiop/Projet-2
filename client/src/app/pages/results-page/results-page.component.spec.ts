@@ -5,8 +5,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Game, GameService } from '@app/services/game.service';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Type } from '@common/game';
+import { Player, Type } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { of } from 'rxjs';
@@ -72,6 +73,12 @@ const FAKE_GAME: Game = {
     ],
 };
 
+const PLAYER_LIST: Player[] = [
+    { name: 'Alice', isHost: false, id: '1', score: 10, bonusCount: 0 },
+    { name: 'Charlie', isHost: false, id: '3', score: 15, bonusCount: 0 },
+    { name: 'Bob', isHost: false, id: '2', score: 10, bonusCount: 0 },
+    { name: 'Dave', isHost: false, id: '4', score: 20, bonusCount: 0 },
+] as Player[];
 const CHAT_MESSAGE: ChatMessage = {
     author: 'John Doe',
     message: 'Hello, this is a test message!',
@@ -83,10 +90,16 @@ describe('ResultsPageComponent', () => {
     let fixture: ComponentFixture<ResultsPageComponent>;
     let mockGameService: jasmine.SpyObj<GameService>;
     let mockSocketRoomService: jasmine.SpyObj<SocketRoomService>;
+    let mockPlayerService: jasmine.SpyObj<PlayerService>;
     let mockActivatedRoute: unknown;
 
     beforeEach(async () => {
         mockGameService = jasmine.createSpyObj('GameService', ['getGameByID']);
+        mockPlayerService = jasmine.createSpyObj('PlayerService', ['nActivePlayers'], {
+            player: PLAYER_LIST[0],
+            playersInGame: PLAYER_LIST,
+        });
+
         mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', [
             'listenForMessages',
             'getChatMessages',
@@ -94,6 +107,7 @@ describe('ResultsPageComponent', () => {
             'endGame',
             'sendChatMessage',
             'leaveRoom',
+            'resetGameState',
         ]);
         mockActivatedRoute = {
             paramMap: of({
@@ -108,6 +122,7 @@ describe('ResultsPageComponent', () => {
                 { provide: GameService, useValue: mockGameService },
                 { provide: SocketRoomService, useValue: mockSocketRoomService },
                 { provide: ActivatedRoute, useValue: mockActivatedRoute },
+                { provide: PlayerService, useValue: mockPlayerService },
             ],
         }).compileComponents();
     });
@@ -116,6 +131,8 @@ describe('ResultsPageComponent', () => {
         mockSocketRoomService.listenForMessages.and.returnValues(of(PLAYER_DATA), of(GAME_RESULTS_DATA));
         mockSocketRoomService.getChatMessages.and.returnValue(of(CHAT_MESSAGE));
         mockSocketRoomService.sendChatMessage.and.returnValue();
+
+        mockPlayerService.nActivePlayers.and.returnValue(4);
 
         mockGameService.getGameByID.and.returnValue(FAKE_GAME);
         fixture = TestBed.createComponent(ResultsPageComponent);
@@ -159,7 +176,7 @@ describe('ResultsPageComponent', () => {
             { name: 'Charlie', isHost: false, id: '3', score: 15, bonusCount: 0 },
             { name: 'Alice', isHost: false, id: '1', score: 10, bonusCount: 0 },
             { name: 'Bob', isHost: false, id: '2', score: 10, bonusCount: 0 },
-        ]);
+        ] as Player[]);
     });
 
     it('should leave without kicking players if player is not the host', () => {
