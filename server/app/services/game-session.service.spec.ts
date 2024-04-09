@@ -1,5 +1,6 @@
 /* eslint-disable max-lines */
-import { Game } from '@common/game';
+import { Game, Player } from '@common/game';
+import { GameSession } from '@common/game-session';
 import { BarChartQuestionStats, QCMStats, QRLGrade } from '@common/game-stats';
 import { expect } from 'chai';
 import * as fs from 'fs';
@@ -101,6 +102,7 @@ describe('GameSession Service', () => {
                     isHidden: false,
                 },
                 statisticsData: [],
+                players: [],
             },
         ]);
         readFileStub = stub(fs.promises, 'readFile').resolves(SESSION_DATA);
@@ -134,8 +136,9 @@ describe('GameSession Service', () => {
         const pin = '2222';
         const game = GAME;
         const statisticsData: BarChartQuestionStats[] = [];
+        const players: Player[] = [];
         const result = await gameSessionService.createSession(pin, GAME);
-        expect(result).to.deep.equal({ pin, game, statisticsData });
+        expect(result).to.deep.equal({ pin, game, statisticsData, players });
         expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(2);
     });
 
@@ -143,9 +146,10 @@ describe('GameSession Service', () => {
         const pin = JSON.parse(SESSION_DATA)[0].pin;
         const game = GAME;
         const statisticsData: BarChartQuestionStats[] = [];
+        const players: Player[] = [];
 
         const result = await gameSessionService.createSession(pin, GAME);
-        expect(result).to.deep.equal({ pin, game, statisticsData });
+        expect(result).to.deep.equal({ pin, game, statisticsData, players });
         expect(JSON.parse(SESSION_DATA)).to.be.an('array').with.lengthOf(1);
     });
 
@@ -345,6 +349,9 @@ describe('GameSession Service', () => {
         await gameSessionService.updateQRLGradeData(pin, qrlGrade);
         updatedSessions = JSON.parse(SESSION_DATA);
         expect(updatedSessions[0].statisticsData[0].data[2].data[0]).to.equal(1);
+
+        qrlGrade.multiplier = null;
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
     });
 
     it('getStatisticsData should return statistics data', async () => {
@@ -371,5 +378,16 @@ describe('GameSession Service', () => {
             { questionID: '', data: [] },
             { questionID: '', data: [] },
         ]);
+    });
+
+    it('should store a new player in the session', async () => {
+        const pin = '1122';
+        const newPlayer = { name: 'New Player', score: 0, bonusCount: 0 } as Player; // Sample new player
+
+        await gameSessionService.storePlayer(pin, newPlayer);
+
+        const updatedSessions = JSON.parse(SESSION_DATA) as GameSession[];
+        const session = updatedSessions.find((s) => s.pin === pin);
+        expect(session.players).to.include.deep.members([newPlayer]);
     });
 });
