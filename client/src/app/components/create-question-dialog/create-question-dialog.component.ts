@@ -18,7 +18,7 @@ export class CreateQuestionDialogComponent implements OnInit {
     questionForm: FormGroup;
     question: Question;
     id: string;
-    hideAddToBankOption = false;
+    hideAddToBankOption: boolean;
 
     // On a besoin de toutes ces injections qui sont notamment des élèments d'Angular.
     // eslint-disable-next-line max-params
@@ -32,9 +32,7 @@ export class CreateQuestionDialogComponent implements OnInit {
     ) {
         this.initializeForm();
         this.handleQuestionTypeChanges(); // pour negliger choices si type = QRL
-        if (this.router.url === '/admin/questions') {
-            this.hideAddToBankOption = true;
-        }
+        this.hideAddToBankOption = this.router.url === '/admin/questions';
     }
 
     get choices(): FormArray {

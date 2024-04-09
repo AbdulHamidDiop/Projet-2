@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { StatusCodes } from 'http-status-codes';
@@ -13,7 +14,10 @@ export class QuestionsService {
     questions: Question[] = [];
     currentQuestionIndex: number = 0;
 
-    constructor(private fetchService: FetchService) {
+    constructor(
+        private fetchService: FetchService,
+        private snackBar: MatSnackBar,
+    ) {
         this.getAllQuestions().then((questions: Question[]) => {
             this.questions = questions;
         });
@@ -50,7 +54,10 @@ export class QuestionsService {
         });
         if (!response.ok) {
             if (response.status === StatusCodes.BAD_REQUEST) {
-                window.alert("Votre question n'a pas été ajoutée à la banque de questions car elle existe déjà");
+                this.snackBar.open("Votre question n'a pas été ajoutée à la banque de questions car elle existe déjà", 'Fermer', {
+                    verticalPosition: 'top',
+                    duration: 5000,
+                });
                 return false;
             }
             throw new Error(`Error: ${response.status}`);
