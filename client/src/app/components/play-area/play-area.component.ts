@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable max-lines */
 import { ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
@@ -54,10 +55,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private bonusGivenSubscription: Subscription;
     private sendQRLAnswerSubscription: Subscription;
     private qrlGradeSubscription: Subscription;
-    // private startTimerSubscription: Subscription;
-    // private stopTimerSubscription: Subscription;
-    //    private getProfileSubscription: Subscription;
-    // private pauseTimerSubscription: Subscription;
+    private otherPlayersSubscription: Subscription;
+
 
     // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
@@ -109,15 +108,15 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.buttonPressed <= this.nbChoices.toString()
         ) {
             const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices[index - 1].text);
+            this.handleQCMChoice(this.question.choices![index - 1].text);
         }
     }
 
     async ngOnInit() {
-        // this.startTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.START_TIMER).subscribe(() => {
-        //     this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
-        //     this.timeService.startTimer(this.timer);
-        // });
+
+        this.otherPlayersSubscription = this.socketService.getPlayers().subscribe((players) => {
+            this.playerService.playersInGame = players;
+        });
 
         this.timeService.timerEnded.subscribe(async () => {
             await this.confirmAnswers(false);
@@ -156,10 +155,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
         });
-
-        // this.stopTimerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.STOP_TIMER).subscribe(() => {
-        //     this.timeService.stopTimer();
-        // });
 
         this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
             this.sendQRLAnswer();
@@ -207,10 +202,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusSubscription?.unsubscribe();
         this.bonusGivenSubscription?.unsubscribe();
         this.abortGameSubscription?.unsubscribe();
-        // this.startTimerSubscription?.unsubscribe();
-        // this.stopTimerSubscription?.unsubscribe();
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
+        this.otherPlayersSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
@@ -227,7 +221,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
         if (newQuestion && newQuestion.type === 'QCM') {
-            this.nbChoices = this.question.choices.length;
+            this.nbChoices = this.question.choices!.length;
         }
         if (newQuestion && newQuestion.type === 'QRL') {
             this.qrlStatsService.startTimer(newQuestion.id);
@@ -256,8 +250,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.qcmStat = {
             questionId: this.question.id,
-            choiceIndex: this.question.choices.findIndex((c) => c.text === answer),
-            correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
+            choiceIndex: this.question.choices!.findIndex((c) => c.text === answer),
+            correctIndex: this.question.choices!.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
             player: this.player,

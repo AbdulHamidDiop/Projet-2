@@ -20,8 +20,8 @@ export class CreateQuestionDialogComponent implements OnInit {
     id: string;
     hideAddToBankOption = false;
 
-    // eslint-disable-next-line max-params
     // On a besoin de toutes ces injections qui sont notamment des élèments d'Angular.
+    // eslint-disable-next-line max-params
     constructor(
         public formBuilder: FormBuilder,
         public dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
@@ -94,9 +94,9 @@ export class CreateQuestionDialogComponent implements OnInit {
         };
 
         const addToBank = this.questionForm.get('addToBank')?.value || this.hideAddToBankOption;
-        const res = await this.questionsService.addQuestion(this.question);
-
-        if (addToBank && !res) return;
+        if (addToBank) {
+            await this.questionsService.addQuestion(this.question);
+        }
 
         this.dialogRef.close(this.question);
     }
