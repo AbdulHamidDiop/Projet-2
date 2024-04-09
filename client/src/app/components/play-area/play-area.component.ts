@@ -213,6 +213,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qrlGradeSubscription?.unsubscribe();
         this.sendQRLAnswerSubscription?.unsubscribe();
         this.pauseTimerSubscription?.unsubscribe();
+        this.startTimerSubscription?.unsubscribe();
+        this.stopTimerSubscription?.unsubscribe();
         this.otherPlayersSubscription?.unsubscribe();
 
         window.removeEventListener('popstate', this.onLocationChange);
