@@ -14,19 +14,15 @@ export class PlayerService {
         bonusCount: 0,
         color: RED,
         chatEnabled: true,
-        outOfRoom: false,
+        leftGame: false,
     };
 
     playersInGame: Player[] = [];
-
-    setGamePlayers(players: Player[]): void {
-        // adds only the players that are not already in the list
-        players.forEach((player) => {
-            const index = this.playersInGame.findIndex((pl) => pl.name === player.name);
-            if (index < 0) {
-                this.playersInGame.push(player);
-            }
-        });
+    activePlayers(): Player[] {
+        return this.playersInGame.filter((player) => !player.leftGame);
+    }
+    nActivePlayers(): number {
+        return this.activePlayers().length;
     }
 
     addGamePlayers(player: Player): void {
@@ -36,7 +32,6 @@ export class PlayerService {
         } else {
             this.playersInGame.push(player);
         }
-        console.log(this.playersInGame);
     }
 
     resetGamePlayers(): void {

@@ -12,7 +12,7 @@ import { QRLStatService } from '@app/services/qrl-stats.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { Feedback } from '@common/feedback';
-import { Player, Question, Type } from '@common/game';
+import { Question, Type } from '@common/game';
 import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
@@ -27,7 +27,6 @@ const RANDOM_INDICATOR = -9;
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements OnInit, OnDestroy {
-    player: Player;
     inTestMode: boolean = false;
     inRandomMode: boolean = false;
     buttonPressed = '';
@@ -46,6 +45,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     qcmStat: QCMStats;
     bonusGiven = false;
     gotBonus = false;
+    movingToNextQuestion = false;
 
     private timer: number;
     private points = 0;
@@ -74,7 +74,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
     ) {
-        this.player = this.playerService.player;
         this.playerService.player.score = 0;
         this.answer = [];
         this.setInTestMode();
@@ -115,6 +114,10 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async ngOnInit() {
         this.timerEndedSubscription = this.timeService.timerEnded.subscribe(async () => {
+            if (this.movingToNextQuestion) {
+                this.timeService.stopTimer();
+                return;
+            }
             await this.confirmAnswers(false);
         });
         const gameID = this.route.snapshot.paramMap.get('id');
@@ -147,6 +150,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
             await this.countPointsAndNextQuestion();
+            this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
@@ -158,14 +162,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.qrlGradeSubscription = this.socketService.listenForMessages(nsp.GAME, Events.QRL_GRADE).subscribe((grade: unknown) => {
             const qrlGrade = grade as QRLGrade;
-            if (qrlGrade.author === this.player.name) {
+            if (qrlGrade.author === this.playerService.player.name) {
                 this.score += qrlGrade.grade;
-                this.player.score = this.score;
+                this.playerService.player.score = this.score;
                 this.bonusGiven = false;
                 this.gotBonus = false;
-                this.playerService.player = this.player;
             }
-            this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.player);
+            this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.playerService.player);
         });
 
         this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
@@ -214,6 +217,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     goNextQuestion() {
         this.answer = [];
         this.qrlAnswer = '';
+        this.movingToNextQuestion = false;
         this.endGameTest();
         const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
@@ -250,7 +254,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             correctIndex: this.question.choices.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
             choiceAmount: this.nbChoices,
             selected: !choiceInList,
-            player: this.player,
+            player: this.playerService.player,
         };
         this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmStat);
     }
@@ -261,11 +265,19 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     async confirmAnswers(fromUserInput: boolean) {
         // true : appelé par input utilisateur, false : appelé par serveur,
-        this.timeService.stopTimer();
-        this.choiceDisabled = true;
-        if (fromUserInput || this.inRandomMode) {
-            this.socketService.confirmAnswer(this.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
+        if (!this.inRandomMode) {
+            this.timeService.stopTimer();
         }
+        this.choiceDisabled = true;
+        if (fromUserInput) {
+            this.socketService.confirmAnswer(this.playerService.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
+            if (this.inRandomMode) {
+                this.socketService.sendMessage(Events.CONFIRM_ANSWER_R, nsp.GAME);
+            }
+        } else {
+            this.socketService.sendMessage(Events.RESET_NUMBER_ANSWERS, nsp.GAME);
+        }
+
         if (this.inTestMode || (this.inRandomMode && this.time === 0)) {
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
@@ -282,7 +294,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         const qrlAnswer: QRLAnswer = {
             questionId: this.question.id,
-            author: this.player.name,
+            author: this.playerService.player.name,
             answer: this.qrlAnswer,
         };
         this.socketService.sendMessage(Events.QRL_ANSWER, nsp.GAME, qrlAnswer);
@@ -293,6 +305,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async countPointsAndNextQuestion() {
+        this.movingToNextQuestion = true;
         if (this.question.type === Type.QCM || this.inTestMode) {
             await this.updateScore();
         }
@@ -312,7 +325,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     onQRLAnswerChange() {
         this.qrlStatsService.notifyEdit();
-        this.socketService.sendMessage(Events.NOTIFY_QRL_INPUT, nsp.GAME_STATS, this.player);
+        this.socketService.sendMessage(Events.NOTIFY_QRL_INPUT, nsp.GAME_STATS, this.playerService.player);
     }
 
     onFinalAnswer() {
@@ -335,14 +348,13 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.score += this.question.points;
             if (this.inTestMode || this.gotBonus) {
                 this.score += this.question.points * BONUS_MULTIPLIER;
-                this.player.bonusCount++;
+                this.playerService.player.bonusCount++;
             }
-            this.player.score = this.score;
+            this.playerService.player.score = this.score;
             this.bonusGiven = false;
             this.gotBonus = false;
         }
-        this.playerService.player = this.player;
-        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.player });
+        this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.playerService.player });
     }
 
     // Le chargé aime pas le nom donné à la fonction.
@@ -364,7 +376,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.answer = [];
                 const chatMessage: ChatMessage = {
                     author: sysmsg.AUTHOR,
-                    message: this.player.name + ' ' + sysmsg.PLAYER_LEFT,
+                    message: this.playerService.player.name + ' ' + sysmsg.PLAYER_LEFT,
                     timeStamp: new Date().toLocaleTimeString(),
                 };
                 this.socketService.sendChatMessage(chatMessage);
@@ -394,6 +406,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
             await this.countPointsAndNextQuestion();
+            this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
@@ -431,14 +444,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     private setInRandomMode(): void {
         this.inRandomMode = this.router.url.slice(RANDOM_INDICATOR) === 'aleatoire';
-
-        if (this.inRandomMode) {
-            this.nextRandomQuestionSubscription = this.gameManager.nextQuestionSignal$.subscribe(async () => {
-                await this.confirmAnswers(false);
-                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
-                await this.countPointsAndNextQuestion();
-            });
-        }
     }
 
     private setInTestMode(): void {

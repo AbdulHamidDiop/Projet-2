@@ -370,7 +370,7 @@ export class SocketRoomService implements OnDestroy {
             bonusCount: 0,
             color: RED,
             chatEnabled: true,
-            outOfRoom: false,
+            leftGame: false,
         };
     }
 

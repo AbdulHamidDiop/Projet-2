@@ -1,5 +1,5 @@
 import { Feedback } from '@common/feedback';
-import { Game } from '@common/game';
+import { Game, Player } from '@common/game';
 import { GameSession } from '@common/game-session';
 import { BarChartQuestionStats, QCMStats, QRLGrade } from '@common/game-stats';
 import * as fs from 'fs/promises';
@@ -23,8 +23,7 @@ export class GameSessionService {
     }
 
     async createSession(pin: string, game: Game): Promise<GameSession> {
-        const statisticsData: BarChartQuestionStats[] = [] as BarChartQuestionStats[];
-        const session: GameSession = { pin, game, statisticsData };
+        const session: GameSession = { pin, game, statisticsData: [], players: [] };
         const sessions: GameSession[] = await this.getAllSessions();
         if (sessions.find((s) => s.pin === pin)) {
             return session;
@@ -68,8 +67,8 @@ export class GameSessionService {
         if (!game) {
             return false;
         }
-        const question = game.questions.find((q) => q.id === questionID);
-        if (question && question.choices) {
+        const question = game?.questions.find((q) => q.id === questionID);
+        if (question?.choices) {
             const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
             if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
                 return false;
@@ -81,7 +80,7 @@ export class GameSessionService {
 
     async generateFeedback(pin: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
         const game = await this.getGameByPin(pin);
-        const question = game.questions.find((q) => q.id === questionId);
+        const question = game?.questions.find((q) => q.id === questionId);
 
         if (!question) {
             return [];
@@ -211,7 +210,28 @@ export class GameSessionService {
             data: [],
         };
         return data.map((item) => {
-            return item === undefined ? blankData : item;
+            return item ?? blankData;
         });
+    }
+
+    async storePlayer(pin: string, player: Player): Promise<void> {
+        await this.getSessionByPin(pin).then(async (session) => {
+            if (session) {
+                session.players.push(player);
+                await this.getAllSessions().then(async (sessions) => {
+                    const sessionIndex = sessions.findIndex((s) => s.pin === pin);
+                    sessions[sessionIndex] = session;
+                    await fs.writeFile(SESSIONS_PATH, JSON.stringify(sessions, null, 2), 'utf8');
+                });
+            }
+        });
+    }
+
+    async getPlayers(pin: string): Promise<Player[]> {
+        const session = await this.getSessionByPin(pin);
+        if (session) {
+            return session.players;
+        }
+        return [];
     }
 }

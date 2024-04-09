@@ -1,6 +1,6 @@
 // C'est inutile d'avoir le même enum deux fois.
 // Si je supprime il va juste réapparaitre par contre, donc vaut mieux laisser ça pour la fin.
-export interface Player {
+export interface Playerr {
     name: string;
     isHost: boolean;
     id: string;

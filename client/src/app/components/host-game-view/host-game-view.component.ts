@@ -37,7 +37,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     questionIndex: number = 0;
     showCountDown: boolean = false;
     onLastQuestion: boolean = false;
-    players: Player[] = [];
     playersLeft: number;
     displayPlayerList = true;
     unitTesting: boolean = false;
@@ -67,12 +66,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         readonly playerService: PlayerService,
         private snackBar: MatSnackBar,
     ) {
-        this.players = this.playerService.playersInGame;
-        this.playersLeft = this.players.length;
+        this.playersLeft = this.playerService.nActivePlayers();
 
         this.getPlayersSubscription = this.socketService.getPlayers().subscribe((players: Player[]) => {
-            this.playerService.playersInGame = this.players; // Pb de cohérence entre component et service avec setGamePlayers.
-            this.players = players;
+            const oldPlayers = this.playerService.playersInGame;
+            this.playerService.playersInGame = players;
+            for (const player of playerService.playersInGame) {
+                const oldPlayer = oldPlayers.find((p) => p.name === player.name);
+                if (oldPlayer) {
+                    player.leftGame = oldPlayer.leftGame;
+                }
+            }
         });
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
@@ -133,24 +137,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.updatePlayerSubscription = this.socketService
             .listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_PLAYER)
             .subscribe((playerWithRoom) => {
-                const { room, ...player } = playerWithRoom as Player & { room: string };
+                const { ...player } = playerWithRoom as Player & { room: string };
                 this.playerService.addGamePlayers(player as Player);
             });
 
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
-            const playersCopy = this.players.filter((p) => p.name !== username);
-            if (playersCopy.length < this.players.length) {
-                this.playersLeft--;
-            }
-            // this.players = this.players.filter((p) => p.name !== username);
-            // Quand le joueur abandonne la partie son nom est supposé être raturé mais toujours affiché.
-
             const player = this.playerService.playersInGame.find((p) => p.name === username);
             if (player) {
                 player.leftGame = true;
             }
-
+            this.playersLeft = this.playerService.nActivePlayers();
             if (this.playersLeft === 0) {
                 this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                     verticalPosition: 'top',
@@ -159,6 +156,13 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 setTimeout(() => {
                     this.socketService.endGame();
                 }, SHOW_FEEDBACK_DELAY);
+            }
+            if (this.currentQuestion.type === Type.QRL) {
+                const qrlStat: QRLStats = {
+                    questionId: this.currentQuestion.id,
+                    edited: false,
+                };
+                this.updateQRLBarChartData(qrlStat);
             }
         });
         this.timeService.deactivatePanicMode();
@@ -207,7 +211,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             } else if (this.statisticsData[index].data[0].data[0] > 0) {
                 this.statisticsData[index].data[0].data[0]--;
             }
-            this.statisticsData[index].data[1].data[0] = this.players.length - this.statisticsData[index].data[0].data[0];
+            this.statisticsData[index].data[1].data[0] = this.playersLeft - this.statisticsData[index].data[0].data[0];
         } else {
             const initialCount = stat.edited ? 1 : 0;
             this.statisticsData.push({
@@ -219,7 +223,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                         backgroundColor: '#4CAF50',
                     },
                     {
-                        data: [this.players.length - initialCount],
+                        data: [this.playersLeft - initialCount],
                         label: "Nombre de personnes n'ayant pas modifié leur réponse dans les 5 dernières secondes",
                         backgroundColor: '#FFCE56',
                     },
@@ -338,7 +342,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     }
 
     updatePlayerFromServer(stats: QCMStats) {
-        for (const player of this.players) {
+        for (const player of this.playerService.playersInGame) {
             if (stats.player && player.name === stats.player.name) {
                 player.score = stats.player.score;
             }
@@ -359,9 +363,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 this.router.navigate(['/game', gameId, 'results']);
             }, RESPONSE_FROM_SERVER_DELAY);
         }
-        setTimeout(() => {
-            this.socketService.sendMessage(Events.GET_PLAYERS, Namespaces.GAME_STATS, this.playerService.playersInGame);
-        }, RESPONSE_FROM_SERVER_DELAY * 2);
     }
 
     onLocationChange = () => {

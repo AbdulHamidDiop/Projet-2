@@ -4,9 +4,9 @@ import { GameSessionService } from '@app/services/game-session.service';
 import { Game } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { Player } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
-import { Player } from '@common/player';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
@@ -17,7 +17,6 @@ import { Subscription } from 'rxjs';
 })
 export class ResultsPageComponent implements OnInit, OnDestroy {
     game: Game;
-    players: Player[] = [];
     statisticsData: BarChartQuestionStats[] = [];
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
@@ -33,9 +32,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         public playerService: PlayerService,
         private gameSessionService: GameSessionService,
         public router: Router,
-    ) {
-        this.players = this.playerService.playersInGame;
-    }
+    ) {}
 
     ngOnInit(): void {
         this.gameSessionService.getGameWithoutCorrectShown(this.socketsService.room).then((game) => {
@@ -47,7 +44,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     sortPlayers(): void {
-        this.players.sort((a, b) => {
+        this.playerService.playersInGame.sort((a, b) => {
             if (a.score !== b.score) {
                 return b.score - a.score;
             } else {
@@ -111,18 +108,10 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     private connectToServer(): void {
-        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_PLAYERS).subscribe({
-            next: (playersData: unknown) => {
-                const playersObj = playersData as { [key: string]: Player };
-                const players: Player[] = [];
-                for (const key in playersObj) {
-                    if (!isNaN(Number(key))) {
-                        players.push(playersObj[key]);
-                    }
-                }
-                this.players = players;
-                this.sortPlayers();
-            },
+        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_FINAL_PLAYERS).subscribe((data) => {
+            const players = data as Player[];
+            this.playerService.playersInGame = players;
+            this.sortPlayers();
         });
 
         // Écouter les QCMSTATS
@@ -139,6 +128,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
                 this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
             },
         });
+        this.socketsService.sendMessage(Events.GET_FINAL_PLAYERS, Namespaces.GAME_STATS);
         this.socketsService.sendMessage(Events.GET_STATS, Namespaces.GAME_STATS);
     }
 }

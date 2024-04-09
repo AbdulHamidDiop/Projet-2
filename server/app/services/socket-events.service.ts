@@ -63,7 +63,7 @@ export class SocketEvents {
             bonusCount: 0,
             color: GREEN,
             chatEnabled: true,
-            outOfRoom: false,
+            leftGame: false,
         };
         this.liveRooms.push(room);
         this.socketIdRoom.set(socket.id, room);
@@ -105,7 +105,7 @@ export class SocketEvents {
                     bonusCount: 0,
                     color: RED,
                     chatEnabled: true,
-                    outOfRoom: false,
+                    leftGame: false,
                 };
                 this.playerSocketId.set(socket.id, playerProfile);
                 socket.emit(Events.JOIN_ROOM, true);
@@ -323,7 +323,7 @@ export class SocketEvents {
                 const players = this.mapOfPlayersInRoom.get(room);
                 for (const play of players) {
                     if (play.name === player.name) {
-                        play.outOfRoom = true;
+                        play.leftGame = true;
                         play.color = BLACK;
                     }
                 }

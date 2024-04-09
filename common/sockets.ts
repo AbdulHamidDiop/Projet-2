@@ -29,6 +29,8 @@ export enum Events {
     CLEANUP_GAME = 'cleanupGame',
     KICK_PLAYER = 'kickPlayer',
     GET_PLAYERS = 'getPlayers',
+    GET_FINAL_PLAYERS = 'getFinalPlayers',
+    STORE_PLAYER = 'storePlayer',
     GET_STATS = 'getStats',
     LEAVE_ROOM = 'leaveRoom',
     LOCK_ROOM = 'lockRoom',
@@ -56,6 +58,7 @@ export enum Events {
     ABANDON_GAME = 'abandonGame',
     PANIC_MODE_OFF = 'panicModeOff',
     PANIC_MODE = 'panicMode',
+    RESET_NUMBER_ANSWERS = 'resetNumberAnswers',
 }
 
 export const LOBBY = '0';

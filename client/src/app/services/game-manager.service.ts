@@ -2,7 +2,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { Feedback } from '@common/feedback';
 import { Game, Player, Question } from '@common/game';
 import { Events, Namespaces } from '@common/sockets';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { GameSessionService } from './game-session.service';
@@ -18,11 +18,7 @@ export class GameManagerService implements OnDestroy {
     endGame: boolean = false;
     inRandomMode: boolean = false;
     playersInRandomGame: Player[] = [];
-    lastPlayerThatConfirmed: string = '';
-    numberOfAnswers: number = 0;
-    nextQuestionSignal$: Observable<void>;
 
-    private nextQuestionSignal: Subject<void>;
     private playerLeftSubscription: Subscription;
     private answerConfirmationSubscription: Subscription;
 
@@ -43,30 +39,11 @@ export class GameManagerService implements OnDestroy {
     initRandomGame(players: Player[]) {
         this.playersInRandomGame = players;
         this.inRandomMode = true;
-        this.nextQuestionSignal = new Subject<void>();
-        this.nextQuestionSignal$ = this.nextQuestionSignal.asObservable();
 
         this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             const username = (data as { user: string }).user;
             this.playersInRandomGame = this.playersInRandomGame.filter((player) => player.name !== username);
         });
-
-        this.answerConfirmationSubscription = this.socketService
-            .listenForMessages(Namespaces.GAME_STATS, Events.CONFIRM_ANSWER_R)
-            .subscribe((data: unknown) => {
-                const payload = data as { room: string; player: Player };
-                const username = payload.player.name;
-
-                if (this.lastPlayerThatConfirmed === username) {
-                    return;
-                }
-                if (++this.numberOfAnswers === this.playersInRandomGame.length + 1) {
-                    this.numberOfAnswers = 0;
-                    this.lastPlayerThatConfirmed = '';
-                    this.nextQuestionSignal.next();
-                }
-                this.lastPlayerThatConfirmed = username;
-            });
     }
     reset() {
         this.currentQuestionIndex = 0;
@@ -74,16 +51,13 @@ export class GameManagerService implements OnDestroy {
     }
 
     firstQuestion(): Question {
-        if (this.game && this.game.questions[0]) {
+        if (this.game?.questions[0]) {
             return this.game.questions[0];
         }
         return {} as Question;
     }
 
     goNextQuestion(): Question {
-        this.numberOfAnswers = 0;
-        this.lastPlayerThatConfirmed = '';
-
         if (this.game) {
             if (this.currentQuestionIndex + 1 === this.game.questions.length) {
                 this.endGame = true;

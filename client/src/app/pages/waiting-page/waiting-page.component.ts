@@ -26,7 +26,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     roomIdEntryView: boolean = true;
     usernameEntryView: boolean = false;
     playerPanelView: boolean = false;
-    player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
+    player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0, leftGame: false };
     game: Game = {} as Game;
     players: Player[] = [];
     showCountDown: boolean = false;
@@ -100,6 +100,10 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
 
     randomGameStartSubscribe() {
         this.randomGameStartSubscription = this.socket.randomGameStartSubscribe().subscribe(() => {
+            if (this.playerService.player.name === 'Organisateur') {
+                this.playerService.player.isHost = false;
+                this.playerService.player.name = 'Joueur 1';
+            }
             this.gameManagerService.initRandomGame(this.players);
             this.openCountDownModal();
             setTimeout(() => {
@@ -115,13 +119,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     private openCountDownModal(): void {
         this.showCountDown = true;
     }
-    // private setInitailView(): void {
-    //     this.fullView = false;
-    //     this.roomIdEntryView = true;
-    //     this.usernameEntryView = false;
-    //     this.playerPanelView = false;
-    //     this.fullView = true;
-    // }
+
     private onLocationChange = () => {
         this.socket.endGame();
     };
@@ -180,7 +178,9 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
 
         this.playersSubscription = this.socket.getPlayers().subscribe((players) => {
             this.players = players;
-            this.playerService.setGamePlayers(players);
+            for (const player of players) {
+                this.playerService.addGamePlayers(player);
+            }
         });
 
         this.profileSubscription = this.socket.getProfile().subscribe((player) => {

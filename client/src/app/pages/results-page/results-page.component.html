@@ -2,34 +2,36 @@
     <div class="results-page">
         <!-- Affichage des joueurs sur le podium (3 premiers joueurs avec le plus de points) -->
         <mat-grid-tile [colspan]="4" [rowspan]="2">
-            <div class="podium" *ngIf="players.length > 2">
+            <div class="podium" *ngIf="playerService.nActivePlayers() > 2">
                 <h2>Podium</h2>
                 <ng-container>
                     <div class="">
                         <!-- Affichage du premier joueur sur le podium -->
                         <div>
                             <h3>1er place</h3>
-                            <p>{{ players[0].name }} - Score: {{ players[0].score }}</p>
+                            <p>{{ playerService.playersInGame[0].name }} - Score: {{ playerService.playersInGame[0].score }}</p>
                         </div>
                         <!-- Affichage du deuxième joueur sur le podium -->
                         <div>
                             <h3>2e place</h3>
-                            <p>{{ players[1].name }} - Score: {{ players[1].score }}</p>
+                            <p>{{ playerService.playersInGame[1].name }} - Score: {{ playerService.playersInGame[1].score }}</p>
                         </div>
                         <!-- Affichage du troisième joueur sur le podium -->
                         <div>
                             <h3>3e place</h3>
-                            <p>{{ players[2].name }} - Score: {{ players[2].score }}</p>
+                            <p>{{ playerService.playersInGame[2].name }} - Score: {{ playerService.playersInGame[2].score }}</p>
                         </div>
                     </div>
                 </ng-container>
             </div>
 
             <!-- Affichage de la liste des joueurs -->
-            <div *ngIf="players.length">
+            <div *ngIf="playerService.nActivePlayers()">
                 <h2>Liste des joueurs</h2>
                 <ul>
-                    <li *ngFor="let player of players">{{ player.name }} - Score: {{ player.score }} - Nombre de bonus: {{ player.bonusCount }}</li>
+                    <li *ngFor="let player of playerService.playersInGame">
+                        {{ player.name }} - Score: {{ player.score }} - Nombre de bonus: {{ player.bonusCount }}
+                    </li>
                 </ul>
             </div>
         </mat-grid-tile>
