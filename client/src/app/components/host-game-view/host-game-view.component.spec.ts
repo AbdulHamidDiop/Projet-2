@@ -68,7 +68,7 @@ describe('HostGameViewComponent', () => {
         mockPlayers = [
             { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0 },
             { name: 'Player2', isHost: true, id: '2', score: 20, bonusCount: 1 },
-        ];
+        ] as Player[];
         mockStat = {
             questionId: 'test-question-id',
             choiceIndex: 0,
@@ -160,10 +160,10 @@ describe('HostGameViewComponent', () => {
     });
 
     it('should update player info on receiving QCM_STATS event', () => {
-        component.players = [{ name: 'A', score: 0 } as Player];
+        component.playerService.playersInGame = [{ name: 'A', score: 0 } as Player];
         mockStat.player = { name: 'A', score: 2 } as Player;
         component.updatePlayerFromServer(mockStat);
-        expect(component.players[0].score).toEqual(2);
+        expect(component.playerService.playersInGame[0].score).toEqual(2);
     });
 
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {

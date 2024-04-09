@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { Game, GameService } from '@app/services/game.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Type } from '@common/game';
+import { Player, Type } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { of } from 'rxjs';
@@ -154,12 +154,12 @@ describe('ResultsPageComponent', () => {
 
     it('should sort players by score in descending order and by name in ascending order if scores are equal', () => {
         component.sortPlayers();
-        expect(component.players).toEqual([
+        expect(component.playerService.playersInGame).toEqual([
             { name: 'Dave', isHost: false, id: '4', score: 20, bonusCount: 0 },
             { name: 'Charlie', isHost: false, id: '3', score: 15, bonusCount: 0 },
             { name: 'Alice', isHost: false, id: '1', score: 10, bonusCount: 0 },
             { name: 'Bob', isHost: false, id: '2', score: 10, bonusCount: 0 },
-        ]);
+        ] as Player[]);
     });
 
     it('should leave without kicking players if player is not the host', () => {
