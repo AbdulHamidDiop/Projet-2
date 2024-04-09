@@ -18,7 +18,6 @@ import { IoService } from './ioservice.service';
 // On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
-    unitTests: boolean = false;
     showingResults: boolean = false;
     readonly socket: Socket;
     readonly namespaces: Map<string, Socket> = new Map();
