@@ -1,4 +1,4 @@
-<main *ngIf="this.fullView">
+<div *ngIf="this.fullView">
     <app-select-room *ngIf="this.roomIdEntryView"></app-select-room>
     <app-select-username *ngIf="this.usernameEntryView"></app-select-username>
     <app-player-and-admin-panel
@@ -8,6 +8,5 @@
         [game]="this.game"
     ></app-player-and-admin-panel>
     <app-sidebar *ngIf="this.playerPanelView" [player]="this.player" id="sidebar"></app-sidebar>
-</main>
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="5" [message]="'Le jeu va commencer dans'">
-</app-countdown-modal>
+</div>
+<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="5"></app-countdown-modal>

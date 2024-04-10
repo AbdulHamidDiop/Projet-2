@@ -1,39 +1,57 @@
-import { Injectable } from '@angular/core';
-import { API_URL } from '@common/consts';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Feedback } from '@common/feedback';
-import { Game, Question } from '@common/game';
+import { Game, Player, Question } from '@common/game';
+import { Events, Namespaces } from '@common/sockets';
+import { Subscription } from 'rxjs';
+import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { GameSessionService } from './game-session.service';
+import { SocketRoomService } from './socket-room.service';
 
 @Injectable({
-    providedIn: 'root', // SPRINT 2: might have to not be a singleton
+    providedIn: 'root',
 })
-export class GameManagerService {
+export class GameManagerService implements OnDestroy {
     game: Game;
     gamePin: string;
     currentQuestionIndex: number = 0;
     endGame: boolean = false;
+    inRandomMode: boolean = false;
+    playersInRandomGame: Player[] = [];
+
+    private playerLeftSubscription: Subscription;
+    private answerConfirmationSubscription: Subscription;
 
     constructor(
         private gameSessionService: GameSessionService,
         private fetchService: FetchService,
+        private socketService: SocketRoomService,
     ) {}
 
     async initialize(pin: string) {
         this.gamePin = pin;
-        const game = await this.gameSessionService.getQuestionsWithoutCorrectShown(pin);
+        const game = await this.gameSessionService.getGameWithoutCorrectShown(pin);
         if (game) {
             this.game = game;
         }
     }
 
+    initRandomGame(players: Player[]) {
+        this.playersInRandomGame = players;
+        this.inRandomMode = true;
+
+        this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
+            const username = (data as { user: string }).user;
+            this.playersInRandomGame = this.playersInRandomGame.filter((player) => player.name !== username);
+        });
+    }
     reset() {
         this.currentQuestionIndex = 0;
         this.endGame = false;
     }
 
     firstQuestion(): Question {
-        if (this.game && this.game.questions[0]) {
+        if (this.game?.questions[0]) {
             return this.game.questions[0];
         }
         return {} as Question;
@@ -63,7 +81,7 @@ export class GameManagerService {
     }
 
     async getFeedBack(questionId: string, answer: string[]): Promise<Feedback[]> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/feedback', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/feedback', {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -73,5 +91,10 @@ export class GameManagerService {
         });
         const feedback = await response.json();
         return feedback;
+    }
+
+    ngOnDestroy() {
+        this.playerLeftSubscription?.unsubscribe();
+        this.answerConfirmationSubscription?.unsubscribe();
     }
 }

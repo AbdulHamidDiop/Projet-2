@@ -1,4 +1,5 @@
-import { Game } from './game';
+import { Game, Player } from './game';
+import { BarChartQuestionStats } from './game-stats';
 export interface GameSession {
     pin: string;
     game: Game;
@@ -6,4 +7,7 @@ export interface GameSession {
     nbPlayers?: number;
     timeStarted?: Date;
     bestScore?: number;
+    isCompleted: boolean;
+    players: Player[];
+    statisticsData: BarChartQuestionStats[];
 }

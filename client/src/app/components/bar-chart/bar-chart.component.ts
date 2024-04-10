@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
@@ -38,7 +38,10 @@ export class BarChartComponent implements OnInit {
         },
     };
 
-    constructor(private socketService: SocketRoomService) {}
+    constructor(
+        private socketService: SocketRoomService,
+        private changeDetector: ChangeDetectorRef,
+    ) {}
 
     ngOnInit(): void {
         this.updateData();
@@ -61,6 +64,7 @@ export class BarChartComponent implements OnInit {
     }
 
     updateData(): void {
+        this.changeDetector.detectChanges();
         this.barChartData = {
             labels: [this.labels],
             datasets: this.datasets,

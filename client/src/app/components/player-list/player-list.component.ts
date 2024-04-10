@@ -1,5 +1,6 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit } from '@angular/core';
 import { Sort } from '@angular/material/sort';
+import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
 
@@ -9,16 +10,17 @@ import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
     styleUrls: ['./player-list.component.scss'],
 })
 export class PlayerListComponent implements OnInit, OnChanges {
-    @Input() players: Player[] = [];
-
     sortOption: Sort;
     protected sortedData: Player[];
-    constructor(private socket: SocketRoomService) {
-        this.sortedData = this.players.slice();
+    constructor(
+        private socket: SocketRoomService,
+        public playerService: PlayerService,
+    ) {
+        this.sortedData = this.playerService.playersInGame.slice();
     }
 
     ngOnInit(): void {
-        this.sortedData = this.players.slice();
+        this.sortedData = this.playerService.playersInGame.slice();
     }
 
     ngOnChanges(): void {
@@ -75,13 +77,13 @@ export class PlayerListComponent implements OnInit, OnChanges {
 
     sortData(sort: Sort) {
         this.sortOption = sort;
-        const data = this.players.slice();
+        const data = this.playerService.playersInGame.slice();
         if (!sort.active || sort.direction === '') {
             this.sortedData = data;
             return;
         }
 
-        this.players = data.sort((a, b) => {
+        this.playerService.playersInGame = data.sort((a, b) => {
             const isAsc = sort.direction === 'asc';
             switch (sort.active) {
                 case 'name':

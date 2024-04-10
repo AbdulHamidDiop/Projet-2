@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Game, GameService } from '@app/services/game.service';
+import { Router } from '@angular/router';
+import { GameSessionService } from '@app/services/game-session.service';
+import { Game } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { Player } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
-import { Player } from '@common/player';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
@@ -16,33 +17,27 @@ import { Subscription } from 'rxjs';
 })
 export class ResultsPageComponent implements OnInit, OnDestroy {
     game: Game;
-    players: Player[] = [];
     statisticsData: BarChartQuestionStats[] = [];
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
+    players: Player[] = [];
 
     private routeSubscription: Subscription;
     private playersSubscription: Subscription;
     private gameResultsSubscription: Subscription;
 
-    // On a besoin de ces injections.
+    // On a besoin de ces injections pour le bon fonctionnement de la page, sans nuire à la complexité du code
     // eslint-disable-next-line max-params
     constructor(
         private socketsService: SocketRoomService,
         public playerService: PlayerService,
-        private gameService: GameService,
-        private route: ActivatedRoute,
+        private gameSessionService: GameSessionService,
         public router: Router,
-    ) {
-        this.players = this.playerService.playersInGame;
-    }
+    ) {}
 
     ngOnInit(): void {
-        this.routeSubscription = this.route.paramMap.subscribe((params) => {
-            const id = params.get('id');
-            if (id) {
-                this.game = this.gameService.getGameByID(id);
-            }
+        this.gameSessionService.getGameWithoutCorrectShown(this.socketsService.room).then((game) => {
+            this.game = game;
         });
         this.connectToServer();
         window.addEventListener('popstate', this.onLocationChange);
@@ -50,13 +45,14 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     sortPlayers(): void {
-        this.players.sort((a, b) => {
+        this.playerService.playersInGame.sort((a, b) => {
             if (a.score !== b.score) {
                 return b.score - a.score;
             } else {
                 return a.name.localeCompare(b.name);
             }
         });
+        this.players = this.playerService.playersInGame;
     }
 
     returnToInitialView(): void {
@@ -85,10 +81,10 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
 
-        this.routeSubscription.unsubscribe();
-        this.playersSubscription.unsubscribe();
-        this.gameResultsSubscription.unsubscribe();
-        this.socketsService.endGame();
+        this.routeSubscription?.unsubscribe();
+        this.playersSubscription?.unsubscribe();
+        this.gameResultsSubscription?.unsubscribe();
+        this.socketsService?.endGame();
     }
 
     leaveWithoutKickingPlayers() {
@@ -101,8 +97,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
             };
             this.socketsService.sendChatMessage(message);
             this.socketsService.leaveRoom();
-            this.socketsService.room = '';
-            this.playerService.playersInGame = [];
+            this.socketsService.resetGameState();
             this.router.navigate(['/']);
         } else {
             this.socketsService.endGame('À la prochaine partie!');
@@ -110,27 +105,19 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     private updateChart(): void {
-        this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
+        this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
         this.socketsService.sendMessage(Events.UPDATE_CHART, Namespaces.GAME_STATS);
     }
 
     private connectToServer(): void {
-        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_PLAYERS).subscribe({
-            next: (playersData: unknown) => {
-                const playersObj = playersData as { [key: string]: Player };
-                const players: Player[] = [];
-                for (const key in playersObj) {
-                    if (!isNaN(Number(key))) {
-                        players.push(playersObj[key]);
-                    }
-                }
-                this.players = players;
-                this.sortPlayers();
-            },
+        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_FINAL_PLAYERS).subscribe((data) => {
+            const players = data as Player[];
+            this.playerService.playersInGame = players;
+            this.sortPlayers();
         });
 
         // Écouter les QCMSTATS
-        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GAME_RESULTS).subscribe({
+        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_STATS).subscribe({
             next: (stats: unknown) => {
                 const statsObj = stats as { [key: string]: BarChartQuestionStats };
                 const statisticsData: BarChartQuestionStats[] = [];
@@ -140,8 +127,10 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
                     }
                 }
                 this.statisticsData = statisticsData;
-                this.currentHistogramData = this.statisticsData[this.currentHistogramIndex].data;
+                this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
             },
         });
+        this.socketsService.sendMessage(Events.GET_FINAL_PLAYERS, Namespaces.GAME_STATS);
+        this.socketsService.sendMessage(Events.GET_STATS, Namespaces.GAME_STATS);
     }
 }

@@ -1,68 +1,15 @@
 import { Application } from '@app/app';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
-import { Game } from '@common/game';
-import { GameSession } from '@common/game-session';
+import { Game, Player } from '@common/game';
+import { BarChartQuestionStats } from '@common/game-stats';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
 import { SinonStubbedInstance, createStubInstance } from 'sinon';
 import supertest from 'supertest';
 import { Container } from 'typedi';
 
-const SESSION_DATA: GameSession[] = [
-    {
-        pin: '1122',
-        game: {
-            id: '46277881345',
-            lastModification: '2024-02-01T15:04:41.171Z',
-            title: 'Questionnaire sur le JS',
-            description: 'Questions de pratique sur le langage JavaScript',
-            duration: 59,
-            questions: [
-                {
-                    id: '11',
-                    type: 'QCM',
-                    text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
-                    points: 40,
-                    choices: [
-                        {
-                            text: 'var',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'self',
-                            isCorrect: false,
-                        },
-                        {
-                            text: 'this',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'int',
-                        },
-                    ],
-                },
-                {
-                    id: '12',
-                    type: 'QCM',
-                    text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
-                    points: 20,
-                    choices: [
-                        {
-                            text: 'Non',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'Oui',
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-            isHidden: false,
-        },
-    } as unknown as GameSession,
-];
+let SESSION_DATA = '';
 
 const GAME: Game = {
     id: '12345678901',
@@ -103,6 +50,61 @@ describe('GameSessionController', () => {
     let expressApp: Express.Application;
 
     beforeEach(async () => {
+        SESSION_DATA = JSON.stringify([
+            {
+                pin: '1122',
+                isCompleted: false,
+                game: {
+                    id: '46277881345',
+                    lastModification: '2024-02-01T15:04:41.171Z',
+                    title: 'Questionnaire sur le JS',
+                    description: 'Questions de pratique sur le langage JavaScript',
+                    duration: 59,
+                    questions: [
+                        {
+                            id: '11',
+                            type: 'QCM',
+                            text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+                            points: 40,
+                            choices: [
+                                {
+                                    text: 'var',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'self',
+                                    isCorrect: false,
+                                },
+                                {
+                                    text: 'this',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'int',
+                                },
+                            ],
+                        },
+                        {
+                            id: '12',
+                            type: 'QCM',
+                            text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
+                            points: 20,
+                            choices: [
+                                {
+                                    text: 'Non',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'Oui',
+                                    isCorrect: false,
+                                },
+                            ],
+                        },
+                    ],
+                    isHidden: false,
+                },
+            },
+        ]);
         gameSessionService = createStubInstance(GameSessionService);
         const app = Container.get(Application);
         Object.defineProperty(app['gameSessionController'], 'gameSessionService', { value: gameSessionService });
@@ -148,15 +150,17 @@ describe('GameSessionController', () => {
     it('should create GameSession', async () => {
         const pin = '1111';
         const game = GAME;
+        const statisticsData: BarChartQuestionStats[] = [];
+        const players: Player[] = [];
         const isCompleted = false;
-        gameSessionService.createSession.resolves({ pin, game, isCompleted });
+        gameSessionService.createSession.resolves({ pin, game, statisticsData, players, isCompleted });
         return supertest(expressApp)
             .post(`/api/gameSession/create/${pin}`)
             .set('Content', 'application/json')
             .send(GAME)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal({ pin, game, isCompleted });
+                expect(response.body).to.deep.equal({ pin, game, statisticsData, players, isCompleted });
             });
     });
 

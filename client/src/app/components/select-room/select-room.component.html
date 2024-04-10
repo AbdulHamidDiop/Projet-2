@@ -1,8 +1,39 @@
-<form class="example-form">
-    <h2>Entrez l'identifiant de la salle à rejoindre.</h2>
+<div id="grad">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+    </head>
 
-    <mat-form-field class="example-full-width">
-        <input #input matInput placeholder="Ex: 2324" (input)="restrictInput($event)"/>
-    </mat-form-field>
-    <button mat-button class="example-full-width" (click)="joinRoom(input)">Rejoindre la salle</button>
-</form>
+    <div class="top-right-corner">
+        <div class="newsletter-subscription">
+            <input type="email" placeholder="Your email" id="newsletterEmail" />
+            <button onclick="subscribeNewsletter()">Subscribe to our newsletter ;)</button>
+        </div>
+        <nav class="top-links">
+            <a href="/about-us">About Us</a>
+            <a href="/contact-us">Contact Us</a>
+        </nav>
+        <p>Join the excitement!</p>
+    </div>
+
+    <div class="header">
+        <h1>QUI(CK)ZZ</h1>
+        <p>Think Fast</p>
+    </div>
+
+    <main>
+        <div class="example-form">
+            <h2>Entrez l'identifiant de la salle à rejoindre.</h2>
+            <div class="input-group">
+                <mat-form-field class="example-full-width">
+                    <input #input matInput placeholder="Ex: 2324" (input)="restrictInput($event)" />
+                </mat-form-field>
+                <img src="https://media.tenor.com/OBWnOrsAz9QAAAAi/light-bulb-idea.gif" alt="Light Bulb Idea GIF" class="right-side-image" />
+            </div>
+            <button mat-button class="example-full-width" (click)="joinRoom(input)">Rejoindre la salle</button>
+        </div>
+
+        <div class="decorative-element">
+            <img src="https://media.tenor.com/OTDlqAguqpEAAAAi/sonic-running.gif" alt="Decorative Element" />
+        </div>
+    </main>
+</div>

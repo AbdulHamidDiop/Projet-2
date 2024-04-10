@@ -1,5 +1,6 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed } from '@angular/core/testing';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
 import { Question } from '@common/game';
@@ -57,9 +58,10 @@ describe('GameManagerService', () => {
     let fetchServiceSpy: jasmine.SpyObj<FetchService>;
 
     beforeEach(() => {
-        const spyGameSessionService = jasmine.createSpyObj('GameSessionService', ['getQuestionsWithoutCorrectShown', 'checkAnswer']);
+        const spyGameSessionService = jasmine.createSpyObj('GameSessionService', ['getGameWithoutCorrectShown', 'checkAnswer']);
         const spyFetchService = jasmine.createSpyObj('FetchService', ['fetch']);
         TestBed.configureTestingModule({
+            imports: [MatSnackBarModule],
             providers: [
                 { provide: GameSessionService, useValue: spyGameSessionService },
                 { provide: FetchService, useValue: spyFetchService },
@@ -76,7 +78,7 @@ describe('GameManagerService', () => {
 
     it('should initialize game data correctly', async () => {
         const mockGame = { id: 'gameId', questions: [] } as unknown as Game;
-        gameSessionServiceSpy.getQuestionsWithoutCorrectShown.and.resolveTo(mockGame);
+        gameSessionServiceSpy.getGameWithoutCorrectShown.and.resolveTo(mockGame);
         await service.initialize('gameId');
         expect(service.game).toEqual(mockGame);
     });
@@ -117,6 +119,19 @@ describe('GameManagerService', () => {
         const question = service.firstQuestion();
         expect(question).toEqual({} as Question);
         expect(service.currentQuestionIndex).toBe(0);
+    });
+
+    it('should check wether it is on the last question with onLastQuestion', () => {
+        service.currentQuestionIndex = 0;
+        service.game = { id: 'gameId', questions: [{}] } as unknown as Game;
+        const onLastQuestion = service.onLastQuestion();
+        expect(onLastQuestion).toBeTruthy();
+    });
+
+    it('should return false if no game with onLastQuestion', () => {
+        service.game = undefined as unknown as Game;
+        const onLastQuestion = service.onLastQuestion();
+        expect(onLastQuestion).toBeFalsy();
     });
 
     describe('goNextQuestion', () => {

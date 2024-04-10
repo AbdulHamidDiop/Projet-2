@@ -14,7 +14,7 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, QCMStats, QRLAnswer, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
-import { Subscription, of } from 'rxjs';
+import { of } from 'rxjs';
 import { HostGameViewComponent } from './host-game-view.component';
 import SpyObj = jasmine.SpyObj;
 
@@ -45,6 +45,7 @@ describe('HostGameViewComponent', () => {
             'onLastQuestion',
         ]);
         gameManagerServiceSpy.game = { id: 'test-game-id', questions: [], duration: 10 } as unknown as Game;
+        gameManagerServiceSpy.onLastQuestion.and.returnValue(true);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         gameSessionServiceSpy = jasmine.createSpyObj('GameSessionService', ['completeSession', 'addNbPlayers']);
@@ -73,7 +74,7 @@ describe('HostGameViewComponent', () => {
         mockPlayers = [
             { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0 },
             { name: 'Player2', isHost: true, id: '2', score: 20, bonusCount: 1 },
-        ];
+        ] as Player[];
         mockStat = {
             questionId: 'test-question-id',
             choiceIndex: 0,
@@ -168,10 +169,10 @@ describe('HostGameViewComponent', () => {
     });
 
     it('should update player info on receiving QCM_STATS event', () => {
-        component.players = [{ name: 'A', score: 0 } as Player];
+        component.playerService.playersInGame = [{ name: 'A', score: 0 } as Player];
         mockStat.player = { name: 'A', score: 2 } as Player;
         component.updatePlayerFromServer(mockStat);
-        expect(component.players[0].score).toEqual(2);
+        expect(component.playerService.playersInGame[0].score).toEqual(2);
     });
 
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {
@@ -226,6 +227,7 @@ describe('HostGameViewComponent', () => {
         const PLAYER_COMPONENT_INIT_DELAY = 3500;
         tick(PLAYER_COMPONENT_INIT_DELAY);
         expect(routerSpy.navigate).toHaveBeenCalledWith(['/game', 'test-game-id', 'results']);
+        tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
     }));
 
     it('should update currentQuestion on NEXT_QUESTION event', fakeAsync(() => {
@@ -462,17 +464,6 @@ describe('HostGameViewComponent', () => {
 
     it('should unsubscribe after ngOnDestroy', () => {
         spyOn(component.gameManagerService, 'reset');
-        component.unitTesting = false;
-        component.playerLeftSubscription = new Subscription();
-        component.getPlayersSubscription = new Subscription();
-        //        component.startTimerSubscription = new Subscription();
-        //        component.stopTimerSubscription = new Subscription();
-        component.nextQuestionSubscription = new Subscription();
-        component.qcmStatsSubscription = new Subscription();
-        component.timerEndedSubscription = new Subscription();
-        component.endGameSubscription = new Subscription();
-        component.updatePlayerSubscription = new Subscription();
-
         component.ngOnDestroy();
         expect(component.gameManagerService.reset).toHaveBeenCalled();
     });

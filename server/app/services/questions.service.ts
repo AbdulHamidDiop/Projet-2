@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/member-ordering */
 /* eslint-disable no-restricted-imports */
-import { Choices, Question } from '@common/game';
+import { Choices, Question, Type } from '@common/game';
 import { DB_COLLECTION_QUESTIONS } from '@common/utils/env';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
+const NUMBER_RANDOM_QUESTIONS = 5;
 
 @Service()
 export class QuestionsService {
@@ -80,5 +82,27 @@ export class QuestionsService {
             return true;
         }
         return true;
+    }
+
+    async getRandomQuestions(): Promise<Question[]> {
+        const questions: Question[] = await this.getAllQuestions();
+        const qcmQuestions = questions.filter((question) => question.type === Type.QCM);
+        if (qcmQuestions.length < NUMBER_RANDOM_QUESTIONS) {
+            throw new Error('Not enough QCM questions');
+        }
+        return this.selectRandomQuestions(qcmQuestions);
+    }
+
+    private shuffleQuestions(questions: Question[]): Question[] {
+        for (let i = questions.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [questions[i], questions[j]] = [questions[j], questions[i]];
+        }
+        return questions;
+    }
+
+    private selectRandomQuestions(questions: Question[]): Question[] {
+        questions = this.shuffleQuestions(questions);
+        return questions.slice(0, NUMBER_RANDOM_QUESTIONS);
     }
 }

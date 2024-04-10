@@ -124,4 +124,24 @@ describe('QuestionsController', () => {
                 expect(response.body).to.deep.equal({ isCorrect: true });
             });
     });
+
+    it('Should random questions if possible', async () => {
+        questionService.getRandomQuestions.resolves([{}, {}, {}, {}, {}] as Question[]);
+        return supertest(expressApp)
+            .get('/api/questions/random')
+            .expect(StatusCodes.OK)
+            .then((response) => {
+                expect(response.body).to.deep.equal([{}, {}, {}, {}, {}] as Question[]);
+            });
+    });
+
+    it('Should send status code 422 if not enough questions', async () => {
+        questionService.getRandomQuestions.rejects(new Error('Not enough QCM questions'));
+        return supertest(expressApp)
+            .get('/api/questions/random')
+            .expect(StatusCodes.UNPROCESSABLE_ENTITY)
+            .then((response) => {
+                expect(response.body.message).to.deep.equal('Not enough QCM questions available.');
+            });
+    });
 });

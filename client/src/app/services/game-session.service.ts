@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { FetchService } from '@app/services/fetch.service';
-import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
     providedIn: 'root',
@@ -11,8 +11,8 @@ import { GameSession } from '@common/game-session';
 export class GameSessionService {
     constructor(public fetchService: FetchService) {}
 
-    async getQuestionsWithoutCorrectShown(pin: string): Promise<Game> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/questionswithoutcorrect/' + pin);
+    async getGameWithoutCorrectShown(pin: string): Promise<Game> {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/questionswithoutcorrect/' + pin);
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -22,7 +22,7 @@ export class GameSessionService {
 
     async checkAnswer(answer: string[], sessionPin: string, questionID: string): Promise<boolean> {
         try {
-            const response = await this.fetchService.fetch(API_URL + 'gameSession/check', {
+            const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/check', {
                 method: 'POST',
                 headers: {
                     // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -42,7 +42,7 @@ export class GameSessionService {
     }
 
     async createSession(pin: string, game: Game): Promise<void> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/create/' + pin, {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/create/' + pin, {
             method: 'POST',
             headers: {
                 // eslint-disable-next-line @typescript-eslint/naming-convention

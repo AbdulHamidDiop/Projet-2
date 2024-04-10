@@ -1,7 +1,9 @@
-main {
+div {
     height: 100vh;
     display: flex;
     margin-left: 250px;
+    display: grid;
+    outline: none;
 }
 
 .header-item {
@@ -35,9 +37,4 @@ main {
     flex: 1 1 auto;
     max-width: 50%;
     margin-top: 50px;
-}
-
-.main {
-    display: grid;
-    outline: none;
 }
