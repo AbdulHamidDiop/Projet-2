@@ -33,7 +33,6 @@ export class Server {
         private socketEvents: SocketEvents,
         private gameSessionService: GameSessionService,
         private databaseService: DatabaseService,
-        private databaseService: DatabaseService,
     ) {}
 
     private static normalizePort(val: number | string): number | string | boolean {

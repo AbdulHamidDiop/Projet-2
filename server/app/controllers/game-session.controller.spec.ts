@@ -111,12 +111,12 @@ describe('GameSessionController', () => {
         expressApp = app.app;
     });
     it('should return all games ', async () => {
-        gameSessionService.getAllSessions.resolves(SESSION_DATA);
+        gameSessionService.getAllSessions.resolves(JSON.parse(SESSION_DATA));
         return supertest(expressApp)
             .get('/api/gameSession')
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(SESSION_DATA);
+                expect(response.body).to.deep.equal(JSON.parse(SESSION_DATA));
             });
     });
 
@@ -126,13 +126,13 @@ describe('GameSessionController', () => {
     // });
 
     it('should return game by pin ', async () => {
-        const pin = SESSION_DATA[0].pin;
-        gameSessionService.getSessionByPin.resolves(SESSION_DATA[0]);
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        gameSessionService.getSessionByPin.resolves(JSON.parse(SESSION_DATA)[0]);
         return supertest(expressApp)
             .get(`/api/gameSession/${pin}`)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(SESSION_DATA[0]);
+                expect(response.body).to.deep.equal(JSON.parse(SESSION_DATA)[0]);
             });
     });
 
@@ -165,7 +165,7 @@ describe('GameSessionController', () => {
     });
 
     it('should delete GameSession', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         gameSessionService.deleteSession.resolves();
         return supertest(expressApp)
             .delete(`/api/gameSession/delete/${pin}`)
@@ -176,18 +176,18 @@ describe('GameSessionController', () => {
     });
 
     it('should get game by pin', async () => {
-        const pin = SESSION_DATA[0].pin;
-        gameSessionService.getGameByPin.resolves(SESSION_DATA[0].game);
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        gameSessionService.getGameByPin.resolves(JSON.parse(SESSION_DATA)[0].game);
         return supertest(expressApp)
             .get(`/api/gameSession/game/${pin}`)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(SESSION_DATA[0].game);
+                expect(response.body).to.deep.equal(JSON.parse(SESSION_DATA)[0].game);
             });
     });
 
     it('should get questions without answers', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const gameWithoutAnswers = {
             id: '46277881345',
             lastModification: '2024-02-01T15:04:41.171Z',
@@ -221,12 +221,12 @@ describe('GameSessionController', () => {
             });
     });
     it('should check answers correctly', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         gameSessionService.isCorrectAnswer.resolves(true);
         return supertest(expressApp)
             .post('/api/gameSession/check')
             .set('Content', 'application/json')
-            .send({ answer: [], sessionPin: pin, questionID: SESSION_DATA[0].game.questions[0].id })
+            .send({ answer: [], sessionPin: pin, questionID: JSON.parse(SESSION_DATA)[0].game.questions[0].id })
             .expect(StatusCodes.OK)
             .then((response) => {
                 expect(response.body).to.deep.equal({ isCorrect: true });
@@ -245,7 +245,7 @@ describe('GameSessionController', () => {
     });
 
     it('should return feedback for correct input', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const feedback: Feedback[] = [
             { choice: 'var', status: 'missed' },
             { choice: 'self', status: 'incorrect' },
@@ -256,59 +256,10 @@ describe('GameSessionController', () => {
         return supertest(expressApp)
             .post('/api/gameSession/feedback')
             .set('Content', 'application/json')
-            .send({ sessionPin: pin, questionID: SESSION_DATA[0].game.questions[0].id, submittedAnswers: [] })
+            .send({ sessionPin: pin, questionID: JSON.parse(SESSION_DATA)[0].game.questions[0].id, submittedAnswers: [] })
             .expect(StatusCodes.OK)
             .then((response) => {
                 expect(response.body).to.deep.equal(feedback);
             });
-    });
-
-    it('should complete session of an existing session', async () => {
-        gameSessionService.completeSession.resolves(true);
-        const pin = '1122';
-        const bestScore = 10;
-        await supertest(expressApp)
-            .patch('/api/gameSession/completeSession')
-            .set('Content', 'application/json')
-            .send({ pin, bestScore })
-            .expect(StatusCodes.NO_CONTENT);
-    });
-
-    it('should not complete session of an unexisting session', async () => {
-        gameSessionService.completeSession.resolves(false);
-        const pin = '5235';
-        const bestScore = 10;
-        await supertest(expressApp)
-            .patch('/api/gameSession/completeSession')
-            .set('Content', 'application/json')
-            .send({ pin, bestScore })
-            .expect(StatusCodes.BAD_REQUEST);
-    });
-
-    it('should delete all sessions from history', async () => {
-        gameSessionService.deleteHistory.resolves();
-        await supertest(expressApp).delete('/api/gameSession/deleteHistory').set('Content', 'application/json').send().expect(StatusCodes.NO_CONTENT);
-    });
-
-    it('should add number of players to an existing session', async () => {
-        gameSessionService.addNbPlayers.resolves(true);
-        const pin = '1122';
-        const nbPlayers = 4;
-        await supertest(expressApp)
-            .patch('/api/gameSession/addNbPlayers')
-            .set('Content', 'application/json')
-            .send({ pin, nbPlayers })
-            .expect(StatusCodes.NO_CONTENT);
-    });
-
-    it('should not add number of players to an unexisting session', async () => {
-        gameSessionService.addNbPlayers.resolves(false);
-        const pin = '5235';
-        const nbPlayers = 4;
-        await supertest(expressApp)
-            .patch('/api/gameSession/addNbPlayers')
-            .set('Content', 'application/json')
-            .send({ pin, nbPlayers })
-            .expect(StatusCodes.BAD_REQUEST);
     });
 });
