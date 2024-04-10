@@ -4,6 +4,8 @@ import { StatusCodes } from 'http-status-codes';
 import { environment } from 'src/environments/environment';
 import { GameSessionService } from './game-session.service';
 import { Game } from './game.service';
+import { GameSession } from '@common/game-session';
+import { API_URL } from '@common/consts';
 
 const SESSION: GameSession = {
     pin: '1122',

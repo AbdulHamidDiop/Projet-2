@@ -17,6 +17,7 @@ describe('PlayerService', () => {
             isHost: false,
             id: '',
             score: 100,
+            leftGame: false,
             bonusCount: 0,
         };
         player2 = {
@@ -24,6 +25,7 @@ describe('PlayerService', () => {
             isHost: false,
             id: '',
             score: 150,
+            leftGame: false,
             bonusCount: 0,
         };
         player3 = {
@@ -31,6 +33,7 @@ describe('PlayerService', () => {
             isHost: false,
             id: '',
             score: 80,
+            leftGame: false,
             bonusCount: 0,
         };
     });
@@ -56,6 +59,7 @@ describe('PlayerService', () => {
             name: 'Player2',
             isHost: false,
             id: '',
+            leftGame: false,
             score: 200,
             bonusCount: 0,
         };
@@ -77,9 +81,24 @@ describe('PlayerService', () => {
         const players = [
             { name: 'player1', isHost: false, id: '1', score: 0, bonusCount: 0 },
             { name: 'player2', isHost: false, id: '2', score: 0, bonusCount: 0 },
-        ];
+        ] as Player[];
         service.playersInGame = [];
         service.setGamePlayers(players);
         expect(service.playersInGame).toEqual(players);
+    });
+
+    it('should return the number of active players', () => {
+        player3.leftGame = true;
+        service.setGamePlayers([player1, player2, player3]);
+        const nActivePlayers = service.nActivePlayers();
+        const EXPECTED_N_ACTIVE_PLAYERS = 2;
+        expect(nActivePlayers).toBe(EXPECTED_N_ACTIVE_PLAYERS);
+    });
+
+    it('should return the active players', () => {
+        player2.leftGame = true;
+        service.setGamePlayers([player1, player2, player3]);
+        const activePlayers = service.activePlayers();
+        expect(activePlayers).toEqual([player1, player3]);
     });
 });

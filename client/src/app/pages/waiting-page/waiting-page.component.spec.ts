@@ -36,6 +36,7 @@ describe('WaitingPageComponent', () => {
             'listenForMessages',
             'getChatMessages',
             'randomGameStartSubscribe',
+            'requestPlayers',
         ]);
         socketMock.leaveRoomSubscribe.and.returnValue(of(undefined));
         socketMock.roomJoinSubscribe.and.returnValue(of(true));
@@ -114,6 +115,7 @@ describe('WaitingPageComponent', () => {
         tick(DELAY + 1);
 
         expect(routerMock.navigate).toHaveBeenCalledWith(['/hostView/123']);
+        tick(DELAY + 1);
     }));
 
     it('Should navigate to game if player is not the host', fakeAsync(() => {

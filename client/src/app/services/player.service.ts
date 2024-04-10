@@ -47,4 +47,14 @@ export class PlayerService {
         }
         return bestPlayer.score;
     }
+
+    setGamePlayers(players: Player[]): void {
+        // adds only the players that are not already in the list
+        players.forEach((player) => {
+            const index = this.playersInGame.findIndex((pl) => pl.name === player.name);
+            if (index < 0) {
+                this.playersInGame.push(player);
+            }
+        });
+    }
 }

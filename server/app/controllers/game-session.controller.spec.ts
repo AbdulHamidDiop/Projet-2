@@ -120,11 +120,6 @@ describe('GameSessionController', () => {
             });
     });
 
-    //   this.router.get('/', async (req: Request, res: Response) => {
-    //     res.json(await this.gameSessionService.getAllSessions());
-    //     res.status(StatusCodes.OK);
-    // });
-
     it('should return game by pin ', async () => {
         const pin = JSON.parse(SESSION_DATA)[0].pin;
         gameSessionService.getSessionByPin.resolves(JSON.parse(SESSION_DATA)[0]);
@@ -261,5 +256,54 @@ describe('GameSessionController', () => {
             .then((response) => {
                 expect(response.body).to.deep.equal(feedback);
             });
+    });
+
+    it('should complete session of an existing session', async () => {
+        gameSessionService.completeSession.resolves(true);
+        const pin = '1122';
+        const bestScore = 10;
+        await supertest(expressApp)
+            .patch('/api/gameSession/completeSession')
+            .set('Content', 'application/json')
+            .send({ pin, bestScore })
+            .expect(StatusCodes.NO_CONTENT);
+    });
+
+    it('should not complete session of an unexisting session', async () => {
+        gameSessionService.completeSession.resolves(false);
+        const pin = '5235';
+        const bestScore = 10;
+        await supertest(expressApp)
+            .patch('/api/gameSession/completeSession')
+            .set('Content', 'application/json')
+            .send({ pin, bestScore })
+            .expect(StatusCodes.BAD_REQUEST);
+    });
+
+    it('should delete all sessions from history', async () => {
+        gameSessionService.deleteHistory.resolves();
+        await supertest(expressApp).delete('/api/gameSession/deleteHistory').set('Content', 'application/json').send().expect(StatusCodes.NO_CONTENT);
+    });
+
+    it('should add number of players to an existing session', async () => {
+        gameSessionService.addNbPlayers.resolves(true);
+        const pin = '1122';
+        const nbPlayers = 4;
+        await supertest(expressApp)
+            .patch('/api/gameSession/addNbPlayers')
+            .set('Content', 'application/json')
+            .send({ pin, nbPlayers })
+            .expect(StatusCodes.NO_CONTENT);
+    });
+
+    it('should not add number of players to an unexisting session', async () => {
+        gameSessionService.addNbPlayers.resolves(false);
+        const pin = '5235';
+        const nbPlayers = 4;
+        await supertest(expressApp)
+            .patch('/api/gameSession/addNbPlayers')
+            .set('Content', 'application/json')
+            .send({ pin, nbPlayers })
+            .expect(StatusCodes.BAD_REQUEST);
     });
 });

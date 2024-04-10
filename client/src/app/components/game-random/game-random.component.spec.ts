@@ -17,7 +17,8 @@ describe('GameRandomComponent', () => {
         // Create spy objects for each service
         mockQuestionsService = jasmine.createSpyObj('QuestionsService', ['getRandomQuestions']);
         mockSocketRoomService = jasmine.createSpyObj('SocketRoomService', ['leaveRoom', 'createRoom']);
-        mockPlayerService = jasmine.createSpyObj('PlayerService', [], { player: { isHost: false, name: '' } });
+        mockPlayerService = jasmine.createSpyObj('PlayerService', ['nActivePlayers'], { player: { isHost: false, name: '' } });
+        mockPlayerService.nActivePlayers.and.returnValue(0);
 
         await TestBed.configureTestingModule({
             declarations: [GameRandomComponent],
@@ -30,12 +31,12 @@ describe('GameRandomComponent', () => {
         }).compileComponents();
 
         const mockQuestions: Question[] = [
-            { id: '1', type: Type.QCM, lastModification: null, text: 'Question 1?', points: 10, choices: [], answer: 'A' },
+            { id: '1', type: Type.QCM, lastModification: null, text: 'Question 1?', points: 10, choices: [], answer: 'A' } as Question,
             { id: '2', type: Type.QCM, lastModification: null, text: 'Question 2?', points: 10, choices: [], answer: 'B' },
             { id: '3', type: Type.QCM, lastModification: null, text: 'Question 3?', points: 10, choices: [], answer: 'C' },
             { id: '4', type: Type.QCM, lastModification: null, text: 'Question 4?', points: 10, choices: [], answer: 'D' },
             { id: '5', type: Type.QCM, lastModification: null, text: 'Question 5?', points: 10, choices: [], answer: 'E' },
-        ];
+        ] as Question[];
         mockQuestionsService.getRandomQuestions.and.returnValue(Promise.resolve(mockQuestions));
         fixture = TestBed.createComponent(GameRandomComponent);
         component = fixture.componentInstance;

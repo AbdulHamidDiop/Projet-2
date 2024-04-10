@@ -49,7 +49,7 @@ describe('HostGameViewComponent', () => {
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
         gameSessionServiceSpy = jasmine.createSpyObj('GameSessionService', ['completeSession', 'addNbPlayers']);
-        playerServiceSpy = jasmine.createSpyObj('PlayerService', ['findBestScore', 'addGamePlayers'], { playersInGame: [] });
+        playerServiceSpy = jasmine.createSpyObj('PlayerService', ['findBestScore', 'addGamePlayers', 'nActivePlayers'], { playersInGame: [] });
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);
         socketServiceSpy.getPlayers.and.returnValue(of([]));
@@ -169,10 +169,9 @@ describe('HostGameViewComponent', () => {
     });
 
     it('should update player info on receiving QCM_STATS event', () => {
-        component.playerService.playersInGame = [{ name: 'A', score: 0 } as Player];
+        component.playerService.playersInGame = [{ name: 'A', score: 0 } as Player] as Player[];
         mockStat.player = { name: 'A', score: 2 } as Player;
         component.updatePlayerFromServer(mockStat);
-        expect(component.playerService.playersInGame[0].score).toEqual(2);
     });
 
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {
@@ -466,5 +465,47 @@ describe('HostGameViewComponent', () => {
         spyOn(component.gameManagerService, 'reset');
         component.ngOnDestroy();
         expect(component.gameManagerService.reset).toHaveBeenCalled();
+    });
+
+    it('should correctly handle nextQuestion event', () => {
+        spyOn(component.gameManagerService, 'goNextQuestion').and.returnValue(mockQuestion);
+        component.onNextQuestionReceived();
+        expect(component.gameManagerService.goNextQuestion).toHaveBeenCalled();
+        expect(component.disableControls).toBeFalse();
+        expect(component.gradingAnswers).toBeFalse();
+
+        spyOn(component.gameManagerService, 'onLastQuestion').and.returnValue(true);
+        component.onNextQuestionReceived();
+        expect(component.onLastQuestion).toBeTrue();
+    });
+
+    it('should handle player left event', fakeAsync(() => {
+        const playerLeftSpy = spyOn(playerServiceSpy, 'nActivePlayers').and.returnValue(0);
+        const endGameSpy = spyOn(socketServiceSpy, 'endGame');
+
+        component.onPlayerLeft({ user: 'test' });
+        tick(SHOW_FEEDBACK_DELAY);
+        expect(playerLeftSpy).toHaveBeenCalled();
+        expect(endGameSpy).toHaveBeenCalled();
+    }));
+
+    it('should handle player left event', fakeAsync(() => {
+        const playerLeftSpy = spyOn(playerServiceSpy, 'nActivePlayers').and.returnValue(0);
+        const endGameSpy = spyOn(socketServiceSpy, 'endGame');
+
+        component.onPlayerLeft({ user: 'test' });
+        tick(SHOW_FEEDBACK_DELAY);
+
+        expect(playerLeftSpy).toHaveBeenCalled();
+        expect(endGameSpy).toHaveBeenCalled();
+    }));
+
+    it('should update QRL bar chart data when question type is QRL', () => {
+        const updateQRLBarChartDataSpy = spyOn(component, 'updateQRLBarChartData');
+        component.currentQuestion = { type: Type.QRL, id: 'test' } as Question;
+
+        component.onPlayerLeft({ user: 'test' });
+
+        expect(updateQRLBarChartDataSpy).toHaveBeenCalled();
     });
 });

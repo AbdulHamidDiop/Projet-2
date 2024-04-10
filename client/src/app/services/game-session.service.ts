@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { API_URL } from '@common/consts';
 import { Injectable } from '@angular/core';
 import { FetchService } from '@app/services/fetch.service';
 import { Game } from '@common/game';

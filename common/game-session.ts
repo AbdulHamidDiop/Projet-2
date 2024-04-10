@@ -7,7 +7,6 @@ export interface GameSession {
     nbPlayers?: number;
     timeStarted?: Date;
     bestScore?: number;
-    isCompleted: boolean;
     players: Player[];
     statisticsData: BarChartQuestionStats[];
 }

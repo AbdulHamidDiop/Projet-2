@@ -223,8 +223,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.endGameTest();
         const newQuestion = this.gameManager.goNextQuestion();
         this.question = newQuestion;
-        if (newQuestion && newQuestion.type === 'QCM') {
-            this.nbChoices = this.question.choices.length;
+        if (newQuestion && newQuestion.type === Type.QCM) {
+            this.nbChoices = this.question.choices?.length ?? 0;
         } else if (newQuestion && newQuestion.type === 'QRL') {
             this.qrlStatsService.startTimer(newQuestion.id);
         }

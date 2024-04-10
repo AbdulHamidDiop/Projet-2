@@ -72,17 +72,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                     this.openCountDownModal();
                 }, SHOW_FEEDBACK_DELAY);
                 setTimeout(() => {
-                    this.questionIndex++;
-                    this.currentQuestion = this.gameManagerService.goNextQuestion();
-                    this.gradingAnswers = false;
-                    this.qRLAnswers = [];
-                    this.disableControls = false;
-
-                    if (this.gameManagerService.onLastQuestion()) {
-                        this.onLastQuestion = true;
-                    }
-                    this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
-                    this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
+                    this.onNextQuestionReceived();
                 }, 2 * SHOW_FEEDBACK_DELAY);
                 this.questionLoaded = true;
             }
@@ -232,6 +222,19 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
         this.choseNextQuestion();
     }
+
+    onNextQuestionReceived(): void {
+        this.questionIndex++;
+        this.currentQuestion = this.gameManagerService.goNextQuestion();
+        this.gradingAnswers = false;
+        this.qRLAnswers = [];
+        this.disableControls = false;
+        if (this.gameManagerService.onLastQuestion()) {
+            this.onLastQuestion = true;
+        }
+        this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
+        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
+    }
     sendTimerControlMessage(): void {
         this.socketService.sendMessage(Events.PAUSE_TIMER, Namespaces.GAME);
     }
@@ -264,13 +267,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
         const RESPONSE_FROM_SERVER_DELAY = 500;
-        const PLAYER_COMPONENT_INIT_DELAY = 3500;
-
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             this.gameSessionService.completeSession(this.gameManagerService.gamePin, this.playerService.findBestScore());
-            // Le score n'est pas mis à jour dans la vue des résultats parceque la réponse du serveur se fait avant que le score soit mis à jour.
-            // C'est peut-etre possible de regler ça en mettant les appels socket dans playerservice.
             setTimeout(() => {
                 this.socketService.showingResults = true;
                 this.router.navigate(['/game', gameId, 'results']);
@@ -288,6 +287,30 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.notifyNextQuestion();
         } else {
             this.gradeAnswers();
+        }
+    }
+    onPlayerLeft(data: { user: string }): void {
+        const username = (data as { user: string }).user;
+        const player = this.playerService.playersInGame.find((p) => p.name === username);
+        if (player) {
+            player.leftGame = true;
+        }
+        this.playersLeft = this.playerService.nActivePlayers();
+        if (this.playersLeft === 0) {
+            this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
+                verticalPosition: 'top',
+                duration: 3000,
+            });
+            setTimeout(() => {
+                this.socketService.endGame();
+            }, SHOW_FEEDBACK_DELAY);
+        }
+        if (this.currentQuestion.type === Type.QRL) {
+            const qrlStat: QRLStats = {
+                questionId: this.currentQuestion.id,
+                edited: false,
+            };
+            this.updateQRLBarChartData(qrlStat);
         }
     }
     ngOnDestroy() {
@@ -321,28 +344,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
 
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
-            const username = (data as { user: string }).user;
-            const player = this.playerService.playersInGame.find((p) => p.name === username);
-            if (player) {
-                player.leftGame = true;
-            }
-            this.playersLeft = this.playerService.nActivePlayers();
-            if (this.playersLeft === 0) {
-                this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
-                    verticalPosition: 'top',
-                    duration: 3000,
-                });
-                setTimeout(() => {
-                    this.socketService.endGame();
-                }, SHOW_FEEDBACK_DELAY);
-            }
-            if (this.currentQuestion.type === Type.QRL) {
-                const qrlStat: QRLStats = {
-                    questionId: this.currentQuestion.id,
-                    edited: false,
-                };
-                this.updateQRLBarChartData(qrlStat);
-            }
+            this.onPlayerLeft(data as { user: string });
         });
     }
 }

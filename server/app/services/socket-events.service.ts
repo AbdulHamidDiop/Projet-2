@@ -1,7 +1,7 @@
 /* eslint-disable max-lines */
 import { GameSessionService } from '@app/services/game-session.service';
 import { BLACK, GREEN, Game, Player, RED } from '@common/game';
-import { ChatMessage, ROOM_UNLOCKED_MESSAGE, SystemMessages as sysmsg } from '@common/message';
+import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { Socket } from 'socket.io';
 import { Service } from 'typedi';
@@ -237,9 +237,6 @@ export class SocketEvents {
                         return lockedRoom !== room;
                     });
                     socket.emit(Events.UNLOCK_ROOM);
-                    const unlockMessage: ChatMessage = { ...ROOM_UNLOCKED_MESSAGE };
-                    unlockMessage.timeStamp = new Date().toLocaleTimeString();
-                    socket.emit(Events.CHAT_MESSAGE, unlockMessage);
                 }
             }
         });
