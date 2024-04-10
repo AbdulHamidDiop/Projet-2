@@ -11,12 +11,8 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
+import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW_FEEDBACK_DELAY, ZERO_GRADE_MULTIPLER } from './const';
 
-const SHOW_FEEDBACK_DELAY = 3000;
-const RECEIVE_ANSWERS_DELAY = 2000;
-const ZERO_GRADE_MULTIPLER = 0;
-const HALF_GRADE_MULTIPLER = 0.5;
-const FULL_GRADE_MULTIPLER = 1;
 @Component({
     selector: 'app-host-game-view',
     templateUrl: './host-game-view.component.html',
@@ -108,12 +104,16 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             };
             const correction: Feedback[] = await this.gameManagerService.getFeedBack(
                 this.currentQuestion.id,
-                this.currentQuestion.choices!.map((choice) => choice.text),
+                this.currentQuestion.choices?.map((choice) => choice.text) || [],
             );
+            let text = 'unknown';
             for (let i = 0; i < stat.choiceAmount; i++) {
+                if (this.currentQuestion.choices) {
+                    text = this.currentQuestion.choices[i].text;
+                }
                 barChartStat.data.push({
                     data: i === stat.choiceIndex ? [1] : [0],
-                    label: this.currentQuestion.choices![i].text,
+                    label: text,
                     backgroundColor: correction[i].status === 'correct' ? '#4CAF50' : '#FF4C4C',
                 });
             }
@@ -342,7 +342,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             const { ...player } = playerWithRoom as Player & { room: string };
             this.playerService.addGamePlayers(player as Player);
         });
-
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             this.onPlayerLeft(data as { user: string });
         });
