@@ -170,7 +170,8 @@ export class Server {
                     player.leftGame = true;
                 }
                 gameNamespace.in(data.room).emit(Events.PLAYER_LEFT, data);
-                if (this.socketEvents.mapOfPlayersInRoom.get(data.room)?.filter((play) => !play.leftGame).length === 1) {
+                const playersInGame = this.socketEvents.mapOfPlayersInRoom.get(data.room)?.filter((play) => !play.leftGame);
+                if (!playersInGame.length) {
                     this.randomGamesNumberOfAnswers.delete(data.room);
 
                     const index = this.liveRooms.indexOf(data.room);

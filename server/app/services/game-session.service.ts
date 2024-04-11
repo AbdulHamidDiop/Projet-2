@@ -98,9 +98,9 @@ export class GameSessionService {
 
     async generateFeedback(pin: string, questionId: string, submittedAnswers: string[]): Promise<Feedback[]> {
         const game = await this.getGameByPin(pin);
-        const question = game.questions.find((q) => q.id === questionId);
+        const question = game?.questions.find((q) => q.id === questionId);
 
-        if (!question) {
+        if (!question || !game) {
             return [];
         }
 

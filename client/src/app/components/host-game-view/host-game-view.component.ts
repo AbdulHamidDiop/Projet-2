@@ -53,14 +53,14 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     ) {
         this.playersLeft = this.playerService.nActivePlayers();
         this.socketService.getPlayers().subscribe((players: Player[]) => {
-            const oldPlayers = this.playerService.playersInGame;
+            // const oldPlayers = this.playerService.playersInGame;
             this.playerService.playersInGame = players;
-            for (const player of playerService.playersInGame) {
-                const oldPlayer = oldPlayers.find((p) => p.name === player.name);
-                if (oldPlayer) {
-                    player.leftGame = oldPlayer.leftGame;
-                }
-            }
+            // for (const player of playerService.playersInGame) {
+            //     const oldPlayer = oldPlayers.find((p) => p.name === player.name);
+            //     if (oldPlayer) {
+            //         player.leftGame = oldPlayer.leftGame;
+            //     }
+            // }
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
             if (!this.questionLoaded) {
