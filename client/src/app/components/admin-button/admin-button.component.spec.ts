@@ -17,6 +17,7 @@ describe('AdminButtonComponent', () => {
 
     beforeEach(async () => {
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         snackBarMock.open.and.returnValue({} as any);
         communicationServiceSpy = jasmine.createSpyObj('ExampleService', ['basicGet', 'basicPost']);
         communicationServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));

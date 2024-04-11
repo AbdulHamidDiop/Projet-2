@@ -57,7 +57,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private qrlGradeSubscription: Subscription;
     private otherPlayersSubscription: Subscription;
 
-
     // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
     constructor(
@@ -113,7 +112,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-
         this.otherPlayersSubscription = this.socketService.getPlayers().subscribe((players) => {
             this.playerService.playersInGame = players;
         });

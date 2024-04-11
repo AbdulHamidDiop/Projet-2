@@ -99,6 +99,7 @@ describe('QuestionsPageComponent', () => {
     beforeEach(() => {
         mockDialog = jasmine.createSpyObj('MatDialog', ['open']);
         snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         snackBarMock.open.and.returnValue({} as any);
 
         TestBed.configureTestingModule({
