@@ -22,7 +22,7 @@ button,
 
 #grad {
     background-image: linear-gradient(to top, #503bb8, transparent);
-    height: 100%
+    height: 100%;
 }
 
 .main-content {
@@ -184,6 +184,22 @@ button:hover {
 
 .top-links a:hover {
     color: #3498db;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logo img {
+    height: 45px;
+    margin-left: -20px;
+    margin-top: 15px;
+}
+
+.logo h1 {
+    letter-spacing: 3px;
 }
 
 @media (max-width: 768px) {
