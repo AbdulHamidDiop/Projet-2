@@ -2,23 +2,21 @@
     c'est pas explicitement demandé mais possible d'ajouter
     une option pour désactiver le tri, comme dans le code ici
     https://material.angular.io/components/sort/overview -->
-<table matSort [matSortDisableClear]="true" (matSortChange)="sortData($event)">
+<table matSort [matSortDisableClear]="true" (matSortChange)="sortData($event)" aria-label="Player List">
     <tr>
         <th mat-sort-header="name">Nom du joueur</th>
         <th mat-sort-header="score">Score</th>
         <th mat-sort-header="state">État</th>
         <th mat-sort-header="name" disabled="true">Droit de clavardage</th>
     </tr>
-    <tr *ngFor="let player of players">
+    <tr *ngFor="let player of playerService.playersInGame">
         <td [ngClass]="getStyle(player)">
-            <!-- Mis en commentaire [ngClass]="{ leftGame: player.leftGame }" -->
-            <s *ngIf="player.color === 0" > {{ player.name }} </s>
-            <div *ngIf="player.color !== 0" >{{ player.name }}</div>
+            <s *ngIf="player.color === 0" [ngClass]="{ leftGame: player.leftGame }"> {{ player.name }} </s>
+            <div *ngIf="player.color !== 0" [ngClass]="{ leftGame: player.leftGame }">{{ player.name }}</div>
         </td>
         <td>{{ player.score }}</td>
         <td>{{ colorToState(player.color) }}</td>
-        <td>
-            <!-- Peut-être trouver un meilleur affichage plus tard -->
+        <td *ngIf="!player.leftGame">
             <button mat-button *ngIf="player.chatEnabled" (click)="excludeFromChat(player)">Exclure du clavardage</button>
             <button mat-button *ngIf="!player.chatEnabled" (click)="includeInChat(player)">Inclure dans le clavardage</button>
         </td>

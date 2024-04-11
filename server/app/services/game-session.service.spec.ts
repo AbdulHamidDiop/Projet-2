@@ -1,8 +1,10 @@
+/* eslint-disable max-lines */
 /* eslint-disable no-restricted-imports */
-import { Game } from '@common/game';
+import { Game, Player } from '@common/game';
 import { expect } from 'chai';
 // import { stub } from 'sinon';
 import { GameSession } from '@common/game-session';
+import { BarChartQuestionStats, QCMStats, QRLGrade } from '@common/game-stats';
 import { DB_COLLECTION_HISTORIQUE } from '@common/utils/env';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import { DatabaseService } from './database.service';
@@ -275,5 +277,142 @@ describe('GameSession Service', () => {
         const nbPlayers = 4;
         const success = await gameSessionService.addNbPlayers(SESSION.pin, nbPlayers);
         expect(success).to.deep.equal(true);
+    });
+
+    it('should update bar chart data on receiving QCM_STATS event', async () => {
+        const pin = 'examplePin';
+        const mockStat: QCMStats = {
+            questionId: '1',
+            choiceIndex: 0,
+            selected: true,
+            choiceAmount: 1,
+            correctIndex: 0,
+        };
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne({
+            pin,
+            game: {
+                questions: [
+                    {
+                        id: '1',
+                        choices: [
+                            {
+                                text: 'var',
+                                isCorrect: true,
+                            },
+                        ],
+                    },
+                ],
+            },
+            statisticsData: [],
+        });
+
+        await gameSessionService.updateStatisticsData(pin, mockStat);
+
+        const updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.statisticsData.length).to.be.greaterThan(0);
+        expect(updatedSession.statisticsData[0].data[0].data[0]).to.equal(1);
+
+        await gameSessionService.updateStatisticsData('fakePin', mockStat);
+        const unchangedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin: 'examplePin' });
+        expect(unchangedSession.statisticsData[0].data[0].data[0]).to.equal(1);
+    });
+
+    it('should decrement bar chart data when stat.selected is false and data value is greater than 0', async () => {
+        const pin = 'examplePin';
+        const decrementStat: QCMStats = {
+            questionId: '1',
+            choiceIndex: 0,
+            selected: false,
+            choiceAmount: 2,
+            correctIndex: 0,
+        };
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne({
+            pin,
+            game: {
+                questions: [
+                    {
+                        id: '1',
+                        choices: [
+                            {
+                                text: 'var',
+                                isCorrect: true,
+                            },
+                        ],
+                    },
+                ],
+            },
+            statisticsData: [{ questionID: '1', data: [{ data: [1], label: 'Choice 1' }] }],
+        });
+
+        await gameSessionService.updateStatisticsData(pin, decrementStat);
+        const updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.statisticsData[0].data[0].data[0]).to.equal(0);
+    });
+
+    it('should update QRL grade data', async () => {
+        const pin = 'examplePin';
+        const qrlGrade: QRLGrade = { questionId: '1', multiplier: 0, grade: 1, author: 'author' };
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne({ pin, game: { questions: [{ id: '1' }] }, statisticsData: [] });
+
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
+        let updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.statisticsData[0].data[0].data[0]).to.equal(1);
+
+        qrlGrade.multiplier = 0.5;
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
+        updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.statisticsData[0].data[1].data[0]).to.equal(1);
+
+        qrlGrade.multiplier = 1;
+        await gameSessionService.updateQRLGradeData(pin, qrlGrade);
+        updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.statisticsData[0].data[2].data[0]).to.equal(1);
+    });
+
+    it('getStatisticsData should return statistics data', async () => {
+        const pin = 'examplePin';
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne({
+            pin,
+            game: { questions: [{ id: '1' }] },
+            statisticsData: [{ questionID: '1', data: [{ data: [1], label: 'Choice 1' }] }],
+        });
+
+        const result = await gameSessionService.getStatisticsData(pin);
+        expect(result).to.deep.equal([{ questionID: '1', data: [{ data: [1], label: 'Choice 1' }] }]);
+    });
+
+    it('cleanStatisticsData should fill undefined stats with blank ones', async () => {
+        const data: BarChartQuestionStats[] = [undefined, undefined, undefined];
+        const result = gameSessionService.cleanStatisticsData(data);
+        expect(result).to.deep.equal([
+            { questionID: '', data: [] },
+            { questionID: '', data: [] },
+            { questionID: '', data: [] },
+        ]);
+    });
+
+    it('should store a new player in the session', async () => {
+        const pin = '1122';
+        const newPlayer = { name: 'New Player', score: 0, bonusCount: 0 } as Player;
+        const session = { pin, game: GAME, players: [] } as GameSession;
+
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(session);
+        await gameSessionService.storePlayer(pin, newPlayer);
+
+        const updatedSession = await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).findOne({ pin });
+        expect(updatedSession.players).to.include.deep.members([newPlayer]);
+    });
+
+    it('should get all players in the session and retern empty array if session dosnt exist', async () => {
+        const pin = '1122';
+        const newPlayer = { name: 'New Player', score: 0, bonusCount: 0 } as Player;
+        const session = { pin, game: GAME, players: [newPlayer] } as GameSession;
+
+        await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertOne(session);
+        const players = await gameSessionService.getPlayers(pin);
+        expect(players).to.deep.equal([newPlayer]);
+
+        const players2 = await gameSessionService.getPlayers('fakePin');
+        expect(players2).to.deep.equal([]);
     });
 });

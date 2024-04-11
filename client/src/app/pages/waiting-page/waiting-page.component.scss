@@ -1,7 +1,9 @@
-main {
+div {
     height: 100vh;
     display: flex;
     margin-left: 250px;
+    display: grid;
+    outline: none;
 }
 
 .header-item {
@@ -37,7 +39,9 @@ main {
     margin-top: 50px;
 }
 
-.main {
-    display: grid;
-    outline: none;
+// classe générée par Angular
+.ng-star-inserted {
+    margin-left: 0;
 }
+
+

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
-import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { StatusCodes } from 'http-status-codes';
+import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 
 @Injectable({
@@ -29,7 +29,7 @@ export class QuestionsService {
     }
 
     async getAllQuestions(): Promise<Question[]> {
-        const response = await this.fetchService.fetch(API_URL + 'questions');
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -41,7 +41,7 @@ export class QuestionsService {
     }
 
     async addQuestion(question: Question): Promise<boolean> {
-        const response = await this.fetchService.fetch(API_URL + 'questions/add', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/add', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +59,7 @@ export class QuestionsService {
     }
 
     async editQuestion(question: Question): Promise<void> {
-        const response = await this.fetchService.fetch(API_URL + 'questions/edit', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/edit', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,7 +72,7 @@ export class QuestionsService {
     }
 
     async deleteQuestion(question: Question): Promise<void> {
-        const response = await this.fetchService.fetch(API_URL + 'questions/delete/' + question.id, {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/delete/' + question.id, {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -82,7 +82,7 @@ export class QuestionsService {
     }
 
     async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
-        const response = await this.fetchService.fetch(API_URL + 'questions/test');
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/test');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -93,9 +93,18 @@ export class QuestionsService {
         return questions;
     }
 
+    async getRandomQuestions(): Promise<Question[]> {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/random');
+        if (!response.ok) {
+            return [];
+        }
+        const questions: Question[] = await response.json();
+        return questions;
+    }
+
     async checkAnswer(answer: string[], id: string): Promise<boolean> {
         try {
-            const response = await this.fetchService.fetch(API_URL + 'questions/check', {
+            const response = await this.fetchService.fetch(environment.serverUrl + 'questions/check', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

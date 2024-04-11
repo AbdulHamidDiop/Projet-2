@@ -6,6 +6,8 @@ import { GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 
+const RANDOM_INDICATOR = -9;
+
 @Component({
     selector: 'app-player-and-admin-panel',
     templateUrl: './player-and-admin-panel.component.html',
@@ -17,6 +19,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     @Input() players: Player[] = [];
     room: string;
     roomLocked: boolean = false;
+    inRandomMode: boolean = false;
     private globalChatSubscription: Subscription;
     private playerLeftSubscription: Subscription;
 
@@ -24,6 +27,12 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
         private socket: SocketRoomService,
         private snackBar: MatSnackBar,
     ) {
+        this.socket.getChatMessages().subscribe((message) => {
+            if (message.author === 'room') {
+                this.room = message.message;
+            }
+        });
+
         this.globalChatSubscription = this.socket.getChatMessages().subscribe((message) => {
             if (message.author === 'room') {
                 this.room = message.message;
@@ -55,19 +64,19 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     }
 
     startGame() {
-        if (this.players.length > 0) {
-            this.socket.startGame();
-            if (this.roomLocked) {
-                GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
-                this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
+        if (this.roomLocked) {
+            if (this.inRandomMode) {
+                this.startRandomGame();
+            } else if (this.players.length > 0) {
+                this.startNormalGame();
             } else {
-                this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
+                this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
                     verticalPosition: 'top',
                     duration: 5000,
                 });
             }
         } else {
-            this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
+            this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 5000,
             });
@@ -84,8 +93,27 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
         this.socket.endGame();
     }
 
+    initializeGame(game: Game) {
+        this.game = game;
+        if (this.game.id.slice(RANDOM_INDICATOR) === 'aleatoire') {
+            this.inRandomMode = true;
+        }
+    }
+
     ngOnDestroy() {
         this.globalChatSubscription.unsubscribe();
         this.playerLeftSubscription.unsubscribe();
+    }
+
+    private startNormalGame(): void {
+        this.socket.startGame();
+        GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
+        this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
+    }
+
+    private startRandomGame(): void {
+        this.socket.startRandomGame();
+        GAME_STARTED_MESSAGE.timeStamp = new Date().toLocaleTimeString();
+        this.socket.sendChatMessage(GAME_STARTED_MESSAGE);
     }
 }

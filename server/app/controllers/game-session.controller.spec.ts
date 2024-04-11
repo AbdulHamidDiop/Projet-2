@@ -1,68 +1,15 @@
 import { Application } from '@app/app';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Feedback } from '@common/feedback';
-import { Game } from '@common/game';
-import { GameSession } from '@common/game-session';
+import { Game, Player } from '@common/game';
+import { BarChartQuestionStats } from '@common/game-stats';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
 import { SinonStubbedInstance, createStubInstance } from 'sinon';
 import supertest from 'supertest';
 import { Container } from 'typedi';
 
-const SESSION_DATA: GameSession[] = [
-    {
-        pin: '1122',
-        game: {
-            id: '46277881345',
-            lastModification: '2024-02-01T15:04:41.171Z',
-            title: 'Questionnaire sur le JS',
-            description: 'Questions de pratique sur le langage JavaScript',
-            duration: 59,
-            questions: [
-                {
-                    id: '11',
-                    type: 'QCM',
-                    text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
-                    points: 40,
-                    choices: [
-                        {
-                            text: 'var',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'self',
-                            isCorrect: false,
-                        },
-                        {
-                            text: 'this',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'int',
-                        },
-                    ],
-                },
-                {
-                    id: '12',
-                    type: 'QCM',
-                    text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
-                    points: 20,
-                    choices: [
-                        {
-                            text: 'Non',
-                            isCorrect: true,
-                        },
-                        {
-                            text: 'Oui',
-                            isCorrect: false,
-                        },
-                    ],
-                },
-            ],
-            isHidden: false,
-        },
-    } as unknown as GameSession,
-];
+let SESSION_DATA = '';
 
 const GAME: Game = {
     id: '12345678901',
@@ -103,34 +50,84 @@ describe('GameSessionController', () => {
     let expressApp: Express.Application;
 
     beforeEach(async () => {
+        SESSION_DATA = JSON.stringify([
+            {
+                pin: '1122',
+                isCompleted: false,
+                game: {
+                    id: '46277881345',
+                    lastModification: '2024-02-01T15:04:41.171Z',
+                    title: 'Questionnaire sur le JS',
+                    description: 'Questions de pratique sur le langage JavaScript',
+                    duration: 59,
+                    questions: [
+                        {
+                            id: '11',
+                            type: 'QCM',
+                            text: 'Parmi les mots suivants, lesquels sont des mots clés réservés en JS?',
+                            points: 40,
+                            choices: [
+                                {
+                                    text: 'var',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'self',
+                                    isCorrect: false,
+                                },
+                                {
+                                    text: 'this',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'int',
+                                },
+                            ],
+                        },
+                        {
+                            id: '12',
+                            type: 'QCM',
+                            text: 'Est-ce que le code suivant lance une erreur : const a = 1/NaN; ? ',
+                            points: 20,
+                            choices: [
+                                {
+                                    text: 'Non',
+                                    isCorrect: true,
+                                },
+                                {
+                                    text: 'Oui',
+                                    isCorrect: false,
+                                },
+                            ],
+                        },
+                    ],
+                    isHidden: false,
+                },
+            },
+        ]);
         gameSessionService = createStubInstance(GameSessionService);
         const app = Container.get(Application);
         Object.defineProperty(app['gameSessionController'], 'gameSessionService', { value: gameSessionService });
         expressApp = app.app;
     });
     it('should return all games ', async () => {
-        gameSessionService.getAllSessions.resolves(SESSION_DATA);
+        gameSessionService.getAllSessions.resolves(JSON.parse(SESSION_DATA));
         return supertest(expressApp)
             .get('/api/gameSession')
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(SESSION_DATA);
+                expect(response.body).to.deep.equal(JSON.parse(SESSION_DATA));
             });
     });
 
-    //   this.router.get('/', async (req: Request, res: Response) => {
-    //     res.json(await this.gameSessionService.getAllSessions());
-    //     res.status(StatusCodes.OK);
-    // });
-
     it('should return game by pin ', async () => {
-        const pin = SESSION_DATA[0].pin;
-        gameSessionService.getSessionByPin.resolves(SESSION_DATA[0]);
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        gameSessionService.getSessionByPin.resolves(JSON.parse(SESSION_DATA)[0]);
         return supertest(expressApp)
             .get(`/api/gameSession/${pin}`)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(SESSION_DATA[0]);
+                expect(response.body).to.deep.equal(JSON.parse(SESSION_DATA)[0]);
             });
     });
 
@@ -148,20 +145,22 @@ describe('GameSessionController', () => {
     it('should create GameSession', async () => {
         const pin = '1111';
         const game = GAME;
+        const statisticsData: BarChartQuestionStats[] = [];
+        const players: Player[] = [];
         const isCompleted = false;
-        gameSessionService.createSession.resolves({ pin, game, isCompleted });
+        gameSessionService.createSession.resolves({ pin, game, statisticsData, players, isCompleted });
         return supertest(expressApp)
             .post(`/api/gameSession/create/${pin}`)
             .set('Content', 'application/json')
             .send(GAME)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal({ pin, game, isCompleted });
+                expect(response.body).to.deep.equal({ pin, game, statisticsData, players, isCompleted });
             });
     });
 
     it('should delete GameSession', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         gameSessionService.deleteSession.resolves();
         return supertest(expressApp)
             .delete(`/api/gameSession/delete/${pin}`)
@@ -172,18 +171,18 @@ describe('GameSessionController', () => {
     });
 
     it('should get game by pin', async () => {
-        const pin = SESSION_DATA[0].pin;
-        gameSessionService.getGameByPin.resolves(SESSION_DATA[0].game);
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
+        gameSessionService.getGameByPin.resolves(JSON.parse(SESSION_DATA)[0].game);
         return supertest(expressApp)
             .get(`/api/gameSession/game/${pin}`)
             .expect(StatusCodes.OK)
             .then((response) => {
-                expect(response.body).to.deep.equal(SESSION_DATA[0].game);
+                expect(response.body).to.deep.equal(JSON.parse(SESSION_DATA)[0].game);
             });
     });
 
     it('should get questions without answers', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const gameWithoutAnswers = {
             id: '46277881345',
             lastModification: '2024-02-01T15:04:41.171Z',
@@ -217,12 +216,12 @@ describe('GameSessionController', () => {
             });
     });
     it('should check answers correctly', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         gameSessionService.isCorrectAnswer.resolves(true);
         return supertest(expressApp)
             .post('/api/gameSession/check')
             .set('Content', 'application/json')
-            .send({ answer: [], sessionPin: pin, questionID: SESSION_DATA[0].game.questions[0].id })
+            .send({ answer: [], sessionPin: pin, questionID: JSON.parse(SESSION_DATA)[0].game.questions[0].id })
             .expect(StatusCodes.OK)
             .then((response) => {
                 expect(response.body).to.deep.equal({ isCorrect: true });
@@ -241,7 +240,7 @@ describe('GameSessionController', () => {
     });
 
     it('should return feedback for correct input', async () => {
-        const pin = SESSION_DATA[0].pin;
+        const pin = JSON.parse(SESSION_DATA)[0].pin;
         const feedback: Feedback[] = [
             { choice: 'var', status: 'missed' },
             { choice: 'self', status: 'incorrect' },
@@ -252,7 +251,7 @@ describe('GameSessionController', () => {
         return supertest(expressApp)
             .post('/api/gameSession/feedback')
             .set('Content', 'application/json')
-            .send({ sessionPin: pin, questionID: SESSION_DATA[0].game.questions[0].id, submittedAnswers: [] })
+            .send({ sessionPin: pin, questionID: JSON.parse(SESSION_DATA)[0].game.questions[0].id, submittedAnswers: [] })
             .expect(StatusCodes.OK)
             .then((response) => {
                 expect(response.body).to.deep.equal(feedback);

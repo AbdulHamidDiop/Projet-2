@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { QuestionsService } from '@app/services/questions.service';
-import { API_URL } from '@common/consts';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-admin-button',
@@ -26,7 +26,7 @@ export class AdminButtonComponent {
 
     async verifyPassword() {
         this.passwordError = false;
-        const response = await fetch(API_URL + 'admin/password', {
+        const response = await fetch(environment.serverUrl + 'admin/password', {
             method: 'POST',
             headers: {
                 // Ce sont des headers de HTML qui ne sont pas pris en compte dans la naming convention de ESLINT

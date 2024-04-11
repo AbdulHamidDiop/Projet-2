@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
-import { Player } from '@common/game';
+import { Game, Player } from '@common/game';
 import { ROOM_LOCKED_MESSAGE } from '@common/message';
 import { of } from 'rxjs';
 import { PlayerAndAdminPanelComponent } from './player-and-admin-panel.component';
@@ -20,6 +20,7 @@ describe('PlayerAndAdminPanelComponent', () => {
             'lockRoom',
             'unlockRoom',
             'startGame',
+            'startRandomGame',
             'getChatMessages',
             'sendChatMessage',
             'endGame',
@@ -95,11 +96,23 @@ describe('PlayerAndAdminPanelComponent', () => {
         expect(socketMock.sendChatMessage).toHaveBeenCalledWith(expectedMessage);
     });
 
+    it('Should send game start message when starting a random game with a locked room and at least one player', () => {
+        component.inRandomMode = true;
+        component.players = [{} as Player];
+        component.roomLocked = true;
+        const expectedMessage = jasmine.objectContaining({
+            author: 'Système',
+            message: 'Le jeu commence',
+        });
+        component.startGame();
+        expect(socketMock.startRandomGame).toHaveBeenCalled();
+        expect(socketMock.sendChatMessage).toHaveBeenCalledWith(expectedMessage);
+    });
+
     it('Should show a snackbar if trying to start a game with an unlocked room', () => {
         component.players = [{} as Player];
         component.roomLocked = false;
         component.startGame();
-        expect(socketMock.startGame).toHaveBeenCalled();
         expect(snackBarMock.open).toHaveBeenCalledWith('La partie doit être verrouillée avant de commencer', 'Fermer', {
             verticalPosition: 'top',
             duration: 5000,
@@ -115,5 +128,12 @@ describe('PlayerAndAdminPanelComponent', () => {
             verticalPosition: 'top',
             duration: 5000,
         });
+    });
+
+    it('Should set inRandomMode correctly on initializeGame', () => {
+        const game = { id: '12345678-aleatoire' } as Game;
+        component.initializeGame(game);
+        expect(component.game).toEqual(game);
+        expect(component.inRandomMode).toBeTruthy();
     });
 });

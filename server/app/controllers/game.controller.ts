@@ -1,4 +1,5 @@
 /* eslint-disable max-lines */
+// Les nombres de lignes sont élevés, mais les commentaires sont nécessaires pour la documentation swagger des api
 import { GamesService } from '@app/services/games.service';
 import { Game } from '@common/game';
 import { Request, Response, Router } from 'express';

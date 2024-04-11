@@ -2,6 +2,7 @@
 import { TestBed, fakeAsync } from '@angular/core/testing';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { Router } from '@angular/router';
 import { Game } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
@@ -11,10 +12,13 @@ import { SocketRoomService } from './socket-room.service';
 import SpyObj = jasmine.SpyObj;
 
 describe('SocketRoomService', () => {
+    let routerMock: SpyObj<Router>;
     let service: SocketRoomService;
     let socketMock: SpyObj<Socket>;
     let ioMock: SpyObj<IoService>;
     beforeEach(() => {
+        routerMock = jasmine.createSpyObj('Router', ['navigate']);
+
         socketMock = jasmine.createSpyObj('Socket', ['on', 'emit', 'off', 'disconnect']);
         socketMock.on.and.callFake((_eventName: any, callBackFn: any) => {
             callBackFn();
@@ -34,10 +38,10 @@ describe('SocketRoomService', () => {
                     provide: IoService,
                     useValue: ioMock,
                 },
+                { provide: Router, useValue: routerMock },
             ],
         });
         service = TestBed.inject(SocketRoomService);
-        service.unitTests = true;
     });
 
     const createMockNamespaceSocket = (emitSuccess: boolean, emitResponse = { success: true }): any => {
@@ -181,8 +185,8 @@ describe('SocketRoomService', () => {
     });
 
     it('Should call socket.on on call to getGameId', () => {
-        service.getGameId().subscribe(() => {
-            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_GAME_ID, jasmine.any(Function));
+        service.getGamePin().subscribe(() => {
+            expect(socketMock.on).toHaveBeenCalledWith(Events.GET_GAME_PIN, jasmine.any(Function));
         });
     });
 
@@ -257,6 +261,7 @@ describe('SocketRoomService', () => {
     it('Should call sendMessage on call to endGame', () => {
         service.playerService.player.name = 'Organisateur';
         service.endGame();
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/createGame']);
         expect(ioMock.io).toHaveBeenCalled();
     });
 
@@ -277,10 +282,10 @@ describe('SocketRoomService', () => {
 
     it('should notify other players when a player leaves the room', () => {
         spyOn(service, 'sendChatMessage');
-        service.unitTests = true;
         service.room = 'room';
         service.endGame();
         expect(service.sendChatMessage).toHaveBeenCalled();
+        expect(routerMock.navigate).toHaveBeenCalledWith(['/createGame']);
     });
 
     it('joins a room successfully', (done) => {

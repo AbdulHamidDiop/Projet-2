@@ -38,6 +38,7 @@ import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
 import { SessionComponent } from './components/session/session.component';
 import { PlayerListComponent } from './components/player-list/player-list.component';
+import { GameRandomComponent } from './components/game-random/game-random.component';
 
 /**
  * Main module that is used in main.ts.
@@ -81,6 +82,7 @@ import { PlayerListComponent } from './components/player-list/player-list.compon
         FooterComponent,
         SessionComponent,
         PlayerListComponent,
+        GameRandomComponent,
     ],
     imports: [
         AppMaterialModule,
