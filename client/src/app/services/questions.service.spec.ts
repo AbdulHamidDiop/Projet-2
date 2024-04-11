@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { VALID_QUESTION } from '@common/test-interfaces';
+import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { QuestionsService } from './questions.service';
 import SpyObj = jasmine.SpyObj;
@@ -129,7 +131,7 @@ describe('QuestionsService', () => {
         tick();
 
         expect(fetchSpy).toHaveBeenCalledWith(
-            API_URL + 'questions/add',
+            environment.serverUrl + 'questions/add',
             jasmine.objectContaining({
                 method: 'POST',
                 body: JSON.stringify(VALID_QUESTION),
@@ -142,7 +144,7 @@ describe('QuestionsService', () => {
         tick();
 
         expect(fetchSpy).toHaveBeenCalledWith(
-            API_URL + 'questions/edit',
+            environment.serverUrl + 'questions/edit',
             jasmine.objectContaining({
                 method: 'PUT',
                 body: JSON.stringify(VALID_QUESTION),
@@ -191,12 +193,27 @@ describe('QuestionsService', () => {
         expect(service.currentQuestionIndex).toEqual(1);
     });
 
-    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', () => {
+    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', fakeAsync(() => {
+        returnQuestion = true;
         responseSetToOk = true;
         service.questions = [];
         service.getQuestionsWithoutCorrectShown();
+        tick();
+        expect(service.questions).toEqual([VALID_QUESTION]);
         expect(fetchSpy).toHaveBeenCalled();
-    });
+    }));
+
+    it('Should fetch random questions on call to getRandomQuestions', fakeAsync(() => {
+        returnQuestion = true;
+        responseSetToOk = true;
+        let questions: Question[] = [];
+        service.getRandomQuestions().then((randomQuestions) => {
+            questions = randomQuestions;
+        });
+        tick();
+        expect(questions).toEqual([VALID_QUESTION]);
+        expect(fetchSpy).toHaveBeenCalled();
+    }));
 
     it('All methods should throw error code when response not ok', async () => {
         responseSetToOk = false;
@@ -213,6 +230,9 @@ describe('QuestionsService', () => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         service.getAllQuestions().catch((error) => {
+            expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
+        });
+        service.getRandomQuestions().catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         const checkAnswer: boolean = await service.checkAnswer([''], '');

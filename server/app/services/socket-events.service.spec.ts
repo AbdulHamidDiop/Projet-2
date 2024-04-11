@@ -1,16 +1,21 @@
+import { DatabaseService } from './database.service';
+/* eslint-disable max-lines */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GameSessionService } from '@app/services/game-session.service';
-import { Player } from '@common/game';
+import { Game, Player } from '@common/game';
+import { GameSession } from '@common/game-session';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY } from '@common/sockets';
 import { expect } from 'chai';
 import { createServer } from 'http';
 import { AddressInfo } from 'net';
-import { SinonSpy, SinonStub, createSandbox, restore, stub } from 'sinon';
+import { SinonSpy, SinonStub, restore, stub } from 'sinon';
 import { Server, Socket } from 'socket.io';
 import { Socket as ClientSocket, io } from 'socket.io-client';
 import { SocketEvents } from './socket-events.service';
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+import sinon = require('sinon');
 
 describe('Socket Events Service', () => {
     let socketEvents: SocketEvents;
@@ -22,6 +27,7 @@ describe('Socket Events Service', () => {
     let socketJoinStub: SinonStub;
     let socketIdStub: SinonSpy;
     let gameSessionService: GameSessionService;
+    const databaseService: DatabaseService = new DatabaseService();
     let server: Server;
     const httpServer = createServer();
 
@@ -82,17 +88,22 @@ describe('Socket Events Service', () => {
         expect(socketToStub.notCalled).to.equal(true);
     });
 
-    it('Should call socket.emit on call to listenForCreateRoom', () => {
-        socket.on('listenForCreateRoom', () => {
-            // La fonction socket.on est mock, les appels à socket.on sont synchrones.
-            const sandbox = createSandbox();
-            socketEvents.liveRooms = [''];
-            socketEvents.listenForCreateRoomEvent(socket);
-            socket.removeAllListeners(Events.CREATE_ROOM);
-            expect(socketOnStub.called).to.equal(true);
-            socketEvents.liveRooms = [LOBBY];
-            sandbox.restore();
-        });
+    it('Should call socket.emit on call to listenForCreateRoom', async () => {
+        const initialRoomId = '1234';
+        socketEvents.liveRooms.push(initialRoomId);
+
+        let callCount = 0;
+        socketEvents.makeRoomId = () => {
+            if (callCount === 0) {
+                callCount++;
+                return initialRoomId;
+            }
+            return '5678';
+        };
+        gameSessionService = new GameSessionService(databaseService);
+        sinon.stub(gameSessionService, 'createSession').resolves({ pin: 'gameId' } as GameSession);
+        socketEvents.unitTesting = true;
+        await socketEvents.onCreateRoom(socket, { game: { id: 'gameId' } as Game });
     });
 
     it('Should call socket.emit on call to listenForJoinRoom', () => {
@@ -115,13 +126,14 @@ describe('Socket Events Service', () => {
             socketEvents.socketIdRoom.set(socket.id, undefined);
             socketEvents.listenForExcludeFromChat(socket);
             socketEvents.socketIdRoom.set(socket.id, LOBBY);
-            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: '' } as Player]);
-            socketEvents.playerSocketId.set('.', { name: '.' } as Player);
-            socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+            const playerName = 'testPlayer';
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: playerName } as Player]);
+            socketEvents.playerSocketId.set(socket.id, { name: playerName, isHost: true } as Player);
             socketEvents.listenForExcludeFromChat(socket);
             socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
             socketEvents.listenForExcludeFromChat(socket);
             expect(socketToStub.called).to.equal(true);
+            expect(socketEvents.socketIdRoom.get(socket.id)).to.equal(LOBBY);
         });
     });
 
@@ -145,9 +157,9 @@ describe('Socket Events Service', () => {
             socketEvents.socketIdRoom.set(socket.id, undefined);
             socketEvents.listenForAbandonGame(socket);
             socketEvents.socketIdRoom.set(socket.id, LOBBY);
-            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: '' } as Player]);
-            socketEvents.playerSocketId.set('.', { name: '.' } as Player);
-            socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+            const playerName = 'testPlayer';
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: playerName } as Player]);
+            socketEvents.playerSocketId.set(socket.id, { name: playerName, isHost: true } as Player);
             socketEvents.listenForAbandonGame(socket);
             expect(socketToStub.called).to.equal(true);
         });
@@ -256,23 +268,6 @@ describe('Socket Events Service', () => {
         });
     });
 
-    it('Should call socket.to on call to listenForStartGame', () => {
-        socket.on('listenForStartGame', () => {
-            socketEvents.socketIdRoom.set(socket.id, undefined);
-            socketEvents.listenForStartGameEvent(socket);
-            socketEvents.socketIdRoom.set(socket.id, LOBBY);
-            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{} as Player]);
-            socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
-            socketEvents.lockedRooms = [LOBBY];
-            socketEvents.listenForStartGameEvent(socket);
-            socketEvents.lockedRooms = [];
-            socketEvents.listenForStartGameEvent(socket);
-            socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
-            socketEvents.listenForStartGameEvent(socket);
-            expect(socketToStub.called).to.equal(true);
-        });
-    });
-
     it('Should call listenForCreateRoom on call to listenForEvents', () => {
         restore();
         const listenForCreateRoomStub = stub(socketEvents, 'listenForCreateRoomEvent').callsFake(() => {
@@ -281,5 +276,54 @@ describe('Socket Events Service', () => {
         socketEvents.listenForEvents(socket);
         socket.removeAllListeners();
         expect(listenForCreateRoomStub.called).to.equal(true);
+    });
+
+    it('Should listen For randomGameEvents', () => {
+        const listenForStartRandomGameEventStub = stub(socketEvents, 'listenForStartRandomGameEvent').callsFake(() => {
+            return;
+        });
+        socketEvents.listenForEvents(socket);
+        socket.removeAllListeners();
+        expect(listenForStartRandomGameEventStub.called).to.equal(true);
+    });
+
+    it('Should call socket.to on call to listenForStartGame', () => {
+        socketEvents.socketIdRoom.set(socket.id, undefined);
+        socketEvents.onStartGame(socket);
+        socketEvents.socketIdRoom.set(socket.id, LOBBY);
+        socketEvents.mapOfPlayersInRoom.set(LOBBY, [{} as Player]);
+        socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+        socketEvents.lockedRooms = [LOBBY];
+        socketEvents.onStartGame(socket);
+        socketEvents.lockedRooms = [];
+        socketEvents.onStartGame(socket);
+        socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
+        socketEvents.onStartGame(socket);
+        expect(socketToStub.called).to.equal(true);
+    });
+    it('Should call socket.to on call to onStartRandomGame', () => {
+        socketEvents.socketIdRoom.set(socket.id, undefined);
+        socketEvents.onStartRandomGame(socket as Socket);
+        socketEvents.socketIdRoom.set(socket.id, LOBBY);
+        socketEvents.mapOfPlayersInRoom.set(LOBBY, [{} as Player]);
+        socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
+        socketEvents.lockedRooms = [LOBBY];
+        socketEvents.onStartRandomGame(socket as Socket);
+        socketEvents.lockedRooms = [];
+        socketEvents.onStartRandomGame(socket as Socket);
+        socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
+        socketEvents.onStartRandomGame(socket as Socket);
+        expect(socketToStub.called).to.equal(true);
+    });
+
+    it('Should emit GET_PLAYERS event with players when room and players exist', () => {
+        socketEvents.socketIdRoom.set(socket.id, LOBBY);
+        socketEvents.mapOfPlayersInRoom.set(LOBBY, [{} as Player]);
+        socketEvents.onRequestPlayers(socket as Socket);
+    });
+
+    it('Should emit GET_PLAYERS event with empty array when room or players do not exist', () => {
+        socketEvents.socketIdRoom.set(socket.id, undefined);
+        socketEvents.onRequestPlayers(socket as Socket);
     });
 });

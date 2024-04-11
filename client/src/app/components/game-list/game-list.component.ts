@@ -12,6 +12,11 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 })
 export class GameListComponent implements OnInit {
     games: Game[];
+
+    // gameSession et gameService necessaire pour lancer une partie test et une vrai partie respectivement
+    // playerService necessaire pour correctement commencer une partie en tant qu'organisateur
+    // router necessaire pour naviguer a la salle d'attente une fois un jeu lancé
+    // socket necessaire pour initialise la room à laquelle les joueurs peuvent s'unir
     // eslint-disable-next-line max-params
     constructor(
         public gameService: GameService,

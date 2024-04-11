@@ -25,7 +25,7 @@
                 <mat-card-title class="column-container">
                     <p>Votre score : {{ this.playerScore }}</p>
                     <div *ngIf="showPoints" class="points-animation">
-                        <p class="points-text">+{{ question.points }}</p>
+                        <p class="points-text">+{{ pointsGained }}</p>
                     </div>
                 </mat-card-title>
             </mat-card-header>
@@ -34,7 +34,6 @@
                     <h3 class="abort-button">Abandonner</h3>
                 </button>
                 <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button">
-                    <!--    <button mat-button (click)="confirmAnswers(); onFinalAnswer()" [disabled]="choiceDisabled" class="confirm-button"> -->
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>

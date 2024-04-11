@@ -1,10 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { FetchService } from '@app/services/fetch.service';
-import { API_URL } from '@common/consts';
-import { GameSession } from '@common/game-session';
 import { StatusCodes } from 'http-status-codes';
+import { environment } from 'src/environments/environment';
 import { GameSessionService } from './game-session.service';
 import { Game } from './game.service';
+import { GameSession } from '@common/game-session';
+import { API_URL } from '@common/consts';
 
 const SESSION: GameSession = {
     pin: '1122',
@@ -79,17 +80,21 @@ describe('GameSessionService', () => {
         const pin = '1234';
         const responseData: Game = {} as Game;
         const mockResponse: Response = { ok: true, json: async () => Promise.resolve(responseData) } as Response;
-        fetchService.fetch.withArgs(API_URL + 'gameSession/questionswithoutcorrect/' + pin).and.returnValue(Promise.resolve(mockResponse));
-        const result = await service.getQuestionsWithoutCorrectShown(pin);
+        fetchService.fetch
+            .withArgs(environment.serverUrl + 'gameSession/questionswithoutcorrect/' + pin)
+            .and.returnValue(Promise.resolve(mockResponse));
+        const result = await service.getGameWithoutCorrectShown(pin);
         expect(result).toEqual(responseData);
-        expect(fetchService.fetch).toHaveBeenCalledWith(API_URL + 'gameSession/questionswithoutcorrect/' + pin);
+        expect(fetchService.fetch).toHaveBeenCalledWith(environment.serverUrl + 'gameSession/questionswithoutcorrect/' + pin);
     });
 
     it('should handle when response is not ok', async () => {
         const pin = '1234';
         const mockResponse: Response = { ok: false, status: StatusCodes.NOT_FOUND } as Response;
-        fetchService.fetch.withArgs(API_URL + 'gameSession/questionswithoutcorrect/' + pin).and.returnValue(Promise.resolve(mockResponse));
-        await expectAsync(service.getQuestionsWithoutCorrectShown(pin)).toBeRejectedWithError(`Error: ${mockResponse.status}`);
+        fetchService.fetch
+            .withArgs(environment.serverUrl + 'gameSession/questionswithoutcorrect/' + pin)
+            .and.returnValue(Promise.resolve(mockResponse));
+        await expectAsync(service.getGameWithoutCorrectShown(pin)).toBeRejectedWithError(`Error: ${mockResponse.status}`);
     });
 
     it('should call checkAnswer and return true if answer is correct', async () => {
@@ -105,7 +110,7 @@ describe('GameSessionService', () => {
 
         // Set up mock response from FetchService
         fetchService.fetch
-            .withArgs(API_URL + 'gameSession/check', {
+            .withArgs(environment.serverUrl + 'gameSession/check', {
                 method: 'POST',
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -130,7 +135,7 @@ describe('GameSessionService', () => {
 
         // Set up mock response from FetchService
         fetchService.fetch
-            .withArgs(API_URL + 'gameSession/check', {
+            .withArgs(environment.serverUrl + 'gameSession/check', {
                 method: 'POST',
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -153,7 +158,7 @@ describe('GameSessionService', () => {
             status: 500,
         } as unknown as Promise<Response>;
         fetchService.fetch
-            .withArgs(API_URL + 'gameSession/check', {
+            .withArgs(environment.serverUrl + 'gameSession/check', {
                 method: 'POST',
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -172,7 +177,7 @@ describe('GameSessionService', () => {
 
         // Set up mock response from FetchService
         fetchService.fetch
-            .withArgs(API_URL + 'gameSession/create/' + pin, {
+            .withArgs(environment.serverUrl + 'gameSession/create/' + pin, {
                 method: 'POST',
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -191,7 +196,7 @@ describe('GameSessionService', () => {
 
         // Set up mock response from FetchService to simulate failure
         fetchService.fetch
-            .withArgs(API_URL + 'gameSession/create/' + pin, {
+            .withArgs(environment.serverUrl + 'gameSession/create/' + pin, {
                 method: 'POST',
                 // Le test ne fonctionne pas sinon
                 // eslint-disable-next-line @typescript-eslint/naming-convention

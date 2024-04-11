@@ -1,28 +1,31 @@
 [
   {
-    "pin": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
+    "pin": "3843",
     "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
+      "id": "10fa2b9d-aab0-44e8-b53a-f8d01131ef32aleatoire",
+      "title": "Mode Aléatoire",
       "questions": [
         {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
-          "points": 10,
-          "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
-        },
-        {
-          "type": "QRL",
-          "text": "calculez la moyenne",
+          "type": "QCM",
+          "text": "Comment s'appelle le premier ministre espagnol",
           "points": 20,
           "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
+          "choices": [
+            {
+              "text": "Pedro Sanchez",
+              "isCorrect": true
+            },
+            {
+              "text": "Txapote",
+              "isCorrect": false
+            },
+            {
+              "text": "Angela Merkel",
+              "isCorrect": false
+            }
+          ],
+          "id": "b2886297-ac1f-484f-8f47-d8ea332751d3",
+          "lastModification": "2024-04-06T16:31:16.768Z"
         },
         {
           "type": "QCM",
@@ -47,41 +50,183 @@
           "lastModification": "2024-02-14T00:36:59.038Z"
         },
         {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
+          "type": "QCM",
+          "text": "Qui est Gabriel",
+          "points": 50,
           "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
+          "choices": [
+            {
+              "text": "moi",
+              "isCorrect": true
+            },
+            {
+              "text": "toi",
+              "isCorrect": false
+            },
+            {
+              "text": "lui",
+              "isCorrect": false
+            },
+            {
+              "text": "nous",
+              "isCorrect": false
+            }
+          ],
+          "id": "91ab4e52-6ebe-460a-82f4-e6b704fec330",
+          "lastModification": "2024-04-06T16:31:51.647Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Comment est-ce qu'on appelle le package manager pour installer de nouvelles dépendences ?",
+          "points": 20,
+          "addToBank": true,
+          "id": "43ec3b8f-2221-4f6d-9477-23054f71fe47",
+          "choices": [
+            {
+              "text": "npm ci",
+              "isCorrect": true
+            },
+            {
+              "text": "git pull",
+              "isCorrect": false
+            },
+            {
+              "text": "ng serve",
+              "isCorrect": false
+            }
+          ],
+          "lastModification": "2024-01-30T22:34:16.468Z"
         }
       ],
-      "isHidden": false
-    }
+      "duration": 20
+    },
+    "statisticsData": [
+      {
+        "questionID": "b2886297-ac1f-484f-8f47-d8ea332751d3",
+        "data": [
+          {
+            "data": [
+              1
+            ],
+            "label": "Pedro Sanchez",
+            "backgroundColor": "#4CAF50"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "Txapote",
+            "backgroundColor": "#FF4C4C"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "Angela Merkel",
+            "backgroundColor": "#FF4C4C"
+          }
+        ]
+      }
+    ],
+    "players": []
   },
   {
     "pin": "1393",
     "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
+      "id": "1f3b6ac2-8b45-410b-90ee-a1040e7cb27aaleatoire",
+      "title": "Mode Aléatoire",
       "questions": [
         {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
+          "type": "QCM",
+          "text": "Quelle est la capitale de l'Allemagne",
           "points": 10,
           "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
+          "choices": [
+            {
+              "text": "Berlin",
+              "isCorrect": true
+            },
+            {
+              "text": "Londres",
+              "isCorrect": false
+            },
+            {
+              "text": "Paris",
+              "isCorrect": false
+            }
+          ],
+          "id": "9a2d7176-a7f3-4770-b8d2-f6ae018a26cf",
+          "lastModification": "2024-04-09T18:40:58.705Z"
         },
         {
-          "type": "QRL",
-          "text": "calculez la moyenne",
-          "points": 20,
+          "type": "QCM",
+          "text": "Qui est Gabriel",
+          "points": 50,
           "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
+          "choices": [
+            {
+              "text": "moi",
+              "isCorrect": true
+            },
+            {
+              "text": "toi",
+              "isCorrect": false
+            },
+            {
+              "text": "lui",
+              "isCorrect": false
+            },
+            {
+              "text": "nous",
+              "isCorrect": false
+            }
+          ],
+          "id": "91ab4e52-6ebe-460a-82f4-e6b704fec330",
+          "lastModification": "2024-04-06T16:31:51.647Z"
+        },
+        {
+          "type": "QCM",
+          "text": "Quelle dit Descartes",
+          "points": 30,
+          "addToBank": false,
+          "choices": [
+            {
+              "text": "Cogito Ergo Sum",
+              "isCorrect": true
+            },
+            {
+              "text": "Cagita Bergo Cum",
+              "isCorrect": false
+            },
+            {
+              "text": "Doritos Beger Slut",
+              "isCorrect": false
+            }
+          ],
+          "id": "fa136de7-1f61-4fba-be4a-e6f2da97164f",
+          "lastModification": "2024-04-09T18:42:03.742Z"
         },
         {
           "type": "QCM",
@@ -106,443 +251,149 @@
           "lastModification": "2024-02-14T00:36:59.038Z"
         },
         {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
-          "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
-        }
-      ],
-      "isHidden": false
-    }
-  },
-  {
-    "pin": "3572",
-    "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
-      "questions": [
-        {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
-          "points": 10,
-          "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
-        },
-        {
-          "type": "QRL",
-          "text": "calculez la moyenne",
-          "points": 20,
-          "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
-        },
-        {
           "type": "QCM",
-          "text": "Quelle est la capitale de France?",
-          "points": 10,
+          "text": "Comment s'appelle le premier ministre espagnol",
+          "points": 20,
           "addToBank": false,
           "choices": [
             {
-              "text": "Paris",
+              "text": "Pedro Sanchez",
               "isCorrect": true
             },
             {
-              "text": "Berlin",
+              "text": "Txapote",
               "isCorrect": false
             },
             {
-              "text": "London",
+              "text": "Angela Merkel",
               "isCorrect": false
             }
           ],
-          "id": "test",
-          "lastModification": "2024-02-14T00:36:59.038Z"
-        },
-        {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
-          "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
+          "id": "b2886297-ac1f-484f-8f47-d8ea332751d3",
+          "lastModification": "2024-04-06T16:31:16.768Z"
         }
       ],
-      "isHidden": false
-    }
-  },
-  {
-    "pin": "1812",
-    "game": {
-      "id": "46277881346",
-      "lastModification": "2024-03-29T03:03:29.822Z",
-      "title": "Quiz de codage classique",
-      "description": "Testez vos connaissances en codage avec ce quiz QCM.",
-      "duration": 45,
-      "questions": [
-        {
-          "id": "1",
-          "type": "QCM",
-          "text": "Quelle est la complexité temporelle de l'algorithme de tri rapide (quicksort) dans le pire des cas ?",
-          "points": 1,
-          "choices": [
-            {
-              "text": "O(n)",
-              "isCorrect": false
-            },
-            {
-              "text": "O(n log n)",
-              "isCorrect": true
-            },
-            {
-              "text": "O(n^2)",
-              "isCorrect": false
-            },
-            {
-              "text": "O(log n)",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "id": "2",
-          "type": "QCM",
-          "text": "Quel est le langage de programmation utilisé pour développer des applications iOS ?",
-          "points": 1,
-          "choices": [
-            {
-              "text": "Java",
-              "isCorrect": false
-            },
-            {
-              "text": "Swift",
-              "isCorrect": true
-            },
-            {
-              "text": "Python",
-              "isCorrect": false
-            },
-            {
-              "text": "C++",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "id": "3",
-          "type": "QCM",
-          "text": "Quelle est la sortie du code suivant en Python ?\nprint(10 % 3)",
-          "points": 1,
-          "choices": [
-            {
-              "text": "3",
-              "isCorrect": false
-            },
-            {
-              "text": "1",
-              "isCorrect": true
-            },
-            {
-              "text": "0",
-              "isCorrect": false
-            },
-            {
-              "text": "10",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "id": "4",
-          "type": "QCM",
-          "text": "Quelle est la différence entre '==' et '===' en JavaScript ?",
-          "points": 1,
-          "choices": [
-            {
-              "text": "'==' compare les valeurs sans tenir compte du type, '===' compare les valeurs et les types",
-              "isCorrect": true
-            },
-            {
-              "text": "'==' compare les valeurs et les types, '===' compare les valeurs sans tenir compte du type",
-              "isCorrect": false
-            },
-            {
-              "text": "'==' est utilisé pour la comparaison de chaînes, '===' est utilisé pour la comparaison de nombres",
-              "isCorrect": false
-            },
-            {
-              "text": "Il n'y a pas de différence, ils font la même chose",
-              "isCorrect": false
-            }
-          ]
-        },
-        {
-          "id": "5",
-          "type": "QCM",
-          "text": "Quelle est la complexité temporelle de l'algorithme de recherche binaire ?",
-          "points": 1,
-          "choices": [
-            {
-              "text": "O(log n)",
-              "isCorrect": true
-            },
-            {
-              "text": "O(n)",
-              "isCorrect": false
-            },
-            {
-              "text": "O(n log n)",
-              "isCorrect": false
-            },
-            {
-              "text": "O(n^2)",
-              "isCorrect": false
-            }
-          ]
-        }
-      ],
-      "isHidden": false
-    }
-  },
-  {
-    "pin": "1167",
-    "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
-      "questions": [
-        {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
-          "points": 10,
-          "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
-        },
-        {
-          "type": "QRL",
-          "text": "calculez la moyenne",
-          "points": 20,
-          "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
-        },
-        {
-          "type": "QCM",
-          "text": "Quelle est la capitale de France?",
-          "points": 10,
-          "addToBank": false,
-          "choices": [
-            {
-              "text": "Paris",
-              "isCorrect": true
-            },
-            {
-              "text": "Berlin",
-              "isCorrect": false
-            },
-            {
-              "text": "London",
-              "isCorrect": false
-            }
-          ],
-          "id": "test",
-          "lastModification": "2024-02-14T00:36:59.038Z"
-        },
-        {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
-          "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
-        }
-      ],
-      "isHidden": false
-    }
-  },
-  {
-    "pin": "2672",
-    "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
-      "questions": [
-        {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
-          "points": 10,
-          "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
-        },
-        {
-          "type": "QRL",
-          "text": "calculez la moyenne",
-          "points": 20,
-          "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
-        },
-        {
-          "type": "QCM",
-          "text": "Quelle est la capitale de France?",
-          "points": 10,
-          "addToBank": false,
-          "choices": [
-            {
-              "text": "Paris",
-              "isCorrect": true
-            },
-            {
-              "text": "Berlin",
-              "isCorrect": false
-            },
-            {
-              "text": "London",
-              "isCorrect": false
-            }
-          ],
-          "id": "test",
-          "lastModification": "2024-02-14T00:36:59.038Z"
-        },
-        {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
-          "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
-        }
-      ],
-      "isHidden": false
-    }
-  },
-  {
-    "pin": "2731",
-    "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
-      "questions": [
-        {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
-          "points": 10,
-          "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
-        },
-        {
-          "type": "QRL",
-          "text": "calculez la moyenne",
-          "points": 20,
-          "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
-        },
-        {
-          "type": "QCM",
-          "text": "Quelle est la capitale de France?",
-          "points": 10,
-          "addToBank": false,
-          "choices": [
-            {
-              "text": "Paris",
-              "isCorrect": true
-            },
-            {
-              "text": "Berlin",
-              "isCorrect": false
-            },
-            {
-              "text": "London",
-              "isCorrect": false
-            }
-          ],
-          "id": "test",
-          "lastModification": "2024-02-14T00:36:59.038Z"
-        },
-        {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
-          "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
-        }
-      ],
-      "isHidden": false
-    }
-  },
-  {
-    "pin": "2888",
-    "game": {
-      "id": "76fb6140-c76f-4b3d-afa6-ed71611c962c",
-      "lastModification": "2024-03-25T00:13:29.616Z",
-      "title": "Quiz QRL",
-      "description": "Tester un jeu QRL",
-      "duration": 35,
-      "questions": [
-        {
-          "type": "QRL",
-          "text": "Expliquez la difference entre tel et tel moyen de dephasage.",
-          "points": 10,
-          "addToBank": false,
-          "id": "4332af1c-ab5c-496e-9fbe-e74fe9329def",
-          "lastModification": "2024-03-25T00:12:06.103Z"
-        },
-        {
-          "type": "QRL",
-          "text": "calculez la moyenne",
-          "points": 20,
-          "addToBank": false,
-          "id": "81b14239-f0e8-45e8-b3a4-51fdd261ba54",
-          "lastModification": "2024-03-25T00:12:35.476Z"
-        },
-        {
-          "type": "QCM",
-          "text": "Quelle est la capitale de France?",
-          "points": 10,
-          "addToBank": false,
-          "choices": [
-            {
-              "text": "Paris",
-              "isCorrect": true
-            },
-            {
-              "text": "Berlin",
-              "isCorrect": false
-            },
-            {
-              "text": "London",
-              "isCorrect": false
-            }
-          ],
-          "id": "test",
-          "lastModification": "2024-02-14T00:36:59.038Z"
-        },
-        {
-          "type": "QRL",
-          "text": "qui etait descartes",
-          "points": 20,
-          "addToBank": false,
-          "id": "4cb397b4-3ceb-40c2-a2c4-b2aabb3d95f4",
-          "lastModification": "2024-03-25T00:13:06.127Z"
-        }
-      ],
-      "isHidden": false
-    }
+      "duration": 20
+    },
+    "statisticsData": [
+      {
+        "questionID": "9a2d7176-a7f3-4770-b8d2-f6ae018a26cf",
+        "data": [
+          {
+            "data": [
+              2
+            ],
+            "label": "Berlin",
+            "backgroundColor": "#4CAF50"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "Londres",
+            "backgroundColor": "#FF4C4C"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "Paris",
+            "backgroundColor": "#FF4C4C"
+          }
+        ]
+      },
+      null,
+      {
+        "questionID": "fa136de7-1f61-4fba-be4a-e6f2da97164f",
+        "data": [
+          {
+            "data": [
+              1
+            ],
+            "label": "Cogito Ergo Sum",
+            "backgroundColor": "#4CAF50"
+          },
+          {
+            "data": [
+              1
+            ],
+            "label": "Cagita Bergo Cum",
+            "backgroundColor": "#FF4C4C"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "Doritos Beger Slut",
+            "backgroundColor": "#FF4C4C"
+          }
+        ]
+      },
+      {
+        "questionID": "test",
+        "data": [
+          {
+            "data": [
+              1
+            ],
+            "label": "Paris",
+            "backgroundColor": "#4CAF50"
+          },
+          {
+            "data": [
+              1
+            ],
+            "label": "Berlin",
+            "backgroundColor": "#FF4C4C"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "London",
+            "backgroundColor": "#FF4C4C"
+          }
+        ]
+      },
+      {
+        "questionID": "b2886297-ac1f-484f-8f47-d8ea332751d3",
+        "data": [
+          {
+            "data": [
+              1
+            ],
+            "label": "Pedro Sanchez",
+            "backgroundColor": "#4CAF50"
+          },
+          {
+            "data": [
+              1
+            ],
+            "label": "Txapote",
+            "backgroundColor": "#FF4C4C"
+          },
+          {
+            "data": [
+              0
+            ],
+            "label": "Angela Merkel",
+            "backgroundColor": "#FF4C4C"
+          }
+        ]
+      }
+    ],
+    "players": [
+      {
+        "room": "1393",
+        "name": "Pepep",
+        "isHost": false,
+        "id": "",
+        "score": 46,
+        "bonusCount": 2,
+        "color": 16711680,
+        "chatEnabled": true,
+        "leftGame": false
+      }
+    ]
   }
 ]

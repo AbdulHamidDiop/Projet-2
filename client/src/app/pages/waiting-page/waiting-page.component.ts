@@ -1,7 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { GameService } from '@app/services/game.service';
+import { PlayerAndAdminPanelComponent } from '@app/components/player-and-admin-panel/player-and-admin-panel.component';
+import { GameManagerService } from '@app/services/game-manager.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -18,11 +20,13 @@ const START_GAME_DELAY = 5000;
     styleUrls: ['./waiting-page.component.scss'],
 })
 export class WaitingPageComponent implements OnDestroy, OnInit {
+    @ViewChild(PlayerAndAdminPanelComponent) playerAndAdminPanelComponent: PlayerAndAdminPanelComponent;
+
     fullView: boolean = true;
     roomIdEntryView: boolean = true;
     usernameEntryView: boolean = false;
     playerPanelView: boolean = false;
-    player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0 };
+    player: Player = { name: '', isHost: false, id: '', score: 0, bonusCount: 0, leftGame: false };
     game: Game = {} as Game;
     players: Player[] = [];
     showCountDown: boolean = false;
@@ -31,8 +35,9 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     leaveRoomSubscription: Subscription;
     roomJoinSubscription: Subscription;
     roomLockedSubscription: Subscription;
-    gameIDSubscription: Subscription;
+    gamePinSubscription: Subscription;
     gameStartSubscription: Subscription;
+    randomGameStartSubscription: Subscription;
     playersSubscription: Subscription;
     profileSubscription: Subscription;
     kickSubscription: Subscription;
@@ -40,19 +45,91 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
 
     // eslint-disable-next-line max-params
     constructor(
-        private gameService: GameService,
+        private gameSessionService: GameSessionService,
+        private gameManagerService: GameManagerService,
         private timeService: TimeService,
+        private playerService: PlayerService,
         private socket: SocketRoomService,
         readonly router: Router,
         private snackBar: MatSnackBar,
-        private playerService: PlayerService,
     ) {
-        // if init is true in the queryParams, call a function
-        if (this.router.url.includes('?init=true')) {
-            this.setInitailView();
-        }
+        this.setSockets();
+    }
+
+    ngOnInit(): void {
+        window.addEventListener('popstate', this.onLocationChange);
+        window.addEventListener('hashchange', this.onLocationChange);
+    }
+
+    ngOnDestroy() {
+        window.removeEventListener('popstate', this.onLocationChange);
+        window.removeEventListener('hashchange', this.onLocationChange);
+
+        this.leaveRoomSubscription?.unsubscribe();
+        this.roomJoinSubscription?.unsubscribe();
+        this.roomLockedSubscription?.unsubscribe();
+        this.gamePinSubscription?.unsubscribe();
+        this.gameStartSubscription?.unsubscribe();
+        this.randomGameStartSubscription?.unsubscribe();
+        this.playersSubscription?.unsubscribe();
+        this.profileSubscription?.unsubscribe();
+        this.kickSubscription?.unsubscribe();
+        this.disconnectSubscription?.unsubscribe();
+        this.playerLeftSubscription?.unsubscribe();
+    }
+
+    onCountDownModalClosed(): void {
+        this.showCountDown = false;
+    }
+
+    gameStartSubscribe() {
+        this.gameStartSubscription = this.socket.gameStartSubscribe().subscribe(() => {
+            this.openCountDownModal();
+            setTimeout(() => {
+                if (this.player.isHost) {
+                    setTimeout(() => {
+                        this.socket.requestPlayers();
+                    }, START_TIMER_DELAY);
+                    this.router.navigate(['/hostView/' + this.game.id]);
+                } else {
+                    this.router.navigate(['/game/' + this.game.id]);
+                }
+            }, START_GAME_DELAY);
+        });
+    }
+
+    randomGameStartSubscribe() {
+        this.randomGameStartSubscription = this.socket.randomGameStartSubscribe().subscribe(() => {
+            if (this.playerService.player.name === 'Organisateur') {
+                this.playerService.player.isHost = false;
+            }
+            this.gameManagerService.initRandomGame(this.players);
+            this.openCountDownModal();
+            setTimeout(() => {
+                setTimeout(() => {
+                    this.socket.sendMessage(Events.START_TIMER, nsp.GAME, { time: this.game.duration });
+                    this.socket.requestPlayers();
+                }, START_TIMER_DELAY);
+                this.router.navigate(['/game/' + this.game.id]);
+            }, START_GAME_DELAY);
+        });
+    }
+
+    private openCountDownModal(): void {
+        this.showCountDown = true;
+    }
+
+    private onLocationChange = () => {
+        this.socket.endGame();
+    };
+
+    private setSockets(): void {
         this.leaveRoomSubscription = this.socket.leaveRoomSubscribe().subscribe(() => {
-            this.setInitailView();
+            this.fullView = false;
+            this.roomIdEntryView = true;
+            this.usernameEntryView = false;
+            this.playerPanelView = false;
+            this.fullView = true;
         });
 
         this.roomJoinSubscription = this.socket.roomJoinSubscribe().subscribe((res) => {
@@ -79,15 +156,30 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             });
         });
 
-        this.gameIDSubscription = this.socket.getGameId().subscribe((id) => {
-            this.game = this.gameService.getGameByID(id);
+        this.socket.getChatMessages().subscribe(async (message) => {
+            if (message.author === 'room') {
+                this.socket.room = message.message;
+                this.gameSessionService.getGameWithoutCorrectShown(this.socket.room).then((game: Game) => {
+                    this.game = game;
+                    this.playerAndAdminPanelComponent.initializeGame(game);
+                });
+            }
         });
 
         this.gameStartSubscribe();
+        this.randomGameStartSubscribe();
+
+        this.gamePinSubscription = this.socket.getGamePin().subscribe((pin) => {
+            this.gameSessionService.getGameWithoutCorrectShown(pin).then((game) => {
+                this.game = game;
+            });
+        });
 
         this.playersSubscription = this.socket.getPlayers().subscribe((players) => {
             this.players = players;
-            this.playerService.setGamePlayers(players);
+            for (const player of players) {
+                this.playerService.addGamePlayers(player);
+            }
         });
 
         this.profileSubscription = this.socket.getProfile().subscribe((player) => {
@@ -113,66 +205,5 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         });
 
         this.timeService.init(); // instanciating the service now to set up subscriptions early
-    }
-
-    ngOnInit(): void {
-        window.addEventListener('popstate', this.onLocationChange);
-        window.addEventListener('hashchange', this.onLocationChange);
-    }
-
-    ngOnDestroy() {
-        window.removeEventListener('popstate', this.onLocationChange);
-        window.removeEventListener('hashchange', this.onLocationChange);
-
-        this.leaveRoomSubscription.unsubscribe();
-        this.roomJoinSubscription.unsubscribe();
-        this.roomLockedSubscription.unsubscribe();
-        this.gameIDSubscription.unsubscribe();
-        this.gameStartSubscription.unsubscribe();
-        this.playersSubscription.unsubscribe();
-        this.profileSubscription.unsubscribe();
-        this.kickSubscription.unsubscribe();
-        this.disconnectSubscription.unsubscribe();
-        this.playerLeftSubscription.unsubscribe();
-    }
-
-    gameStartSubscribe() {
-        this.gameStartSubscription = this.socket.gameStartSubscribe().subscribe(() => {
-            window.removeEventListener('popstate', this.onLocationChange);
-            window.removeEventListener('hashchange', this.onLocationChange);
-
-            this.openCountDownModal();
-            setTimeout(() => {
-                if (this.player.isHost) {
-                    setTimeout(() => {
-                        this.socket.sendMessage(Events.START_TIMER, nsp.GAME);
-                        // this.socket.requestPlayers(); Supprimé par git.
-                    }, START_TIMER_DELAY);
-                    this.router.navigate(['/hostView/' + this.game.id]);
-                } else {
-                    this.router.navigate(['/game/' + this.game.id]);
-                }
-            }, START_GAME_DELAY);
-        });
-    }
-
-    setInitailView(): void {
-        this.fullView = false;
-        this.roomIdEntryView = true;
-        this.usernameEntryView = false;
-        this.playerPanelView = false;
-        this.fullView = true;
-    }
-
-    onLocationChange = () => {
-        this.socket.endGame();
-    };
-
-    openCountDownModal(): void {
-        this.showCountDown = true;
-    }
-
-    onCountDownModalClosed(): void {
-        this.showCountDown = false;
     }
 }

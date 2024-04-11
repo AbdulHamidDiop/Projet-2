@@ -32,6 +32,8 @@ export interface QRLAnswer {
 }
 
 export interface QRLGrade {
+    questionId: string;
     author: string;
     grade: number;
+    multiplier: number;
 }

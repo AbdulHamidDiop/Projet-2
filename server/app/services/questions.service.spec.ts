@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-imports */
-import { Question } from '@common/game';
+import { Question, Type } from '@common/game';
 import { DB_COLLECTION_QUESTIONS } from '@common/utils/env';
 import { expect } from 'chai';
 import { MongoMemoryServer } from 'mongodb-memory-server';
@@ -143,5 +143,29 @@ describe('Questions Service', () => {
         stub(questionService, 'getAllQuestions').resolves([{ type: 'QRL' } as unknown as Question]);
         const isCorrectQRL = await questionService.isCorrectAnswer(['qrl answer'], 'qrl id');
         expect(isCorrectQRL).to.equal(true);
+    });
+
+    it('should throw an error if there are not enough QCM questions', async () => {
+        try {
+            await questionService.getRandomQuestions();
+            expect.fail('Expected method to throw.');
+        } catch (error) {
+            expect(error).to.be.an('error').with.property('message', 'Not enough QCM questions');
+        }
+    });
+
+    it('should get 5 random questions if there are 5', async () => {
+        // Modify the stub to resolve with different data or reject
+        stub(questionService, 'getAllQuestions').resolves([
+            { id: '1', type: Type.QCM },
+            { id: '2', type: Type.QCM },
+            { id: '3', type: Type.QCM },
+            { id: '4', type: Type.QCM },
+            { id: '5', type: Type.QCM },
+            { id: '6', type: Type.QRL },
+        ] as Question[]);
+        const five = 5;
+        const randomQuestions = await questionService.getRandomQuestions();
+        expect(randomQuestions).to.be.an('array').with.lengthOf(five);
     });
 });

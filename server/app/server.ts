@@ -23,7 +23,10 @@ export class Server {
     private io: SocketIOServer;
     private chatHistories: Map<string, ChatMessage[]> = new Map();
     private liveRooms: string[] = [];
+    private randomGamesNumberOfAnswers = new Map<string, number>();
 
+    // Le nombre de paramètres est adéquat pour les requis du projet
+    // malgré les conventions de eslint
     // eslint-disable-next-line max-params
     constructor(
         private readonly application: Application,
@@ -36,13 +39,14 @@ export class Server {
         const port: number = typeof val === 'string' ? parseInt(val, this.baseDix) : val;
         return isNaN(port) ? val : port >= 0 ? port : false;
     }
+
     async init(): Promise<void> {
         this.application.app.set('port', Server.appPort);
         this.server = http.createServer(this.application.app);
         this.server.listen(Server.appPort);
         this.server.on('error', (error: NodeJS.ErrnoException) => this.onError(error));
         this.server.on('listening', () => this.onListening());
-        const corsOptions: CorsOptions = { origin: ['http://localhost:4200'] };
+        const corsOptions: CorsOptions = { origin: '*' };
         this.io = new SocketIOServer(this.server, { cors: corsOptions });
         this.liveRooms.push(LOBBY);
         this.chatHistories.set(LOBBY, []);
@@ -102,6 +106,7 @@ export class Server {
                 socket.to(data.room).emit(Events.QCM_STATS, data);
                 const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data.player, YELLOW);
+                this.gameSessionService.updateStatisticsData(data.room, data);
             });
             socket.on(Events.CONFIRM_ANSWERS, (data) => {
                 const GREEN = 0x00ff00;
@@ -134,6 +139,22 @@ export class Server {
             socket.on(Events.GET_PLAYERS, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.GET_PLAYERS, data);
             });
+
+            socket.on(Events.GET_STATS, async (data) => {
+                const stats = await this.gameSessionService.getStatisticsData(data.room);
+                socket.emit(Events.GET_STATS, stats);
+            });
+
+            socket.on(Events.STORE_PLAYER, async (data) => {
+                await this.gameSessionService.storePlayer(data.room, data);
+                const players = await this.gameSessionService.getPlayers(data.room);
+                socket.emit(Events.GET_FINAL_PLAYERS, players);
+            });
+
+            socket.on(Events.GET_FINAL_PLAYERS, async (data) => {
+                const players = await this.gameSessionService.getPlayers(data.room);
+                socket.emit(Events.GET_FINAL_PLAYERS, players);
+            });
         });
 
         gameNamespace.on('connection', (socket) => {
@@ -143,7 +164,22 @@ export class Server {
             });
 
             socket.on(Events.PLAYER_LEFT, (data) => {
+                const playersInRoom = this.socketEvents.mapOfPlayersInRoom.get(data.room) || [];
+                const player = playersInRoom.find((play) => play.name === data.user);
+                if (player) {
+                    player.leftGame = true;
+                }
                 gameNamespace.in(data.room).emit(Events.PLAYER_LEFT, data);
+                if (this.socketEvents.mapOfPlayersInRoom.get(data.room)?.filter((play) => !play.leftGame).length === 1) {
+                    this.randomGamesNumberOfAnswers.delete(data.room);
+
+                    const index = this.liveRooms.indexOf(data.room);
+                    if (index > ERROR_INDEX) this.liveRooms.splice(index, 1);
+
+                    this.chatHistories.delete(data.room);
+
+                    this.gameSessionService.deleteSession(data.room);
+                }
             });
 
             socket.on(Events.PLAYER_JOINED, (data) => {
@@ -164,6 +200,7 @@ export class Server {
 
             socket.on(Events.QRL_GRADE, (data) => {
                 socket.in(data.room).emit(Events.QRL_GRADE, data);
+                this.gameSessionService.updateQRLGradeData(data.room, data);
             });
 
             socket.on(Events.END_GAME, ({ room }: { room: string }) => {
@@ -207,6 +244,22 @@ export class Server {
             socket.on(Events.FINAL_ANSWER, ({ room }: { room: string }) => {
                 socket.emit(Events.BONUS);
                 socket.to(room).emit(Events.BONUS_GIVEN);
+            });
+
+            socket.on(Events.CONFIRM_ANSWER_R, async ({ room }) => {
+                const numberOfAnswers = this.randomGamesNumberOfAnswers.get(room) + 1 || 1;
+                this.randomGamesNumberOfAnswers.set(room, numberOfAnswers);
+                const nPlayers = this.socketEvents.mapOfPlayersInRoom.get(room)?.filter((player) => !player.leftGame).length || 0;
+                if (numberOfAnswers >= nPlayers) {
+                    this.randomGamesNumberOfAnswers.set(room, 0);
+                    gameNamespace.to(room).emit(Events.NEXT_QUESTION);
+                }
+            });
+
+            socket.on(Events.RESET_NUMBER_ANSWERS, ({ room }) => {
+                if (this.randomGamesNumberOfAnswers.get(room) > 0) {
+                    this.randomGamesNumberOfAnswers.set(room, 0);
+                }
             });
         });
     }
