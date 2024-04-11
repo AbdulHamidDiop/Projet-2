@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
+// import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { VALID_QUESTION } from '@common/test-interfaces';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { QuestionsService } from './questions.service';
+import SpyObj = jasmine.SpyObj;
 
 async function arrayBufferMock(): Promise<ArrayBuffer> {
     const buffer = new ArrayBuffer(0);
@@ -87,9 +90,13 @@ async function fetchMock(): Promise<Response> {
 
 describe('QuestionsService', () => {
     let service: QuestionsService;
+    let snackBarMock: SpyObj<MatSnackBar>;
     const fetchSpy = jasmine.createSpy().and.callFake(fetchMock);
 
     beforeEach(() => {
+        snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        snackBarMock.open.and.returnValue({} as any);
         TestBed.configureTestingModule({
             providers: [
                 {
@@ -98,6 +105,7 @@ describe('QuestionsService', () => {
                         fetch: fetchSpy,
                     },
                 },
+                { provide: MatSnackBar, useValue: snackBarMock },
             ],
         });
         service = TestBed.inject(QuestionsService);

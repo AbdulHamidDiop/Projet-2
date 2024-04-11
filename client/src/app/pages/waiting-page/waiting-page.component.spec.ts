@@ -60,7 +60,7 @@ describe('WaitingPageComponent', () => {
         );
         socketMock.listenForMessages.and.returnValue(of({}));
 
-        routerMock = jasmine.createSpyObj('Router', ['navigate'], { url: '' });
+        routerMock = jasmine.createSpyObj('Router', ['navigate'], { url: { includes: () => true } });
 
         gameSessionServiceMock = jasmine.createSpyObj('GameSessionService', ['getGameWithoutCorrectShown']);
         gameSessionServiceMock.getGameWithoutCorrectShown.and.returnValue(Promise.resolve({ id: '123' } as Game));

@@ -114,7 +114,6 @@ export class Server {
             });
 
             socket.on(Events.NOTIFY_QRL_INPUT, (data) => {
-                // !!!!!! souvent appelé durant un qrl
                 const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data, YELLOW);
             });

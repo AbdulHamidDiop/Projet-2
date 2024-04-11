@@ -1,6 +1,7 @@
 import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
 import { CommunicationService } from '@app/services/communication.service';
 import { of } from 'rxjs';
@@ -12,8 +13,12 @@ describe('AdminButtonComponent', () => {
     let component: AdminButtonComponent;
     let fixture: ComponentFixture<AdminButtonComponent>;
     let communicationServiceSpy: SpyObj<CommunicationService>;
+    let snackBarMock: SpyObj<MatSnackBar>;
 
     beforeEach(async () => {
+        snackBarMock = jasmine.createSpyObj('MatSnackBar', ['open']);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        snackBarMock.open.and.returnValue({} as any);
         communicationServiceSpy = jasmine.createSpyObj('ExampleService', ['basicGet', 'basicPost']);
         communicationServiceSpy.basicGet.and.returnValue(of({ title: '', body: '' }));
         communicationServiceSpy.basicPost.and.returnValue(of(new HttpResponse<string>({ status: 201, statusText: 'Created' })));
@@ -21,7 +26,7 @@ describe('AdminButtonComponent', () => {
         await TestBed.configureTestingModule({
             imports: [RouterTestingModule, HttpClientTestingModule],
             declarations: [],
-            providers: [CommunicationService],
+            providers: [CommunicationService, MatSnackBar],
         }).compileComponents();
     });
 
