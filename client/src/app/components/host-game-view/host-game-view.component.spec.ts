@@ -463,15 +463,6 @@ describe('HostGameViewComponent', () => {
 
     it('should unsubscribe after ngOnDestroy', () => {
         spyOn(component.gameManagerService, 'reset');
-        component.unitTesting = false;
-        component.playerLeftSubscription = new Subscription();
-        component.getPlayersSubscription = new Subscription();
-        component.nextQuestionSubscription = new Subscription();
-        component.qcmStatsSubscription = new Subscription();
-        component.timerEndedSubscription = new Subscription();
-        component.endGameSubscription = new Subscription();
-        component.updatePlayerSubscription = new Subscription();
-
         component.ngOnDestroy();
         expect(component.gameManagerService.reset).toHaveBeenCalled();
     });

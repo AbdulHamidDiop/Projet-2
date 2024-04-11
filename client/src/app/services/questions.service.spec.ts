@@ -2,7 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { API_URL } from '@common/consts';
+// import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { VALID_QUESTION } from '@common/test-interfaces';
 import { environment } from 'src/environments/environment';

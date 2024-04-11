@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { API_URL } from '@common/consts';
+// import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { StatusCodes } from 'http-status-codes';
 import { environment } from 'src/environments/environment';
