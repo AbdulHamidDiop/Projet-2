@@ -7,6 +7,10 @@ body {
     display: flex;
 }
 
+main {
+    bottom: 0;
+}
+
 .header h1,
 .header p,
 .example-form h2,
@@ -18,6 +22,7 @@ button,
 
 #grad {
     background-image: linear-gradient(to top, #503bb8, transparent);
+    height: 100%
 }
 
 .main-content {
