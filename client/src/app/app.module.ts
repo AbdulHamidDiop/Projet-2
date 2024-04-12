@@ -21,11 +21,14 @@ import { CreateQuestionDialogComponent } from './components/create-question-dial
 import { FooterComponent } from './components/footer/footer.component';
 import { GameCardComponent } from './components/game-card/game-card.component';
 import { GameListComponent } from './components/game-list/game-list.component';
+import { GameRandomComponent } from './components/game-random/game-random.component';
 import { HostGameViewComponent } from './components/host-game-view/host-game-view.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { PlayerAndAdminPanelComponent } from './components/player-and-admin-panel/player-and-admin-panel.component';
+import { PlayerListComponent } from './components/player-list/player-list.component';
 import { SelectRoomComponent } from './components/select-room/select-room.component';
 import { SelectUsernameComponent } from './components/select-username/select-username.component';
+import { SessionComponent } from './components/session/session.component';
 import { StatsTestComponent } from './components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
@@ -36,9 +39,6 @@ import { WaitingPageComponent } from './pages/waiting-page/waiting-page.componen
 import { GameService } from './services/game.service';
 import { QuestionsService } from './services/questions.service';
 import { SocketRoomService } from './services/socket-room.service';
-import { SessionComponent } from './components/session/session.component';
-import { PlayerListComponent } from './components/player-list/player-list.component';
-import { GameRandomComponent } from './components/game-random/game-random.component';
 
 /**
  * Main module that is used in main.ts.
