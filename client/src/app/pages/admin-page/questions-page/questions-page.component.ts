@@ -52,7 +52,7 @@ export class QuestionsPageComponent implements OnInit {
 
         dialogRef.afterClosed().subscribe((result: Question) => {
             if (result) {
-                this.questions.push(result);
+                this.getQuestions();
             }
         });
     }

@@ -31,6 +31,7 @@ export interface Game {
 export interface Player {
     name: string;
     isHost: boolean;
+    isRandomGameHost?: boolean;
     id: string;
     score: number;
     bonusCount: number;

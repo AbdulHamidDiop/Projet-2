@@ -17,13 +17,6 @@ main {
     min-height: 100%;
 }
 
-.header-item {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 1.8em;
-    color: #007bff;
-}
-
 .grid-container-admin-page {
     min-height: 100%;
     display: grid;
@@ -63,10 +56,10 @@ main {
 }
 
 #handleErrorsGrid {
-    border-style: solid;
+    border-style: dotted;
     border-color: black;
-    height: 300px;
-    width: 353.19px;
+    height: 100px;
+    width: 300px;
 }
 
 .quickzz {

@@ -8,6 +8,7 @@ import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { MouseButton } from '@app/interfaces/game-elements';
 import { GameManagerService } from '@app/services/game-manager.service';
+import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { QRLStatService } from '@app/services/qrl-stats.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -75,6 +76,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         public router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
+        private gameSessionService: GameSessionService,
     ) {
         this.playerService.player.score = 0;
         this.answer = [];
@@ -218,6 +220,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     goNextQuestion() {
         this.answer = [];
+        this.feedback = [];
         this.qrlAnswer = '';
         this.movingToNextQuestion = false;
         this.endGameTest();
@@ -414,6 +417,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
+            this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
