@@ -76,7 +76,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         public router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
-        private gameSessionService: GameSessionService
+        private gameSessionService: GameSessionService,
     ) {
         this.playerService.player.score = 0;
         this.answer = [];
@@ -155,7 +155,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
-            this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
@@ -195,7 +194,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
-        this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManager.gamePin);
     }
     ngOnDestroy() {
         this.timeService.stopTimer();
@@ -222,6 +220,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     goNextQuestion() {
         this.answer = [];
+        this.feedback = [];
         this.qrlAnswer = '';
         this.movingToNextQuestion = false;
         this.endGameTest();
@@ -418,6 +417,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
+            this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);

@@ -329,7 +329,7 @@ export class SocketRoomService implements OnDestroy {
     endGame(snckMessage?: string): void {
         const snackMessage = snckMessage ? snckMessage : 'La partie a été interrompue';
 
-        if (this.playerService.player.name === 'Organisateur') {
+        if (this.playerService.player.name === 'Organisateur' && !this.playerService.player.isRandomGameHost) {
             this.sendMessage(Events.CLEANUP_GAME, Namespaces.GAME);
             this.sendMessage(Events.ABORT_GAME, Namespaces.GAME);
 
@@ -362,6 +362,7 @@ export class SocketRoomService implements OnDestroy {
         this.playerService.player = {
             name: '',
             isHost: false,
+            isRandomGameHost: false,
             id: '',
             score: 0,
             bonusCount: 0,

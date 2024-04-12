@@ -102,6 +102,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         this.randomGameStartSubscription = this.socket.randomGameStartSubscribe().subscribe(() => {
             if (this.playerService.player.name === 'Organisateur') {
                 this.playerService.player.isHost = false;
+                this.playerService.player.isRandomGameHost = true;
             }
             this.gameManagerService.initRandomGame(this.players);
             this.openCountDownModal();
