@@ -155,7 +155,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
-            this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
@@ -418,6 +417,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
+            this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
