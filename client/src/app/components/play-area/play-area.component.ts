@@ -397,10 +397,11 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         });
     }
 
-    endGame() {
+    async endGame() {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
         this.router.navigate(['results'], { relativeTo: this.route });
+        await this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
     }
 
     onLocationChange = () => {
@@ -417,7 +418,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
-            this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
             setTimeout(() => {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);

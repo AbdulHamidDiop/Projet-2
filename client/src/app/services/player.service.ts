@@ -39,10 +39,10 @@ export class PlayerService {
     }
 
     findBestScore(): number {
-        let bestPlayer: Player = this.playersInGame[0];
-        for (let i = 1; i < this.playersInGame.length; i++) {
-            if (this.playersInGame[i].score > bestPlayer.score) {
-                bestPlayer = this.playersInGame[i];
+        let bestPlayer: Player = this.player;
+        for (const player of this.playersInGame) {
+            if (player.score > bestPlayer.score) {
+                bestPlayer = player;
             }
         }
         return bestPlayer.score;

@@ -9,7 +9,7 @@ import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
-
+const COMPLETE_DELAY = 5000;
 @Component({
     selector: 'app-results-page',
     templateUrl: './results-page.component.html',
@@ -110,7 +110,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     }
 
     private connectToServer(): void {
-        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_FINAL_PLAYERS).subscribe((data) => {
+        this.playersSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_FINAL_PLAYERS).subscribe(async (data) => {
             const players = data as Player[];
             this.playerService.playersInGame = players;
             this.sortPlayers();
@@ -132,5 +132,8 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         });
         this.socketsService.sendMessage(Events.GET_FINAL_PLAYERS, Namespaces.GAME_STATS);
         this.socketsService.sendMessage(Events.GET_STATS, Namespaces.GAME_STATS);
+        setTimeout(async () => {
+            await this.gameSessionService.completeSession(this.socketsService.room, this.playerService.findBestScore());
+        }, COMPLETE_DELAY);
     }
 }
