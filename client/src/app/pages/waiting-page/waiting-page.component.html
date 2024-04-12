@@ -9,4 +9,9 @@
     ></app-player-and-admin-panel>
     <app-sidebar *ngIf="this.playerPanelView" [player]="this.player" id="sidebar"></app-sidebar>
 </div>
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()" [countdown]="5"></app-countdown-modal>
+<app-countdown-modal
+    [showModal]="showCountDown"
+    (modalClosed)="onCountDownModalClosed()"
+    [countdown]="5"
+    [message]="'La partie commence dans'"
+></app-countdown-modal>
