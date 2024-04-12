@@ -103,8 +103,8 @@ export class GameSessionService {
         if (!question || !game) {
             return [];
         }
-
-        const feedback: Feedback[] = question.choices.map((choice) => {
+        console.log('question', question);
+        const feedback: Feedback[] = question.choices?.map((choice) => {
             const isSelected = submittedAnswers.includes(choice.text);
             const status: 'correct' | 'incorrect' | 'missed' = isSelected
                 ? choice.isCorrect

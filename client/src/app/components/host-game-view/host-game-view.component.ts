@@ -51,23 +51,17 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private gameSessionService: GameSessionService,
         private snackBar: MatSnackBar,
     ) {
+        this.timeService.pauseFlag = false;
+        this.questionLoaded = false;
         this.playersLeft = this.playerService.nActivePlayers();
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.playersInGame = players;
 
             this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManagerService.gamePin);
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
-            if (!this.questionLoaded) {
-                setTimeout(() => {
-                    this.openCountDownModal();
-                }, SHOW_FEEDBACK_DELAY);
-                setTimeout(() => {
-                    this.onNextQuestionReceived();
-                }, 2 * SHOW_FEEDBACK_DELAY);
-                this.questionLoaded = true;
-            }
-        });
+        //         this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
+        // dans notifyNextQuestion
+        //         });
     }
     get time(): number {
         return this.timeService.time;
@@ -275,6 +269,15 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     };
     choseNextQuestion(): void {
         this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
+        if (!this.questionLoaded) {
+            this.questionLoaded = true;
+            setTimeout(() => {
+                this.openCountDownModal();
+            }, SHOW_FEEDBACK_DELAY);
+            setTimeout(() => {
+                this.onNextQuestionReceived();
+            }, 2 * SHOW_FEEDBACK_DELAY);
+        }
     }
     handleTimerEnd(): void {
         if (this.currentQuestion.type === Type.QCM) {

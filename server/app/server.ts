@@ -171,7 +171,7 @@ export class Server {
                 }
                 gameNamespace.in(data.room).emit(Events.PLAYER_LEFT, data);
                 const playersInGame = this.socketEvents.mapOfPlayersInRoom.get(data.room)?.filter((play) => !play.leftGame);
-                if (!playersInGame.length) {
+                if (!playersInGame?.length) {
                     this.randomGamesNumberOfAnswers.delete(data.room);
 
                     const index = this.liveRooms.indexOf(data.room);
@@ -189,6 +189,7 @@ export class Server {
 
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
                 gameNamespace.to(room).emit(Events.NEXT_QUESTION);
+                console.log('Next question');
             });
 
             socket.on(Events.QRL_ANSWER, (data) => {
