@@ -190,6 +190,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.socketService.endGame();
         });
 
+
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
     }
@@ -218,6 +219,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
     goNextQuestion() {
         this.answer = [];
+        this.feedback = [];
         this.qrlAnswer = '';
         this.movingToNextQuestion = false;
         this.endGameTest();
