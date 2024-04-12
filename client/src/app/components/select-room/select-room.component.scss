@@ -73,8 +73,16 @@ button,
 }
 
 .mat-form-field {
-    width: 100%;
     margin-bottom: 1rem;
+}
+
+.example-full-width {
+    max-height: 90px;
+    width: 500px;
+}
+
+.example-full-width input {
+    margin-left: 35%;
 }
 
 input,
@@ -93,7 +101,7 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button.example-full-width {
+button.join-room-button {
     color: white;
 }
 
