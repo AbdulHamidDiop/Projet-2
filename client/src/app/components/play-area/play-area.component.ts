@@ -76,7 +76,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         public router: Router,
         private route: ActivatedRoute,
         private snackBar: MatSnackBar,
-        private gameSessionService: GameSessionService
+        private gameSessionService: GameSessionService,
     ) {
         this.playerService.player.score = 0;
         this.answer = [];
@@ -192,10 +192,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.socketService.endGame();
         });
 
-
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
-        this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManager.gamePin);
     }
     ngOnDestroy() {
         this.timeService.stopTimer();
