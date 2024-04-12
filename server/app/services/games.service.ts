@@ -20,6 +20,7 @@ export class GamesService {
     }
 
     async addGame(game: Game): Promise<void> {
+        await this.collection.deleteOne({ id: game.id });
         await this.collection.insertOne(game);
     }
 

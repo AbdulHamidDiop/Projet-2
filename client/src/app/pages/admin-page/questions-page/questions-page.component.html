@@ -3,16 +3,21 @@
 
     <div class="grid-container-question-bank">
         <div class="questions-list-column">
-                <mat-button-toggle-group multiple>
-                    <mat-button-toggle value="QCM" (click)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
-                    <mat-button-toggle value="QRL" (click)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
-                </mat-button-toggle-group>
-                <mat-accordion>
-                    <p *ngIf="displayQuestions.length === 0">Aucune question à afficher</p>
-                    <div *ngFor="let question of displayQuestions; index as order">
-                        <app-admin-question [question]="question" [index]="order + 1" [editable]="true"></app-admin-question>
-                    </div>
-                </mat-accordion>
+            <mat-button-toggle-group multiple>
+                <mat-button-toggle value="QCM" (click)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
+                <mat-button-toggle value="QRL" (click)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
+            </mat-button-toggle-group>
+            <mat-accordion>
+                <p *ngIf="displayQuestions.length === 0">Aucune question à afficher</p>
+                <div *ngFor="let question of displayQuestions; index as order">
+                    <app-admin-question
+                        [question]="question"
+                        [index]="order + 1"
+                        [editable]="true"
+                        [showModificationDate]="true"
+                    ></app-admin-question>
+                </div>
+            </mat-accordion>
         </div>
         <div class="question-add-column">
             <div>
