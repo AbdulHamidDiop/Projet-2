@@ -47,6 +47,7 @@ export class GameService {
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
+        this.games = await this.getAllGames();
     }
 
     getGameByID(id: string): Game {
