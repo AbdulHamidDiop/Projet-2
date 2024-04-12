@@ -61,6 +61,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             //         player.leftGame = oldPlayer.leftGame;
             //     }
             // }
+            this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManagerService.gamePin);
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
             if (!this.questionLoaded) {
