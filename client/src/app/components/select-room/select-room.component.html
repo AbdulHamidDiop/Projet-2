@@ -15,9 +15,8 @@
                 <mat-form-field class="example-full-width">
                     <input #input matInput placeholder="Ex: 2324" (input)="restrictInput($event)" />
                 </mat-form-field>
-                <img src="https://media.tenor.com/OBWnOrsAz9QAAAAi/light-bulb-idea.gif" alt="Light Bulb Idea GIF" class="right-side-image" />
             </div>
-            <button mat-button class="example-full-width" (click)="joinRoom(input)">Rejoindre la salle</button>
+            <button mat-button class="join-room-button" (click)="joinRoom(input)">Rejoindre la salle</button>
         </div>
 
         <div class="decorative-element">
