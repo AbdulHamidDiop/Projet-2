@@ -357,7 +357,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_CONFIRMED).subscribe(() => {
             this.nConfirmations++;
             if (this.nConfirmations === this.playersLeft) {
-                this.disableNextQuestion = true;
+                this.disableNextQuestion = false;
             }
         });
     }

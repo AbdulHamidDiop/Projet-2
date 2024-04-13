@@ -7,29 +7,14 @@ body {
     display: flex;
 }
 
-main {
-    bottom: 0;
-}
-
-.example-form h2,
-button,
-.top-links a,
-.top-right-corner a {
-    font-family: 'Poppins', sans-serif;
+.flex-center {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
 }
 
 .header img {
     max-height: 150px;
-}
-
-.main-content {
-    margin-left: 400px;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
 }
 
 .header {
@@ -63,7 +48,7 @@ button,
     color: #fff;
     border: solid $border transparent; /* !importanté */
     border-radius: 1em;
-    
+
     width: 100%;
     max-width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -136,56 +121,6 @@ button:hover {
 .mat-form-field {
     flex: 1;
     margin-right: 0.5rem;
-}
-
-.right-side-image {
-    height: 80px;
-    margin-left: 10%;
-    margin-bottom: 10%;
-}
-
-.top-right-corner {
-    position: absolute;
-    right: 0;
-    top: 0;
-    padding-top: 10px;
-    padding-right: 10px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.top-right-corner p {
-    margin-right: 17%;
-}
-
-.top-links a {
-    display: block;
-    text-decoration: none;
-    color: #4a4a4a;
-    margin: 5px 0;
-    font-size: 0.9rem;
-    margin-right: 70px;
-}
-
-.top-links a:hover {
-    color: #3498db;
-}
-
-.logo {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.logo img {
-    height: 45px;
-    margin-left: -20px;
-    margin-top: 15px;
-}
-
-.logo h1 {
-    letter-spacing: 3px;
 }
 
 @media (max-width: 768px) {

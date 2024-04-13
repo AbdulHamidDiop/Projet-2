@@ -21,7 +21,7 @@
                     </li>
                 </ul>
 
-                <div class="button-row">
+                <div *ngIf="!game.unavailable" class="button-row">
                     <button
                         mat-fab
                         (click)="launchTestGame(game)"
@@ -29,11 +29,12 @@
                         color="primary"
                         [routerLink]="['/game', game.id]"
                         [queryParams]="{ testMode: 'true' }"
+                        [disabled]="game.unavailable"
                     >
                         Tester le jeu
                     </button>
 
-                    <button mat-fab (click)="launchGame(game)" extended color="primary">Lancer une partie</button>
+                    <button mat-fab [disabled]="game.unavailable" (click)="launchGame(game)" extended color="primary">Lancer une partie</button>
                 </div>
             </div>
             <ng-template #unavailableMessage>

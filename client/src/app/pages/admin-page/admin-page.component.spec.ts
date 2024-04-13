@@ -296,15 +296,15 @@ describe('AdminPageComponent', () => {
             title: 'test1',
             questions: [],
         };
-        component.games.push(mockGame1);
+        component.gameService.games.push(mockGame1);
         const mockGame2: Game = {
             id: '2',
             title: 'test2',
             questions: [],
         };
-        component.games.push(mockGame2);
+        component.gameService.games.push(mockGame2);
         component.onDeleteGame(mockGame1);
-        expect(component.games).toEqual([mockGame2]);
+        expect(component.gameService.games).toEqual([mockGame2]);
     });
 
     it('isGame should be true when the game meets the criterias', () => {
