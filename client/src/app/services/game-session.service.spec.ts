@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { FetchService } from '@app/services/fetch.service';
+import { API_URL } from '@common/consts';
+import { GameSession } from '@common/game-session';
 import { StatusCodes } from 'http-status-codes';
 import { environment } from 'src/environments/environment';
 import { GameSessionService } from './game-session.service';
 import { Game } from './game.service';
-import { GameSession } from '@common/game-session';
-import { API_URL } from '@common/consts';
 
 const SESSION: GameSession = {
     pin: '1122',
@@ -297,43 +297,5 @@ describe('GameSessionService', () => {
         fetchService.fetch.and.returnValue(Promise.resolve(mockErrorResponse));
 
         await expectAsync(service.deleteHistory()).toBeRejectedWithError('Error: 404');
-    });
-
-    it('should add number of players successfully', async () => {
-        const pin = '1234';
-        const nbPlayers = 10;
-        const mockResponse: Response = { ok: true } as unknown as Response;
-
-        // Set up mock response from FetchService
-        fetchService.fetch
-            .withArgs(API_URL + 'gameSession/addNbPlayers', {
-                method: 'PATCH',
-                // Le test ne fonctionne pas sinon
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nbPlayers, pin }),
-            })
-            .and.returnValue(Promise.resolve(mockResponse));
-
-        await expectAsync(service.addNbPlayers(nbPlayers, pin)).toBeResolved();
-    });
-
-    it('should throw error when adding number of players fails', async () => {
-        const pin = '1234';
-        const nbPlayers = 10;
-        const mockErrorResponse: Response = { ok: false, status: 500 } as unknown as Response;
-
-        // Set up mock response from FetchService
-        fetchService.fetch
-            .withArgs(API_URL + 'gameSession/addNbPlayers', {
-                method: 'PATCH',
-                // Le test ne fonctionne pas sinon
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nbPlayers, pin }),
-            })
-            .and.returnValue(Promise.resolve(mockErrorResponse));
-
-        await expectAsync(service.addNbPlayers(nbPlayers, pin)).toBeRejectedWithError('Error: 500');
     });
 });

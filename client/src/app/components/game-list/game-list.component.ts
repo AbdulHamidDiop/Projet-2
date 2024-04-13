@@ -46,15 +46,27 @@ export class GameListComponent implements OnInit {
         }
     }
 
-    launchGame(game: Game) {
-        this.socket.leaveRoom();
-        this.playerService.player.isHost = true;
-        this.playerService.player.name = 'Organisateur';
-        this.socket.createRoom(game);
-        this.router.navigate(['/waiting']);
+    async launchGame(game: Game) {
+        this.selectGame(game).then(() => {
+            if (game.unavailable) {
+                return;
+            } else {
+                this.socket.leaveRoom();
+                this.playerService.player.isHost = true;
+                this.playerService.player.name = 'Organisateur';
+                this.socket.createRoom(game);
+                this.router.navigate(['/waiting']);
+            }
+        });
     }
 
     async launchTestGame(game: Game) {
-        await this.gameSessionService.createSession(game.id, game);
+        this.selectGame(game).then(async () => {
+            if (game.unavailable) {
+                return;
+            } else {
+                await this.gameSessionService.createSession(game.id, game);
+            }
+        });
     }
 }
