@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -11,6 +12,7 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
+import { IconDefinition, faBoltLightning, faChartSimple, faClock, faForward, faPause, faPlay, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW_FEEDBACK_DELAY, ZERO_GRADE_MULTIPLER } from './const';
 
 @Component({
@@ -37,6 +39,16 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     disableControls: boolean = false;
     questionLoaded: boolean = false;
     inPanicMode: boolean = false;
+    timerPaused: boolean = false;
+
+    // icons
+    faClock: IconDefinition = faClock;
+    faBoltLightning: IconDefinition = faBoltLightning;
+    faPlay: IconDefinition = faPlay;
+    faPause: IconDefinition = faPause;
+    faForward: IconDefinition = faForward;
+    faChartSimple: IconDefinition = faChartSimple;
+    faUserGroup: IconDefinition = faUserGroup;
 
     // Tous les paramètres du constructeur sont nécessaires
     // au bon fonctionnement de la classe.
@@ -225,6 +237,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
     }
     sendTimerControlMessage(): void {
+        this.timerPaused = !this.timerPaused;
         this.socketService.sendMessage(Events.PAUSE_TIMER, Namespaces.GAME);
     }
     activatePanicMode(): void {
@@ -255,7 +268,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     openResultsPage(): void {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
-        const RESPONSE_FROM_SERVER_DELAY = 500;
+        const RESPONSE_FROM_SERVER_DELAY = 1000;
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             setTimeout(() => {
@@ -312,6 +325,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     }
     ngOnDestroy() {
         this.timeService.stopTimer();
+        this.timerPaused = false;
         this.deactivatePanicMode();
         this.timeService.deactivatePanicMode();
         this.gameManagerService.reset();

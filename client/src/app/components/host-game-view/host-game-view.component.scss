@@ -4,16 +4,26 @@ main {
 }
 
 // CSS pour les boutons
-.pause-button {
-    margin-top: 20px;
-    margin-right: 10px;
-    text-align: center;
+
+button {
+    color: #fff;
     border: none;
-    padding: 10px 20px;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
+.pause-button {
+    // margin-top: 20px;
+    // margin-right: 10px;
+    // text-align: center;
+    // border: none;
+    // padding: 10px 20px;
     background-color: #007bff;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
+    // border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
@@ -22,14 +32,14 @@ main {
 }
 
 .next-button {
-    margin-top: 20px;
-    margin-right: 10px;
-    text-align: center;
-    border: none;
-    padding: 10px 20px;
+    // margin-top: 20px;
+    // margin-right: 10px;
+    // text-align: center;
+    // border: none;
+    // padding: 10px 20px;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
+    // border-radius: 5px;
     transition: background-color 0.3s ease;
     background-color: rgb(15, 142, 32);
 }
@@ -39,14 +49,14 @@ main {
 }
 
 .panic-button {
-    margin-top: 20px;
-    margin-right: 10px;
-    text-align: center;
-    border: none;
-    padding: 10px 20px;
+    // margin-top: 20px;
+    // margin-right: 10px;
+    // text-align: center;
+    // border: none;
+    // padding: 10px 20px;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
+    // border-radius: 5px;
     transition: background-color 0.3s ease;
     background-color: red;
 }
@@ -56,14 +66,14 @@ main {
 }
 
 .end-button {
-    margin-top: 20px;
-    margin-right: 10px;
-    text-align: center;
-    border: none;
-    padding: 10px 20px;
+    // margin-top: 20px;
+    // margin-right: 10px;
+    // text-align: center;
+    // border: none;
+    // padding: 10px 20px;
     color: white;
     cursor: pointer;
-    border-radius: 5px;
+    // border-radius: 5px;
     transition: background-color 0.3s ease;
     background-color: rgb(23, 5, 5);
 }
@@ -71,9 +81,9 @@ main {
 // CSS Liste des joueurs et zone statistique
 
 .title {
-    color: #007bff;
+    color: white;
     text-decoration: underline;
-    font-size: 24px;
+    font-size: 15px;
     align-content: center;
 }
 
@@ -115,6 +125,8 @@ main {
     height: 50px;
     text-align: center;
     margin-left: 15px;
+    border-radius: 50px;
+    color: black;
 }
 .grade2 {
     background-color: rgb(240, 240, 109);
@@ -123,10 +135,45 @@ main {
     text-align: center;
     margin-left: 10px;
     margin-right: 10px;
+    border-radius: 50px;
+    color: black;
 }
 .grade3 {
     background-color: lightgreen;
     width: 50px;
     height: 50px;
     text-align: center;
+    border-radius: 50px;
+    color: black;
+}
+
+.glassy {
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    background-color: rgba(6, 6, 54, 0.547);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    border-width: 1px;
+
+    $border: 1.5px;
+    color: #fff;
+    border: solid $border transparent; /* !importanté */
+    border-radius: 1em;
+    margin-bottom: 5px;
+}
+
+mat-card-subtitle h3 {
+    color: #ffffff;
+}
+
+button h4 {
+    color: #ffffff;
+}
+
+.game-controls {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }

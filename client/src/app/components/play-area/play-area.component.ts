@@ -142,7 +142,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         }
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
-            console.log('next question');
             await this.confirmAnswers(false);
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);

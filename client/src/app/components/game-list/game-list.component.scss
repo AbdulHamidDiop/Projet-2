@@ -53,7 +53,7 @@ mat-expansion-panel mat-expansion-panel-header {
 button.mat-fab {
     border: 1px solid black;
     margin-right: 10px;
-    background-color: #007bff;
+    background-color: #004a9a;
     color: white;
     border-radius: 5px;
     cursor: pointer;
@@ -66,7 +66,26 @@ button.mat-fab {
     font-weight: bold;
 }
 
-/* Add hover effect for better user interaction */
-.mat-expansion-panel:hover {
-    background-color: #f0f0f0;
+/* remove hover effect for better user interaction */
+// .mat-expansion-panel-header:hover {
+//     background-color: #f0f0f0;
+// }
+
+.glassy {
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    background-color: rgba(6, 6, 54, 0.234);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    border-width: 1px;
+
+    $border: 1.5px;
+    color: #fff;
+    border: solid $border transparent; /* !importanté */
+    border-radius: 1em;
+}
+
+.bold {
+    font-weight: bold
 }

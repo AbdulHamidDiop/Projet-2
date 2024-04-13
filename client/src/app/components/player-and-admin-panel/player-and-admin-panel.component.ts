@@ -4,8 +4,8 @@ import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Player } from '@common/game';
 import { GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
+import { IconDefinition, faDoorOpen, faLock, faLockOpen, faPlay, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
-
 const RANDOM_INDICATOR = -9;
 
 @Component({
@@ -20,6 +20,13 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
     room: string;
     roomLocked: boolean = false;
     inRandomMode: boolean = false;
+
+    faLock: IconDefinition = faLock;
+    faLockOpen: IconDefinition = faLockOpen;
+    faDoorOpen: IconDefinition = faDoorOpen;
+    faPlay: IconDefinition = faPlay;
+    faRightFromBracket: IconDefinition = faRightFromBracket;
+
     private globalChatSubscription: Subscription;
     private playerLeftSubscription: Subscription;
 
@@ -36,6 +43,7 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
         this.globalChatSubscription = this.socket.getChatMessages().subscribe((message) => {
             if (message.author === 'room') {
                 this.room = message.message;
+                navigator.clipboard.writeText(this.room);
             }
         });
 

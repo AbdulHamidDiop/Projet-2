@@ -2,6 +2,15 @@ mat-card {
     box-shadow: none !important;
 }
 
+button {
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+}
+
 .main-container {
     overflow: auto;
     flex: 1 1 auto;
@@ -14,4 +23,52 @@ mat-card {
 .main {
     display: grid;
     outline: none;
+}
+
+.glassy {
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    background-color: rgba(6, 6, 54, 0.547);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    border-width: 1px;
+
+    $border: 1.5px;
+    color: #fff;
+    border: solid $border transparent; /* !importanté */
+    border-radius: 1em;
+}
+
+.leave-button {
+    background-color: #ad0e0e;
+}
+.start-button {
+    background-color: #0a8f34;
+}
+.lock-button {
+    background-color: #6050b1;
+}
+.unlock-button {
+    background-color: #0a8f3400;
+    border-style: solid;
+    border-color: #6050b1;
+}
+
+.player-container {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    text-align: center;
+}
+
+.player-container button {
+    margin-top: -7px;
+    background-color: #792b2b;
+    right: 4px;
+    -ms-flex-align: end;
+}
+
+.users-header {
+    color: white;
 }

@@ -3,6 +3,7 @@ import { Sort } from '@angular/material/sort';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
+import { IconDefinition, faComment, faCommentSlash } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-player-list',
@@ -11,6 +12,9 @@ import { BLACK, GREEN, Player, RED, YELLOW } from '@common/game';
 })
 export class PlayerListComponent implements OnInit, OnChanges {
     sortOption: Sort;
+
+    faComment: IconDefinition = faComment;
+    faCommentSlash: IconDefinition = faCommentSlash;
     protected sortedData: Player[];
     constructor(
         private socket: SocketRoomService,
@@ -38,13 +42,13 @@ export class PlayerListComponent implements OnInit, OnChanges {
     colorToState(color: number | undefined) {
         switch (color) {
             case RED: {
-                return 'Aucune réponse';
+                return 'Aucune';
             }
             case YELLOW: {
-                return 'Réponse en cours';
+                return 'En cours';
             }
             case GREEN: {
-                return 'Réponse envoyée';
+                return 'Envoyée';
             }
             case BLACK: {
                 return 'Abandon';

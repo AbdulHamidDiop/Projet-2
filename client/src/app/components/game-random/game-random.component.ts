@@ -3,6 +3,7 @@ import { PlayerService } from '@app/services/player.service';
 import { QuestionsService } from '@app/services/questions.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Question } from '@common/game';
+import { IconDefinition, faDice } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
     selector: 'app-game-random',
@@ -10,6 +11,7 @@ import { Game, Question } from '@common/game';
     styleUrls: ['./game-random.component.scss'],
 })
 export class GameRandomComponent {
+    faDice: IconDefinition = faDice;
     show: boolean = false;
     questions: Question[];
     game: Game;

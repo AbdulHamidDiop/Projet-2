@@ -4,10 +4,10 @@
     https://material.angular.io/components/sort/overview -->
 <table matSort [matSortDisableClear]="true" (matSortChange)="sortData($event)" aria-label="Player List">
     <tr>
-        <th mat-sort-header="name">Nom du joueur</th>
+        <th mat-sort-header="name">Nom</th>
         <th mat-sort-header="score">Score</th>
-        <th mat-sort-header="state">État</th>
-        <th mat-sort-header="name" disabled="true">Droit de clavardage</th>
+        <th mat-sort-header="state">Réponse</th>
+        <th mat-sort-header="name" disabled="true">Clavardage</th>
     </tr>
     <tr *ngFor="let player of playerService.playersInGame">
         <td [ngClass]="getStyle(player)">
@@ -17,8 +17,13 @@
         <td>{{ player.score }}</td>
         <td>{{ colorToState(player.color) }}</td>
         <td *ngIf="!player.leftGame">
-            <button mat-button *ngIf="player.chatEnabled" (click)="excludeFromChat(player)">Exclure du clavardage</button>
-            <button mat-button *ngIf="!player.chatEnabled" (click)="includeInChat(player)">Inclure dans le clavardage</button>
+            <button mat-button *ngIf="player.chatEnabled" (click)="excludeFromChat(player)">
+                <fa-icon [icon]="faComment"></fa-icon>
+            </button>
+            <button mat-button *ngIf="!player.chatEnabled" (click)="includeInChat(player)">
+                <fa-icon [icon]="faCommentSlash"></fa-icon>
+            </button>
         </td>
     </tr>
+    <mat-divider></mat-divider>
 </table>

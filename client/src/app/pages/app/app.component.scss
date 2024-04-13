@@ -13,4 +13,11 @@ body {
 #grad {
     background-image: linear-gradient(to top, #503bb8, transparent);
     min-height: 100%;
+    // backdrop-filter: blur(5px);
+    z-index: 0;
+
+}
+
+app-nav-bar {
+    z-index: 1000;
 }
