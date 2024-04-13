@@ -2,36 +2,36 @@
     <div class="results-page">
         <!-- Affichage des joueurs sur le podium (3 premiers joueurs avec le plus de points) -->
         <mat-grid-tile [colspan]="4" [rowspan]="2">
-            <div class="podium" *ngIf="playerService.nActivePlayers() > 2">
+            <!-- <div class="podium" *ngIf="playerService.nActivePlayers() > 2">
                 <h2>Podium</h2>
                 <ng-container>
                     <div class="">
-                        <!-- Affichage du premier joueur sur le podium -->
                         <div>
                             <h3>1er place</h3>
                             <p>{{ playerService.playersInGame[0].name }} - Score: {{ playerService.playersInGame[0].score }}</p>
                         </div>
-                        <!-- Affichage du deuxième joueur sur le podium -->
                         <div>
                             <h3>2e place</h3>
                             <p>{{ playerService.playersInGame[1].name }} - Score: {{ playerService.playersInGame[1].score }}</p>
                         </div>
-                        <!-- Affichage du troisième joueur sur le podium -->
                         <div>
                             <h3>3e place</h3>
                             <p>{{ playerService.playersInGame[2].name }} - Score: {{ playerService.playersInGame[2].score }}</p>
                         </div>
                     </div>
                 </ng-container>
-            </div>
+            </div> -->
 
             <!-- Affichage de la liste des joueurs -->
-            <div *ngIf="players.length">
-                <h2>Liste des joueurs</h2>
-                <ul>
-                    <li *ngFor="let player of players">{{ player.name }} - Score: {{ player.score }} - Nombre de bonus: {{ player.bonusCount }}</li>
-                </ul>
-            </div>
+            <ng-container *ngIf="players.length">
+                <mat-card *ngFor="let player of players; let i = index" class="player-card">
+                    <mat-card-content class="space-around">
+                        <h2>{{ player.score }}</h2>
+                        <h3>{{ player.name }}</h3>
+                        <h3>Bonus: {{ player.bonusCount }}</h3>
+                    </mat-card-content>
+                </mat-card>
+            </ng-container>
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="1" [rowspan]="9">
