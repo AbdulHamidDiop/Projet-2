@@ -2,6 +2,7 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { RouterTestingModule } from '@angular/router/testing';
 import { PlayAreaComponent } from '@app/components/play-area/play-area.component';
@@ -13,6 +14,7 @@ import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
 import { of } from 'rxjs';
 import { AdminPageComponent } from './admin-page.component';
+import SpyObj = jasmine.SpyObj;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 let mockData: any = {};
@@ -148,6 +150,8 @@ describe('AdminPageComponent', () => {
     let fixture: ComponentFixture<AdminPageComponent>;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockGameFile: any;
+    let matDialogMock: SpyObj<MatDialog>;
+    let matDialogRefSpy: SpyObj<MatDialogRef<any, any>>;
     let fakeFile: File;
     let readFileSpy;
 
@@ -168,12 +172,21 @@ describe('AdminPageComponent', () => {
     beforeEach(async () => {
         await TestBed.configureTestingModule({
             declarations: [AdminPageComponent],
-            imports: [RouterTestingModule, HttpClientModule],
-            providers: [CommunicationService, GameService],
+            imports: [RouterTestingModule, HttpClientModule, MatDialogModule],
+            providers: [CommunicationService, GameService, {
+                provide: MatDialog,
+                useValue: matDialogMock,
+            },
+            { provide: MatDialogRef, useValue: matDialogRefSpy },],
         }).compileComponents();
         fixture = TestBed.createComponent(AdminPageComponent);
         component = fixture.componentInstance;
         fixture.detectChanges();
+
+        matDialogMock = jasmine.createSpyObj('MatDialog', ['open', 'closeAll', 'afterClosed']);
+        matDialogRefSpy = jasmine.createSpyObj('MatDialogRef', ['afterClosed']);
+        matDialogRefSpy.afterClosed.and.returnValue(of(true));
+        matDialogMock.open.and.returnValue(matDialogRefSpy);
 
         mockGameFile = {
             id: '462778813469',
