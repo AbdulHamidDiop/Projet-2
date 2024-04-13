@@ -11,8 +11,6 @@ main {
     bottom: 0;
 }
 
-.header h1,
-.header p,
 .example-form h2,
 button,
 .top-links a,
@@ -20,10 +18,9 @@ button,
     font-family: 'Poppins', sans-serif;
 }
 
-// #grad {
-//     background-image: linear-gradient(to top, #503bb8, transparent);
-//     height: 100%;
-// }
+.header img {
+    max-height: 150px;
+}
 
 .main-content {
     margin-left: 400px;
@@ -38,7 +35,6 @@ button,
 .header {
     width: 100%;
     text-align: center;
-    margin-bottom: 2rem;
 }
 
 .header h1 {
@@ -55,20 +51,30 @@ button,
     margin: 0;
 }
 
-.example-form {
+.glassy {
+    backdrop-filter: blur(5px);
+    background-color: rgba(6, 6, 54, 0.547);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    border-width: 1px;
+
+    $border: 1.5px;
+    color: #fff;
+    border: solid $border transparent; /* !importanté */
+    border-radius: 1em;
+    
     width: 100%;
     max-width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     margin-bottom: 2rem;
-    background-color: #ffffff;
-    border-radius: 10px;
     margin-left: 33%;
 }
 
 .example-form h2 {
     text-align: center;
-    color: #333;
+    color: #efeaea;
     margin-bottom: 1.5rem;
 }
 
@@ -83,6 +89,8 @@ button,
 
 .example-full-width input {
     margin-left: 35%;
+    font-size: larger;
+    border-radius: 30%;
 }
 
 input,
@@ -99,6 +107,7 @@ button {
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    border: 0cap;
 }
 
 button.join-room-button {
@@ -148,37 +157,6 @@ button:hover {
 
 .top-right-corner p {
     margin-right: 17%;
-}
-
-.newsletter-subscription {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-}
-
-.newsletter-subscription input[type='email'],
-.newsletter-subscription button {
-    margin-left: auto;
-    margin-bottom: 0.5rem;
-}
-
-.newsletter-subscription input[type='email'] {
-    padding: 0.5rem;
-    border-radius: 5px;
-    border: 1px solid #bdc3c7;
-}
-
-.newsletter-subscription button {
-    padding: 0.5rem;
-    background-color: #503bb8;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.newsletter-subscription button:hover {
-    background-color: hsl(204, 89%, 14%);
 }
 
 .top-links a {
