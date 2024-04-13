@@ -282,8 +282,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     handleTimerEnd(): void {
         if (this.currentQuestion.type === Type.QCM) {
             this.notifyNextQuestion();
-        } else {
+        } else if (this.currentQuestion.type === Type.QRL) {
             this.gradeAnswers();
+        } else {
+            console.log('Oh no');
         }
     }
     onPlayerLeft(data: { user: string }): void {
