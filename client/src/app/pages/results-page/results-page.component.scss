@@ -7,3 +7,27 @@
 mat-grid-list {
     margin-left: 200px;
 }
+
+mat-card {
+    width: 80%;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.space-around {
+    display: flex;
+    justify-content: space-around;
+    font-size: 16px;
+}
+
+.player-card {
+    margin-bottom: 2%;
+}
+
+.card-list {
+    list-style: none; /* Removes bullets */
+    padding: 0; /* Removes padding */
+    margin: 0; /* Removes margin */
+    width: 100%; /* Sets the full width, adjust as needed */
+}

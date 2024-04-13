@@ -218,10 +218,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             };
         }
         this.disableControls = true;
-        this.questionLoaded = false;
         this.deactivatePanicMode();
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
         this.choseNextQuestion();
+        this.questionLoaded = false;
     }
 
     onNextQuestionReceived(): void {
@@ -295,8 +295,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     handleTimerEnd(): void {
         if (this.currentQuestion.type === Type.QCM) {
             this.notifyNextQuestion();
-        } else {
+        } else if (this.currentQuestion.type === Type.QRL) {
             this.gradeAnswers();
+        } else {
+            console.log('Oh no');
         }
     }
     onPlayerLeft(data: { user: string }): void {

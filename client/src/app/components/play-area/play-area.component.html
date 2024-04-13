@@ -3,11 +3,8 @@
         <mat-card *ngIf="shouldRender(this.question.text)">
             <mat-card-header>
                 <mat-card-title>
-                    <h2>Question</h2>
+                    <h2>{{ this.question.text }}</h2>
                 </mat-card-title>
-                <mat-card-subtitle>
-                    <h3>{{ this.question.text }}</h3>
-                </mat-card-subtitle>
             </mat-card-header>
             <mat-card-actions align="end">
                 <button mat-button [disabled]="true">

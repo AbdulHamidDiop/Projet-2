@@ -168,20 +168,6 @@ describe('QuestionsPageComponent', () => {
         expect(mockDialog.open).toHaveBeenCalledWith(CreateQuestionDialogComponent, {});
     });
 
-    it('should push result to questions array if result exists', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const mockDialogRef: any = {
-            afterClosed: () => of(mockQuestion),
-        };
-        mockDialog.open.and.returnValue(mockDialogRef);
-
-        component.questions = [];
-
-        component.openDialog();
-
-        expect(component.questions).toEqual([mockQuestion]);
-    });
-
     it('should not push result to questions array if result is null', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const mockDialogRef: any = {

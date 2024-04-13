@@ -42,3 +42,7 @@
         </mat-card-actions> -->
     </mat-card>
 </section>
+
+<ng-template #roomUnlocked>
+    <button mat-button (click)="lock()"><mat-icon [inline]="true">lock_open</mat-icon></button>
+</ng-template>

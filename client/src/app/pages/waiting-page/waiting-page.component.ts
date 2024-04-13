@@ -162,7 +162,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
                 this.socket.room = message.message;
                 this.gameSessionService.getGameWithoutCorrectShown(this.socket.room).then((game: Game) => {
                     this.game = game;
-                    this.playerAndAdminPanelComponent.initializeGame(game);
+                    this.playerAndAdminPanelComponent?.initializeGame(game);
                 });
             }
         });
