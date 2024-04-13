@@ -206,10 +206,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             };
         }
         this.disableControls = true;
-        this.questionLoaded = false;
         this.deactivatePanicMode();
         this.socketService.sendMessage(Events.STOP_TIMER, Namespaces.GAME);
         this.choseNextQuestion();
+        this.questionLoaded = false;
     }
 
     onNextQuestionReceived(): void {

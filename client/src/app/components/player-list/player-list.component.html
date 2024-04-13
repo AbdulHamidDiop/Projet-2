@@ -7,7 +7,7 @@
         <th mat-sort-header="name">Nom du joueur</th>
         <th mat-sort-header="score">Score</th>
         <th mat-sort-header="state">État</th>
-        <th mat-sort-header="name" disabled="true">Droit de clavardage</th>
+        <th>Droit de clavardage</th>
     </tr>
     <tr *ngFor="let player of playerService.playersInGame">
         <td [ngClass]="getStyle(player)">
