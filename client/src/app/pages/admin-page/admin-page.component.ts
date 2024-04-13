@@ -73,7 +73,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     onDeleteGame(game: Game) {
-        this.games = this.games.filter((g) => g !== game);
+        this.gameService.games = this.gameService.games.filter((g) => g !== game);
     }
 
     verifyIfJSON(): boolean {
