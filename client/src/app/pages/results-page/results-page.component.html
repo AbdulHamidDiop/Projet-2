@@ -7,9 +7,9 @@
                 <li *ngFor="let player of players; let i = index" class="player-list-item">
                     <mat-card class="player-card">
                         <mat-card-content class="space-around">
-                            <span>{{ player.score }}</span>
+                            <span>Score : {{ player.score }}</span>
                             <span>{{ player.name }}</span>
-                            <span>Bonus: {{ player.bonusCount }}</span>
+                            <span>Nombre de bonus: {{ player.bonusCount }}</span>
                         </mat-card-content>
                     </mat-card>
                 </li>

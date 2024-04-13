@@ -8,7 +8,7 @@
                 <mat-button-toggle value="QRL" (click)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
             </mat-button-toggle-group>
             <mat-accordion>
-                <p *ngIf="displayQuestions.length === 0">Aucune question à afficher</p>
+                <p *ngIf="displayQuestions?.length === 0">Aucune question à afficher</p>
                 <div *ngFor="let question of displayQuestions; index as order">
                     <app-admin-question
                         [question]="question"

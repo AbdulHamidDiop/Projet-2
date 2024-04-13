@@ -68,7 +68,7 @@
 
         <mat-grid-tile #gradingTile *ngIf="gradingAnswers" [colspan]="3" [rowspan]="1">
             <div>
-                <mat-card *ngIf="currentQuestion" class="grading-container glassy">
+                <mat-card *ngIf="currentQuestion && currentQRLAnswer" class="grading-container glassy">
                     <mat-card-header class="glassy">
                         <mat-card-title>
                             <h2>Correction des réponses</h2>
