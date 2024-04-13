@@ -1,26 +1,27 @@
 <section class="main-container">
-    <mat-card>
-        <mat-card-actions align="start">
-            <button mat-button (click)="leaveRoom()">Quitter la salle d'attente</button>
-        </mat-card-actions>
+    <mat-card class="game-card">
+        <mat-card-content>
+            <div class="space-between">
+                <h1>
+                    {{ game.title }}
+                    <ng-container *ngIf="this.player.isHost"> &nbsp;&nbsp;&nbsp;&nbsp;Pin : {{ room }} </ng-container>
+                </h1>
+                <button mat-fab color="warn" (click)="leaveRoom()"><mat-icon>exit_to_app</mat-icon></button>
+            </div>
+            <h2>Nom d'utilisateur : {{ player.name }}</h2>
+        </mat-card-content>
         <br />
-        <h2 *ngIf="this.player.isHost">Votre Pin: {{ room }}</h2>
-        <h2>Nom d'utilisateur : {{ player.name }}</h2>
-        <h2>Jeu choisi : {{ game.title }}</h2>
-        <h2 *ngIf="this.player.isHost">Paramètres de la partie</h2>
-        <mat-card-actions *ngIf="player.isHost" align="end">
-            <button mat-button (click)="startGame()">Commencer la partie</button>
-            <button mat-button (click)="lock()">Verrouiller</button>
-            <button mat-button (click)="unlock()">Déverrouiller</button>
+        <mat-card-actions *ngIf="player.isHost" class="space-around">
+            <button mat-button (click)="unlock()"><mat-icon [inline]="true">lock_open</mat-icon></button>
+            <button mat-stroked-button color="primary" (click)="startGame()">Commencer la partie</button>
+            <button mat-button (click)="lock()"><mat-icon [inline]="true">lock</mat-icon></button>
         </mat-card-actions>
     </mat-card>
-    <h2 *ngIf="players.length > 0">Utilisateurs connectés</h2>
-    <mat-card *ngFor="let play of players" class="main">
-        <mat-card-title>
-            <p>Joueur : {{ play.name }}</p>
-        </mat-card-title>
-        <mat-card-actions align="end">
-            <button *ngIf="this.player.isHost" mat-button (click)="kickPlayer(play.name)">Exclure</button>
-        </mat-card-actions>
+
+    <mat-card *ngFor="let play of players" class="player-card">
+        <mat-card-content class="space-between">
+            <h2>Joueur : {{ play.name }}</h2>
+            <button *ngIf="this.player.isHost" mat-button color="warn" (click)="kickPlayer(play.name)"><mat-icon>block</mat-icon></button>
+        </mat-card-content>
     </mat-card>
 </section>
