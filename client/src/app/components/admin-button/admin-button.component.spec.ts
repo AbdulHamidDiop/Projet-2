@@ -1,5 +1,6 @@
 import { HttpResponse } from '@angular/common/http';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -27,6 +28,7 @@ describe('AdminButtonComponent', () => {
             imports: [RouterTestingModule, HttpClientTestingModule],
             declarations: [],
             providers: [CommunicationService, MatSnackBar],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

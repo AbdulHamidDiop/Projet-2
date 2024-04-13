@@ -303,6 +303,7 @@ describe('Socket Events Service', () => {
     });
     it('Should call socket.to on call to onStartRandomGame', () => {
         socketEvents.socketIdRoom.set(socket.id, undefined);
+
         socketEvents.onStartRandomGame(socket as Socket);
         socketEvents.socketIdRoom.set(socket.id, LOBBY);
         socketEvents.mapOfPlayersInRoom.set(LOBBY, [{} as Player]);

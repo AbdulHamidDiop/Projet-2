@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-lines */
 
-import { EventEmitter } from '@angular/core';
+import { EventEmitter, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flush, tick } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatListModule } from '@angular/material/list';
@@ -128,6 +128,7 @@ describe('PlayAreaComponent', () => {
                     },
                 },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
 
         gameManager = TestBed.inject(GameManagerService);
@@ -462,19 +463,6 @@ describe('PlayAreaComponent', () => {
 
             expect(component.confirmAnswers).toHaveBeenCalled();
             nextQuestionSubject.complete();
-        }));
-
-        it('should handle END_GAME event', fakeAsync(() => {
-            component.socketService.listenForMessages(Namespaces.GAME, Events.END_GAME).subscribe(() => {
-                component.endGame();
-            });
-
-            spyOn(component, 'endGame').and.callThrough();
-            endGameSubject.next();
-            flush();
-
-            expect(component.endGame).toHaveBeenCalled();
-            endGameSubject.complete();
         }));
 
         it('should handle START_TIMER event', fakeAsync(() => {

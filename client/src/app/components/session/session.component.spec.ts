@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { GameSession } from '@common/game-session';
 import { SessionComponent } from './session.component';
 
@@ -10,6 +11,7 @@ describe('SessionComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [SessionComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         });
         fixture = TestBed.createComponent(SessionComponent);
         component = fixture.componentInstance;

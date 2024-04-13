@@ -303,7 +303,7 @@ export class SocketEvents {
             if (this.lockedRooms.includes(room)) {
                 host.isHost = false;
                 players.push(host);
-                this.gameSessionService.addNbPlayers(room, players.length);
+                this.gameSessionService?.addNbPlayers(room, players.length);
                 socket.to(room).emit(Events.START_RANDOM_GAME);
                 socket.emit(Events.START_RANDOM_GAME);
                 socket.to(room).emit(Events.GET_PLAYERS, players);

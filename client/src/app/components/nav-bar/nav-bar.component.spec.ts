@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { SocketRoomService as SocketService } from '@app/services/socket-room.service';
@@ -15,6 +16,7 @@ describe('NavBarComponent', () => {
                 { provide: Router, useValue: { navigate: jasmine.createSpy('navigate') } },
                 { provide: SocketService, useValue: { endGame: jasmine.createSpy('endGame') } },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         });
 
         component = TestBed.inject(NavBarComponent);

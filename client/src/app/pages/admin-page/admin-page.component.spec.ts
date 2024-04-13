@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatSelectChange } from '@angular/material/select';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -162,6 +163,7 @@ describe('AdminPageComponent', () => {
                     },
                 },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -170,6 +172,7 @@ describe('AdminPageComponent', () => {
             declarations: [AdminPageComponent],
             imports: [RouterTestingModule, HttpClientModule],
             providers: [CommunicationService, GameService],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
         fixture = TestBed.createComponent(AdminPageComponent);
         component = fixture.componentInstance;

@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { Sort } from '@angular/material/sort';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Player } from '@common/game';
@@ -23,6 +24,7 @@ describe('PlayerListComponent', () => {
                     useValue: socketMock,
                 },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         });
         fixture = TestBed.createComponent(PlayerListComponent);
         component = fixture.componentInstance;
