@@ -51,20 +51,30 @@ button,
     margin: 0;
 }
 
-.example-form {
+.glassy {
+    backdrop-filter: blur(5px);
+    background-color: rgba(6, 6, 54, 0.547);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    border-width: 1px;
+
+    $border: 1.5px;
+    color: #fff;
+    border: solid $border transparent; /* !importanté */
+    border-radius: 1em;
+    
     width: 100%;
     max-width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 2rem;
     margin-bottom: 2rem;
-    background-color: #ffffff;
-    border-radius: 10px;
     margin-left: 33%;
 }
 
 .example-form h2 {
     text-align: center;
-    color: #333;
+    color: #efeaea;
     margin-bottom: 1.5rem;
 }
 
@@ -80,6 +90,7 @@ button,
 .example-full-width input {
     margin-left: 35%;
     font-size: larger;
+    border-radius: 30%;
 }
 
 input,
@@ -96,6 +107,7 @@ button {
     font-size: 1rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    border: 0cap;
 }
 
 button.join-room-button {
