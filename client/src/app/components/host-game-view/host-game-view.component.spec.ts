@@ -233,6 +233,7 @@ describe('HostGameViewComponent', () => {
         gameManagerServiceSpy.goNextQuestion.and.returnValue(mockQuestion);
         component.choseNextQuestion();
         tick();
+        flush();
         expect(component.currentQuestion).toEqual(mockQuestion);
     }));
 

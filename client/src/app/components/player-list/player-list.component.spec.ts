@@ -75,13 +75,13 @@ describe('PlayerListComponent', () => {
 
         let expectedOutput = true;
         const player = { color: RED } as Player;
-        expectedOutput = expectedOutput && component.colorToState(player.color) === 'Aucune réponse';
+        expectedOutput = expectedOutput && component.colorToState(player.color) === 'Aucune';
         player.color = YELLOW;
         component.getStyle(player);
-        expectedOutput = expectedOutput && component.colorToState(player.color) === 'Réponse en cours';
+        expectedOutput = expectedOutput && component.colorToState(player.color) === 'En cours';
         player.color = GREEN;
         component.getStyle(player);
-        expectedOutput = expectedOutput && component.colorToState(player.color) === 'Réponse envoyée';
+        expectedOutput = expectedOutput && component.colorToState(player.color) === 'Envoyée';
         player.color = BLACK;
         component.getStyle(player);
         expectedOutput = expectedOutput && component.colorToState(player.color) === 'Abandon';
