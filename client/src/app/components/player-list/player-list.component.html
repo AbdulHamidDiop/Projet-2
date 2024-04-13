@@ -7,7 +7,7 @@
         <th mat-sort-header="name">Nom</th>
         <th mat-sort-header="score">Score</th>
         <th mat-sort-header="state">Réponse</th>
-        <th mat-sort-header="name" disabled="true">Clavardage</th>
+        <th>Clavardage</th>
     </tr>
     <tr *ngFor="let player of playerService.playersInGame">
         <td [ngClass]="getStyle(player)">

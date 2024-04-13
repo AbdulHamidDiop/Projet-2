@@ -277,6 +277,7 @@ export class SocketEvents {
             const players = this.mapOfPlayersInRoom.get(room);
             if (host && host.isHost && players.length > 0) {
                 if (this.lockedRooms.includes(room)) {
+                    this.gameSessionService.addNbPlayers(room, players.length);
                     socket.to(room).emit(Events.START_GAME);
                     socket.emit(Events.START_GAME);
                     socket.to(room).emit(Events.GET_PLAYERS, players);

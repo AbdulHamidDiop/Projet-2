@@ -112,7 +112,9 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             }
             this.statisticsData.push(barChartStat);
         }
-        this.barChartData = this.statisticsData[this.questionIndex]?.data;
+        if (this.statisticsData) {
+            this.barChartData = this.statisticsData[this.questionIndex]?.data;
+        }
     }
     async updateQRLBarChartData(stat: QRLStats): Promise<void> {
         const index = this.statisticsData.findIndex((questionStat) => questionStat.questionID === stat.questionId);

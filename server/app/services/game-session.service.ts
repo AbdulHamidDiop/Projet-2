@@ -132,7 +132,7 @@ export class GameSessionService {
     }
 
     async deleteHistory(): Promise<void> {
-        await this.collection.deleteMany({});
+        await this.collection.deleteMany({ isCompleted: true });
     }
 
     async addNbPlayers(pin: string, nbPlayers: number): Promise<boolean> {
