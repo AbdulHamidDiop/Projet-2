@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { Component, ElementRef, OnInit } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
 import { Router } from '@angular/router';
+import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
+import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { CommunicationService } from '@app/services/communication.service';
 import { GameSessionService } from '@app/services/game-session.service';
 import { GameService } from '@app/services/game.service';
@@ -30,6 +33,7 @@ export class AdminPageComponent implements OnInit {
         public el: ElementRef,
         readonly gameService: GameService,
         readonly gameSessionService: GameSessionService,
+        private deleteHistoryDialog: MatDialog
     ) {}
 
     async getGames() {
@@ -293,5 +297,22 @@ export class AdminPageComponent implements OnInit {
             case 'descending-date':
                 this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
         }
+    }
+
+    handleAbort(): void {
+        const message = "Êtes-vous sûr de vouloir supprimer l'historique?";
+
+        const dialogData = new ConfirmDialogModel('Supprimer Historique', message);
+
+        const dialogRef = this.deleteHistoryDialog.open(ConfirmDialogComponent, {
+            maxWidth: '400px',
+            data: dialogData,
+        });
+
+        dialogRef.afterClosed().subscribe((dialogResult) => {
+            if (dialogResult) {
+                this.onDeleteHistory();
+            }
+        });
     }
 }
