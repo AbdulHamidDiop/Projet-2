@@ -2,14 +2,15 @@
     <img src="https://i.imgur.com/Ra73D5O.png" alt="QUICKZZ logo">
 </div>
 
-<form class="glassy example-form">
-    <h2>Entrez votre nom</h2>
-
-    <mat-form-field class="example-full-width">
-        <input #input matInput placeholder="Ex: Jean" />
-    </mat-form-field>
-    <button mat-button class="example-full-width" (click)="sendUsername(input)">Envoyer</button>
-</form>
+<div class="glassy example-form">
+            <h2>Entrez le nom du joueur</h2>
+            <div class="input-group">
+                <mat-form-field class="example-full-width">
+                    <input #input matInput placeholder="Ex: Jean"/>
+                </mat-form-field>
+            </div>
+            <button mat-button class="join-room-button" (click)="sendUsername(input)">Rejoindre la salle</button>
+        </div>
 
 <div class="decorative-element">
     <img src="https://media.tenor.com/OTDlqAguqpEAAAAi/sonic-running.gif" alt="Decorative Element" />

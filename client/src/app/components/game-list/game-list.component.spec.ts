@@ -92,15 +92,17 @@ describe('GameListComponent', () => {
     });
 
     describe('launchGame', () => {
-        it('should launch game correctly', () => {
-            const game: Game = { id: '1', title: 'Test Game' } as Game;
-            component.launchGame(game);
-            expect(socketMock.leaveRoom).toHaveBeenCalled();
-            expect(socketMock.createRoom).toHaveBeenCalledWith(game);
-            expect(router.navigate).toHaveBeenCalledWith(['/waiting']);
+        it('should launch game correctly', async () => {
+            spyOn(component, 'selectGame').and.returnValue(Promise.resolve());
+            const game: Game = { id: '1', title: 'Test Game', unavailable: false } as Game;
+            await component.launchGame(game);
+            expect(component.socket.leaveRoom).toHaveBeenCalled();
+            expect(component.socket.createRoom).toHaveBeenCalledWith(game);
+            expect(component.router.navigate).toHaveBeenCalledWith(['/waiting']);
         });
         it('should launch test game correctly', async () => {
-            const game: Game = { id: '1', title: 'Test Game' } as Game;
+            spyOn(component, 'selectGame').and.returnValue(Promise.resolve());
+            const game: Game = { id: '1', title: 'Test Game', unavailable: false } as Game;
             await component.launchTestGame(game);
             expect(gameSessionService.createSession).toHaveBeenCalledWith(game.id, game);
         });
