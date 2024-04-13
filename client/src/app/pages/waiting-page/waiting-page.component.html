@@ -1,5 +1,5 @@
 <div *ngIf="fullView" class="main">
-    <app-select-room *ngIf="this.roomIdEntryView"></app-select-room>
+    <app-select-room *ngIf="this.roomIdEntryView && this.playerPanelView"></app-select-room>
     <app-select-username *ngIf="this.usernameEntryView"></app-select-username>
     <app-player-and-admin-panel
         *ngIf="this.playerPanelView"
