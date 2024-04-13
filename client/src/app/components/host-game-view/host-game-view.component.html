@@ -41,7 +41,7 @@
                             *ngIf="!onLastQuestion && currentQuestion?.type === 'QCM'"
                             mat-button
                             (click)="notifyNextQuestion()"
-                            [disabled]="disableControls"
+                            [disabled]="disableControls || disableNextQuestion"
                             class="next-button"
                         >
                             prochaine question
@@ -52,7 +52,7 @@
                             mat-button
                             (click)="gradeAnswers()"
                             class="next-button"
-                            [disabled]="disableControls"
+                            [disabled]="disableControls || disableNextQuestion"
                         >
                             procéder à la correction
                             <fa-icon [icon]="faForward"></fa-icon>

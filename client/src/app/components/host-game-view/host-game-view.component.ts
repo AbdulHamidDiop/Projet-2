@@ -36,6 +36,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     displayPlayerList = true;
     unitTesting: boolean = false;
     disableControls: boolean = false;
+    disableNextQuestion: boolean = true;
+    nConfirmations: number = 0;
     questionLoaded: boolean = false;
     inPanicMode: boolean = false;
     timerPaused: boolean = false;
@@ -224,6 +226,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.gradingAnswers = false;
         this.qRLAnswers = [];
         this.disableControls = false;
+        this.nConfirmations = 0;
+        this.disableNextQuestion = true;
         if (this.gameManagerService.onLastQuestion()) {
             this.onLastQuestion = true;
         }
@@ -349,6 +353,12 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             this.onPlayerLeft(data as { user: string });
+        });
+        this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_CONFIRMED).subscribe(() => {
+            this.nConfirmations++;
+            if (this.nConfirmations === this.playersLeft) {
+                this.disableNextQuestion = true;
+            }
         });
     }
 }
