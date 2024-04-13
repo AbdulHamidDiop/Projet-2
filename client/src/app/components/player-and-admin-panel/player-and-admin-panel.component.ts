@@ -43,7 +43,6 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
         this.globalChatSubscription = this.socket.getChatMessages().subscribe((message) => {
             if (message.author === 'room') {
                 this.room = message.message;
-                navigator.clipboard.writeText(this.room);
             }
         });
 

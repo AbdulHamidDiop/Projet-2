@@ -48,7 +48,6 @@ describe('HostGameViewComponent', () => {
         gameManagerServiceSpy.onLastQuestion.and.returnValue(true);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage']);
         timeServiceSpy = jasmine.createSpyObj('TimeService', ['startTimer', 'stopTimer', 'timerEnded']);
-        gameSessionServiceSpy = jasmine.createSpyObj('GameSessionService', ['completeSession', 'addNbPlayers']);
         playerServiceSpy = jasmine.createSpyObj('PlayerService', ['findBestScore', 'addGamePlayers', 'nActivePlayers'], { playersInGame: [] });
         routerSpy = jasmine.createSpyObj('Router', ['navigate']);
         socketServiceSpy = jasmine.createSpyObj('SocketRoomService', ['getPlayers', 'listenForMessages', 'sendMessage', 'endGame']);

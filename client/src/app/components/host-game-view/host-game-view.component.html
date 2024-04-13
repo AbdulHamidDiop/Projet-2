@@ -38,7 +38,7 @@
                             <fa-icon [icon]="faBoltLightning"></fa-icon>
                         </button>
                         <button
-                            *ngIf="!onLastQuestion && currentQuestion.type === 'QCM'"
+                            *ngIf="!onLastQuestion && currentQuestion?.type === 'QCM'"
                             mat-button
                             (click)="notifyNextQuestion()"
                             [disabled]="disableControls"
@@ -48,7 +48,7 @@
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
                         <button
-                            *ngIf="currentQuestion.type === 'QRL'"
+                            *ngIf="currentQuestion?.type === 'QRL'"
                             mat-button
                             (click)="gradeAnswers()"
                             class="next-button"
@@ -57,7 +57,7 @@
                             procéder à la correction
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
-                        <button *ngIf="onLastQuestion && currentQuestion.type === 'QCM'" mat-button (click)="notifyEndGame()" class="confirm-button">
+                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="confirm-button">
                             Terminer le jeu
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>

@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { QRL_TIMER } from '@app/components/play-area/const';
 import { GameManagerService } from '@app/services/game-manager.service';
-import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
@@ -40,7 +39,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     questionLoaded: boolean = false;
     inPanicMode: boolean = false;
     timerPaused: boolean = false;
-
     // icons
     faClock: IconDefinition = faClock;
     faBoltLightning: IconDefinition = faBoltLightning;
@@ -60,7 +58,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         private router: Router,
         readonly socketService: SocketRoomService,
         readonly playerService: PlayerService,
-        private gameSessionService: GameSessionService,
         private snackBar: MatSnackBar,
     ) {
         this.timeService.pauseFlag = false;
@@ -68,12 +65,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.playersLeft = this.playerService.nActivePlayers();
         this.socketService.getPlayers().subscribe((players: Player[]) => {
             this.playerService.playersInGame = players;
-
-            this.gameSessionService.addNbPlayers(this.playerService.playersInGame.length, this.gameManagerService.gamePin);
         });
-        //         this.socketService.listenForMessages(Namespaces.GAME, Events.NEXT_QUESTION).subscribe(() => {
-        // dans notifyNextQuestion
-        //         });
     }
     get time(): number {
         return this.timeService.time;
@@ -297,8 +289,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             this.notifyNextQuestion();
         } else if (this.currentQuestion.type === Type.QRL) {
             this.gradeAnswers();
-        } else {
-            console.log('Oh no');
         }
     }
     onPlayerLeft(data: { user: string }): void {
