@@ -1,4 +1,4 @@
-import { SimpleChange } from '@angular/core';
+import { NO_ERRORS_SCHEMA, SimpleChange } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { CountdownModalComponent } from './countdown-modal.component';
 
@@ -11,6 +11,7 @@ describe('CountdownModalComponent', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             declarations: [CountdownModalComponent],
+            schemas: [NO_ERRORS_SCHEMA],
         });
         fixture = TestBed.createComponent(CountdownModalComponent);
         component = fixture.componentInstance;

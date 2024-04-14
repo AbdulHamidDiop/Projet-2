@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { of } from 'rxjs';
@@ -19,6 +20,7 @@ describe('BarChartComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [BarChartComponent],
             providers: [{ provide: SocketRoomService, useValue: mockSocketRoomService }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

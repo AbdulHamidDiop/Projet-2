@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { PlayerService } from '@app/services/player.service';
 import { QuestionsService } from '@app/services/questions.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -28,6 +29,7 @@ describe('GameRandomComponent', () => {
                 { provide: SocketRoomService, useValue: mockSocketRoomService },
                 { provide: PlayerService, useValue: mockPlayerService },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
 
         const mockQuestions: Question[] = [

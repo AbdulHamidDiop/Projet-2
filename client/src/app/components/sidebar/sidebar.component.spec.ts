@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, flush } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SidebarComponent } from '@app/components/sidebar/sidebar.component';
@@ -32,6 +33,7 @@ describe('SidebarComponent', () => {
                 { provide: SocketRoomService, useValue: socketMock },
                 { provide: MatSnackBar, useValue: snackBarMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

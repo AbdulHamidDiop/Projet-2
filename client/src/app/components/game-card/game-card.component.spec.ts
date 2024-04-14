@@ -1,4 +1,5 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -19,6 +20,7 @@ describe('GameCardComponent', () => {
             declarations: [GameCardComponent],
             imports: [HttpClientTestingModule, RouterTestingModule],
             providers: [GameService],
+            schemas: [NO_ERRORS_SCHEMA],
         });
 
         fixture = TestBed.createComponent(GameCardComponent);

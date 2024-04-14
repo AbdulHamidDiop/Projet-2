@@ -1,27 +1,24 @@
 <main>
-    <h1 class="header-item">Page Administrateur</h1>
+    <h1 class="header-item"><strong>Page Administrateur</strong></h1>
     <div class="grid-container-admin-page">
         <div class="grid-area-game-list">
             <div class="scroll-box">
-                <h1 class="quickzz">Qui(ck)zz</h1>
-                <app-game-card
-                    *ngFor="let game of gameService.games"
-                    [game]="game"
-                    (deleteEvent)="onDeleteGame($event)"
-                    (checkEvent)="onCheckGame($event)"
-                ></app-game-card>
+                <h1 class="game-list"><strong>Liste de jeux :</strong></h1>
+                <app-game-card *ngFor="let game of gameService.games" [game]="game" (deleteEvent)="onDeleteGame($event)"
+                    (checkEvent)="onCheckGame($event)"></app-game-card>
             </div>
         </div>
         <div class="grid-area-add-game">
-            <mat-card>
+            <mat-card class="glassy">
                 <mat-card-header>
                     <mat-card-title>
-                        <h3>Créer un jeu</h3>
+                        <u>Créer un jeu</u>
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <p>
-                        Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un qui(ck)zz complétement
+                        Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un
+                        qui(ck)zz complétement
                         personnalisé.
                     </p>
                 </mat-card-content>
@@ -31,14 +28,15 @@
             </mat-card>
         </div>
         <div class="grid-area-question-bank">
-            <mat-card>
+            <mat-card class="glassy">
                 <mat-card-header>
                     <mat-card-title>
-                        <h3>Banque de questions</h3>
+                        <u>Banque de questions</u>
                     </mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
-                    <p>Parcourez, modifiez et ajoutez des questions à la banque de quiz qui est partagée par tous les utilisateurs qui(ck)zz.</p>
+                    <p>Parcourez, modifiez et ajoutez des questions à la banque de quiz qui est partagée par tous les
+                        utilisateurs qui(ck)zz.</p>
                 </mat-card-content>
                 <mat-card-actions>
                     <button mat-button (click)="onQuestionsButtonClick()"><mat-icon>launch</mat-icon></button>
@@ -46,9 +44,9 @@
             </mat-card>
         </div>
         <div class="grid-area-import">
-            <mat-card>
+            <mat-card class="glassy">
                 <mat-card-header>
-                    <mat-card-title>Importer un jeu</mat-card-title>
+                    <mat-card-title><u>Importer un jeu</u></mat-card-title>
                 </mat-card-header>
                 <mat-card-content>
                     <p>Choisissez le fichier à importer</p>
@@ -57,15 +55,16 @@
                     <div id="handleErrorsGrid"></div>
                 </mat-card-content>
                 <mat-card-actions>
-                    <button mat-button (click)="onImportButtonClick()">Importer le jeu</button>
+                    <button mat-fab extended color="primary" (click)="onImportButtonClick()">Importer le jeu</button>
                 </mat-card-actions>
             </mat-card>
         </div>
         <div class="grid-area-history">
             <div class="scroll-box">
-                <h1>Historique</h1>
+                <h1><strong><u>Historique :</u></strong></h1>
                 <p>
-                    Effacer l'historique:<button mat-button (click)="handleAbort()"><mat-icon>delete</mat-icon></button>
+                    <button mat-flat-button color="warn" (click)="handleAbort()">Effacer
+                        l'historique:<mat-icon>delete</mat-icon></button>
                 </p>
                 <mat-form-field>
                     <mat-label>Trier par:</mat-label>

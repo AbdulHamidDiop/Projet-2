@@ -1,6 +1,7 @@
 /* eslint-disable max-lines */
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSelectChange } from '@angular/material/select';
@@ -151,7 +152,7 @@ describe('AdminPageComponent', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let mockGameFile: any;
     let matDialogMock: SpyObj<MatDialog>;
-    let matDialogRefSpy: SpyObj<MatDialogRef<any, any>>;
+    let matDialogRefSpy: SpyObj<MatDialogRef<unknown, unknown>>;
     let fakeFile: File;
     let readFileSpy;
 
@@ -166,6 +167,7 @@ describe('AdminPageComponent', () => {
                     },
                 },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 
@@ -173,11 +175,15 @@ describe('AdminPageComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [AdminPageComponent],
             imports: [RouterTestingModule, HttpClientModule, MatDialogModule],
-            providers: [CommunicationService, GameService, {
-                provide: MatDialog,
-                useValue: matDialogMock,
-            },
-            { provide: MatDialogRef, useValue: matDialogRefSpy },],
+            providers: [
+                CommunicationService,
+                GameService,
+                {
+                    provide: MatDialog,
+                    useValue: matDialogMock,
+                },
+                { provide: MatDialogRef, useValue: matDialogRefSpy },
+            ],
         }).compileComponents();
         fixture = TestBed.createComponent(AdminPageComponent);
         component = fixture.componentInstance;

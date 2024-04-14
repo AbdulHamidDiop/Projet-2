@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { SelectRoomComponent } from './select-room.component';
 import SpyObj = jasmine.SpyObj;
@@ -15,6 +16,7 @@ describe('SelectRoomComponent', () => {
         await TestBed.configureTestingModule({
             declarations: [SelectRoomComponent],
             providers: [{ provide: SocketRoomService, useValue: socketMock }],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

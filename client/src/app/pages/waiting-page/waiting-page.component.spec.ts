@@ -1,3 +1,4 @@
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
@@ -78,6 +79,7 @@ describe('WaitingPageComponent', () => {
                 { provide: GameSessionService, useValue: gameSessionServiceMock },
                 { provide: MatSnackBar, useValue: snackBarMock },
             ],
+            schemas: [NO_ERRORS_SCHEMA],
         }).compileComponents();
     });
 

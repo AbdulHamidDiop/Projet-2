@@ -7,7 +7,7 @@
                 <li *ngFor="let player of players; let i = index" class="player-list-item">
                     <mat-card class="player-card">
                         <mat-card-content class="space-around">
-                            <span>Score : {{ player.score }}</span>
+                            <span>Score : {{ player.score.toFixed(2) }}</span>
                             <span>{{ player.name }}</span>
                             <span>Nombre de bonus: {{ player.bonusCount }}</span>
                         </mat-card-content>
@@ -28,7 +28,8 @@
                     <!-- Affichage de l'histogramme actuel -->
 
                     <ng-container *ngIf="currentHistogramData && currentHistogramData.length">
-                        <app-bar-chart [labels]="game.questions[currentHistogramIndex].text" [datasets]="currentHistogramData"></app-bar-chart>
+                        <app-bar-chart [labels]="game.questions[currentHistogramIndex].text"
+                            [datasets]="currentHistogramData"></app-bar-chart>
                     </ng-container>
                     <h5 *ngIf="!currentHistogramData || (currentHistogramData && !currentHistogramData.length)">
                         Il n'y a eu acune réponse à cette question.

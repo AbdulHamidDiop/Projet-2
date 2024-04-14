@@ -17,6 +17,11 @@ main {
     min-height: 100%;
 }
 
+.header-item {
+    color: #503bb8;
+    text-decoration: underline;
+}
+
 .grid-container-admin-page {
     min-height: 100%;
     display: grid;
@@ -55,6 +60,21 @@ main {
     height: 100vh;
 }
 
+.glassy {
+    padding: 15px;
+    backdrop-filter: blur(5px);
+    background-color: rgba(6, 6, 54, 0.234);
+    border-radius: 10px;
+    border-style: solid;
+    border-color: #e0e0e0;
+    border-width: 1px;
+
+    $border: 1.5px;
+    color: #fff;
+    border: solid $border transparent; /* !importanté */
+    border-radius: 1em;
+}
+
 #handleErrorsGrid {
     border-style: dotted;
     border-color: black;
@@ -62,6 +82,7 @@ main {
     width: 300px;
 }
 
-.quickzz {
-    margin-bottom: 36px;
+.game-list {
+    margin-bottom: 10px;
+    text-decoration: underline;
 }
