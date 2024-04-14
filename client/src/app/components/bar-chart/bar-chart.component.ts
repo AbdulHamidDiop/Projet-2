@@ -1,7 +1,5 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
-import { SocketRoomService } from '@app/services/socket-room.service';
 import { BarChartChoiceStats } from '@common/game-stats';
-import { Events, Namespaces } from '@common/sockets';
 import { ChartConfiguration } from 'chart.js';
 
 @Component({
@@ -38,29 +36,10 @@ export class BarChartComponent implements OnInit {
         },
     };
 
-    constructor(
-        private socketService: SocketRoomService,
-        private changeDetector: ChangeDetectorRef,
-    ) {}
+    constructor(private changeDetector: ChangeDetectorRef) {}
 
     ngOnInit(): void {
         this.updateData();
-
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe(() => {
-            this.updateData();
-        });
-
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QRL_STATS).subscribe(() => {
-            this.updateData();
-        });
-
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.UPDATE_CHART).subscribe(() => {
-            this.updateData();
-        });
-
-        this.socketService.listenForMessages(Namespaces.GAME, Events.QRL_GRADE).subscribe(() => {
-            this.updateData();
-        });
     }
 
     updateData(): void {

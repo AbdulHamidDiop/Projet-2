@@ -262,14 +262,14 @@ describe('GameSession Service', () => {
         expect(success).to.deep.equal(true);
     });
 
-    it('should delete all sessions from db', async () => {
-        const isCompleted = false;
+    it('should delete all completed sessions from db', async () => {
+        const isCompleted = true;
         const pin = '2222';
         const gameCopy = { ...GAME };
         await databaseService.db.collection(DB_COLLECTION_HISTORIQUE).insertMany([SESSION, { pin, gameCopy, isCompleted }]);
         await gameSessionService.deleteHistory();
         const sessions = await gameSessionService.getAllSessions();
-        expect(sessions.length).to.deep.equal(0);
+        expect(sessions.length).to.deep.equal(1);
     });
 
     it('should return true if addNbPlayers is success', async () => {

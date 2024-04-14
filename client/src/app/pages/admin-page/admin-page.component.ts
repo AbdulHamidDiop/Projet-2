@@ -283,7 +283,7 @@ export class AdminPageComponent implements OnInit {
 
     sortList(event: MatSelectChange) {
         const sortBy = event.value;
-
+        this.sessions = this.sessions.filter(session => session.timeStarted !== undefined);
         switch (sortBy) {
             case 'ascending-alphabetically':
                 this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));
@@ -296,6 +296,7 @@ export class AdminPageComponent implements OnInit {
                 break;
             case 'descending-date':
                 this.sessions.sort((b, a) => new Date(a.timeStarted!).getTime() - new Date(b.timeStarted!).getTime());
+                break;
         }
     }
 

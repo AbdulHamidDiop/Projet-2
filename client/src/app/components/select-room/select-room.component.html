@@ -10,11 +10,13 @@
     <main>
         <div class="glassy example-form">
             <h2>Entrez l'identifiant de la salle à rejoindre.</h2>
-            <div class="input-group">
-                <mat-form-field class="example-full-width">
-                    <input #input matInput placeholder="Ex: 2324" (input)="restrictInput($event)" />
-                </mat-form-field>
-            </div>
+            <form (ngSubmit)="joinRoom(input)">
+                <div class="input-group">
+                    <mat-form-field class="example-full-width">
+                        <input #input matInput placeholder="Ex: 2324" (input)="restrictInput($event)" />
+                    </mat-form-field>
+                </div>
+            </form>
             <button mat-button class="join-room-button" (click)="joinRoom(input)">Rejoindre la salle</button>
         </div>
 

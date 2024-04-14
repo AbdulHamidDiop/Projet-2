@@ -1,7 +1,8 @@
 /* eslint-disable max-lines */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
 import { QRL_TIMER } from '@app/components/play-area/const';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { PlayerService } from '@app/services/player.service';
@@ -12,6 +13,7 @@ import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
 import { IconDefinition, faBoltLightning, faChartSimple, faClock, faForward, faPause, faPlay, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW_FEEDBACK_DELAY, ZERO_GRADE_MULTIPLER } from './const';
 
 @Component({
@@ -20,6 +22,7 @@ import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW
     styleUrls: ['./host-game-view.component.scss'],
 })
 export class HostGameViewComponent implements OnInit, OnDestroy {
+    @ViewChild(BarChartComponent) appBarChart: BarChartComponent;
     game: Game;
     timer: number;
     currentQuestion: Question;
@@ -41,6 +44,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     questionLoaded: boolean = false;
     inPanicMode: boolean = false;
     timerPaused: boolean = false;
+    playerLeftSubscription: Subscription;
     // icons
     faClock: IconDefinition = faClock;
     faBoltLightning: IconDefinition = faBoltLightning;
@@ -92,6 +96,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 this.statisticsData[index].data[stat.choiceIndex].data[0]--;
             }
             this.barChartData = this.statisticsData[this.questionIndex].data;
+            this.appBarChart.datasets = this.barChartData;
+            this.appBarChart.updateData();
         } else {
             const barChartStat: BarChartQuestionStats = {
                 questionID: stat.questionId,
@@ -116,6 +122,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
         if (this.statisticsData) {
             this.barChartData = this.statisticsData[this.questionIndex]?.data;
+            this.appBarChart.datasets = this.barChartData;
+            this.appBarChart.updateData();
         }
     }
     async updateQRLBarChartData(stat: QRLStats): Promise<void> {
@@ -146,6 +154,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             });
         }
         this.barChartData = this.statisticsData[this.questionIndex]?.data;
+        this.appBarChart.datasets = this.barChartData;
+        this.appBarChart.updateData();
     }
     updateQRLGradeData(multiplier: number): void {
         let barIndex;
@@ -233,6 +243,15 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
         this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
         this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
+        if (this.currentQuestion.type === Type.QRL) {
+            const qrlStat: QRLStats = {
+                questionId: this.currentQuestion.id,
+                edited: false,
+            };
+            for (let i = 1; i <= this.playersLeft; i++) {
+                this.updateQRLBarChartData(qrlStat);
+            }
+        }
     }
     sendTimerControlMessage(): void {
         this.timerPaused = !this.timerPaused;
@@ -327,6 +346,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.deactivatePanicMode();
         this.timeService.deactivatePanicMode();
         this.gameManagerService.reset();
+        this.playerLeftSubscription?.unsubscribe();
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
     }
@@ -351,7 +371,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             const { ...player } = playerWithRoom as Player & { room: string };
             this.playerService.addGamePlayers(player as Player);
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
+        this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             this.onPlayerLeft(data as { user: string });
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_CONFIRMED).subscribe(() => {

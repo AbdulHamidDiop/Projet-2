@@ -57,7 +57,7 @@
                             procéder à la correction
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
-                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="confirm-button">
+                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button">
                             Terminer le jeu
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
@@ -120,7 +120,7 @@
                     <fa-icon [icon]="faChartSimple"></fa-icon>
                 </h2>
                 <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                    <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                    <app-bar-chart #appBarChart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
                 </ng-container>
             </div>
         </mat-grid-tile>
@@ -130,6 +130,6 @@
 <app-countdown-modal
     [showModal]="showCountDown"
     (modalClosed)="onCountDownModalClosed()"
-    [message]="'Prochaine question dans'"
+    [message]="'Prochaine question'"
     [countdown]="3"
 ></app-countdown-modal>

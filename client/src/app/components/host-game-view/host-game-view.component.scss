@@ -14,16 +14,15 @@ button {
     margin-right: 10px;
 }
 
+.game-controls button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
 .pause-button {
-    // margin-top: 20px;
-    // margin-right: 10px;
-    // text-align: center;
-    // border: none;
-    // padding: 10px 20px;
     background-color: #007bff;
     color: white;
     cursor: pointer;
-    // border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
@@ -32,14 +31,8 @@ button {
 }
 
 .next-button {
-    // margin-top: 20px;
-    // margin-right: 10px;
-    // text-align: center;
-    // border: none;
-    // padding: 10px 20px;
     color: white;
     cursor: pointer;
-    // border-radius: 5px;
     transition: background-color 0.3s ease;
     background-color: rgb(15, 142, 32);
 }
@@ -49,14 +42,8 @@ button {
 }
 
 .panic-button {
-    // margin-top: 20px;
-    // margin-right: 10px;
-    // text-align: center;
-    // border: none;
-    // padding: 10px 20px;
     color: white;
     cursor: pointer;
-    // border-radius: 5px;
     transition: background-color 0.3s ease;
     background-color: red;
 }
@@ -66,14 +53,8 @@ button {
 }
 
 .end-button {
-    // margin-top: 20px;
-    // margin-right: 10px;
-    // text-align: center;
-    // border: none;
-    // padding: 10px 20px;
     color: white;
     cursor: pointer;
-    // border-radius: 5px;
     transition: background-color 0.3s ease;
     background-color: rgb(23, 5, 5);
 }
@@ -88,15 +69,15 @@ button {
 }
 
 .players-table {
-    width: 100%; /* Largeur de la table */
-    border-collapse: collapse; /* Fusion des bordures de cellules */
+    width: 100%;
+    border-collapse: collapse;
 }
 
 .players-table th,
 .players-table td {
-    border: 1px solid black; /* Bordures des cellules */
-    padding: 8px; /* Espacement intérieur des cellules */
-    text-align: left; /* Alignement du texte à gauche */
+    border: 1px solid black;
+    padding: 8px;
+    text-align: left;
 }
 
 .grading-container {
@@ -158,7 +139,7 @@ button {
 
     $border: 1.5px;
     color: #fff;
-    border: solid $border transparent; /* !importanté */
+    border: solid $border transparent; /* !important */
     border-radius: 1em;
     margin-bottom: 5px;
 }

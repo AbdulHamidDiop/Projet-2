@@ -20,10 +20,6 @@ export class QRLStatService implements OnDestroy {
 
     startTimer(questionId: string) {
         this.questionId = questionId;
-        this.socketService.sendMessage(Events.QRL_STATS, Namespaces.GAME_STATS, {
-            questionId: this.questionId,
-            edited: false,
-        });
         this.timerSubscription = timer(0, CHECK_INTERVAL)
             .pipe(
                 takeUntil(this.stopTimer$),

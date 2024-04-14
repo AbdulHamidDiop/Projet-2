@@ -351,6 +351,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.score += pointsWithBonus;
                 this.pointsGained = pointsWithBonus;
                 this.playerService.player.bonusCount++;
+                this.snackBar.open('Bravo! Vous avez obtenu le point bonus!', 'Fermer', {
+                    duration: 3000,
+                });
             } else {
                 this.score += this.question.points;
                 this.pointsGained = this.question.points;
