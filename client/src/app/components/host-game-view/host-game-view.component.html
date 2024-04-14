@@ -120,7 +120,7 @@
                     <fa-icon [icon]="faChartSimple"></fa-icon>
                 </h2>
                 <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                    <app-bar-chart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                    <app-bar-chart #appBarChart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
                 </ng-container>
             </div>
         </mat-grid-tile>

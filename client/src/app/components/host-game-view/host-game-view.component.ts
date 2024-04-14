@@ -1,7 +1,8 @@
 /* eslint-disable max-lines */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
 import { QRL_TIMER } from '@app/components/play-area/const';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { PlayerService } from '@app/services/player.service';
@@ -20,6 +21,7 @@ import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW
     styleUrls: ['./host-game-view.component.scss'],
 })
 export class HostGameViewComponent implements OnInit, OnDestroy {
+    @ViewChild(BarChartComponent) appBarChart: BarChartComponent;
     game: Game;
     timer: number;
     currentQuestion: Question;
@@ -92,6 +94,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
                 this.statisticsData[index].data[stat.choiceIndex].data[0]--;
             }
             this.barChartData = this.statisticsData[this.questionIndex].data;
+            this.appBarChart.datasets = this.barChartData;
+            this.appBarChart.updateData();
         } else {
             const barChartStat: BarChartQuestionStats = {
                 questionID: stat.questionId,
@@ -116,6 +120,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
         if (this.statisticsData) {
             this.barChartData = this.statisticsData[this.questionIndex]?.data;
+            this.appBarChart.datasets = this.barChartData;
+            this.appBarChart.updateData();
         }
     }
     async updateQRLBarChartData(stat: QRLStats): Promise<void> {
@@ -146,6 +152,8 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             });
         }
         this.barChartData = this.statisticsData[this.questionIndex]?.data;
+        this.appBarChart.datasets = this.barChartData;
+        this.appBarChart.updateData();
     }
     updateQRLGradeData(multiplier: number): void {
         let barIndex;
@@ -233,6 +241,15 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
         this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
         this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
+        if (this.currentQuestion.type === Type.QRL) {
+            const qrlStat: QRLStats = {
+                questionId: this.currentQuestion.id,
+                edited: false,
+            };
+            for (let i = 1; i <= this.playersLeft; i++) {
+                this.updateQRLBarChartData(qrlStat);
+            }
+        }
     }
     sendTimerControlMessage(): void {
         this.timerPaused = !this.timerPaused;
