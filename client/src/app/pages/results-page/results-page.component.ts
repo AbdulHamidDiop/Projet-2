@@ -1,5 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
 import { GameSessionService } from '@app/services/game-session.service';
 import { Game } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
@@ -16,6 +17,7 @@ const COMPLETE_DELAY = 5000;
     styleUrls: ['./results-page.component.scss'],
 })
 export class ResultsPageComponent implements OnInit, OnDestroy {
+    @ViewChild(BarChartComponent) appBarChart: BarChartComponent;
     game: Game;
     statisticsData: BarChartQuestionStats[] = [];
     currentHistogramData: BarChartChoiceStats[] = [];
@@ -106,7 +108,9 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
 
     private updateChart(): void {
         this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
-        this.socketsService.sendMessage(Events.UPDATE_CHART, Namespaces.GAME_STATS);
+        this.appBarChart.datasets = this.currentHistogramData;
+        this.appBarChart.labels = this.game?.questions[this.currentHistogramIndex].text;
+        this.appBarChart.updateData();
     }
 
     private connectToServer(): void {
@@ -128,6 +132,7 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
                 }
                 this.statisticsData = statisticsData;
                 this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
+                this.updateChart();
             },
         });
         this.socketsService.sendMessage(Events.GET_FINAL_PLAYERS, Namespaces.GAME_STATS);

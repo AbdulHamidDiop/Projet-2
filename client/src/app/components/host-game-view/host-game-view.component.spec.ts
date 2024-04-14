@@ -5,6 +5,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
@@ -18,6 +19,8 @@ import { of } from 'rxjs';
 import { HostGameViewComponent } from './host-game-view.component';
 import SpyObj = jasmine.SpyObj;
 
+const SHOW_FEEDBACK_DELAY = 3000;
+const START_TIMER_DELAY = 500;
 describe('HostGameViewComponent', () => {
     let component: HostGameViewComponent;
     let fixture: ComponentFixture<HostGameViewComponent>;
@@ -31,8 +34,14 @@ describe('HostGameViewComponent', () => {
     let mockPlayers: Player[];
     let mockStat: QCMStats;
     let mockFeedback: Feedback[];
-    const SHOW_FEEDBACK_DELAY = 3000;
-    const START_TIMER_DELAY = 500;
+
+    const appBarChartMock = {
+        updateData: () => {
+            return;
+        },
+        datasets: [],
+        labels: [],
+    } as unknown as BarChartComponent;
 
     beforeEach(async () => {
         gameManagerServiceSpy = jasmine.createSpyObj('GameManagerService', [
@@ -85,7 +94,6 @@ describe('HostGameViewComponent', () => {
             { choice: 'Option 1', status: 'correct' },
             { choice: 'Option 2', status: 'incorrect' },
         ];
-
         await TestBed.configureTestingModule({
             imports: [RouterTestingModule, MatSnackBarModule, NoopAnimationsModule],
             declarations: [HostGameViewComponent],
@@ -116,11 +124,13 @@ describe('HostGameViewComponent', () => {
         component = fixture.componentInstance;
         component.unitTesting = true;
         component.currentQuestion = mockQuestion;
+        component.appBarChart = appBarChartMock;
         gameManagerServiceSpy.firstQuestion.and.returnValue(mockQuestion);
         socketServiceSpy.getPlayers.and.returnValue(of(mockPlayers));
         socketServiceSpy.listenForMessages.and.returnValue(of({}));
         fixture.detectChanges();
         jasmine.getEnv().allowRespy(true);
+        component.appBarChart = appBarChartMock;
     });
 
     it('should create', () => {
@@ -135,6 +145,14 @@ describe('HostGameViewComponent', () => {
             }
             return of({});
         });
+        component.appBarChart = {
+            updateData: () => {
+                return;
+            },
+            datasets: [],
+            labels: [],
+        } as unknown as BarChartComponent;
+        fixture.detectChanges();
         component.ngOnInit();
         tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY); // couvrir le max de delay
         flush();
@@ -142,6 +160,7 @@ describe('HostGameViewComponent', () => {
     }));
 
     it('should handle UPDATE_PLAYER event from SocketRoomService', fakeAsync(() => {
+        component.appBarChart = appBarChartMock;
         const mockPlayerWithRoom = { name: 'Player1', isHost: false, id: '1', score: 10, bonusCount: 0, room: 'test-room' };
         socketServiceSpy.listenForMessages.and.callFake((namespace, event) => {
             if (namespace === Namespaces.GAME_STATS && event === Events.UPDATE_PLAYER) {
@@ -155,6 +174,7 @@ describe('HostGameViewComponent', () => {
     }));
 
     it('should initialize game and set current question on ngOnInit', fakeAsync(() => {
+        component.appBarChart = appBarChartMock;
         component.ngOnInit();
         tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
         flush();
@@ -175,6 +195,7 @@ describe('HostGameViewComponent', () => {
 
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {
         gameManagerServiceSpy.getFeedBack.and.returnValue(Promise.resolve(mockFeedback));
+        component.appBarChart = appBarChartMock;
         component.currentQuestion = mockQuestion;
         component.updateBarChartData(mockStat);
         tick();
@@ -194,6 +215,7 @@ describe('HostGameViewComponent', () => {
             ...initialStat,
             selected: false,
         };
+        component.appBarChart = appBarChartMock;
         component.statisticsData = [
             {
                 questionID: 'test-question-id',
@@ -380,7 +402,7 @@ describe('HostGameViewComponent', () => {
     it('should increment data when stat is edited', async () => {
         const stat: QRLStats = { questionId: '1', edited: true };
         component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
-
+        component.appBarChart = appBarChartMock;
         await component.updateQRLBarChartData(stat);
 
         expect(component.statisticsData[0].data[0].data[0]).toEqual(1);
@@ -389,7 +411,7 @@ describe('HostGameViewComponent', () => {
     it('should decrement data when stat is not edited and data is greater than 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false };
         component.statisticsData = [{ questionID: '1', data: [{ data: [1] }, { data: [0] }] as BarChartChoiceStats[] }];
-
+        component.appBarChart = appBarChartMock;
         await component.updateQRLBarChartData(stat);
 
         expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
@@ -398,7 +420,7 @@ describe('HostGameViewComponent', () => {
     it('should not change data when stat is not edited and data is 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false } as QRLStats;
         component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
-
+        component.appBarChart = appBarChartMock;
         await component.updateQRLBarChartData(stat);
 
         expect(component.statisticsData[0].data[0].data[0]).toEqual(0);

@@ -97,6 +97,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             }
             this.barChartData = this.statisticsData[this.questionIndex].data;
             this.appBarChart.datasets = this.barChartData;
+            this.appBarChart.labels = this.currentQuestion.text;
             this.appBarChart.updateData();
         } else {
             const barChartStat: BarChartQuestionStats = {
@@ -123,6 +124,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         if (this.statisticsData) {
             this.barChartData = this.statisticsData[this.questionIndex]?.data;
             this.appBarChart.datasets = this.barChartData;
+            this.appBarChart.labels = this.currentQuestion.text;
             this.appBarChart.updateData();
         }
     }
@@ -155,6 +157,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
         this.barChartData = this.statisticsData[this.questionIndex]?.data;
         this.appBarChart.datasets = this.barChartData;
+        this.appBarChart.labels = this.currentQuestion.text;
         this.appBarChart.updateData();
     }
     updateQRLGradeData(multiplier: number): void {
