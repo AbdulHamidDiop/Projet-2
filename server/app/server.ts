@@ -89,7 +89,7 @@ export class Server {
 
             socket.on(Events.CHAT_HISTORY, (data) => {
                 const chatHistory = this.chatHistories.get(data.room) || [];
-                socket.to(data.room).emit(Events.CHAT_HISTORY, chatHistory);
+                socket.emit(Events.CHAT_HISTORY, chatHistory);
             });
         });
 
@@ -190,7 +190,6 @@ export class Server {
 
             socket.on(Events.NEXT_QUESTION, ({ room }) => {
                 gameNamespace.to(room).emit(Events.NEXT_QUESTION);
-                console.log('Next question');
             });
 
             socket.on(Events.QRL_ANSWER, (data) => {
