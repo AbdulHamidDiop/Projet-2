@@ -14,6 +14,11 @@ button {
     margin-right: 10px;
 }
 
+.game-controls button:disabled {
+    background-color: #6c757d;
+    cursor: not-allowed;
+}
+
 .pause-button {
     // margin-top: 20px;
     // margin-right: 10px;

@@ -57,7 +57,7 @@
                             procéder à la correction
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
-                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="confirm-button">
+                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button">
                             Terminer le jeu
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
