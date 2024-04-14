@@ -496,6 +496,9 @@ describe('HostGameViewComponent', () => {
         expect(component.disableControls).toBeFalse();
         expect(component.gradingAnswers).toBeFalse();
 
+        spyOn(component.gameManagerService, 'goNextQuestion').and.returnValue({ type: Type.QRL } as Question);
+        component.onNextQuestionReceived();
+
         spyOn(component.gameManagerService, 'onLastQuestion').and.returnValue(true);
         component.onNextQuestionReceived();
         expect(component.onLastQuestion).toBeTrue();
