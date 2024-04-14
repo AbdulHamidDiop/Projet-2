@@ -89,7 +89,8 @@ export class Server {
 
             socket.on(Events.CHAT_HISTORY, (data) => {
                 const chatHistory = this.chatHistories.get(data.room) || [];
-                socket.emit(Events.CHAT_HISTORY, chatHistory);
+                socket.to(data.room).emit(Events.CHAT_HISTORY, chatHistory);
+                // socket.emit(Events.CHAT_HISTORY, chatHistory);
             });
         });
 
