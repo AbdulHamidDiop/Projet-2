@@ -9,6 +9,7 @@ import { Player } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
+import { IconDefinition, faMedal } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 const COMPLETE_DELAY = 5000;
 @Component({
@@ -23,6 +24,8 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
     currentHistogramData: BarChartChoiceStats[] = [];
     currentHistogramIndex: number = 0;
     players: Player[] = [];
+
+    faMedal: IconDefinition = faMedal;
 
     private routeSubscription: Subscription;
     private playersSubscription: Subscription;
