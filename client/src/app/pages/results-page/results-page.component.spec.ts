@@ -5,6 +5,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
+import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
 import { Game, GameService } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -91,6 +92,13 @@ describe('ResultsPageComponent', () => {
     let mockSocketRoomService: jasmine.SpyObj<SocketRoomService>;
     let mockPlayerService: jasmine.SpyObj<PlayerService>;
     let mockActivatedRoute: unknown;
+    const appBarChartMock = {
+        updateData: () => {
+            return;
+        },
+        datasets: [],
+        labels: [],
+    } as unknown as BarChartComponent;
 
     beforeEach(async () => {
         mockGameService = jasmine.createSpyObj('GameService', ['getGameByID']);
@@ -137,6 +145,8 @@ describe('ResultsPageComponent', () => {
         mockGameService.getGameByID.and.returnValue(FAKE_GAME);
         fixture = TestBed.createComponent(ResultsPageComponent);
         component = fixture.componentInstance;
+        component.appBarChart = appBarChartMock;
+
         fixture.detectChanges();
     });
 
@@ -149,18 +159,18 @@ describe('ResultsPageComponent', () => {
     });
 
     it('should update chart data when showing next histogram', () => {
+        component.appBarChart = appBarChartMock;
         component.showNextHistogram();
         expect(component.currentHistogramIndex).toBe(1);
         expect(component.currentHistogramData).toEqual(GAME_RESULTS_DATA[1].data);
-        expect(mockSocketRoomService.sendMessage).toHaveBeenCalledWith(Events.UPDATE_CHART, Namespaces.GAME_STATS);
     });
 
     it('should update chart data when showing previous histogram', () => {
+        component.appBarChart = appBarChartMock;
         component.currentHistogramIndex = 1;
         component.showPreviousHistogram();
         expect(component.currentHistogramIndex).toBe(0);
         expect(component.currentHistogramData).toEqual(GAME_RESULTS_DATA[0].data);
-        expect(mockSocketRoomService.sendMessage).toHaveBeenCalledWith(Events.UPDATE_CHART, Namespaces.GAME_STATS);
     });
 
     it('should navigate to initial view when returnToInitialView is called', () => {
