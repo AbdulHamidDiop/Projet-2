@@ -100,11 +100,28 @@ describe('GameListComponent', () => {
             expect(component.socket.createRoom).toHaveBeenCalledWith(game);
             expect(component.router.navigate).toHaveBeenCalledWith(['/waiting']);
         });
+
+        it('should not launch game if unavailable', async () => {
+            spyOn(component, 'selectGame').and.returnValue(Promise.resolve());
+            const game: Game = { id: '1', title: 'Test Game', unavailable: true } as Game;
+            await component.launchGame(game);
+            expect(component.socket.leaveRoom).not.toHaveBeenCalled();
+            expect(component.socket.createRoom).not.toHaveBeenCalledWith(game);
+            expect(component.router.navigate).not.toHaveBeenCalledWith(['/waiting']);
+        });
+
         it('should launch test game correctly', async () => {
             spyOn(component, 'selectGame').and.returnValue(Promise.resolve());
             const game: Game = { id: '1', title: 'Test Game', unavailable: false } as Game;
             await component.launchTestGame(game);
             expect(gameSessionService.createSession).toHaveBeenCalledWith(game.id, game);
+        });
+
+        it('should not launch test game if unavailable', async () => {
+            spyOn(component, 'selectGame').and.returnValue(Promise.resolve());
+            const game: Game = { id: '1', title: 'Test Game', unavailable: true } as Game;
+            await component.launchTestGame(game);
+            expect(gameSessionService.createSession).not.toHaveBeenCalledWith(game.id, game);
         });
     });
 });
