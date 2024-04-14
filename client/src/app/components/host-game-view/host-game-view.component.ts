@@ -13,6 +13,7 @@ import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
 import { IconDefinition, faBoltLightning, faChartSimple, faClock, faForward, faPause, faPlay, faUserGroup } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW_FEEDBACK_DELAY, ZERO_GRADE_MULTIPLER } from './const';
 
 @Component({
@@ -43,6 +44,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     questionLoaded: boolean = false;
     inPanicMode: boolean = false;
     timerPaused: boolean = false;
+    playerLeftSubscription: Subscription;
     // icons
     faClock: IconDefinition = faClock;
     faBoltLightning: IconDefinition = faBoltLightning;
@@ -344,6 +346,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         this.deactivatePanicMode();
         this.timeService.deactivatePanicMode();
         this.gameManagerService.reset();
+        this.playerLeftSubscription?.unsubscribe();
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
     }
@@ -368,7 +371,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
             const { ...player } = playerWithRoom as Player & { room: string };
             this.playerService.addGamePlayers(player as Player);
         });
-        this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
+        this.playerLeftSubscription = this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_LEFT).subscribe((data: unknown) => {
             this.onPlayerLeft(data as { user: string });
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_CONFIRMED).subscribe(() => {
