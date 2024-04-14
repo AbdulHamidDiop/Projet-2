@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
 import { GameSessionService } from '@app/services/game-session.service';
@@ -17,7 +17,7 @@ const COMPLETE_DELAY = 5000;
     templateUrl: './results-page.component.html',
     styleUrls: ['./results-page.component.scss'],
 })
-export class ResultsPageComponent implements OnInit, OnDestroy {
+export class ResultsPageComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BarChartComponent) appBarChart: BarChartComponent;
     game: Game;
     statisticsData: BarChartQuestionStats[] = [];
@@ -47,6 +47,24 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
         this.connectToServer();
         window.addEventListener('popstate', this.onLocationChange);
         window.addEventListener('hashchange', this.onLocationChange);
+    }
+
+    ngAfterViewInit(): void {
+        // Écouter les QCMSTATS
+        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_STATS).subscribe({
+            next: (stats: unknown) => {
+                const statsObj = stats as { [key: string]: BarChartQuestionStats };
+                const statisticsData: BarChartQuestionStats[] = [];
+                for (const key in statsObj) {
+                    if (!isNaN(Number(key))) {
+                        statisticsData.push(statsObj[key]);
+                    }
+                }
+                this.statisticsData = statisticsData;
+                this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
+                this.updateChart();
+            },
+        });
     }
 
     sortPlayers(): void {
@@ -123,21 +141,6 @@ export class ResultsPageComponent implements OnInit, OnDestroy {
             this.sortPlayers();
         });
 
-        // Écouter les QCMSTATS
-        this.gameResultsSubscription = this.socketsService.listenForMessages(Namespaces.GAME_STATS, Events.GET_STATS).subscribe({
-            next: (stats: unknown) => {
-                const statsObj = stats as { [key: string]: BarChartQuestionStats };
-                const statisticsData: BarChartQuestionStats[] = [];
-                for (const key in statsObj) {
-                    if (!isNaN(Number(key))) {
-                        statisticsData.push(statsObj[key]);
-                    }
-                }
-                this.statisticsData = statisticsData;
-                this.currentHistogramData = this.statisticsData[this.currentHistogramIndex]?.data;
-                this.updateChart();
-            },
-        });
         this.socketsService.sendMessage(Events.GET_FINAL_PLAYERS, Namespaces.GAME_STATS);
         this.socketsService.sendMessage(Events.GET_STATS, Namespaces.GAME_STATS);
         setTimeout(async () => {
