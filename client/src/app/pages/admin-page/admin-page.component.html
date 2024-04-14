@@ -71,8 +71,8 @@
                     <mat-select (selectionChange)="sortList($event)">
                         <mat-option value="ascending-alphabetically">Ordre alphabétique croissant</mat-option>
                         <mat-option value="descending-alphabetically">Ordre alphabétique décroissant</mat-option>
-                        <mat-option value="ascending-date">Plus récent</mat-option>
-                        <mat-option value="descending-date">Plus ancien</mat-option>
+                        <mat-option value="descending-date">Plus récent</mat-option>
+                        <mat-option value="ascending-date">Plus ancien</mat-option>
                     </mat-select>
                 </mat-form-field>
                 <div *ngFor="let session of sessions">
