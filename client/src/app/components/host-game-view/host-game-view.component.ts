@@ -288,7 +288,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     openResultsPage(): void {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
-        const RESPONSE_FROM_SERVER_DELAY = 1000;
+        const RESPONSE_FROM_SERVER_DELAY = 1300;
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             setTimeout(() => {

@@ -72,12 +72,6 @@ body {
     width: 500px;
 }
 
-.example-full-width input {
-    margin-left: 35%;
-    font-size: larger;
-    border-radius: 30%;
-}
-
 input,
 button {
     width: 100%;
@@ -116,6 +110,15 @@ button:hover {
     display: flex;
     align-items: center;
     width: 100%;
+    font-size: larger;
+    border-radius: 30%;
+    align-self: center;
+}
+
+.input-example {
+    text-align: center;
+    font-size: 16px;
+    padding: 10px;
 }
 
 .mat-form-field {

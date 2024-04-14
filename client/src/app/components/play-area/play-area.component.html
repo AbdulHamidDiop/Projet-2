@@ -1,6 +1,6 @@
 <div #main id="grid-container" class="main">
     <section id="question-container">
-        <mat-card *ngIf="shouldRender(this.question.text)">
+        <mat-card class="glassy" *ngIf="shouldRender(this.question.text)">
             <mat-card-header>
                 <mat-card-title>
                     <h2>{{ this.question.text }}</h2>
@@ -17,7 +17,7 @@
             </mat-card-actions>
         </mat-card>
         <br />
-        <mat-card>
+        <mat-card class="glassy">
             <mat-card-header>
                 <mat-card-title class="column-container">
                     <p>Votre score : {{ this.playerScore.toFixed(2) }}</p>
@@ -27,8 +27,8 @@
                 </mat-card-title>
             </mat-card-header>
             <mat-card-actions align="end">
-                <button mat-button (click)="handleAbort()">
-                    <h3 class="abort-button">Abandonner</h3>
+                <button mat-button class="abort-button" (click)="handleAbort()">
+                    Abandonner
                 </button>
                 <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="choiceDisabled"
                     class="confirm-button">

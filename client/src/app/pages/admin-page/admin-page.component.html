@@ -3,7 +3,7 @@
     <div class="grid-container-admin-page">
         <div class="grid-area-game-list">
             <div class="scroll-box">
-                <h1 class="game-list"><strong>Liste de jeux :</strong></h1>
+                <h1 class="header-item"><strong>Liste de jeux :</strong></h1>
                 <app-game-card *ngFor="let game of gameService.games" [game]="game" (deleteEvent)="onDeleteGame($event)"
                     (checkEvent)="onCheckGame($event)"></app-game-card>
             </div>
@@ -61,7 +61,7 @@
         </div>
         <div class="grid-area-history">
             <div class="scroll-box">
-                <h1><strong><u>Historique :</u></strong></h1>
+                <h1 class="header-item"><strong><u>Historique :</u></strong></h1>
                 <p>
                     <button mat-flat-button color="warn" (click)="handleAbort()">Effacer
                         l'historique:<mat-icon>delete</mat-icon></button>

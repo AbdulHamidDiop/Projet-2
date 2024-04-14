@@ -29,35 +29,29 @@
                         </mat-card-actions>
                     </mat-card>
                     <mat-card-actions align="end" class="glassy game-controls">
-                        <button mat-button (click)="sendTimerControlMessage()" [disabled]="disableControls" class="pause-button">
+                        <button mat-button (click)="sendTimerControlMessage()" [disabled]="disableControls"
+                            class="pause-button">
                             Compteur
                             <fa-icon [icon]="timerPaused ? faPlay : faPause"></fa-icon>
                         </button>
-                        <button mat-button (click)="activatePanicMode()" [disabled]="disableControls || inPanicMode" class="panic-button">
+                        <button mat-button (click)="activatePanicMode()" [disabled]="disableControls || inPanicMode"
+                            class="panic-button">
                             Mode Panique
                             <fa-icon [icon]="faBoltLightning"></fa-icon>
                         </button>
-                        <button
-                            *ngIf="!onLastQuestion && currentQuestion?.type === 'QCM'"
-                            mat-button
-                            (click)="notifyNextQuestion()"
-                            [disabled]="disableControls || disableNextQuestion"
-                            class="next-button"
-                        >
+                        <button *ngIf="!onLastQuestion && currentQuestion?.type === 'QCM'" mat-button
+                            (click)="notifyNextQuestion()" [disabled]="disableControls || disableNextQuestion"
+                            class="next-button">
                             prochaine question
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
-                        <button
-                            *ngIf="currentQuestion?.type === 'QRL'"
-                            mat-button
-                            (click)="gradeAnswers()"
-                            class="next-button"
-                            [disabled]="disableControls || disableNextQuestion"
-                        >
+                        <button *ngIf="currentQuestion?.type === 'QRL'" mat-button (click)="gradeAnswers()"
+                            class="next-button" [disabled]="disableControls || disableNextQuestion">
                             procéder à la correction
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
-                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button">
+                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button
+                            (click)="notifyEndGame()" class="end-button">
                             Terminer le jeu
                             <fa-icon [icon]="faForward"></fa-icon>
                         </button>
@@ -120,16 +114,13 @@
                     <fa-icon [icon]="faChartSimple"></fa-icon>
                 </h2>
                 <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                    <app-bar-chart #appBarChart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                    <app-bar-chart #appBarChart [labels]="currentQuestion.text"
+                        [datasets]="barChartData"></app-bar-chart>
                 </ng-container>
             </div>
         </mat-grid-tile>
     </mat-grid-list>
 </main>
 
-<app-countdown-modal
-    [showModal]="showCountDown"
-    (modalClosed)="onCountDownModalClosed()"
-    [message]="'Prochaine question'"
-    [countdown]="3"
-></app-countdown-modal>
+<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"
+    [message]="'Prochaine question'" [countdown]="3"></app-countdown-modal>

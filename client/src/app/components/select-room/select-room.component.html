@@ -1,6 +1,9 @@
 <div id="grad">
+
     <head>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap" rel="stylesheet" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Roboto:wght@400;500&display=swap"
+            rel="stylesheet" />
     </head>
 
     <div class="header">
@@ -13,7 +16,8 @@
             <form (ngSubmit)="joinRoom(input)">
                 <div class="input-group">
                     <mat-form-field class="example-full-width">
-                        <input #input matInput placeholder="Ex: 2324" (input)="restrictInput($event)" />
+                        <input #input matInput class="input-example" placeholder="Ex: 2324"
+                            (input)="restrictInput($event)" />
                     </mat-form-field>
                 </div>
             </form>
