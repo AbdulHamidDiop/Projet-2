@@ -26,14 +26,16 @@ describe('Socket Events Service', () => {
     let socketEmitStub: SinonStub;
     let socketJoinStub: SinonStub;
     let socketIdStub: SinonSpy;
-    let gameSessionService: GameSessionService;
+    let gameSessionService: any;
     const databaseService: DatabaseService = new DatabaseService();
     let server: Server;
     const httpServer = createServer();
 
     before((done) => {
         server = new Server(httpServer);
-
+        gameSessionService = {
+            addNbPlayers: sinon.stub(),
+        };
         httpServer.listen(() => {
             const port = (httpServer.address() as AddressInfo).port;
             clientSocket = io(`http://localhost:${port}`);
@@ -102,6 +104,7 @@ describe('Socket Events Service', () => {
         };
         gameSessionService = new GameSessionService(databaseService);
         sinon.stub(gameSessionService, 'createSession').resolves({ pin: 'gameId' } as GameSession);
+
         socketEvents.unitTesting = true;
         await socketEvents.onCreateRoom(socket, { game: { id: 'gameId' } as Game });
     });
