@@ -18,6 +18,7 @@ mat-card {
 .space-around {
     display: flex;
     justify-content: space-around;
+    align-items: flex-start;
     font-size: 16px;
 }
 
@@ -30,4 +31,16 @@ mat-card {
     padding: 0;
     margin: 0;
     width: 100%;
+}
+
+.first {
+    color: gold;
+}
+
+.second {
+    color: silver;
+}
+
+.third {
+    color: brown;
 }
