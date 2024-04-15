@@ -2,21 +2,21 @@
 <main>
     <button mat-button class="panic-button" (click)="onLocationChange()">Quitter la partie</button>
     <mat-grid-list cols="4" rowHeight="50vh">
-        <mat-grid-tile #controlsTile *ngIf="!gradingAnswers" [colspan]="3" [rowspan]="1">
+        <mat-grid-tile #controlsTile *ngIf="!logic.gradingAnswers" [colspan]="3" [rowspan]="1">
             <div id="grid-container">
                 <section id="question-container">
-                    <mat-card *ngIf="currentQuestion" class="glassy">
+                    <mat-card *ngIf="logic.currentQuestion" class="glassy">
                         <mat-card-header class="glassy">
                             <mat-card-title>
                                 <h2>Question en cours</h2>
                             </mat-card-title>
                             <mat-card-subtitle>
-                                <h3>{{ this.currentQuestion.text }}</h3>
+                                <h3>{{ this.logic.currentQuestion.text }}</h3>
                             </mat-card-subtitle>
                         </mat-card-header>
                         <mat-card-actions align="end">
                             <button mat-button [disabled]="true">
-                                <h4>{{ this.currentQuestion.points }} points.</h4>
+                                <h4>{{ this.logic.currentQuestion.points }} points.</h4>
                             </button>
                             <br />
                             <button mat-button [disabled]="true">
@@ -28,28 +28,28 @@
                         </mat-card-actions>
                     </mat-card>
                     <mat-card-actions align="end" class="glassy game-controls">
-                        <button mat-button (click)="sendTimerControlMessage()" [disabled]="disableControls"
+                        <button mat-button (click)="sendTimerControlMessage()" [disabled]="logic.disableControls"
                             class="pause-button">
                             Compteur
-                            <fa-icon [icon]="timerPaused ? icons.faPlay : icons.faPause"></fa-icon>
+                            <fa-icon [icon]="logic.timerPaused ? icons.faPlay : icons.faPause"></fa-icon>
                         </button>
-                        <button mat-button (click)="activatePanicMode()" [disabled]="disableControls || inPanicMode"
+                        <button mat-button (click)="activatePanicMode()" [disabled]="logic.disableControls || logic.inPanicMode"
                             class="panic-button">
                             Mode Panique
                             <fa-icon [icon]="icons.faBoltLightning"></fa-icon>
                         </button>
-                        <button *ngIf="!onLastQuestion && currentQuestion?.type === 'QCM'" mat-button
-                            (click)="notifyNextQuestion()" [disabled]="disableControls || disableNextQuestion"
+                        <button *ngIf="!logic.onLastQuestion && logic.currentQuestion?.type === 'QCM'" mat-button
+                            (click)="notifyNextQuestion()" [disabled]="logic.disableControls || logic.disableNextQuestion"
                             class="next-button">
                             prochaine question
                             <fa-icon [icon]="icons.faForward"></fa-icon>
                         </button>
-                        <button *ngIf="currentQuestion?.type === 'QRL'" mat-button (click)="gradeAnswers()"
-                            class="next-button" [disabled]="disableControls || disableNextQuestion">
+                        <button *ngIf="logic.currentQuestion?.type === 'QRL'" mat-button (click)="gradeAnswers()"
+                            class="next-button" [disabled]="logic.disableControls || logic.disableNextQuestion">
                             procéder à la correction
                             <fa-icon [icon]="icons.faForward"></fa-icon>
                         </button>
-                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button" [disabled]="disableNextQuestion">
+                        <button *ngIf="logic.onLastQuestion && logic.currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button" [disabled]="logic.disableNextQuestion">
                             Terminer le jeu
                             <fa-icon [icon]="icons.faForward"></fa-icon>
                         </button>
@@ -58,22 +58,22 @@
             </div>
         </mat-grid-tile>
 
-        <mat-grid-tile #gradingTile *ngIf="gradingAnswers" [colspan]="3" [rowspan]="1">
+        <mat-grid-tile #gradingTile *ngIf="logic.gradingAnswers" [colspan]="3" [rowspan]="1">
             <div>
-                <mat-card *ngIf="currentQuestion && currentQRLAnswer" class="grading-container glassy">
+                <mat-card *ngIf="logic.currentQuestion && logic.currentQRLAnswer" class="grading-container glassy">
                     <mat-card-header class="glassy">
                         <mat-card-title>
                             <h2>Correction des réponses</h2>
                         </mat-card-title>
                         <mat-card-subtitle>
-                            <h3>{{ this.currentQuestion.text }}</h3>
+                            <h3>{{ this.logic.currentQuestion.text }}</h3>
                         </mat-card-subtitle>
                     </mat-card-header>
                     <mat-card-subtitle class="player-name">
-                        <h3>réponse de {{ currentQRLAnswer.author }}</h3>
+                        <h3>réponse de {{ logic.currentQRLAnswer.author }}</h3>
                     </mat-card-subtitle>
                     <h3 class="player-answer">
-                        {{ currentQRLAnswer.answer }}
+                        {{ logic.currentQRLAnswer.answer }}
                     </h3>
                     <mat-card-actions class="grading-controls">
                         <small>% des points accordé:</small>
@@ -102,7 +102,7 @@
                         <strong>Joueurs ‎ ‎</strong>
                         <fa-icon [icon]="icons.faUserGroup"></fa-icon>
                     </h2>
-                    <app-player-list *ngIf="displayPlayerList"></app-player-list>
+                    <app-player-list *ngIf="logic.displayPlayerList"></app-player-list>
                 </div>
 
                 <div class="glassy stats-div">
@@ -110,8 +110,8 @@
                         <strong>Statistiques‎ ‎</strong>
                         <fa-icon [icon]="icons.faChartSimple"></fa-icon>
                     </h2>
-                    <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                        <app-bar-chart #appBarChart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                    <ng-container *ngIf="logic.statisticsData.length > 0 && logic.statisticsData[logic.questionIndex] && logic.currentQuestion">
+                        <app-bar-chart #appBarChart [labels]="logic.currentQuestion.text" [datasets]="logic.barChartData"></app-bar-chart>
                     </ng-container>
                 </div>
             </div>
@@ -119,5 +119,5 @@
     </mat-grid-list>
 </main>
 
-<app-countdown-modal [showModal]="showCountDown" (modalClosed)="onCountDownModalClosed()"
+<app-countdown-modal [showModal]="logic.showCountDown" (modalClosed)="onCountDownModalClosed()"
     [message]="'Prochaine question'" [countdown]="3"></app-countdown-modal>

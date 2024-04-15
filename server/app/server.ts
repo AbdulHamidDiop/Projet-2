@@ -1,6 +1,7 @@
-/* eslint-disable no-restricted-imports */
+// Nous avons besoin de la console afin de vérifier que les connections au database et au serveur s'établissent correctement
 /* eslint-disable no-console */
 import { Application } from '@app/app';
+import { LAST_INDEX } from '@common/consts';
 import { Player } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY, Namespaces } from '@common/sockets';
@@ -14,7 +15,6 @@ import { DatabaseService } from './services/database.service';
 import { GameSessionService } from './services/game-session.service';
 import { SocketEvents } from './services/socket-events.service';
 
-const ERROR_INDEX = -1;
 @Service()
 export class Server {
     private static readonly appPort: string | number | boolean = Server.normalizePort(process.env.PORT || '3000');
@@ -177,7 +177,7 @@ export class Server {
                     this.randomGamesNumberOfAnswers.delete(data.room);
 
                     const index = this.liveRooms.indexOf(data.room);
-                    if (index > ERROR_INDEX) this.liveRooms.splice(index, 1);
+                    if (index > LAST_INDEX) this.liveRooms.splice(index, 1);
 
                     this.chatHistories.delete(data.room);
 
@@ -214,7 +214,7 @@ export class Server {
                 gameNamespace.in(room).emit(Events.CLEANUP_GAME);
 
                 const index = this.liveRooms.indexOf(room);
-                if (index > ERROR_INDEX) this.liveRooms.splice(index, 1);
+                if (index > LAST_INDEX) this.liveRooms.splice(index, 1);
 
                 this.chatHistories.delete(room);
 

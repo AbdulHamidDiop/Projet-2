@@ -67,7 +67,7 @@ export class QuestionsPageComponent implements OnInit {
     }
 
     updateDisplayQuestions() {
-        if (this.selectedTypes.size === 0) {
+        if (!this.selectedTypes.size) {
             this.displayQuestions = [];
         } else if (this.selectedTypes.size === 2) {
             this.displayQuestions = this.questions;

@@ -43,7 +43,7 @@ export class SidebarComponent implements OnDestroy {
 
         this.chatHistorySubscription = this.socketsService.listenForMessages(nsp.CHAT_MESSAGES, Events.CHAT_HISTORY).subscribe((data: unknown) => {
             const chatHistory = data as ChatMessage[];
-            if (this.messageHistory.length === 0) {
+            if (!this.messageHistory.length) {
                 this.messageHistory = this.messageHistory.concat(chatHistory);
             }
             this.autoScroll();

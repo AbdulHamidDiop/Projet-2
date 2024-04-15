@@ -1,12 +1,12 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { RANDOM_INDICATOR, START_GAME_DELAY } from '@common/consts';
 import { Game, Player } from '@common/game';
 import { GAME_STARTED_MESSAGE, ROOM_LOCKED_MESSAGE, ROOM_UNLOCKED_MESSAGE } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { IconDefinition, faDoorOpen, faLock, faLockOpen, faPlay, faRightFromBracket } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
-const RANDOM_INDICATOR = -9;
 
 @Component({
     selector: 'app-player-and-admin-panel',
@@ -79,13 +79,13 @@ export class PlayerAndAdminPanelComponent implements OnDestroy {
             } else {
                 this.snackBar.open("Aucun joueur n'est présent dans la salle, le jeu ne peut pas commencer", 'Fermer', {
                     verticalPosition: 'top',
-                    duration: 5000,
+                    duration: START_GAME_DELAY,
                 });
             }
         } else {
             this.snackBar.open('La partie doit être verrouillée avant de commencer', 'Fermer', {
                 verticalPosition: 'top',
-                duration: 5000,
+                duration: START_GAME_DELAY,
             });
         }
     }

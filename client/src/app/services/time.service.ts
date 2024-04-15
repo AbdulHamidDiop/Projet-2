@@ -1,12 +1,10 @@
 import { EventEmitter, Injectable, OnDestroy } from '@angular/core';
+import { DEFAULT_TICK, PANIC_SOUND_URL, PANIC_TICK, PANIC_TRESHOLD } from '@common/consts';
 import { Type } from '@common/game';
 import { Events, Namespaces } from '@common/sockets';
 import { Subscription } from 'rxjs';
 import { SocketRoomService } from './socket-room.service';
-const PANIC_TRESHOLD = 10;
-const DEFAULT_TICK = 1000;
-const PANIC_TICK = 250;
-const PANIC_SOUND_URL = '@app/../assets/audio/pop.mp3';
+
 @Injectable({
     providedIn: 'root',
 })

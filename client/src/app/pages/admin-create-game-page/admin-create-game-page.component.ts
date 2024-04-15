@@ -51,26 +51,10 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
         this.communicationService.sharedVariable$.subscribe((data) => {
             this.isAuthentificated = data;
         });
-        if (!this.isAuthentificated) {
-            this.router.navigate(['/home']);
-        }
-        this.gameForm = this.formBuilder.group({
-            title: ['', Validators.required],
-            description: [''],
-            duration: [null, [Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)]],
-        });
-
+        this.routeUnauthenticatedUser();
+        this.createGameForm();
         this.gameService.games = await this.gameService.getAllGames();
-
-        this.route.paramMap.subscribe(async (params) => {
-            const gameId = params.get('id');
-            if (gameId) {
-                this.loadGameData(gameId);
-                this.id = gameId;
-            } else {
-                this.id = v4();
-            }
-        });
+        this.setGameIdFromParams();
     }
 
     loadGameData(gameId: string): void {
@@ -128,5 +112,31 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
 
         this.gameService.addGame(this.game);
         this.router.navigate(['/admin']);
+    }
+
+    private createGameForm(): void {
+        this.gameForm = this.formBuilder.group({
+            title: ['', Validators.required],
+            description: [''],
+            duration: [null, [Validators.required, Validators.min(MIN_DURATION), Validators.max(MAX_DURATION)]],
+        });
+    }
+
+    private routeUnauthenticatedUser(): void {
+        if (!this.isAuthentificated) {
+            this.router.navigate(['/home']);
+        }
+    }
+
+    private setGameIdFromParams(): void {
+        this.route.paramMap.subscribe(async (params) => {
+            const gameId = params.get('id');
+            if (gameId) {
+                this.loadGameData(gameId);
+                this.id = gameId;
+            } else {
+                this.id = v4();
+            }
+        });
     }
 }

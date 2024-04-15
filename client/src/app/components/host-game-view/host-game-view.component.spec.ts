@@ -122,8 +122,8 @@ describe('HostGameViewComponent', () => {
     beforeEach(() => {
         fixture = TestBed.createComponent(HostGameViewComponent);
         component = fixture.componentInstance;
-        component.unitTesting = true;
-        component.currentQuestion = mockQuestion;
+        component.logic.unitTesting = true;
+        component.logic.currentQuestion = mockQuestion;
         component.appBarChart = appBarChartMock;
         gameManagerServiceSpy.firstQuestion.and.returnValue(mockQuestion);
         socketServiceSpy.getPlayers.and.returnValue(of(mockPlayers));
@@ -179,7 +179,7 @@ describe('HostGameViewComponent', () => {
         tick(SHOW_FEEDBACK_DELAY + START_TIMER_DELAY);
         flush();
         expect(gameManagerServiceSpy.initialize).toHaveBeenCalled();
-        expect(component.currentQuestion).toEqual(mockQuestion);
+        expect(component.logic.currentQuestion).toEqual(mockQuestion);
     }));
 
     it('should return the current time from TimeService', () => {
@@ -196,11 +196,11 @@ describe('HostGameViewComponent', () => {
     it('should update bar chart data on receiving QCM_STATS event', fakeAsync(() => {
         gameManagerServiceSpy.getFeedBack.and.returnValue(Promise.resolve(mockFeedback));
         component.appBarChart = appBarChartMock;
-        component.currentQuestion = mockQuestion;
+        component.logic.currentQuestion = mockQuestion;
         component.updateBarChartData(mockStat);
         tick();
-        expect(component.statisticsData.length).toBeGreaterThan(0);
-        expect(component.barChartData.length).toBeGreaterThan(0);
+        expect(component.logic.statisticsData.length).toBeGreaterThan(0);
+        expect(component.logic.barChartData.length).toBeGreaterThan(0);
     }));
 
     it('should decrement bar chart data when stat.selected is false and data value is greater than 0', fakeAsync(() => {
@@ -216,7 +216,7 @@ describe('HostGameViewComponent', () => {
             selected: false,
         };
         component.appBarChart = appBarChartMock;
-        component.statisticsData = [
+        component.logic.statisticsData = [
             {
                 questionID: 'test-question-id',
                 data: [
@@ -235,11 +235,11 @@ describe('HostGameViewComponent', () => {
         ];
         component.updateBarChartData(initialStat);
         tick();
-        expect(component.statisticsData[0].data[0].data[0]).toBe(2);
+        expect(component.logic.statisticsData[0].data[0].data[0]).toBe(2);
         component.updateBarChartData(decrementStat);
         tick();
-        expect(component.statisticsData[0].data[0].data[0]).toBe(1);
-        expect(component.barChartData).toEqual(component.statisticsData[0].data);
+        expect(component.logic.statisticsData[0].data[0].data[0]).toBe(1);
+        expect(component.logic.barChartData).toEqual(component.logic.statisticsData[0].data);
     }));
 
     it('should navigate to results page on receiving END_GAME event', fakeAsync(() => {
@@ -255,7 +255,7 @@ describe('HostGameViewComponent', () => {
         component.choseNextQuestion();
         tick();
         flush();
-        expect(component.currentQuestion).toEqual(mockQuestion);
+        expect(component.logic.currentQuestion).toEqual(mockQuestion);
     }));
 
     it('should handle NEXT_QUESTION event correctly', fakeAsync(() => {
@@ -279,12 +279,12 @@ describe('HostGameViewComponent', () => {
 
     it('should set showCountDown to true when openCountDownModal is called', () => {
         component.openCountDownModal();
-        expect(component.showCountDown).toBeTrue();
+        expect(component.logic.showCountDown).toBeTrue();
     });
 
     it('should set showCountDown to false when onCountDownModalClosed is called', () => {
         component.onCountDownModalClosed();
-        expect(component.showCountDown).toBeFalse();
+        expect(component.logic.showCountDown).toBeFalse();
     });
 
     it('should call showResults and sendMessage with END_GAME event after a delay', fakeAsync(() => {
@@ -304,8 +304,8 @@ describe('HostGameViewComponent', () => {
     });
 
     it('should update QRL grade data', () => {
-        component.questionIndex = 0;
-        component.statisticsData[component.questionIndex] = {
+        component.logic.questionIndex = 0;
+        component.logic.statisticsData[component.logic.questionIndex] = {
             questionID: '1',
             data: [
                 { data: [0], label: 'label1', backgroundColor: '#FF4C4C' },
@@ -319,7 +319,7 @@ describe('HostGameViewComponent', () => {
         component.updateQRLGradeData(0.5);
         component.updateQRLGradeData(1);
         component.updateQRLGradeData(2);
-        expect(component.statisticsData[component.questionIndex].data[0].data[0]).toEqual(1);
+        expect(component.logic.statisticsData[component.logic.questionIndex].data[0].data[0]).toEqual(1);
     });
 
     it('should grade answers', fakeAsync(() => {
@@ -334,7 +334,7 @@ describe('HostGameViewComponent', () => {
     }));
 
     it('should send QRL grade', () => {
-        component.statisticsData[component.questionIndex] = {
+        component.logic.statisticsData[component.logic.questionIndex] = {
             questionID: '1',
             data: [
                 { data: [0], label: 'label1', backgroundColor: '#FF4C4C' },
@@ -342,88 +342,88 @@ describe('HostGameViewComponent', () => {
                 { data: [0], label: 'label3', backgroundColor: '#4CAF50' },
             ],
         };
-        component.currentQRLAnswer = { author: 'author1' } as QRLAnswer;
+        component.logic.currentQRLAnswer = { author: 'author1' } as QRLAnswer;
         spyOn(socketServiceSpy, 'sendMessage');
         spyOn(gameManagerServiceSpy, 'onLastQuestion').and.returnValue(false);
 
-        component.qRLAnswers = [{ author: 'author1' }, { author: 'author2' }] as QRLAnswer[];
-        component.currentQuestion = { id: '1', points: 10 } as Question;
+        component.logic.qRLAnswers = [{ author: 'author1' }, { author: 'author2' }] as QRLAnswer[];
+        component.logic.currentQuestion = { id: '1', points: 10 } as Question;
 
         component.sendQRLGrade(1);
 
         expect(socketServiceSpy.sendMessage).toHaveBeenCalled();
-        expect(component.qRLAnswers.length).toEqual(1);
+        expect(component.logic.qRLAnswers.length).toEqual(1);
 
         component.sendQRLGrade(1);
-        expect(component.qRLAnswers.length).toEqual(0);
+        expect(component.logic.qRLAnswers.length).toEqual(0);
 
         spyOn(gameManagerServiceSpy, 'onLastQuestion').and.returnValue(true);
-        component.currentQRLAnswer = { author: 'author1' } as QRLAnswer;
+        component.logic.currentQRLAnswer = { author: 'author1' } as QRLAnswer;
         component.sendQRLGrade(1);
-        expect(component.qRLAnswers.length).toEqual(0);
+        expect(component.logic.qRLAnswers.length).toEqual(0);
     });
 
     it('should notify next question when statisticsData for current questionIndex does not exist', () => {
         spyOn(socketServiceSpy, 'sendMessage');
-        component.questionIndex = 0;
-        component.currentQuestion = { id: '1' } as Question;
-        component.statisticsData = [];
+        component.logic.questionIndex = 0;
+        component.logic.currentQuestion = { id: '1' } as Question;
+        component.logic.statisticsData = [];
         component.notifyNextQuestion();
 
-        expect(component.statisticsData[component.questionIndex]).toEqual({
-            questionID: component.currentQuestion.id,
+        expect(component.logic.statisticsData[component.logic.questionIndex]).toEqual({
+            questionID: component.logic.currentQuestion.id,
             data: [],
         });
-        expect(component.disableControls).toBeTrue();
-        expect(component.questionLoaded).toBeFalse();
+        expect(component.logic.disableControls).toBeTrue();
+        expect(component.logic.questionLoaded).toBeFalse();
         expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.STOP_TIMER, Namespaces.GAME);
     });
 
     it('should notify next question when statisticsData for current questionIndex exists', () => {
         spyOn(socketServiceSpy, 'sendMessage');
-        component.questionIndex = 0;
-        component.currentQuestion = { id: '1' } as Question;
-        component.statisticsData[component.questionIndex] = {
+        component.logic.questionIndex = 0;
+        component.logic.currentQuestion = { id: '1' } as Question;
+        component.logic.statisticsData[component.logic.questionIndex] = {
             questionID: '2',
             data: [],
         };
 
         component.notifyNextQuestion();
 
-        expect(component.statisticsData[component.questionIndex]).toEqual({
+        expect(component.logic.statisticsData[component.logic.questionIndex]).toEqual({
             questionID: '2',
             data: [],
         });
-        expect(component.disableControls).toBeTrue();
-        expect(component.questionLoaded).toBeFalse();
+        expect(component.logic.disableControls).toBeTrue();
+        expect(component.logic.questionLoaded).toBeFalse();
         expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.STOP_TIMER, Namespaces.GAME);
     });
 
     it('should increment data when stat is edited', async () => {
         const stat: QRLStats = { questionId: '1', edited: true };
-        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
+        component.logic.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
         component.appBarChart = appBarChartMock;
         await component.updateQRLBarChartData(stat);
 
-        expect(component.statisticsData[0].data[0].data[0]).toEqual(1);
+        expect(component.logic.statisticsData[0].data[0].data[0]).toEqual(1);
     });
 
     it('should decrement data when stat is not edited and data is greater than 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false };
-        component.statisticsData = [{ questionID: '1', data: [{ data: [1] }, { data: [0] }] as BarChartChoiceStats[] }];
+        component.logic.statisticsData = [{ questionID: '1', data: [{ data: [1] }, { data: [0] }] as BarChartChoiceStats[] }];
         component.appBarChart = appBarChartMock;
         await component.updateQRLBarChartData(stat);
 
-        expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+        expect(component.logic.statisticsData[0].data[0].data[0]).toEqual(0);
     });
 
     it('should not change data when stat is not edited and data is 0', async () => {
         const stat: QRLStats = { questionId: '1', edited: false } as QRLStats;
-        component.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
+        component.logic.statisticsData = [{ questionID: '1', data: [{ data: [0] }, { data: [0] }] as BarChartChoiceStats[] }];
         component.appBarChart = appBarChartMock;
         await component.updateQRLBarChartData(stat);
 
-        expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+        expect(component.logic.statisticsData[0].data[0].data[0]).toEqual(0);
     });
 
     it('should decrement the first data point of the first data set', () => {
@@ -434,7 +434,7 @@ describe('HostGameViewComponent', () => {
 
         component.updateQRLBarChartData(stat);
 
-        expect(component.statisticsData[0].data[0].data[0]).toEqual(0);
+        expect(component.logic.statisticsData[0].data[0].data[0]).toEqual(0);
     });
 
     it('should send SHOW_RESULTS message', () => {
@@ -453,18 +453,18 @@ describe('HostGameViewComponent', () => {
 
     it('should activate panic mode and send PANIC_MODE message', () => {
         spyOn(socketServiceSpy, 'sendMessage');
-        component.currentQuestion = { type: Type.QCM } as Question;
+        component.logic.currentQuestion = { type: Type.QCM } as Question;
 
         component.activatePanicMode();
 
-        expect(component.inPanicMode).toBeTrue();
+        expect(component.logic.inPanicMode).toBeTrue();
         expect(socketServiceSpy.sendMessage).toHaveBeenCalledWith(Events.PANIC_MODE, Namespaces.GAME, { type: Type.QCM });
     });
 
     it('should call notifyNextQuestion for QCM type', () => {
         spyOn(component, 'notifyNextQuestion');
         spyOn(component, 'gradeAnswers');
-        component.currentQuestion = { type: Type.QCM } as Question;
+        component.logic.currentQuestion = { type: Type.QCM } as Question;
 
         component.handleTimerEnd();
 
@@ -475,7 +475,7 @@ describe('HostGameViewComponent', () => {
     it('should call gradeAnswers for non-QCM type', () => {
         spyOn(component, 'gradeAnswers');
         spyOn(component, 'notifyNextQuestion');
-        component.currentQuestion = { type: Type.QRL } as Question;
+        component.logic.currentQuestion = { type: Type.QRL } as Question;
 
         component.handleTimerEnd();
 
@@ -493,15 +493,15 @@ describe('HostGameViewComponent', () => {
         spyOn(component.gameManagerService, 'goNextQuestion').and.returnValue(mockQuestion);
         component.onNextQuestionReceived();
         expect(component.gameManagerService.goNextQuestion).toHaveBeenCalled();
-        expect(component.disableControls).toBeFalse();
-        expect(component.gradingAnswers).toBeFalse();
+        expect(component.logic.disableControls).toBeFalse();
+        expect(component.logic.gradingAnswers).toBeFalse();
 
         spyOn(component.gameManagerService, 'goNextQuestion').and.returnValue({ type: Type.QRL } as Question);
         component.onNextQuestionReceived();
 
         spyOn(component.gameManagerService, 'onLastQuestion').and.returnValue(true);
         component.onNextQuestionReceived();
-        expect(component.onLastQuestion).toBeTrue();
+        expect(component.logic.onLastQuestion).toBeTrue();
     });
 
     it('should handle player left event', fakeAsync(() => {
@@ -527,7 +527,7 @@ describe('HostGameViewComponent', () => {
 
     it('should update QRL bar chart data when question type is QRL', () => {
         const updateQRLBarChartDataSpy = spyOn(component, 'updateQRLBarChartData');
-        component.currentQuestion = { type: Type.QRL, id: 'test' } as Question;
+        component.logic.currentQuestion = { type: Type.QRL, id: 'test' } as Question;
 
         component.onPlayerLeft({ user: 'test' });
 

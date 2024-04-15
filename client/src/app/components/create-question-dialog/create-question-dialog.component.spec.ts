@@ -5,7 +5,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { AbstractControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Router } from '@angular/router';
+import { Data, Router } from '@angular/router';
 import { AppMaterialModule } from '@app/modules/material.module';
 import { QuestionsService } from '@app/services/questions.service';
 import { Choices, Question, Type } from '@common/game';
@@ -82,7 +82,7 @@ describe('CreateQuestionDialogComponent', () => {
     });
 
     it('Should assign id if no question data is injected via MAT_DIALOG_DATA', () => {
-        component.data = null;
+        component.data = undefined as unknown as Data;
         component.id = '';
         component.ngOnInit();
         expect(component.id !== '').toBeTruthy();

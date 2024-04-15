@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { MAX_PIN_CHARACTERS } from '@common/consts';
 
-const MAX_CHARACTERS = 4;
 @Component({
     selector: 'app-select-room',
     templateUrl: './select-room.component.html',
@@ -24,8 +24,8 @@ export class SelectRoomComponent implements AfterViewInit {
     restrictInput(event: Event) {
         const input = event.target as HTMLInputElement;
         input.value = input.value.replace(/\D/g, '');
-        if (input.value.length > MAX_CHARACTERS) {
-            input.value = input.value.slice(0, MAX_CHARACTERS);
+        if (input.value.length > MAX_PIN_CHARACTERS) {
+            input.value = input.value.slice(0, MAX_PIN_CHARACTERS);
         }
     }
 
