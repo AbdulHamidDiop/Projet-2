@@ -38,7 +38,9 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private sendQRLAnswerSubscription: Subscription;
     private qrlGradeSubscription: Subscription;
     private timerEndedSubscription: Subscription;
-    // Tous les paramètres du constructeur sont utilisés et nécessaires pour le bon fonctionnement de la classe.
+
+    // La play area a besoin d'un accès à chaque paramètre du constructeur, les changer de fichier ne serait pas
+    // vraiemnt bénéfique et en enlever bloquerait certaines fonctionnalités.
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
@@ -240,7 +242,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qrlStatsService.stopTimer();
         this.socketService.sendMessage(Events.QRL_ANSWER, nsp.GAME, this.logic.prepQRLAnswer());
     }
-
     async countPointsAndNextQuestion() {
         this.logic.movingToNextQuestion = true;
         if (this.logic.question.type === Type.QCM || this.logic.inTestMode) {
@@ -278,7 +279,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.logic.calculateScore(isCorrectAnswer);
         this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.playerService.player });
     }
-
     handleAbortGame(): void {
         const message = 'Êtes-vous sûr de vouloir abandonner la partie?';
         const dialogData = new ConfirmDialogModel('Abandon', message);

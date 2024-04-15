@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { Game } from '@common/game';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
+import { NamingConvention } from './headers';
 
 @Injectable({
     providedIn: 'root',
@@ -38,7 +38,7 @@ export class GameService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/importgame', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(game),
         });
@@ -60,7 +60,7 @@ export class GameService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ id: gameID }),
         });
@@ -79,11 +79,43 @@ export class GameService {
         return true;
     }
 
+<<<<<<< HEAD
+=======
+    async getQuestionsWithoutCorrectShown(id: string): Promise<Game> {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'game/questionswithoutcorrect/' + id);
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status}`);
+        }
+        const game: Game = await response.json();
+        return game;
+    }
+
+    async checkAnswer(answer: string[], gameID: string, questionID: string): Promise<boolean> {
+        try {
+            const response = await this.fetchService.fetch(environment.serverUrl + 'game/check', {
+                method: 'POST',
+                headers: {
+                    [NamingConvention.CONTENT_TYPE]: 'application/json',
+                },
+                body: JSON.stringify({ answer, gameID, questionID }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status}`);
+            }
+            const result = await response.json();
+            return result.isCorrect;
+        } catch (error) {
+            return false;
+        }
+    }
+
+>>>>>>> 0fcf7c687e5a64909808ee3215e9631d41ad4b78
     async checkHiddenOrDeleted(game: Game): Promise<boolean> {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/availability/' + game.id, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
         });
         if (!response.ok) {

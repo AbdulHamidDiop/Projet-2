@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { START_GAME_DELAY } from '@common/consts';
@@ -6,6 +5,7 @@ import { Question } from '@common/game';
 import { StatusCodes } from 'http-status-codes';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
+import { NamingConvention } from './headers';
 
 @Injectable({
     providedIn: 'root',
@@ -49,7 +49,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'questions/add', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -70,7 +70,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'questions/edit', {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -97,4 +97,32 @@ export class QuestionsService {
         const questions: Question[] = await response.json();
         return questions;
     }
+<<<<<<< HEAD
+=======
+
+    async checkAnswer(answer: string[], id: string): Promise<boolean> {
+        try {
+            const response = await this.fetchService.fetch(environment.serverUrl + 'questions/check', {
+                method: 'POST',
+                headers: {
+                    [NamingConvention.CONTENT_TYPE]: 'application/json',
+                },
+                body: JSON.stringify({ answer, id }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur de communication avec le serveur. Statut : ${response.status}`);
+            }
+            const result = await response.json();
+
+            if (result && result.isCorrect) {
+                return result.isCorrect;
+            } else {
+                throw new Error('Réponse du serveur malformée');
+            }
+        } catch (error) {
+            return false;
+        }
+    }
+>>>>>>> 0fcf7c687e5a64909808ee3215e9631d41ad4b78
 }

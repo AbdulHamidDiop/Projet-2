@@ -43,3 +43,4 @@ export const GAME_ENDED_MESSAGE: ChatMessage = {
     message: SystemMessages.GAME_ENDED,
     timeStamp: new Date().toLocaleTimeString(),
 };
+
