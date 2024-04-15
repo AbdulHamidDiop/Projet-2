@@ -205,7 +205,7 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.socketService.sendMessage(Events.QRL_GRADE, Namespaces.GAME, qrlGrade);
         this.qRLAnswers.shift();
         this.currentQRLAnswer = this.qRLAnswers[0];
-        if (this.qRLAnswers.length === 0) {
+        if (!this.qRLAnswers.length) {
             if (this.gameManagerService.onLastQuestion()) {
                 this.notifyEndGame();
                 return;
@@ -328,7 +328,7 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
             player.leftGame = true;
         }
         this.playersLeft = this.playerService.nActivePlayers();
-        if (this.playersLeft === 0) {
+        if (this.playersLeft) {
             this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 3000,

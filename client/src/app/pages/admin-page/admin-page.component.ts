@@ -117,7 +117,7 @@ export class AdminPageComponent implements OnInit {
             !qcmQuestions.every(
                 (question: Question) =>
                     !question.choices!.every((choice: Choices) => choice.isCorrect) &&
-                    !question.choices!.every((choiche: Choices) => choiche.isCorrect === false),
+                    !question.choices!.every((choice: Choices) => !choice.isCorrect),
             )
         ) {
             this.errors += 'La validité des choix de réponse ne peut pas être que vraie ou que fausse.';
@@ -146,7 +146,7 @@ export class AdminPageComponent implements OnInit {
     }
 
     questionErrorsHandling(questions: Question[]) {
-        if (questions === undefined || questions.length === 0) {
+        if (questions === undefined || !questions.length) {
             this.errors += 'Le jeu doit contenir au moins une question. ';
         } else {
             if (!questions.every((question: Question) => question.type === 'QCM' || question.type === 'QRL')) {
@@ -178,8 +178,8 @@ export class AdminPageComponent implements OnInit {
                 (question.choices?.length ?? 0) <= MAX_CHOICES &&
                 Array.isArray(question.choices) &&
                 question.choices.every((choice: Choices) => typeof choice.text === 'string') &&
-                !question.choices.every((choice: Choices) => choice.isCorrect === true) &&
-                !question.choices.every((choice: Choices) => choice.isCorrect === false)
+                !question.choices.every((choice: Choices) => choice.isCorrect) &&
+                !question.choices.every((choice: Choices) => !choice.isCorrect)
             );
         } else {
             return question.choices === undefined;

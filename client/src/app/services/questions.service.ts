@@ -24,7 +24,7 @@ export class QuestionsService {
         });
     }
     get question(): Question {
-        if (this.questions.length === 0) {
+        if (!this.questions.length) {
             return {} as Question;
         } else if (this.currentQuestionIndex + 1 === this.questions.length) {
             return this.questions[this.currentQuestionIndex];

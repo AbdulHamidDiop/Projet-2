@@ -45,7 +45,7 @@ li {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 20px
+    margin-bottom: 20px;
 }
 
 .wrapper .sidebar ul li a {
@@ -59,4 +59,8 @@ li {
 
 .wrapper .sidebar ul li:hover a {
     color: #fff;
+}
+
+.router {
+    text-decoration: none;
 }

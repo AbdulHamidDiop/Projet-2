@@ -18,7 +18,7 @@ export class CountdownModalComponent implements OnChanges {
             this.time = this.countdown;
             const interval = setInterval(() => {
                 this.time -= 1;
-                if (this.time === 0) {
+                if (!this.time) {
                     clearInterval(interval);
                     this.showModal = false;
                     this.modalClosed.emit();

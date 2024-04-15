@@ -284,7 +284,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.socketService.sendMessage(Events.RESET_NUMBER_ANSWERS, nsp.GAME);
         }
 
-        if (this.inTestMode || (this.inRandomMode && this.time === 0)) {
+        if (this.inTestMode || (this.inRandomMode && !this.time)) {
             if (this.question.type === Type.QCM) {
                 this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
             }
