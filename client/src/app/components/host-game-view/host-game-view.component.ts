@@ -12,9 +12,9 @@ import { Feedback } from '@common/feedback';
 import { Game, Player, Question, Type } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats, QCMStats, QRLAnswer, QRLGrade, QRLStats } from '@common/game-stats';
 import { Events, Namespaces } from '@common/sockets';
-import { IconDefinition, faBoltLightning, faChartSimple, faClock, faForward, faPause, faPlay, faUserGroup } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
 import { FULL_GRADE_MULTIPLER, HALF_GRADE_MULTIPLER, RECEIVE_ANSWERS_DELAY, SHOW_FEEDBACK_DELAY, ZERO_GRADE_MULTIPLER } from './const';
+import { icons } from './icons';
 
 @Component({
     selector: 'app-host-game-view',
@@ -45,15 +45,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     inPanicMode: boolean = false;
     timerPaused: boolean = false;
     playerLeftSubscription: Subscription;
-    // icons
-    faClock: IconDefinition = faClock;
-    faBoltLightning: IconDefinition = faBoltLightning;
-    faPlay: IconDefinition = faPlay;
-    faPause: IconDefinition = faPause;
-    faForward: IconDefinition = faForward;
-    faChartSimple: IconDefinition = faChartSimple;
-    faUserGroup: IconDefinition = faUserGroup;
-
+    icons = icons;
     // Tous les paramètres du constructeur sont nécessaires
     // au bon fonctionnement de la classe.
     // eslint-disable-next-line max-params
@@ -313,7 +305,10 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         }
     }
     handleTimerEnd(): void {
-        if (this.currentQuestion.type === Type.QCM) {
+        if (this.onLastQuestion) {
+            this.timeService.stopTimer();
+            this.notifyEndGame();
+        } else if (this.currentQuestion.type === Type.QCM) {
             this.notifyNextQuestion();
         } else if (this.currentQuestion.type === Type.QRL) {
             this.gradeAnswers();

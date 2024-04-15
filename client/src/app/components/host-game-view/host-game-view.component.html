@@ -1,5 +1,4 @@
 <app-nav-bar></app-nav-bar>
-
 <main>
     <button mat-button class="panic-button" (click)="onLocationChange()">Quitter la partie</button>
     <mat-grid-list cols="4" rowHeight="50vh">
@@ -22,7 +21,7 @@
                             <br />
                             <button mat-button [disabled]="true">
                                 <h4>
-                                    <fa-icon [icon]="faClock"> </fa-icon>
+                                    <fa-icon [icon]="icons.faClock"> </fa-icon>
                                     {{ time }}s
                                 </h4>
                             </button>
@@ -31,11 +30,11 @@
                     <mat-card-actions align="end" class="glassy game-controls">
                         <button mat-button (click)="sendTimerControlMessage()" [disabled]="disableControls" class="pause-button">
                             Compteur
-                            <fa-icon [icon]="timerPaused ? faPlay : faPause"></fa-icon>
+                            <fa-icon [icon]="timerPaused ? icons.faPlay : icons.faPause"></fa-icon>
                         </button>
                         <button mat-button (click)="activatePanicMode()" [disabled]="disableControls || inPanicMode" class="panic-button">
                             Mode Panique
-                            <fa-icon [icon]="faBoltLightning"></fa-icon>
+                            <fa-icon [icon]="icons.faBoltLightning"></fa-icon>
                         </button>
                         <button
                             *ngIf="!onLastQuestion && currentQuestion?.type === 'QCM'"
@@ -45,7 +44,7 @@
                             class="next-button"
                         >
                             prochaine question
-                            <fa-icon [icon]="faForward"></fa-icon>
+                            <fa-icon [icon]="icons.faForward"></fa-icon>
                         </button>
                         <button
                             *ngIf="currentQuestion?.type === 'QRL'"
@@ -55,11 +54,11 @@
                             [disabled]="disableControls || disableNextQuestion"
                         >
                             procéder à la correction
-                            <fa-icon [icon]="faForward"></fa-icon>
+                            <fa-icon [icon]="icons.faForward"></fa-icon>
                         </button>
-                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button">
+                        <button *ngIf="onLastQuestion && currentQuestion?.type === 'QCM'" mat-button (click)="notifyEndGame()" class="end-button" [disabled]="disableNextQuestion">
                             Terminer le jeu
-                            <fa-icon [icon]="faForward"></fa-icon>
+                            <fa-icon [icon]="icons.faForward"></fa-icon>
                         </button>
                     </mat-card-actions>
                 </section>
@@ -103,25 +102,25 @@
             <app-sidebar> </app-sidebar>
         </mat-grid-tile>
 
-        <mat-grid-tile [colspan]="1" [rowspan]="1">
-            <div class="glassy">
-                <h2 class="title">
-                    <strong>Joueurs ‎ ‎</strong>
-                    <fa-icon [icon]="faUserGroup"></fa-icon>
-                </h2>
-                <app-player-list *ngIf="displayPlayerList"></app-player-list>
-            </div>
-        </mat-grid-tile>
+        <mat-grid-tile [colspan]="3" [rowspan]="1">
+            <div class="player-and-stats-tile">
+                <div class="glassy players-div">
+                    <h2 class="title">
+                        <strong>Joueurs ‎ ‎</strong>
+                        <fa-icon [icon]="icons.faUserGroup"></fa-icon>
+                    </h2>
+                    <app-player-list *ngIf="displayPlayerList"></app-player-list>
+                </div>
 
-        <mat-grid-tile #statsTile [colspan]="2" [rowspan]="1">
-            <div class="glassy">
-                <h2 class="title">
-                    <strong>Statistiques‎ ‎</strong>
-                    <fa-icon [icon]="faChartSimple"></fa-icon>
-                </h2>
-                <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
-                    <app-bar-chart #appBarChart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
-                </ng-container>
+                <div class="glassy stats-div">
+                    <h2 class="title">
+                        <strong>Statistiques‎ ‎</strong>
+                        <fa-icon [icon]="icons.faChartSimple"></fa-icon>
+                    </h2>
+                    <ng-container *ngIf="statisticsData.length > 0 && statisticsData[questionIndex] && currentQuestion">
+                        <app-bar-chart #appBarChart [labels]="currentQuestion.text" [datasets]="barChartData"></app-bar-chart>
+                    </ng-container>
+                </div>
             </div>
         </mat-grid-tile>
     </mat-grid-list>

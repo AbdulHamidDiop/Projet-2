@@ -24,12 +24,11 @@
             <!-- Affichage des histogrammes -->
             <div>
                 <h2>{{ game.questions[currentHistogramIndex].text }}</h2>
-                <div class="glassy">
+                <div class="glassy full-width">
                     <!-- Affichage de l'histogramme actuel -->
 
                     <ng-container *ngIf="currentHistogramData && currentHistogramData.length">
-                        <app-bar-chart [labels]="game.questions[currentHistogramIndex].text"
-                            [datasets]="currentHistogramData"></app-bar-chart>
+                        <app-bar-chart [labels]="game.questions[currentHistogramIndex].text" [datasets]="currentHistogramData"></app-bar-chart>
                     </ng-container>
                     <h5 *ngIf="!currentHistogramData || (currentHistogramData && !currentHistogramData.length)">
                         Il n'y a eu aucune réponse à cette question.

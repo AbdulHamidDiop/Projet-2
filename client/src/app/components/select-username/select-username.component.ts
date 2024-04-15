@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
@@ -8,7 +8,9 @@ import { SocketRoomService } from '@app/services/socket-room.service';
     templateUrl: './select-username.component.html',
     styleUrls: ['./select-username.component.scss'],
 })
-export class SelectUsernameComponent {
+export class SelectUsernameComponent implements AfterViewInit {
+    @ViewChild('input') nameField!: ElementRef;
+
     constructor(
         private socket: SocketRoomService,
         private playerService: PlayerService,
@@ -41,5 +43,9 @@ export class SelectUsernameComponent {
                 duration: 5000,
             });
         }
+    }
+
+    ngAfterViewInit() {
+        this.nameField.nativeElement.focus();
     }
 }
