@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { Feedback } from '@common/feedback';
 import { Game, Player } from '@common/game';
 import { GameSession } from '@common/game-session';
