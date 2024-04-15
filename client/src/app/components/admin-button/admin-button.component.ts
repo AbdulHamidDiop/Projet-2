@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CommunicationService } from '@app/services/communication.service';
 import { QuestionsService } from '@app/services/questions.service';
 import { environment } from 'src/environments/environment';
+import { NamingConvention } from '@app/services/headers';
 
 @Component({
     selector: 'app-admin-button',
@@ -29,9 +30,7 @@ export class AdminButtonComponent {
         const response = await fetch(environment.serverUrl + 'admin/password', {
             method: 'POST',
             headers: {
-                // Ce sont des headers de HTML qui ne sont pas pris en compte dans la naming convention de ESLINT
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ password: this.userInput }),
         });

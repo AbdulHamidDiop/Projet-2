@@ -130,8 +130,8 @@ describe('Socket Events Service', () => {
             socketEvents.listenForExcludeFromChat(socket);
             socketEvents.socketIdRoom.set(socket.id, LOBBY);
             const playerName = 'testPlayer';
-            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: playerName } as Player]);
-            socketEvents.playerSocketId.set(socket.id, { name: playerName, isHost: true } as Player);
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: playerName, chatEnabled: true } as Player]);
+            socketEvents.playerSocketId.set(socket.id, { name: playerName, chatEnabled: true, isHost: true } as Player);
             socketEvents.listenForExcludeFromChat(socket);
             socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
             socketEvents.listenForExcludeFromChat(socket);
@@ -145,8 +145,8 @@ describe('Socket Events Service', () => {
             socketEvents.socketIdRoom.set(socket.id, undefined);
             socketEvents.listenForIncludeInChat(socket);
             socketEvents.socketIdRoom.set(socket.id, LOBBY);
-            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: '' } as Player]);
-            socketEvents.playerSocketId.set('.', { name: '.' } as Player);
+            socketEvents.mapOfPlayersInRoom.set(LOBBY, [{ name: 'testPlayer' } as Player]);
+            socketEvents.playerSocketId.set('.', { name: 'testPlayer' } as Player);
             socketEvents.playerSocketId.set(socket.id, { isHost: true } as Player);
             socketEvents.listenForIncludeInChat(socket);
             socketEvents.playerSocketId.set(socket.id, { isHost: false } as Player);
