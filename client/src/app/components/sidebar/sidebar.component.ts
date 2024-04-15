@@ -2,6 +2,7 @@ import { Component, ElementRef, Input, OnDestroy, ViewChild } from '@angular/cor
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { THREE_SECOND_DELAY } from '@common/consts';
 import { Player } from '@common/game';
 import { ChatMessage, MAX_MESSAGE_LENGTH, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
@@ -27,6 +28,46 @@ export class SidebarComponent implements OnDestroy {
         private snackBar: MatSnackBar,
     ) {
         this.player = this.playerService.player;
+        this.setSubscriptions();
+        this.socketsService.sendMessage(Events.CHAT_HISTORY, nsp.CHAT_MESSAGES);
+    }
+
+    get messages() {
+        return this.messageHistory;
+    }
+
+    handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
+        if (event.key === 'Enter' && this.currentMessage.message && this.player.chatEnabled) {
+            this.currentMessage.author = this.player.name;
+            this.currentMessage.timeStamp = new Date().toLocaleTimeString();
+            this.sendMessage();
+            this.autoScroll();
+        } else if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
+            this.currentMessage.message = input.value;
+        }
+    }
+
+    autoScroll(): void {
+        setTimeout(() => {
+            try {
+                this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
+            } catch (err) {
+                return;
+            }
+        }, 0);
+    }
+
+    purgeChat(): void {
+        this.messageHistory = this.messageHistory.filter((message) => message.author !== sysmsg.AUTHOR);
+    }
+
+    ngOnDestroy(): void {
+        this.chatMessagesSubscription.unsubscribe();
+        this.chatHistorySubscription.unsubscribe();
+        this.globalChatSubscription.unsubscribe();
+    }
+
+    private setSubscriptions(): void {
         this.globalChatSubscription = this.socketsService.getChatMessages().subscribe(async (message) => {
             if (message.author === 'room') {
                 this.socketsService.room = message.message;
@@ -54,54 +95,22 @@ export class SidebarComponent implements OnDestroy {
             this.messageHistory.push(message);
             this.autoScroll();
         });
-        this.socketsService.sendMessage(Events.CHAT_HISTORY, nsp.CHAT_MESSAGES);
     }
 
-    get messages() {
-        return this.messageHistory;
-    }
-
-    handleKeyboardPress(event: KeyboardEvent, input: HTMLInputElement) {
-        if (event.key === 'Enter' && this.currentMessage.message && this.player.chatEnabled) {
-            this.currentMessage.author = this.player.name;
-            this.currentMessage.timeStamp = new Date().toLocaleTimeString();
-            if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
-                this.messageHistory.push(this.currentMessage);
-                this.socketsService.sendChatMessage(this.currentMessage);
-            } else {
-                this.snackBar.open('Le message ne peut pas excéder 200 caractères', 'Fermer', {
-                    verticalPosition: 'top',
-                    duration: 3000,
-                });
-            }
-            this.currentMessage = {
-                message: '',
-                author: this.player.name,
-                timeStamp: new Date().toLocaleTimeString(),
-            };
-            this.autoScroll();
-        } else if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
-            this.currentMessage.message = input.value;
+    private sendMessage(): void {
+        if (this.currentMessage.message.length <= MAX_MESSAGE_LENGTH) {
+            this.messageHistory.push(this.currentMessage);
+            this.socketsService.sendChatMessage(this.currentMessage);
+        } else {
+            this.snackBar.open('Le message ne peut pas excéder 200 caractères', 'Fermer', {
+                verticalPosition: 'top',
+                duration: THREE_SECOND_DELAY,
+            });
         }
-    }
-
-    autoScroll(): void {
-        setTimeout(() => {
-            try {
-                this.chatContainer.nativeElement.scrollTop = this.chatContainer.nativeElement.scrollHeight;
-            } catch (err) {
-                return;
-            }
-        }, 0);
-    }
-
-    purgeChat(): void {
-        this.messageHistory = this.messageHistory.filter((message) => message.author !== sysmsg.AUTHOR);
-    }
-
-    ngOnDestroy(): void {
-        this.chatMessagesSubscription.unsubscribe();
-        this.chatHistorySubscription.unsubscribe();
-        this.globalChatSubscription.unsubscribe();
+        this.currentMessage = {
+            message: '',
+            author: this.player.name,
+            timeStamp: new Date().toLocaleTimeString(),
+        };
     }
 }
