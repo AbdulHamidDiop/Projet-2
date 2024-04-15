@@ -30,7 +30,6 @@ import { PlayerListComponent } from './components/player-list/player-list.compon
 import { SelectRoomComponent } from './components/select-room/select-room.component';
 import { SelectUsernameComponent } from './components/select-username/select-username.component';
 import { SessionComponent } from './components/session/session.component';
-import { StatsTestComponent } from './components/stats-test/stats-test.component';
 import { AdminCreateGamePageComponent } from './pages/admin-create-game-page/admin-create-game-page.component';
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { QuestionsPageComponent } from './pages/admin-page/questions-page/questions-page.component';
@@ -69,12 +68,10 @@ import { SocketRoomService } from './services/socket-room.service';
         ConfirmDialogComponent,
         NavBarComponent,
         CountdownModalComponent,
-        StatsTestComponent,
         HostGameViewComponent,
         ResultsPageComponent,
         BarChartComponent,
         CountdownModalComponent,
-        StatsTestComponent,
         SelectRoomComponent,
         SelectUsernameComponent,
         PlayerAndAdminPanelComponent,
