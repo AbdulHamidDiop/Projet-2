@@ -178,7 +178,6 @@ describe('PlayAreaComponent', () => {
     });
 
     it('goNextQuestion should call gameManager.goNextQuestion', fakeAsync(() => {
-        // Prepare the next question to be returned by the GameManagerService
         gameManager = TestBed.inject(GameManagerService);
         spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
 
@@ -323,6 +322,17 @@ describe('PlayAreaComponent', () => {
         expect(component.goNextQuestion).toHaveBeenCalled();
     }));
 
+    it('confirmAnswers should update score and proceed after delay in random mode', fakeAsync(() => {
+        component.logic.inRandomMode = true;
+        spyOn(component, 'updateScore').and.returnValue({} as any);
+        spyOn(component, 'goNextQuestion').and.returnValue();
+        component.confirmAnswers(true);
+        tick(SHOW_FEEDBACK_DELAY * 2);
+        expect(component.updateScore).toHaveBeenCalled();
+        expect(component.logic.choiceDisabled).toBeFalse();
+        expect(component.goNextQuestion).toHaveBeenCalled();
+    }));
+
     it('handleAbort should reset score and navigate on confirmation', () => {
         const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(true), close: null });
         spyOn(component.router, 'navigate');
@@ -365,6 +375,12 @@ describe('PlayAreaComponent', () => {
         expect(component.endGame).toHaveBeenCalled();
         gameManager.onLastQuestion = () => false;
         flush();
+    }));
+
+    it('should navigate to results page when endGame', fakeAsync( () => {
+        spyOn(component.router, 'navigate');
+        component.endGame();
+        expect(component.router.navigate).toHaveBeenCalledWith(['results'], { relativeTo: component.route });
     }));
 
     it('should set inTestMode to true when queryparams testMode is true', () => {

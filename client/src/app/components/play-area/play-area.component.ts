@@ -51,7 +51,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         private changeDetector: ChangeDetectorRef,
         public abortDialog: MatDialog,
         public router: Router,
-        private route: ActivatedRoute,
+        public route: ActivatedRoute,
         private snackBar: MatSnackBar,
         private gameSessionService: GameSessionService,
     ) {
