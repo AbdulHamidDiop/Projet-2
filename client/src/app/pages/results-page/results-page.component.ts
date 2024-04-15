@@ -5,13 +5,14 @@ import { GameSessionService } from '@app/services/game-session.service';
 import { Game } from '@app/services/game.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { START_GAME_DELAY } from '@common/consts';
 import { Player } from '@common/game';
 import { BarChartChoiceStats, BarChartQuestionStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
 import { IconDefinition, faMedal } from '@fortawesome/free-solid-svg-icons';
 import { Subscription } from 'rxjs';
-const COMPLETE_DELAY = 5000;
+
 @Component({
     selector: 'app-results-page',
     templateUrl: './results-page.component.html',
@@ -145,6 +146,6 @@ export class ResultsPageComponent implements OnInit, AfterViewInit, OnDestroy {
         this.socketsService.sendMessage(Events.GET_STATS, Namespaces.GAME_STATS);
         setTimeout(async () => {
             await this.gameSessionService.completeSession(this.socketsService.room, this.playerService.findBestScore());
-        }, COMPLETE_DELAY);
+        }, START_GAME_DELAY);
     }
 }

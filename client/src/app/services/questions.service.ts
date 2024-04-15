@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { START_GAME_DELAY } from '@common/consts';
 import { Question } from '@common/game';
 import { StatusCodes } from 'http-status-codes';
 import { environment } from 'src/environments/environment';
@@ -56,7 +57,7 @@ export class QuestionsService {
             if (response.status === StatusCodes.BAD_REQUEST) {
                 this.snackBar.open("Votre question n'a pas été ajoutée à la banque de questions car elle existe déjà", 'Fermer', {
                     verticalPosition: 'top',
-                    duration: 5000,
+                    duration: START_GAME_DELAY,
                 });
                 return false;
             }

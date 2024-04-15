@@ -12,7 +12,6 @@ import { IconDefinition, faComment, faCommentSlash } from '@fortawesome/free-sol
 })
 export class PlayerListComponent implements OnInit, OnChanges {
     sortOption: Sort;
-
     faComment: IconDefinition = faComment;
     faCommentSlash: IconDefinition = faCommentSlash;
     protected sortedData: Player[];

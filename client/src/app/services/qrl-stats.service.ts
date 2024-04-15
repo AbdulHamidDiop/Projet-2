@@ -1,10 +1,9 @@
 import { Injectable, OnDestroy } from '@angular/core';
+import { CHECK_INTERVAL } from '@common/consts';
 import { Events, Namespaces } from '@common/sockets';
 import { Subject, Subscription, timer } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 import { SocketRoomService } from './socket-room.service';
-
-const CHECK_INTERVAL = 5000;
 
 @Injectable({
     providedIn: 'root',

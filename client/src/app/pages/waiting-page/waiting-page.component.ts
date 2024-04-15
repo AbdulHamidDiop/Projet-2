@@ -7,12 +7,10 @@ import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
+import { START_GAME_DELAY, START_TIMER_DELAY } from '@common/consts';
 import { Game, Player } from '@common/game';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
-
-const START_TIMER_DELAY = 500;
-const START_GAME_DELAY = 5000;
 
 @Component({
     selector: 'app-waiting-page',
@@ -137,7 +135,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
             if (!res) {
                 this.snackBar.open("Cette partie n'existe pas", 'Fermer', {
                     verticalPosition: 'top',
-                    duration: 5000,
+                    duration: START_GAME_DELAY,
                 });
                 return;
             }
@@ -153,7 +151,7 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
         this.roomLockedSubscription = this.socket.roomLockedSubscribe().subscribe(() => {
             this.snackBar.open('La partie est verrouillée', 'Fermer', {
                 verticalPosition: 'top',
-                duration: 5000,
+                duration: START_GAME_DELAY,
             });
         });
 

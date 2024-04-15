@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PlayerService } from '@app/services/player.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
+import { START_GAME_DELAY } from '@common/consts';
 
 @Component({
     selector: 'app-select-username',
@@ -19,14 +20,14 @@ export class SelectUsernameComponent implements AfterViewInit {
         this.socket.onNameNotAvailable().subscribe(() => {
             this.snackBar.open('Le nom choisi est déjà utilisé', 'Fermer', {
                 verticalPosition: 'top',
-                duration: 5000,
+                duration: START_GAME_DELAY,
             });
         });
 
         this.socket.onNameBanned().subscribe(() => {
             this.snackBar.open('Le nom choisi est banni et ne peut-être utilisé', 'Fermer', {
                 verticalPosition: 'top',
-                duration: 5000,
+                duration: START_GAME_DELAY,
             });
         });
     }
@@ -40,7 +41,7 @@ export class SelectUsernameComponent implements AfterViewInit {
         } else {
             this.snackBar.open('Le nom entré est invalide', 'fermer', {
                 verticalPosition: 'top',
-                duration: 5000,
+                duration: START_GAME_DELAY,
             });
         }
     }

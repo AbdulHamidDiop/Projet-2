@@ -3,6 +3,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { PlayerService } from '@app/services/player.service';
+import { START_GAME_DELAY } from '@common/consts';
 import { Game, Player, Question, RED } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
@@ -335,7 +336,7 @@ export class SocketRoomService implements OnDestroy {
             this.router.navigate(['/createGame']);
         } else if (this.room) {
             this.snackBar.open(snackMessage, 'Fermer', {
-                duration: 5000,
+                duration: START_GAME_DELAY,
                 verticalPosition: 'top',
             });
 
