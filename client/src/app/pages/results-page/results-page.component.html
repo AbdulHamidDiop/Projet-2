@@ -1,8 +1,6 @@
 <mat-grid-list cols="5" rowHeight="10vh">
     <div class="results-page">
-        <!-- Affichage des joueurs sur le podium (3 premiers joueurs avec le plus de points) -->
         <mat-grid-tile [colspan]="4" [rowspan]="2">
-            <!-- Affichage de la liste des joueurs -->
             <ul *ngIf="players.length" class="card-list">
                 <li *ngFor="let player of players; let i = index" class="player-list-item">
                     <mat-card class="player-card">
@@ -24,12 +22,9 @@
         </mat-grid-tile>
 
         <mat-grid-tile [colspan]="4" [rowspan]="7" *ngIf="game?.questions">
-            <!-- Affichage des histogrammes -->
             <div>
                 <h2>{{ game.questions[currentHistogramIndex].text }}</h2>
                 <div class="glassy full-width">
-                    <!-- Affichage de l'histogramme actuel -->
-
                     <ng-container *ngIf="currentHistogramData && currentHistogramData.length">
                         <app-bar-chart [labels]="game.questions[currentHistogramIndex].text" [datasets]="currentHistogramData"></app-bar-chart>
                     </ng-container>
@@ -37,7 +32,6 @@
                         Il n'y a eu aucune réponse à cette question.
                     </h5>
                 </div>
-                <!-- Boutons pour afficher l'histogramme précédent et suivant -->
                 <div>
                     <button mat-button (click)="showPreviousHistogram()">Précédent</button>
                     <button mat-button (click)="showNextHistogram()">Suivant</button>

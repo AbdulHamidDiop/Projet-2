@@ -94,7 +94,6 @@ describe('PlayerListComponent', () => {
     });
 
     it('Should call sortData on three type of fields', () => {
-        // La validation de sortData peut se faire en test d'intégration, y a 8 configurations à checker.
         component.playerService.playersInGame = [
             { name: 'A', score: 0, color: 0 } as Player,
             { name: 'B', score: 1, color: 1 } as Player,

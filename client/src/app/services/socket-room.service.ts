@@ -15,7 +15,6 @@ import { IoService } from './ioservice.service';
 @Injectable({
     providedIn: 'root',
 })
-// On peut ajouter des nouvelles fonctionnalités selon les besoins des components.
 export class SocketRoomService implements OnDestroy {
     room: string;
     showingResults: boolean = false;
@@ -28,7 +27,7 @@ export class SocketRoomService implements OnDestroy {
         private io: IoService,
         public playerService: PlayerService,
         private router: Router,
-        private snackBar: MatSnackBar, // Peut-être mettre dans un component.
+        private snackBar: MatSnackBar,
     ) {
         this.socket = io.io(environment.ws);
         window.addEventListener('beforeunload', () => {
@@ -350,8 +349,6 @@ export class SocketRoomService implements OnDestroy {
             this.sendChatMessage(message);
             this.sendMessage(Events.PLAYER_LEFT, Namespaces.GAME, { user: this.playerService.player.name });
         }
-        //   this.leaveRoom(); Fait bug une fonctionnalité, si l'appel à leaveroom est necessaire
-        // faudra un nouvel event ex. leaveGame.
         this.resetGameState();
     }
 

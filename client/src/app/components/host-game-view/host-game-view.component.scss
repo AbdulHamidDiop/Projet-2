@@ -3,8 +3,6 @@ main {
     margin-left: 200px;
 }
 
-// CSS pour les boutons
-
 button {
     color: #fff;
     border: none;
@@ -59,8 +57,6 @@ button {
     transition: background-color 0.3s ease;
     background-color: rgb(23, 5, 5);
 }
-
-// CSS Liste des joueurs et zone statistique
 
 .title {
     color: white;
@@ -140,7 +136,7 @@ button {
 
     $border: 1px;
     color: #fff;
-    border: solid $border transparent; /* !important */
+    border: solid $border transparent;
     margin-bottom: 3px;
 }
 

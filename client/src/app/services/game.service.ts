@@ -9,7 +9,6 @@ import { FetchService } from './fetch.service';
 })
 export class GameService {
     games: Game[] = [];
-    // Modification : Déclaration de selectedGame comme Game directement
     private selectedGame: Game = {} as Game;
 
     constructor(public fetchService: FetchService) {
@@ -18,7 +17,6 @@ export class GameService {
         });
     }
 
-    // Modification : Modification du type de retour de getSelectedGame à Game
     getSelectedGame(): Game {
         return this.selectedGame;
     }

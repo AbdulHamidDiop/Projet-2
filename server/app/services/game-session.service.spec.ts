@@ -2,7 +2,6 @@
 /* eslint-disable no-restricted-imports */
 import { Game, Player } from '@common/game';
 import { expect } from 'chai';
-// import { stub } from 'sinon';
 import { GameSession } from '@common/game-session';
 import { BarChartQuestionStats, QCMStats, QRLGrade } from '@common/game-stats';
 import { DB_COLLECTION_HISTORIQUE } from '@common/utils/env';

@@ -36,7 +36,7 @@ export interface Player {
     score: number;
     bonusCount: number;
     leftGame: boolean;
-    color?: number; // La couleur d'affichage du texte. Dépends du statut de l'utilisateur ( fonctionnalité #17)
+    color?: number;
     chatEnabled?: boolean; // Active ou désactive le chat
 }
 

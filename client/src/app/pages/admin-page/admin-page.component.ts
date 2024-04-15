@@ -25,7 +25,6 @@ export class AdminPageComponent implements OnInit {
     selectedFile: File;
     isAuthentificated: boolean;
     errors: string;
-    // Pas utilisé dans le sprint 2
     // eslint-disable-next-line max-params
     constructor(
         readonly router: Router,
@@ -191,7 +190,6 @@ export class AdminPageComponent implements OnInit {
             Array.isArray(questions) &&
             questions.length > 0 &&
             questions.every(
-                // eslint-disable-next-line complexity
                 (question: Question) =>
                     typeof question.type === 'string' &&
                     (question.type === Type.QCM || question.type === Type.QRL) &&
@@ -224,8 +222,7 @@ export class AdminPageComponent implements OnInit {
             }
         }
     }
-    // - cdl
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, complexity
+
     isGame(obj: any): obj is Game {
         this.handleGameError(obj);
         this.questionErrorsHandling(obj.questions);
@@ -300,7 +297,7 @@ export class AdminPageComponent implements OnInit {
         }
     }
 
-    handleAbort(): void {
+    handleDeleteHistory(): void {
         const message = "Êtes-vous sûr de vouloir supprimer l'historique?";
 
         const dialogData = new ConfirmDialogModel('Supprimer Historique', message);

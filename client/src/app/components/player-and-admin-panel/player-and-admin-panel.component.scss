@@ -13,7 +13,6 @@ button {
 }
 
 .main-container {
-    // overflow: auto;
     flex: 1 1 auto;
     max-width: 50%;
     min-width: 500px;
@@ -60,7 +59,7 @@ button {
 
     $border: 1.5px;
     color: #fff;
-    border: solid $border transparent; /* !importanté */
+    border: solid $border transparent;
     border-radius: 1em;
     margin-bottom: 5px;
 }
