@@ -27,7 +27,6 @@ export class CreateQuestionDialogComponent implements OnInit {
         public dialogRef: MatDialogRef<CreateQuestionDialogComponent>,
         public questionsService: QuestionsService,
         public router: Router,
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         @Inject(MAT_DIALOG_DATA) public data: Data,
     ) {
         this.initializeForm();
