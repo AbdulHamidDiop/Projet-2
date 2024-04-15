@@ -22,7 +22,7 @@ export class BarChartComponent implements OnInit {
         maintainAspectRatio: false, // Added for non-proportional resizing
         scales: {
             x: {
-                display: false, // Hide x-axis
+                display: false,
             },
             y: {
                 display: true, // Show y-axis
@@ -30,7 +30,12 @@ export class BarChartComponent implements OnInit {
                     display: false, // Hide grid lines
                 },
                 ticks: {
-                    stepSize: 1, // Set tick value to 1
+                    stepSize: 1,
+                    color: 'white',
+                    font: {
+                        size: 14,
+                        weight: 'bold',
+                    },
                 },
             },
         },
