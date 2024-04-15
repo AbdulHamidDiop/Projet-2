@@ -61,7 +61,7 @@ export class GameSessionController {
 
         this.router.get('/:pin', async (req: Request, res: Response) => {
             const session: GameSession = await this.gameSessionService.getSessionByPin(req.params.pin);
-            if (session === null) {
+            if (!session) {
                 res.status(StatusCodes.NOT_FOUND);
             } else {
                 res.status(StatusCodes.OK);
