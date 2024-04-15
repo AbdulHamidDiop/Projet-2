@@ -1,13 +1,13 @@
 <main>
-    <h1 class="header-item">Banque de questions</h1>
+    <h1 class="header-item"><strong>Banque de questions</strong></h1>
     <div class="grid-container-question-bank">
         <div class="questions-list-column">
-            <h1>
+            <h2>
                 Questions
                 <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
-                    <mat-icon class="add-icon">add</mat-icon>
+                    <mat-icon>library_add</mat-icon>
                 </button>
-            </h1>
+            </h2>
             <mat-button-toggle-group multiple>
                 <mat-button-toggle value="QCM" (click)="toggleQuestionType('QCM')"
                     [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
