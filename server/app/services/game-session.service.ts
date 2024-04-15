@@ -1,4 +1,5 @@
 /* eslint-disable prefer-const */
+import { QRL_FULL_GRADE_MULTIPLER, QRL_HALF_GRADE_MULTIPLER, QRL_ZERO_GRADE_MULTIPLER } from '@common/consts';
 import { Feedback } from '@common/feedback';
 import { Game, Player } from '@common/game';
 import { GameSession } from '@common/game-session';
@@ -7,10 +8,6 @@ import { DB_COLLECTION_HISTORIQUE } from '@common/utils/env';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
 import { DatabaseService } from './database.service';
-
-const ZERO_GRADE_MULTIPLER = 0;
-const HALF_GRADE_MULTIPLER = 0.5;
-const FULL_GRADE_MULTIPLER = 1;
 
 @Service()
 export class GameSessionService {
@@ -208,13 +205,13 @@ export class GameSessionService {
 
         let barIndex;
         switch (qrlGrade.multiplier) {
-            case ZERO_GRADE_MULTIPLER:
+            case QRL_ZERO_GRADE_MULTIPLER:
                 barIndex = 0;
                 break;
-            case HALF_GRADE_MULTIPLER:
+            case QRL_HALF_GRADE_MULTIPLER:
                 barIndex = 1;
                 break;
-            case FULL_GRADE_MULTIPLER:
+            case QRL_FULL_GRADE_MULTIPLER:
                 barIndex = 2;
                 break;
             default:
