@@ -33,7 +33,7 @@ export class AdminPageComponent implements OnInit {
         public el: ElementRef,
         readonly gameService: GameService,
         readonly gameSessionService: GameSessionService,
-        private deleteHistoryDialog: MatDialog
+        private deleteHistoryDialog: MatDialog,
     ) {}
 
     async getGames() {
@@ -116,7 +116,7 @@ export class AdminPageComponent implements OnInit {
         if (
             !qcmQuestions.every(
                 (question: Question) =>
-                    !question.choices!.every((choice: Choices) => choice.isCorrect === true) &&
+                    !question.choices!.every((choice: Choices) => choice.isCorrect) &&
                     !question.choices!.every((choiche: Choices) => choiche.isCorrect === false),
             )
         ) {
@@ -283,7 +283,7 @@ export class AdminPageComponent implements OnInit {
 
     sortList(event: MatSelectChange) {
         const sortBy = event.value;
-        this.sessions = this.sessions.filter(session => session.timeStarted !== undefined);
+        this.sessions = this.sessions.filter((session) => session.timeStarted !== undefined);
         switch (sortBy) {
             case 'ascending-alphabetically':
                 this.sessions.sort((a, b) => a.game.title.localeCompare(b.game.title));

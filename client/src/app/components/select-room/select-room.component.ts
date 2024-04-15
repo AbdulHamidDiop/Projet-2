@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, ViewChild } from '@angular/core';
 import { SocketRoomService } from '@app/services/socket-room.service';
 
 const MAX_CHARACTERS = 4;
@@ -7,7 +7,9 @@ const MAX_CHARACTERS = 4;
     templateUrl: './select-room.component.html',
     styleUrls: ['./select-room.component.scss'],
 })
-export class SelectRoomComponent {
+export class SelectRoomComponent implements AfterViewInit {
+    @ViewChild('input') roomField!: ElementRef;
+
     constructor(private socket: SocketRoomService) {}
     async joinRoom(input: HTMLInputElement) {
         this.socket.joinRoom(input.value);
@@ -25,5 +27,9 @@ export class SelectRoomComponent {
         if (input.value.length > MAX_CHARACTERS) {
             input.value = input.value.slice(0, MAX_CHARACTERS);
         }
+    }
+
+    ngAfterViewInit() {
+        this.roomField.nativeElement.focus();
     }
 }
