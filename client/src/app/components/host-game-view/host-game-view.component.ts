@@ -26,6 +26,7 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
     logic: HostGameViewLogic = new HostGameViewLogic();
     playerLeftSubscription: Subscription;
     icons = icons;
+
     // Tous les paramètres du constructeur sont nécessaires
     // au bon fonctionnement de la classe.
     // eslint-disable-next-line max-params
