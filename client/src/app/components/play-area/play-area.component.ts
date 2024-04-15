@@ -14,7 +14,7 @@ import { PlayerService } from '@app/services/player.service';
 import { QRLStatService } from '@app/services/qrl-stats.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
-import { RANDOM_INDICATOR, START_GAME_DELAY } from '@common/consts';
+import { RANDOM_INDICATOR, START_GAME_DELAY, THREE_SECOND_DELAY } from '@common/consts';
 import { Type } from '@common/game';
 import { QRLAnswer, QRLGrade } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysMsg } from '@common/message';
@@ -332,7 +332,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.attributes.pointsGained = pointsWithBonus;
                 this.playerService.player.bonusCount++;
                 this.snackBar.open('Bravo! Vous avez obtenu le point bonus!', 'Fermer', {
-                    duration: 3000,
+                    duration: THREE_SECOND_DELAY,
                 });
             } else {
                 this.attributes.score += this.attributes.question.points;

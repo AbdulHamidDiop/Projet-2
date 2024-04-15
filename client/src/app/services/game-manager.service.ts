@@ -6,6 +6,7 @@ import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
 import { GameSessionService } from './game-session.service';
+import { NamingConvention } from './headers';
 import { SocketRoomService } from './socket-room.service';
 
 @Injectable({
@@ -18,7 +19,6 @@ export class GameManagerService implements OnDestroy {
     endGame: boolean = false;
     inRandomMode: boolean = false;
     playersInRandomGame: Player[] = [];
-
     private playerLeftSubscription: Subscription;
     private answerConfirmationSubscription: Subscription;
 
@@ -84,8 +84,7 @@ export class GameManagerService implements OnDestroy {
         const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/feedback', {
             method: 'POST',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ sessionPin: this.gamePin, questionID: questionId, submittedAnswers: answer }),
         });

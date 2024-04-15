@@ -25,6 +25,7 @@ export const RED = 0xff0000;
 export const START_TIMER_DELAY = 500;
 export const START_GAME_DELAY = 5000;
 export const THREE_SECOND_DELAY = 3000;
+export const COUNT_DOWN_MODAL_INTERVAL = 1000;
 
 export const MAX_PIN_CHARACTERS = 4;
 
