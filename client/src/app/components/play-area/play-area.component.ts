@@ -7,6 +7,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ConfirmDialogModel } from '@app/classes/confirm-dialog-model';
 import { ConfirmDialogComponent } from '@app/components/confirm-dialog/confirm-dialog.component';
 import { MouseButton } from '@app/interfaces/game-elements';
+import { PlayAreaLogic } from '@app/interfaces/play-area-logic';
 import { GameManagerService } from '@app/services/game-manager.service';
 import { GameSessionService } from '@app/services/game-session.service';
 import { PlayerService } from '@app/services/player.service';
@@ -14,9 +15,8 @@ import { QRLStatService } from '@app/services/qrl-stats.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
 import { RANDOM_INDICATOR, START_GAME_DELAY } from '@common/consts';
-import { Feedback } from '@common/feedback';
-import { Question, Type } from '@common/game';
-import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
+import { Type } from '@common/game';
+import { QRLAnswer, QRLGrade } from '@common/game-stats';
 import { ChatMessage, SystemMessages as sysMsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
@@ -28,27 +28,7 @@ import { BONUS_MULTIPLIER, ERROR_INDEX, MAX_QRL_LENGTH, QRL_TIMER, SHOW_FEEDBACK
     styleUrls: ['./play-area.component.scss'],
 })
 export class PlayAreaComponent implements OnInit, OnDestroy {
-    inTestMode: boolean = false;
-    inRandomMode: boolean = false;
-    buttonPressed = '';
-    question: Question = {} as Question;
-
-    answer: string[] = [];
-    qrlAnswer: string = '';
-    nbChoices: number;
-    score = 0;
-
-    showPoints: boolean = false;
-    pointsGained: number = 0;
-    showCountDown: boolean = false;
-    countDownKey: number = Date.now();
-    choiceDisabled = false;
-    feedback: Feedback[];
-    qcmStat: QCMStats;
-    bonusGiven = false;
-    gotBonus = false;
-    movingToNextQuestion = false;
-
+    attributes: PlayAreaLogic = new PlayAreaLogic();
     private timer: number;
     private points = 0;
 
@@ -62,6 +42,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private qrlGradeSubscription: Subscription;
     private timerEndedSubscription: Subscription;
 
+    // La play area a besoin d'un accès à chaque paramètre du constructeur, les changer de fichier ne serait pas
+    // vraiemnt bénéfique et en enlever bloquerait certaines fonctionnalités.
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
@@ -77,7 +59,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         private gameSessionService: GameSessionService,
     ) {
         this.playerService.player.score = 0;
-        this.answer = [];
+        this.attributes.answer = [];
         this.timeService.pauseFlag = false;
         this.setInTestMode();
         this.setInRandomMode();
@@ -92,65 +74,65 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     get playerScore(): number {
-        return this.score;
+        return this.attributes.score;
     }
 
     get charsLeft(): number {
-        return MAX_QRL_LENGTH - this.qrlAnswer.length;
+        return MAX_QRL_LENGTH - this.attributes.qrlAnswer.length;
     }
 
     @HostListener('keydown', ['$event'])
     detectButton(event: KeyboardEvent) {
-        this.buttonPressed = event.key;
-        if (this.buttonPressed === 'Enter' && this.question.type === Type.QCM && !this.choiceDisabled) {
+        this.attributes.buttonPressed = event.key;
+        if (this.attributes.buttonPressed === 'Enter' && this.attributes.question.type === Type.QCM && !this.attributes.choiceDisabled) {
             this.confirmAnswers(true);
         } else if (
-            this.buttonPressed >= '1' &&
-            this.buttonPressed <= '4' &&
-            this.question.type === Type.QCM &&
-            this.buttonPressed <= this.nbChoices.toString()
+            this.attributes.buttonPressed >= '1' &&
+            this.attributes.buttonPressed <= '4' &&
+            this.attributes.question.type === Type.QCM &&
+            this.attributes.buttonPressed <= this.attributes.nbChoices.toString()
         ) {
-            const index = parseInt(this.buttonPressed, 10);
-            this.handleQCMChoice(this.question.choices![index - 1].text);
+            const index = parseInt(this.attributes.buttonPressed, 10);
+            this.handleQCMChoice(this.attributes.question.choices![index - 1].text);
         }
     }
 
     async ngOnInit() {
         this.timerEndedSubscription = this.timeService.timerEnded.subscribe(async () => {
-            if (this.movingToNextQuestion) {
+            if (this.attributes.movingToNextQuestion) {
                 this.timeService.stopTimer();
                 return;
             }
             await this.confirmAnswers(false);
         });
         const gameID = this.route.snapshot.paramMap.get('id');
-        if (this.inTestMode && gameID) {
+        if (this.attributes.inTestMode && gameID) {
             await this.gameManager.initialize(gameID);
         } else {
             await this.gameManager.initialize(this.socketService.room);
         }
-        this.question = this.gameManager.firstQuestion();
-        if (this.question.type === Type.QRL) {
-            this.qrlStatsService.startTimer(this.question.id);
+        this.attributes.question = this.gameManager.firstQuestion();
+        if (this.attributes.question.type === Type.QRL) {
+            this.qrlStatsService.startTimer(this.attributes.question.id);
         }
-        this.nbChoices = this.question.choices?.length ?? 0;
-        if (this.inTestMode) {
-            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+        this.attributes.nbChoices = this.attributes.question.choices?.length ?? 0;
+        if (this.attributes.inTestMode) {
+            this.timer = this.attributes.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
             this.timeService.startTimer(this.timer);
         }
 
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers(false);
-            if (this.question.type === Type.QCM) {
-                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.attributes.question.type === Type.QCM) {
+                this.attributes.feedback = await this.gameManager.getFeedBack(this.attributes.question.id, this.attributes.answer);
             }
             await this.countPointsAndNextQuestion();
         });
 
         this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
             await this.confirmAnswers(false);
-            if (this.question.type === Type.QCM) {
-                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.attributes.question.type === Type.QCM) {
+                this.attributes.feedback = await this.gameManager.getFeedBack(this.attributes.question.id, this.attributes.answer);
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
@@ -166,20 +148,20 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.qrlGradeSubscription = this.socketService.listenForMessages(nsp.GAME, Events.QRL_GRADE).subscribe((grade: unknown) => {
             const qrlGrade = grade as QRLGrade;
             if (qrlGrade.author === this.playerService.player.name) {
-                this.score += qrlGrade.grade;
-                this.playerService.player.score = this.score;
-                this.bonusGiven = false;
-                this.gotBonus = false;
+                this.attributes.score += qrlGrade.grade;
+                this.playerService.player.score = this.attributes.score;
+                this.attributes.bonusGiven = false;
+                this.attributes.gotBonus = false;
             }
             this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.playerService.player);
         });
 
         this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
-            this.gotBonus = true;
+            this.attributes.gotBonus = true;
         });
 
         this.bonusGivenSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
-            this.bonusGiven = true;
+            this.attributes.bonusGiven = true;
         });
 
         this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
@@ -218,73 +200,73 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     goNextQuestion() {
-        this.answer = [];
-        this.feedback = [];
-        this.qrlAnswer = '';
-        this.movingToNextQuestion = false;
+        this.attributes.answer = [];
+        this.attributes.feedback = [];
+        this.attributes.qrlAnswer = '';
+        this.attributes.movingToNextQuestion = false;
         this.endGameTest();
         const newQuestion = this.gameManager.goNextQuestion();
-        this.question = newQuestion;
+        this.attributes.question = newQuestion;
         if (newQuestion && newQuestion.type === Type.QCM) {
-            this.nbChoices = this.question.choices?.length ?? 0;
+            this.attributes.nbChoices = this.attributes.question.choices?.length ?? 0;
         } else if (newQuestion && newQuestion.type === 'QRL') {
             this.qrlStatsService.startTimer(newQuestion.id);
         }
         this.changeDetector.detectChanges();
-        if (this.inTestMode || this.inRandomMode) {
+        if (this.attributes.inTestMode || this.attributes.inRandomMode) {
             this.timeService.stopTimer();
-            this.timer = this.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
+            this.timer = this.attributes.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
             this.timeService.startTimer(this.timer);
         }
     }
 
     handleQCMChoice(answer: string) {
         let choiceInList = false;
-        for (let i = 0; i < this.answer.length; i++) {
-            if (answer === this.answer[i]) {
-                this.answer.splice(i, 1);
+        for (let i = 0; i < this.attributes.answer.length; i++) {
+            if (answer === this.attributes.answer[i]) {
+                this.attributes.answer.splice(i, 1);
                 choiceInList = true;
                 i--;
                 break;
             }
         }
         if (!choiceInList) {
-            this.answer.push(answer);
+            this.attributes.answer.push(answer);
         }
 
-        this.qcmStat = {
-            questionId: this.question.id,
-            choiceIndex: this.question.choices!.findIndex((c) => c.text === answer),
-            correctIndex: this.question.choices!.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
-            choiceAmount: this.nbChoices,
+        this.attributes.answerStat = {
+            questionId: this.attributes.question.id,
+            choiceIndex: this.attributes.question.choices!.findIndex((c) => c.text === answer),
+            correctIndex: this.attributes.question.choices!.find((choice) => choice.isCorrect)?.index ?? ERROR_INDEX,
+            choiceAmount: this.attributes.nbChoices,
             selected: !choiceInList,
             player: this.playerService.player,
         };
-        this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.qcmStat);
+        this.socketService.sendMessage(Events.QCM_STATS, nsp.GAME_STATS, this.attributes.answerStat);
     }
 
     isChoice(choice: string): boolean {
-        return this.answer.includes(choice);
+        return this.attributes.answer.includes(choice);
     }
 
     async confirmAnswers(fromUserInput: boolean) {
         // true : appelé par input utilisateur, false : appelé par serveur,
-        if (!this.inRandomMode) {
+        if (!this.attributes.inRandomMode) {
             this.timeService.stopTimer();
         }
-        this.choiceDisabled = true;
+        this.attributes.choiceDisabled = true;
         if (fromUserInput) {
             this.socketService.confirmAnswer(this.playerService.player); // Sert à changer la couleur du texte affiché dans la vue de l'organisateur.
-            if (this.inRandomMode) {
+            if (this.attributes.inRandomMode) {
                 this.socketService.sendMessage(Events.CONFIRM_ANSWER_R, nsp.GAME);
             }
         } else {
             this.socketService.sendMessage(Events.RESET_NUMBER_ANSWERS, nsp.GAME);
         }
 
-        if (this.inTestMode || (this.inRandomMode && !this.time)) {
-            if (this.question.type === Type.QCM) {
-                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+        if (this.attributes.inTestMode || (this.attributes.inRandomMode && !this.time)) {
+            if (this.attributes.question.type === Type.QCM) {
+                this.attributes.feedback = await this.gameManager.getFeedBack(this.attributes.question.id, this.attributes.answer);
             }
             this.countPointsAndNextQuestion();
             return;
@@ -294,12 +276,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     sendQRLAnswer() {
         this.timeService.stopTimer();
         this.qrlStatsService.stopTimer();
-        this.choiceDisabled = true;
+        this.attributes.choiceDisabled = true;
 
         const qrlAnswer: QRLAnswer = {
-            questionId: this.question.id,
+            questionId: this.attributes.question.id,
             author: this.playerService.player.name,
-            answer: this.qrlAnswer,
+            answer: this.attributes.qrlAnswer,
         };
         this.socketService.sendMessage(Events.QRL_ANSWER, nsp.GAME, qrlAnswer);
         this.snackBar.open('Votre réponse a été envoyée pour correction, veuillez patienter', 'Fermer', {
@@ -309,18 +291,18 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async countPointsAndNextQuestion() {
-        this.movingToNextQuestion = true;
-        if (this.question.type === Type.QCM || this.inTestMode) {
+        this.attributes.movingToNextQuestion = true;
+        if (this.attributes.question.type === Type.QCM || this.attributes.inTestMode) {
             await this.updateScore();
         }
         setTimeout(
             () => {
-                this.choiceDisabled = false;
+                this.attributes.choiceDisabled = false;
                 this.goNextQuestion();
             },
-            this.inTestMode ? SHOW_FEEDBACK_DELAY : SHOW_FEEDBACK_DELAY * 2,
+            this.attributes.inTestMode ? SHOW_FEEDBACK_DELAY : SHOW_FEEDBACK_DELAY * 2,
         );
-        if (!this.inTestMode) {
+        if (!this.attributes.inTestMode) {
             setTimeout(() => {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
@@ -333,38 +315,38 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     onFinalAnswer() {
-        if (!this.bonusGiven) {
+        if (!this.attributes.bonusGiven) {
             this.socketService.sendMessage(Events.FINAL_ANSWER, nsp.GAME);
         }
     }
     async updateScore() {
-        if (this.question.type === Type.QRL && this.inTestMode) {
-            this.score += this.question.points;
+        if (this.attributes.question.type === Type.QRL && this.attributes.inTestMode) {
+            this.attributes.score += this.attributes.question.points;
             return;
         }
-        const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.answer, this.question.id);
-        if (isCorrectAnswer && this.question.points) {
-            if (this.inTestMode || this.gotBonus) {
-                const pointsWithBonus = this.question.points * (1 + BONUS_MULTIPLIER);
-                this.score += pointsWithBonus;
-                this.pointsGained = pointsWithBonus;
+        const isCorrectAnswer = await this.gameManager.isCorrectAnswer(this.attributes.answer, this.attributes.question.id);
+        if (isCorrectAnswer && this.attributes.question.points) {
+            if (this.attributes.inTestMode || this.attributes.gotBonus) {
+                const pointsWithBonus = this.attributes.question.points * (1 + BONUS_MULTIPLIER);
+                this.attributes.score += pointsWithBonus;
+                this.attributes.pointsGained = pointsWithBonus;
                 this.playerService.player.bonusCount++;
                 this.snackBar.open('Bravo! Vous avez obtenu le point bonus!', 'Fermer', {
                     duration: 3000,
                 });
             } else {
-                this.score += this.question.points;
-                this.pointsGained = this.question.points;
+                this.attributes.score += this.attributes.question.points;
+                this.attributes.pointsGained = this.attributes.question.points;
             }
 
-            this.showPoints = true;
+            this.attributes.showPoints = true;
             setTimeout(() => {
-                this.showPoints = false;
+                this.attributes.showPoints = false;
             }, SHOW_FEEDBACK_DELAY);
 
-            this.playerService.player.score = this.score;
-            this.bonusGiven = false;
-            this.gotBonus = false;
+            this.playerService.player.score = this.attributes.score;
+            this.attributes.bonusGiven = false;
+            this.attributes.gotBonus = false;
         }
         this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.playerService.player });
     }
@@ -382,8 +364,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         dialogRef.afterClosed().subscribe((dialogResult) => {
             if (dialogResult) {
                 this.timeService.stopTimer();
-                this.score = 0;
-                this.answer = [];
+                this.attributes.score = 0;
+                this.attributes.answer = [];
                 const chatMessage: ChatMessage = {
                     author: sysMsg.AUTHOR,
                     message: this.playerService.player.name + ' ' + sysMsg.PLAYER_LEFT,
@@ -409,12 +391,12 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     };
 
     async endGameTest() {
-        if (this.gameManager.onLastQuestion() && this.inTestMode) {
+        if (this.gameManager.onLastQuestion() && this.attributes.inTestMode) {
             this.router.navigate(['/createGame']);
-        } else if (this.gameManager.onLastQuestion() && this.inRandomMode) {
+        } else if (this.gameManager.onLastQuestion() && this.attributes.inRandomMode) {
             await this.confirmAnswers(false);
-            if (this.question.type === Type.QCM) {
-                this.feedback = await this.gameManager.getFeedBack(this.question.id, this.answer);
+            if (this.attributes.question.type === Type.QCM) {
+                this.attributes.feedback = await this.gameManager.getFeedBack(this.attributes.question.id, this.attributes.answer);
             }
             await this.countPointsAndNextQuestion();
             this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
@@ -432,32 +414,32 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     getStyle(choiceText: string): string {
-        if (!this.feedback) return '';
-        const feedbackItem = this.feedback?.find((f) => f.choice === choiceText);
+        if (!this.attributes.feedback) return '';
+        const feedbackItem = this.attributes.feedback?.find((f) => f.choice === choiceText);
         if (!feedbackItem) return '';
 
         return feedbackItem.status;
     }
 
     openCountDownModal(): void {
-        this.showCountDown = true;
-        this.countDownKey = Date.now();
+        this.attributes.showCountDown = true;
+        this.attributes.countDownKey = Date.now();
     }
 
     onCountDownModalClosed(): void {
-        this.showCountDown = false;
+        this.attributes.showCountDown = false;
     }
-
+    // Le any vient d'un appel à une fonction de Angular.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, no-undef
     trackByFunction(item: any) {
         return item.id;
     }
 
     private setInRandomMode(): void {
-        this.inRandomMode = this.router.url.slice(RANDOM_INDICATOR) === 'aleatoire';
+        this.attributes.inRandomMode = this.router.url.slice(RANDOM_INDICATOR) === 'aleatoire';
     }
 
     private setInTestMode(): void {
-        this.inTestMode = this.route.snapshot.queryParams.testMode === 'true';
+        this.attributes.inTestMode = this.route.snapshot.queryParams.testMode === 'true';
     }
 }

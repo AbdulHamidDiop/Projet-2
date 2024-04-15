@@ -19,7 +19,7 @@ export class PlayAreaLogic {
     countDownKey: number = Date.now(); // to force change dete/ctiosn
     choiceDisabled: boolean = false;
     feedback: Feedback[];
-    qcmStat: QCMStats;
+    answerStat: QCMStats;
     bonusGiven: boolean = false;
     gotBonus: boolean = false;
     movingToNextQuestion: boolean = false;

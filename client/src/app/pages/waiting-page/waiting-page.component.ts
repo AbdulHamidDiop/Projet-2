@@ -41,6 +41,8 @@ export class WaitingPageComponent implements OnDestroy, OnInit {
     kickSubscription: Subscription;
     disconnectSubscription: Subscription;
 
+    // nous avons besoin de tout ces services pour assurer le bon fonctionnement et la bonne coordnation des
+    // évènement de la page d'attente et séparer en différents fichier augmenterait la complexité inutilement.
     // eslint-disable-next-line max-params
     constructor(
         private gameSessionService: GameSessionService,
