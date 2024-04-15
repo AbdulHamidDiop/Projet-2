@@ -316,14 +316,13 @@ export class SocketEvents {
     private joinWaitingPageRoom(socket: Socket, room: string, name: string) {
         const player = this.playerSocketId.get(socket.id);
         const playerList = this.mapOfPlayersInRoom.get(room);
-        const gameId = this.roomGameId.get(room);
         socket.join(room);
         player.name = name;
         socket.emit(Events.GET_PLAYER_PROFILE, player);
         playerList.push(player);
         socket.emit(Events.GET_PLAYERS, playerList);
         socket.to(room).emit(Events.GET_PLAYERS, playerList);
-        socket.emit(Events.GET_GAME_PIN, gameId);
+        socket.emit(Events.GET_GAME_PIN, room);
         const message: ChatMessage = {
             author: sysmsg.AUTHOR,
             message: name + ' ' + sysmsg.PLAYER_JOINED,
