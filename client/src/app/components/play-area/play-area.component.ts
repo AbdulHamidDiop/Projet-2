@@ -42,6 +42,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private qrlGradeSubscription: Subscription;
     private timerEndedSubscription: Subscription;
 
+    // La play area a besoin d'un accès à chaque paramètre du constructeur, les changer de fichier ne serait pas
+    // vraiemnt bénéfique et en enlever bloquerait certaines fonctionnalités.
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,

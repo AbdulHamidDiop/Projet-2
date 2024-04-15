@@ -27,6 +27,8 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     questions: Question[] = [];
     isAuthentificated: boolean;
 
+    // Ces paramètres permettent d'asurer que les fonctionnalité de cette page sont bien implémentés et
+    // les changer de fichier compliquerait le tout pour rien.
     // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,
