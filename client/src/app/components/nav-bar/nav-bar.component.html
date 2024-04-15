@@ -6,10 +6,11 @@
             </a>
             <ul>
                 <li>
-                    <a style="text-decoration: none" (click)="createGame()" routerLink="/createGame"><i class="fas fa-blog"></i>Créer une partie</a>
+                    <a class="router" (click)="createGame()" routerLink="/createGame"><i class="fas fa-blog"></i>Créer
+                        une partie</a>
                 </li>
                 <li>
-                    <a style="text-decoration: none" (click)="home()" routerLink="/home" [queryParams]="{ init: 'true' }">
+                    <a class="router" (click)="home()" routerLink="/home" [queryParams]="{ init: 'true' }">
                         <i class="fas fa-address-book"></i>Rejoindre une partie
                     </a>
                 </li>

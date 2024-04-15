@@ -34,7 +34,7 @@ export class AdminQuestionsBankComponent {
             const dateB = new Date(b.lastModification);
             return dateB.getTime() - dateA.getTime();
         });
-        if (this.selectedTypes.size === 0) {
+        if (!this.selectedTypes.size) {
             this.displayQuestions = [];
         } else if (this.selectedTypes.size === 2) {
             this.displayQuestions = this.questions;
