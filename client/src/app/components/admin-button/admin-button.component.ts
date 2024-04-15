@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AdminService } from '@app/services/admin.service';
 import { CommunicationService } from '@app/services/communication.service';
-import { QuestionsService } from '@app/services/questions.service';
-import { environment } from 'src/environments/environment';
-import { NamingConvention } from '@app/services/headers';
 
 @Component({
     selector: 'app-admin-button',
@@ -18,7 +16,7 @@ export class AdminButtonComponent {
     constructor(
         readonly communicationService: CommunicationService,
         readonly router: Router,
-        readonly questionsService: QuestionsService,
+        private readonly adminService: AdminService,
     ) {}
 
     toggleAdmin() {
@@ -27,14 +25,8 @@ export class AdminButtonComponent {
 
     async verifyPassword() {
         this.passwordError = false;
-        const response = await fetch(environment.serverUrl + 'admin/password', {
-            method: 'POST',
-            headers: {
-                [NamingConvention.CONTENT_TYPE]: 'application/json',
-            },
-            body: JSON.stringify({ password: this.userInput }),
-        });
-        if (response.ok) {
+        const validated = await this.adminService.verifyPassword(this.userInput);
+        if (validated) {
             this.router.navigate(['/admin']);
             this.communicationService.updateSharedVariable(true);
         } else {

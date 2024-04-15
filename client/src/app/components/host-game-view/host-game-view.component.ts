@@ -73,7 +73,7 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             this.createQuestionStat(stat);
         }
-        if (this.logic.statisticsData) {
+        if (this.logic.statisticsData && this.appBarChart) {
             this.logic.barChartData = this.logic.statisticsData[this.logic.questionIndex]?.data;
             this.appBarChart.datasets = this.logic.barChartData;
             this.appBarChart.labels = this.logic.currentQuestion.text;
