@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
-import { API_URL } from '@common/consts';
 import { Injectable } from '@angular/core';
 import { FetchService } from '@app/services/fetch.service';
+import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
 import { environment } from 'src/environments/environment';
+import { NamingConvention } from './headers';
 
 @Injectable({
     providedIn: 'root',
@@ -26,7 +26,7 @@ export class GameSessionService {
             const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/check', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    [NamingConvention.CONTENT_TYPE]: 'application/json',
                 },
                 body: JSON.stringify({ answer, sessionPin, questionID }),
             });
@@ -45,7 +45,7 @@ export class GameSessionService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/create/' + pin, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(game),
         });
@@ -68,7 +68,7 @@ export class GameSessionService {
         const response = await this.fetchService.fetch(API_URL + 'gameSession/completeSession', {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ pin, bestScore }),
         });
@@ -90,7 +90,7 @@ export class GameSessionService {
         const response = await this.fetchService.fetch(API_URL + 'gameSession/addNbPlayers', {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ nbPlayers, pin }),
         });

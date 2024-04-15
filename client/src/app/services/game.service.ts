@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { Injectable } from '@angular/core';
 import { Game } from '@common/game';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
+import { NamingConvention } from './headers';
 
 @Injectable({
     providedIn: 'root',
@@ -38,7 +38,7 @@ export class GameService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/importgame', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(game),
         });
@@ -60,7 +60,7 @@ export class GameService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/togglehidden', {
             method: 'PATCH',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ id: gameID }),
         });
@@ -93,7 +93,7 @@ export class GameService {
             const response = await this.fetchService.fetch(environment.serverUrl + 'game/check', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    [NamingConvention.CONTENT_TYPE]: 'application/json',
                 },
                 body: JSON.stringify({ answer, gameID, questionID }),
             });
@@ -112,7 +112,7 @@ export class GameService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/availability/' + game.id, {
             method: 'GET',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
         });
         if (!response.ok) {

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import { EventEmitter, Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { START_GAME_DELAY } from '@common/consts';
@@ -6,6 +5,7 @@ import { Question } from '@common/game';
 import { StatusCodes } from 'http-status-codes';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
+import { NamingConvention } from './headers';
 
 @Injectable({
     providedIn: 'root',
@@ -49,7 +49,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'questions/add', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -70,7 +70,7 @@ export class QuestionsService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'questions/edit', {
             method: 'PUT',
             headers: {
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify(question),
         });
@@ -115,7 +115,7 @@ export class QuestionsService {
             const response = await this.fetchService.fetch(environment.serverUrl + 'questions/check', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    [NamingConvention.CONTENT_TYPE]: 'application/json',
                 },
                 body: JSON.stringify({ answer, id }),
             });
