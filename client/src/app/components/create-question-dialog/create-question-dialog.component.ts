@@ -2,7 +2,7 @@ import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { Router } from '@angular/router';
+import { Data, Router } from '@angular/router';
 import { QuestionsService } from '@app/services/questions.service';
 import { Choices, Question, Type } from '@common/game';
 import { v4 } from 'uuid';
@@ -28,7 +28,7 @@ export class CreateQuestionDialogComponent implements OnInit {
         public questionsService: QuestionsService,
         public router: Router,
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: Data,
     ) {
         this.initializeForm();
         this.handleQuestionTypeChanges(); // pour negliger choices si type = QRL

@@ -50,10 +50,8 @@ export class SocketEvents {
             room = this.makeRoomId();
         }
         if (!this.unitTesting) {
-            // creates testing errors errors otherwise à régler si necessaire
             await this.gameSessionService.createSession(room, game);
         }
-        // leaveAllRooms(socket); À ajouter plus tard.
         socket.join(room);
         const player: Player = {
             name: 'Organisateur',
@@ -109,8 +107,6 @@ export class SocketEvents {
                 };
                 this.playerSocketId.set(socket.id, playerProfile);
                 socket.emit(Events.JOIN_ROOM, true);
-                // L'évènement joinroom est envoyé mais le socket n'est pas encore dans le room au sens connection.
-                // Le socket rejoint le room après avoir envoyé son nom et que celui-ci est validé.
             } else {
                 socket.emit(Events.JOIN_ROOM, false);
             }
@@ -350,7 +346,6 @@ export class SocketEvents {
                         author: sysmsg.AUTHOR,
                         timeStamp: new Date().toLocaleTimeString(),
                     };
-                    // Très mauvaise idée en terme de performances, mais on est pas noté sur les performances.
                     for (const socketId of this.playerSocketId.keys()) {
                         if (this.playerSocketId.get(socketId).name === player.name) {
                             if (this.socketIdRoom.get(socketId) === room) {
@@ -387,7 +382,6 @@ export class SocketEvents {
                         author: sysmsg.AUTHOR,
                         timeStamp: new Date().toLocaleTimeString(),
                     };
-                    // Très mauvaise idée en terme de performances, mais on est pas noté sur les performances.
                     for (const socketId of this.playerSocketId.keys()) {
                         if (this.playerSocketId.get(socketId).name === player.name) {
                             if (this.socketIdRoom.get(socketId) === room) {

@@ -32,7 +32,6 @@ export class GameRandomComponent {
     }
 
     private async setQuestions(): Promise<void> {
-        // Get all QCM depuis service ou filtrer QLR
         this.questionService.getRandomQuestions().then((questions) => {
             if (questions.length) {
                 this.questions = questions;

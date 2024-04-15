@@ -54,7 +54,7 @@ export class PlayerListComponent implements OnInit, OnChanges {
                 return 'Abandon';
             }
             default: {
-                return 'Erreur'; // Ne devrait jamais afficher ça, mais reste utile.
+                return 'Erreur';
             }
         }
     }
@@ -74,7 +74,7 @@ export class PlayerListComponent implements OnInit, OnChanges {
                 return 'black-text';
             }
             default: {
-                return 'blue-text'; // Ne devrait jamais afficher ça, mais reste utile.
+                return 'blue-text';
             }
         }
     }

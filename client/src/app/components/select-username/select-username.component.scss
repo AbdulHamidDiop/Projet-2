@@ -13,9 +13,9 @@ main {
 
     $border: 1.5px;
     color: #fff;
-    border: solid $border transparent; /* !importanté */
+    border: solid $border transparent;
     border-radius: 1em;
-    
+
     width: 100%;
     max-width: 400px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);

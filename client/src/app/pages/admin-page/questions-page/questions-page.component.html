@@ -1,33 +1,30 @@
 <main>
     <h1 class="header-item">Banque de questions</h1>
-
     <div class="grid-container-question-bank">
         <div class="questions-list-column">
+            <h1>
+                Questions
+                <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
+                    <mat-icon class="add-icon">add</mat-icon>
+                </button>
+            </h1>
             <mat-button-toggle-group multiple>
                 <mat-button-toggle value="QCM" (click)="toggleQuestionType('QCM')" [checked]="selectedTypes.has('QCM')">QCM</mat-button-toggle>
                 <mat-button-toggle value="QRL" (click)="toggleQuestionType('QRL')" [checked]="selectedTypes.has('QRL')">QRL</mat-button-toggle>
             </mat-button-toggle-group>
             <mat-accordion>
                 <p *ngIf="displayQuestions?.length === 0">Aucune question à afficher</p>
-                <div *ngFor="let question of displayQuestions; index as order">
-                    <app-admin-question
-                        [question]="question"
-                        [index]="order + 1"
-                        [editable]="true"
-                        [showModificationDate]="true"
-                    ></app-admin-question>
+                <div class="scrollable-container">
+                    <div *ngFor="let question of displayQuestions; index as order">
+                        <app-admin-question class="question"
+                            [question]="question"
+                            [index]="order + 1"
+                            [editable]="true"
+                            [showModificationDate]="true"
+                        ></app-admin-question>
+                    </div>
                 </div>
             </mat-accordion>
-        </div>
-        <div class="question-add-column">
-            <div>
-                <h1>
-                    Questions
-                    <button mat-icon-button (click)="openDialog()" name="add-question" class="add-button">
-                        <mat-icon class="add-icon">add</mat-icon>
-                    </button>
-                </h1>
-            </div>
         </div>
     </div>
 </main>

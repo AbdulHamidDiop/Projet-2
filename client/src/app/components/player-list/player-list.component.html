@@ -1,7 +1,3 @@
-<!-- Le matSortDisableClear empêche de désactiver le tri, 
-    c'est pas explicitement demandé mais possible d'ajouter
-    une option pour désactiver le tri, comme dans le code ici
-    https://material.angular.io/components/sort/overview -->
 <table matSort [matSortDisableClear]="true" (matSortChange)="sortData($event)" aria-label="Player List">
     <tr>
         <th mat-sort-header="name">Nom</th>
