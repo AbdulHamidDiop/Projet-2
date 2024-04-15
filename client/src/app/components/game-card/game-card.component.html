@@ -7,10 +7,10 @@
     <mat-card-content> Dernière modification: {{ game.lastModification | date: 'short' }} </mat-card-content>
     <mat-card-actions>
         <mat-checkbox id="hiddenCheckBox" [(ngModel)]="game.isHidden"
-            (change)="onCheck(game)"></mat-checkbox><mat-icon>visibility_off</mat-icon>
+            (change)="onCheck(game)"></mat-checkbox><mat-icon *ngIf="game.isHidden">visibility_off</mat-icon><mat-icon *ngIf="!game.isHidden">visibility_on</mat-icon>
         <button mat-button id="modifyGameButton" (click)="onModifyButtonClick(game)"><mat-icon>build</mat-icon></button>
         <button mat-button id="exportGameButton"
-            (click)="onExportButtonClick(game)"><mat-icon>save_alt</mat-icon></button>
+            (click)="onExportButtonClick(game)"><mat-icon>cloud_upload</mat-icon></button>
         <button mat-button id="deleteGameButton"
             (click)="onDeleteButtonClick(game)"><mat-icon>delete</mat-icon></button>
     </mat-card-actions>
