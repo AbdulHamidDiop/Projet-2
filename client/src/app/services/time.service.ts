@@ -90,13 +90,18 @@ export class TimeService implements OnDestroy {
 
     activatePanicMode(type: Type) {
         this.stopTimer();
-        if (type === Type.QCM && this.counter > PANIC_TRESHOLD) {
+
+        if ((type === Type.QCM && this.counter > PANIC_TRESHOLD) || (type === Type.QRL && this.counter > PANIC_TRESHOLD * 2)) {
+            const audioLength = 13;
+            const speedMultiplier = 4;
             this.panicMode = true;
-            this.panicSound.play();
-        } else if (type === Type.QRL && this.counter > PANIC_TRESHOLD * 2) {
-            this.panicMode = true;
+            const remainingTimeInSeconds = this.counter / speedMultiplier;
+            const audioStartTime = Math.max(0, audioLength - remainingTimeInSeconds);
+
+            this.panicSound.currentTime = audioStartTime;
             this.panicSound.play();
         }
+
         if (!this.pauseFlag) {
             this.startTimer(this.counter);
         }

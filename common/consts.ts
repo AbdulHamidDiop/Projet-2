@@ -16,7 +16,7 @@ export const ADMIN_PASSWORD = 'log2990-312';
 export const PANIC_TRESHOLD = 10;
 export const DEFAULT_TICK = 1000;
 export const PANIC_TICK = 250;
-export const PANIC_SOUND_URL = '@app/../assets/audio/pop.mp3';
+export const PANIC_SOUND_URL = '@app/../assets/audio/panic.mp3';
 
 export const CHECK_INTERVAL = 5000;
 
