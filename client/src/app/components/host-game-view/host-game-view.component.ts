@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BarChartComponent } from '@app/components/bar-chart/bar-chart.component';
@@ -21,7 +21,7 @@ import { icons } from './icons';
     templateUrl: './host-game-view.component.html',
     styleUrls: ['./host-game-view.component.scss'],
 })
-export class HostGameViewComponent implements OnInit, OnDestroy {
+export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(BarChartComponent) appBarChart: BarChartComponent;
     game: Game;
     timer: number;
@@ -72,11 +72,18 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         await this.gameManagerService.initialize(this.socketService.room);
         this.currentQuestion = this.gameManagerService.firstQuestion();
         this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
-        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
         this.setSubscriptions();
+        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
         this.timeService.deactivatePanicMode();
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
+    }
+
+    ngAfterViewInit(): void {
+        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
+            this.updateBarChartData(stat as QCMStats);
+            this.updatePlayerFromServer(stat as QCMStats);
+        });
     }
     async updateBarChartData(stat: QCMStats): Promise<void> {
         const index = this.statisticsData.findIndex((questionStat) => questionStat.questionID === stat.questionId);
@@ -280,7 +287,7 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
     openResultsPage(): void {
         window.removeEventListener('popstate', this.onLocationChange);
         window.removeEventListener('hashchange', this.onLocationChange);
-        const RESPONSE_FROM_SERVER_DELAY = 1000;
+        const RESPONSE_FROM_SERVER_DELAY = 1300;
         const gameId = this.route.snapshot.paramMap.get('id');
         if (gameId) {
             setTimeout(() => {
@@ -349,10 +356,6 @@ export class HostGameViewComponent implements OnInit, OnDestroy {
         window.removeEventListener('hashchange', this.onLocationChange);
     }
     private setSubscriptions(): void {
-        this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QCM_STATS).subscribe((stat: unknown) => {
-            this.updateBarChartData(stat as QCMStats);
-            this.updatePlayerFromServer(stat as QCMStats);
-        });
         this.socketService.listenForMessages(Namespaces.GAME_STATS, Events.QRL_STATS).subscribe((stat: unknown) => {
             this.updateQRLBarChartData(stat as QRLStats);
         });

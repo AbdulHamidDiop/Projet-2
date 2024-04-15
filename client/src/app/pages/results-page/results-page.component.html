@@ -7,7 +7,10 @@
                 <li *ngFor="let player of players; let i = index" class="player-list-item">
                     <mat-card class="player-card">
                         <mat-card-content class="space-around">
-                            <span>Score : {{ player.score.toFixed(2) }}</span>
+                            <fa-icon *ngIf="i === 0" [icon]="faMedal" class="first" [style]="{ display: 'inline-block', padding: '5px' }"></fa-icon>
+                            <fa-icon *ngIf="i === 1" [icon]="faMedal" class="second" [style]="{ display: 'inline-block', padding: '5px' }"></fa-icon>
+                            <fa-icon *ngIf="i === 2" [icon]="faMedal" class="third" [style]="{ display: 'inline-block', padding: '5px' }"></fa-icon>
+                            <span>Score : {{ player.score.toFixed(0) }}</span>
                             <span>{{ player.name }}</span>
                             <span>Nombre de bonus: {{ player.bonusCount }}</span>
                         </mat-card-content>
