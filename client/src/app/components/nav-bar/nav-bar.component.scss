@@ -1,4 +1,3 @@
-/* Reset some default browser styles */
 body,
 h1,
 h2,
@@ -10,7 +9,6 @@ li {
     padding: 0;
 }
 
-/* Header styles */
 .wrapper {
     display: flex;
     position: relative;
@@ -45,7 +43,7 @@ li {
     display: block;
     margin-left: auto;
     margin-right: auto;
-    margin-bottom: 20px
+    margin-bottom: 20px;
 }
 
 .wrapper .sidebar ul li a {

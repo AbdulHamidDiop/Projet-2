@@ -191,7 +191,6 @@ export class QuestionsController {
                 const questions = await this.questionsService.getRandomQuestions();
                 res.json(questions);
             } catch (error) {
-                // Not enough QCM questions
                 if (error.message === 'Not enough QCM questions') {
                     res.status(StatusCodes.UNPROCESSABLE_ENTITY).send({ message: 'Not enough QCM questions available.' });
                 }
