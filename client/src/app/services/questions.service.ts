@@ -97,32 +97,4 @@ export class QuestionsService {
         const questions: Question[] = await response.json();
         return questions;
     }
-<<<<<<< HEAD
-=======
-
-    async checkAnswer(answer: string[], id: string): Promise<boolean> {
-        try {
-            const response = await this.fetchService.fetch(environment.serverUrl + 'questions/check', {
-                method: 'POST',
-                headers: {
-                    [NamingConvention.CONTENT_TYPE]: 'application/json',
-                },
-                body: JSON.stringify({ answer, id }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erreur de communication avec le serveur. Statut : ${response.status}`);
-            }
-            const result = await response.json();
-
-            if (result && result.isCorrect) {
-                return result.isCorrect;
-            } else {
-                throw new Error('Réponse du serveur malformée');
-            }
-        } catch (error) {
-            return false;
-        }
-    }
->>>>>>> 0fcf7c687e5a64909808ee3215e9631d41ad4b78
 }
