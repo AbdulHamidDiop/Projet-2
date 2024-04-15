@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { FetchService } from './fetch.service';
+import { NamingConvention } from './headers';
 
 @Injectable({
     providedIn: 'root',
@@ -12,9 +13,7 @@ export class AdminService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'admin/password', {
             method: 'POST',
             headers: {
-                // Ce sont des headers de HTML qui ne sont pas pris en compte dans la naming convention de ESLINT
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
+                [NamingConvention.CONTENT_TYPE]: 'application/json',
             },
             body: JSON.stringify({ password }),
         });

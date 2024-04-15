@@ -25,7 +25,7 @@ export class AdminPageComponent implements OnInit {
     selectedFile: File;
     isAuthentificated: boolean;
     errors: string;
-    // chacun des paramètres est essentiel au fonctionnement, routage, etc... de la page admin et les séparer 
+    // chacun des paramètres est essentiel au fonctionnement, routage, etc... de la page admin et les séparer
     // en plusieurs fichier compliquerait le code inutillement.
     // eslint-disable-next-line max-params
     constructor(

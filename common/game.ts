@@ -44,3 +44,25 @@ export const YELLOW = 0xffff00;
 export const BLACK = 0x000000;
 export const RED = 0xff0000;
 export const GREEN = 0x00ff00;
+
+export const DEFAULT_PLAYER_PROFILE: Player = {
+    id: '',
+    name: 'Player',
+    isHost: false,
+    score: 0,
+    bonusCount: 0,
+    color: RED,
+    chatEnabled: true,
+    leftGame: false,
+};
+
+export const DEFAULT_HOST_PROFILE: Player = {
+    name: 'Organisateur',
+    score: 0,
+    isHost: true,
+    id: '',
+    bonusCount: 0,
+    color: GREEN,
+    chatEnabled: true,
+    leftGame: false,
+};
