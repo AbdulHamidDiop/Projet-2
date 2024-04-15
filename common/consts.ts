@@ -17,3 +17,14 @@ export const PANIC_TRESHOLD = 10;
 export const DEFAULT_TICK = 1000;
 export const PANIC_TICK = 250;
 export const PANIC_SOUND_URL = '@app/../assets/audio/pop.mp3';
+
+export const CHECK_INTERVAL = 5000;
+
+export const RED = 0xff0000;
+
+export const START_TIMER_DELAY = 500;
+export const START_GAME_DELAY = 5000;
+
+export const MAX_PIN_CHARACTERS = 4;
+
+export const RANDOM_INDICATOR = -9;

@@ -13,6 +13,7 @@ import { PlayerService } from '@app/services/player.service';
 import { QRLStatService } from '@app/services/qrl-stats.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { TimeService } from '@app/services/time.service';
+import { RANDOM_INDICATOR, START_GAME_DELAY } from '@common/consts';
 import { Feedback } from '@common/feedback';
 import { Question, Type } from '@common/game';
 import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
@@ -20,8 +21,6 @@ import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
 import { BONUS_MULTIPLIER, ERROR_INDEX, MAX_QRL_LENGTH, QRL_TIMER, SHOW_FEEDBACK_DELAY } from './const';
-
-const RANDOM_INDICATOR = -9;
 
 @Component({
     selector: 'app-play-area',
@@ -185,7 +184,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
 
         this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
             this.snackBar.open("L'organisateur a mis fin à la partie", 'Fermer', {
-                duration: 5000,
+                duration: START_GAME_DELAY,
                 verticalPosition: 'top',
             });
             this.router.navigate(['/']);
@@ -304,7 +303,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         };
         this.socketService.sendMessage(Events.QRL_ANSWER, nsp.GAME, qrlAnswer);
         this.snackBar.open('Votre réponse a été envoyée pour correction, veuillez patienter', 'Fermer', {
-            duration: 5000,
+            duration: START_GAME_DELAY,
             verticalPosition: 'top',
         });
     }
