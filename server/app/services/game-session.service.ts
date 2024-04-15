@@ -83,10 +83,9 @@ export class GameSessionService {
         const question = game.questions.find((q) => q.id === questionID);
         if (question && question.choices) {
             const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
-            if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
-                return false;
+            if (answer.every((answr) => correctChoices.includes(answr))) {
+                return true;
             }
-            return true;
         }
         return false;
     }
