@@ -1,4 +1,3 @@
-/* eslint-disable prefer-const */
 import { QRL_FULL_GRADE_MULTIPLER, QRL_HALF_GRADE_MULTIPLER, QRL_ZERO_GRADE_MULTIPLER } from '@common/consts';
 import { Feedback } from '@common/feedback';
 import { Game, Player } from '@common/game';
