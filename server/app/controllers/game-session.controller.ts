@@ -1,3 +1,4 @@
+// Nous avons besoin d'un fichier très long en raison des commentaires qui permettent d'avoir des swagger pertinents
 /* eslint-disable max-lines */
 import { GameSessionService } from '@app/services/game-session.service';
 import { GameSession } from '@common/game-session';

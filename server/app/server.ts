@@ -1,3 +1,4 @@
+// Nous avons besoin de la console afin de vérifier que les connections au database et au serveur s'établissent correctement
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { Player } from '@common/game';
