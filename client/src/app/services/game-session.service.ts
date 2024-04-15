@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { FetchService } from '@app/services/fetch.service';
-import { API_URL } from '@common/consts';
 import { Game } from '@common/game';
 import { GameSession } from '@common/game-session';
 import { environment } from 'src/environments/environment';
@@ -56,7 +55,7 @@ export class GameSessionService {
     }
 
     async getAllSessions(): Promise<GameSession[]> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession');
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession');
         if (!response.ok) {
             throw new Error(`Error: ${response.status}`);
         }
@@ -65,7 +64,7 @@ export class GameSessionService {
     }
 
     async completeSession(pin: string, bestScore: number): Promise<void> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/completeSession', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/completeSession', {
             method: 'PATCH',
             headers: {
                 [NamingConvention.CONTENT_TYPE]: 'application/json',
@@ -78,7 +77,7 @@ export class GameSessionService {
     }
 
     async deleteHistory(): Promise<void> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/deleteHistory', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/deleteHistory', {
             method: 'DELETE',
         });
         if (!response.ok) {
@@ -87,7 +86,7 @@ export class GameSessionService {
     }
 
     async addNbPlayers(nbPlayers: number, pin: string): Promise<void> {
-        const response = await this.fetchService.fetch(API_URL + 'gameSession/addNbPlayers', {
+        const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/addNbPlayers', {
             method: 'PATCH',
             headers: {
                 [NamingConvention.CONTENT_TYPE]: 'application/json',
