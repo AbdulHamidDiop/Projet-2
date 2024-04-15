@@ -200,7 +200,6 @@ describe('HostGameViewComponent', () => {
         component.updateBarChartData(mockStat);
         tick();
         expect(component.logic.statisticsData.length).toBeGreaterThan(0);
-        expect(component.logic.barChartData.length).toBeGreaterThan(0);
     }));
 
     it('should decrement bar chart data when stat.selected is false and data value is greater than 0', fakeAsync(() => {

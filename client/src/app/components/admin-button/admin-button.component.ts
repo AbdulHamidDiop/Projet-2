@@ -1,8 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
+import { AdminService } from '@app/services/admin.service';
 import { CommunicationService } from '@app/services/communication.service';
-import { QuestionsService } from '@app/services/questions.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-admin-button',
@@ -17,7 +16,7 @@ export class AdminButtonComponent {
     constructor(
         readonly communicationService: CommunicationService,
         readonly router: Router,
-        readonly questionsService: QuestionsService,
+        private readonly adminService: AdminService,
     ) {}
 
     toggleAdmin() {
@@ -26,16 +25,8 @@ export class AdminButtonComponent {
 
     async verifyPassword() {
         this.passwordError = false;
-        const response = await fetch(environment.serverUrl + 'admin/password', {
-            method: 'POST',
-            headers: {
-                // Ce sont des headers de HTML qui ne sont pas pris en compte dans la naming convention de ESLINT
-                // eslint-disable-next-line @typescript-eslint/naming-convention
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ password: this.userInput }),
-        });
-        if (response.ok) {
+        const validated = await this.adminService.verifyPassword(this.userInput);
+        if (validated) {
             this.router.navigate(['/admin']);
             this.communicationService.updateSharedVariable(true);
         } else {
