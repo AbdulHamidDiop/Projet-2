@@ -239,41 +239,41 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
         this.logic.currentQuestion = this.gameManagerService.goNextQuestion();
         this.logic.gradingAnswers = false;
         this.logic.qRLAnswers = [];
-        this.disableControls = false;
-        this.nConfirmations = 0;
-        this.disableNextQuestion = true;
+        this.logic.disableControls = false;
+        this.logic.nConfirmations = 0;
+        this.logic.disableNextQuestion = true;
         if (this.gameManagerService.onLastQuestion()) {
-            this.onLastQuestion = true;
+            this.logic.onLastQuestion = true;
         }
-        this.timer = this.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
-        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.timer });
-        if (this.currentQuestion.type === Type.QRL) {
+        this.logic.timer = this.logic.currentQuestion.type === Type.QCM ? (this.gameManagerService.game.duration as number) : QRL_TIMER;
+        this.socketService.sendMessage(Events.START_TIMER, Namespaces.GAME, { time: this.logic.timer });
+        if (this.logic.currentQuestion.type === Type.QRL) {
             const qrlStat: QRLStats = {
-                questionId: this.currentQuestion.id,
+                questionId: this.logic.currentQuestion.id,
                 edited: false,
             };
-            for (let i = 1; i <= this.playersLeft; i++) {
+            for (let i = 1; i <= this.logic.playersLeft; i++) {
                 this.updateQRLBarChartData(qrlStat);
             }
         }
     }
     sendTimerControlMessage(): void {
-        this.timerPaused = !this.timerPaused;
+        this.logic.timerPaused = !this.logic.timerPaused;
         this.socketService.sendMessage(Events.PAUSE_TIMER, Namespaces.GAME);
     }
     activatePanicMode(): void {
-        this.inPanicMode = true;
-        this.socketService.sendMessage(Events.PANIC_MODE, Namespaces.GAME, { type: this.currentQuestion.type });
+        this.logic.inPanicMode = true;
+        this.socketService.sendMessage(Events.PANIC_MODE, Namespaces.GAME, { type: this.logic.currentQuestion.type });
     }
     deactivatePanicMode(): void {
-        this.inPanicMode = false;
+        this.logic.inPanicMode = false;
         this.socketService.sendMessage(Events.PANIC_MODE_OFF, Namespaces.GAME);
     }
     openCountDownModal(): void {
-        this.showCountDown = true;
+        this.logic.showCountDown = true;
     }
     onCountDownModalClosed(): void {
-        this.showCountDown = false;
+        this.logic.showCountDown = false;
     }
     notifyEndGame() {
         this.showResults();
@@ -303,8 +303,8 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     choseNextQuestion(): void {
         this.socketService.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
-        if (!this.questionLoaded) {
-            this.questionLoaded = true;
+        if (!this.logic.questionLoaded) {
+            this.logic.questionLoaded = true;
             setTimeout(() => {
                 this.openCountDownModal();
             }, SHOW_FEEDBACK_DELAY);
@@ -314,12 +314,12 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
     handleTimerEnd(): void {
-        if (this.onLastQuestion) {
+        if (this.logic.onLastQuestion) {
             this.timeService.stopTimer();
             this.notifyEndGame();
-        } else if (this.currentQuestion.type === Type.QCM) {
+        } else if (this.logic.currentQuestion.type === Type.QCM) {
             this.notifyNextQuestion();
-        } else if (this.currentQuestion.type === Type.QRL) {
+        } else if (this.logic.currentQuestion.type === Type.QRL) {
             this.gradeAnswers();
         }
     }
@@ -329,8 +329,8 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
         if (player) {
             player.leftGame = true;
         }
-        this.playersLeft = this.playerService.nActivePlayers();
-        if (this.playersLeft === 0) {
+        this.logic.playersLeft = this.playerService.nActivePlayers();
+        if (this.logic.playersLeft === 0) {
             this.snackBar.open('Tous les joueurs ont quitté la partie, la partie sera interrompue sous peu', 'Fermer', {
                 verticalPosition: 'top',
                 duration: 3000,
@@ -339,9 +339,9 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.socketService.endGame();
             }, SHOW_FEEDBACK_DELAY);
         }
-        if (this.currentQuestion.type === Type.QRL) {
+        if (this.logic.currentQuestion.type === Type.QRL) {
             const qrlStat: QRLStats = {
-                questionId: this.currentQuestion.id,
+                questionId: this.logic.currentQuestion.id,
                 edited: false,
             };
             this.updateQRLBarChartData(qrlStat);
@@ -349,7 +349,7 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
     ngOnDestroy() {
         this.timeService.stopTimer();
-        this.timerPaused = false;
+        this.logic.timerPaused = false;
         this.deactivatePanicMode();
         this.timeService.deactivatePanicMode();
         this.gameManagerService.reset();
@@ -362,7 +362,7 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.updateQRLBarChartData(stat as QRLStats);
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.QRL_ANSWER).subscribe((answer: unknown) => {
-            this.qRLAnswers.push(answer as QRLAnswer);
+            this.logic.qRLAnswers.push(answer as QRLAnswer);
         });
         this.timeService.timerEnded.subscribe(() => {
             this.handleTimerEnd();
@@ -378,9 +378,9 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
             this.onPlayerLeft(data as { user: string });
         });
         this.socketService.listenForMessages(Namespaces.GAME, Events.PLAYER_CONFIRMED).subscribe(() => {
-            this.nConfirmations++;
-            if (this.nConfirmations === this.playersLeft) {
-                this.disableNextQuestion = false;
+            this.logic.nConfirmations++;
+            if (this.logic.nConfirmations === this.logic.playersLeft) {
+                this.logic.disableNextQuestion = false;
             }
         });
     }
