@@ -26,27 +26,28 @@ main {
     min-height: 100%;
     display: grid;
     grid-template-columns: 1.5fr 1.5fr 1.5fr;
-    gap: 8px 0px;
+    gap: 0px 0px;
     grid-auto-flow: row;
     grid-template-areas:
         'game-list history see-bank'
-        'game-list history import'
-        'game-list history .';
+        'game-list history add-game'
+        'game-list history import';
 }
 
 .grid-area-import {
     grid-area: import;
 }
 
+.grid-area-add-game {
+    grid-area: add-game;
+}
+
 .grid-area-question-bank {
     grid-area: see-bank;
-    margin: 88px 0px 0px 0px;
-    cursor: pointer;
 }
 
 .grid-area-game-list {
     grid-area: game-list;
-    margin: 18px 0px 0px 0px;
 }
 
 .grid-area-history {
@@ -70,7 +71,7 @@ main {
 
     $border: 1.5px;
     color: #fff;
-    border: solid $border transparent;
+    border: solid $border transparent; /* !importanté */
     border-radius: 1em;
 }
 
@@ -79,16 +80,4 @@ main {
     border-color: black;
     height: 100px;
     width: 300px;
-}
-
-.add-game-card {
-    margin: 8px 0px 8px 0px;
-    cursor: pointer;
-}
-
-.space-between {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
 }

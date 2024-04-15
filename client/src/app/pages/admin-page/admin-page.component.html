@@ -2,22 +2,8 @@
     <h1 class="header-item"><strong>Page Administrateur</strong></h1>
     <div class="grid-container-admin-page">
         <div class="grid-area-game-list">
-            <br />
-            <h1 class="header-item">Liste de jeux :</h1>
             <div class="scroll-box">
-                <mat-card (click)="onCreateButtonClick()" class="glassy add-game-card">
-                    <mat-card-header>
-                        <mat-card-title>
-                            <u>Créer un jeu</u>
-                        </mat-card-title>
-                    </mat-card-header>
-                    <mat-card-content>
-                        <p>
-                            Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un qui(ck)zz complétement
-                            personnalisé.
-                        </p>
-                    </mat-card-content>
-                </mat-card>
+                <h1 class="header-item"><strong>Liste de jeux :</strong></h1>
                 <app-game-card
                     *ngFor="let game of gameService.games"
                     [game]="game"
@@ -26,8 +12,26 @@
                 ></app-game-card>
             </div>
         </div>
+        <div class="grid-area-add-game">
+            <mat-card class="glassy">
+                <mat-card-header>
+                    <mat-card-title>
+                        <u>Créer un jeu</u>
+                    </mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                    <p>
+                        Créez un jeu à partir de questions existantes ou créez vos propres questions afin de faire un qui(ck)zz complétement
+                        personnalisé.
+                    </p>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button (click)="onCreateButtonClick()"><mat-icon>launch</mat-icon></button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
         <div class="grid-area-question-bank">
-            <mat-card class="glassy" (click)="onQuestionsButtonClick()">
+            <mat-card class="glassy">
                 <mat-card-header>
                     <mat-card-title>
                         <u>Banque de questions</u>
@@ -36,6 +40,9 @@
                 <mat-card-content>
                     <p>Parcourez, modifiez et ajoutez des questions à la banque de quiz qui est partagée par tous les utilisateurs qui(ck)zz.</p>
                 </mat-card-content>
+                <mat-card-actions>
+                    <button mat-button (click)="onQuestionsButtonClick()"><mat-icon>launch</mat-icon></button>
+                </mat-card-actions>
             </mat-card>
         </div>
         <div class="grid-area-import">
@@ -46,10 +53,8 @@
                 <mat-card-content>
                     <p>Choisissez le fichier à importer</p>
                     <input type="file" accept=".json" (change)="onFileSelected($event)" />
-                    <ng-container>
-                        <p>Résultat de l'importation</p>
-                        <div id="handleErrorsGrid"></div>
-                    </ng-container>
+                    <p>Résultat de l'importation</p>
+                    <div id="handleErrorsGrid"></div>
                 </mat-card-content>
                 <mat-card-actions>
                     <button mat-fab extended color="primary" (click)="onImportButtonClick()">Importer le jeu</button>
@@ -57,8 +62,13 @@
             </mat-card>
         </div>
         <div class="grid-area-history">
-            <div class="space-between">
-                <h1 class="header-item">Historique :</h1>
+            <div class="scroll-box">
+                <h1 class="header-item">
+                    <strong><u>Historique :</u></strong>
+                </h1>
+                <p>
+                    <button mat-flat-button color="warn" (click)="handleAbort()">Effacer l'historique:<mat-icon>delete</mat-icon></button>
+                </p>
                 <mat-form-field>
                     <mat-label>Trier par:</mat-label>
                     <mat-select (selectionChange)="sortList($event)">
@@ -68,9 +78,6 @@
                         <mat-option value="ascending-date">Plus ancien</mat-option>
                     </mat-select>
                 </mat-form-field>
-                <button mat-flat-button color="warn" (click)="handleAbort()">Supprimer<mat-icon>delete</mat-icon></button>
-            </div>
-            <div class="scroll-box">
                 <div *ngFor="let session of sessions">
                     <div *ngIf="session.isCompleted">
                         <app-session [session]="session"></app-session>
