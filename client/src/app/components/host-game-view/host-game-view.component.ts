@@ -68,37 +68,9 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
     async updateBarChartData(stat: QCMStats): Promise<void> {
         const index = this.logic.statisticsData.findIndex((questionStat) => questionStat.questionID === stat.questionId);
         if (index >= 0) {
-            if (stat.selected) {
-                this.logic.statisticsData[index].data[stat.choiceIndex].data[0]++;
-            }
-            if (!stat.selected && this.logic.statisticsData[index].data[stat.choiceIndex].data[0] > 0) {
-                this.logic.statisticsData[index].data[stat.choiceIndex].data[0]--;
-            }
-            this.logic.barChartData = this.logic.statisticsData[this.logic.questionIndex].data;
-            this.appBarChart.datasets = this.logic.barChartData;
-            this.appBarChart.labels = this.logic.currentQuestion.text;
-            this.appBarChart.updateData();
+            this.addQuestionStat(stat, index);
         } else {
-            const barChartStat: BarChartQuestionStats = {
-                questionID: stat.questionId,
-                data: [],
-            };
-            const correction: Feedback[] = await this.gameManagerService.getFeedBack(
-                this.logic.currentQuestion.id,
-                this.logic.currentQuestion.choices?.map((choice) => choice.text) || [],
-            );
-            let text = 'unknown';
-            for (let i = 0; i < stat.choiceAmount; i++) {
-                if (this.logic.currentQuestion.choices) {
-                    text = this.logic.currentQuestion.choices[i].text;
-                }
-                barChartStat.data.push({
-                    data: i === stat.choiceIndex ? [1] : [0],
-                    label: text,
-                    backgroundColor: correction[i].status === 'correct' ? '#4CAF50' : '#FF4C4C',
-                });
-            }
-            this.logic.statisticsData.push(barChartStat);
+            this.createQuestionStat(stat);
         }
         if (this.logic.statisticsData) {
             this.logic.barChartData = this.logic.statisticsData[this.logic.questionIndex]?.data;
@@ -330,5 +302,40 @@ export class HostGameViewComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.logic.disableNextQuestion = false;
             }
         });
+    }
+    private async createQuestionStat(stat: QCMStats): Promise<void> {
+        const barChartStat: BarChartQuestionStats = {
+            questionID: stat.questionId,
+            data: [],
+        };
+        const correction: Feedback[] = await this.gameManagerService.getFeedBack(
+            this.logic.currentQuestion.id,
+            this.logic.currentQuestion.choices?.map((choice) => choice.text) || [],
+        );
+        let text = 'unknown';
+        for (let i = 0; i < stat.choiceAmount; i++) {
+            if (this.logic.currentQuestion.choices) {
+                text = this.logic.currentQuestion.choices[i].text;
+            }
+            barChartStat.data.push({
+                data: i === stat.choiceIndex ? [1] : [0],
+                label: text,
+                backgroundColor: correction[i].status === 'correct' ? '#4CAF50' : '#FF4C4C',
+            });
+        }
+        this.logic.statisticsData.push(barChartStat);
+    }
+
+    private addQuestionStat(stat: QCMStats, index: number): void {
+        if (stat.selected) {
+            this.logic.statisticsData[index].data[stat.choiceIndex].data[0]++;
+        }
+        if (!stat.selected && this.logic.statisticsData[index].data[stat.choiceIndex].data[0] > 0) {
+            this.logic.statisticsData[index].data[stat.choiceIndex].data[0]--;
+        }
+        this.logic.barChartData = this.logic.statisticsData[this.logic.questionIndex].data;
+        this.appBarChart.datasets = this.logic.barChartData;
+        this.appBarChart.labels = this.logic.currentQuestion.text;
+        this.appBarChart.updateData();
     }
 }
