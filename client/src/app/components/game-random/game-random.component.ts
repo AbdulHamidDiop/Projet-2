@@ -4,6 +4,7 @@ import { QuestionsService } from '@app/services/questions.service';
 import { SocketRoomService } from '@app/services/socket-room.service';
 import { Game, Question } from '@common/game';
 import { IconDefinition, faDice } from '@fortawesome/free-solid-svg-icons';
+import { v4 } from 'uuid';
 
 @Component({
     selector: 'app-game-random',
@@ -43,7 +44,7 @@ export class GameRandomComponent {
 
     private createGame(): Game {
         return {
-            id: crypto.randomUUID() + 'aleatoire',
+            id: v4() + 'aleatoire',
             title: 'Mode Aléatoire',
             questions: this.questions,
             duration: 20,
