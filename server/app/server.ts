@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { Player } from '@common/game';
