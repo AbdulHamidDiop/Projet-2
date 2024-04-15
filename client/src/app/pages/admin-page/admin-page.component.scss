@@ -16,10 +16,11 @@ main {
 }
 
 .header-item {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 1.8em;
     color: #503bb8;
-    text-decoration: underline;
 }
-
 .grid-container-admin-page {
     min-height: 100%;
     display: grid;
@@ -41,6 +42,7 @@ main {
 }
 
 .grid-area-question-bank {
+    padding-top: 40px;
     grid-area: see-bank;
 }
 
@@ -76,6 +78,18 @@ main {
 #handleErrorsGrid {
     border-style: dotted;
     border-color: black;
-    height: 100px;
+    height: 130px;
     width: 300px;
+}
+
+h2 {
+    color: #503bb8;
+}
+
+.history-selection {
+    display: flex
+}
+
+.delete-history {
+    margin:10px;
 }
