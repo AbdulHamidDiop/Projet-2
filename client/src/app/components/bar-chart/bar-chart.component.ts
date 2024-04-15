@@ -19,15 +19,15 @@ export class BarChartComponent implements OnInit {
 
     barChartOptions: ChartConfiguration<'bar'>['options'] = {
         responsive: true,
-        maintainAspectRatio: false, // Added for non-proportional resizing
+        maintainAspectRatio: false,
         scales: {
             x: {
                 display: false,
             },
             y: {
-                display: true, // Show y-axis
+                display: true,
                 grid: {
-                    display: false, // Hide grid lines
+                    display: false,
                 },
                 ticks: {
                     stepSize: 1,

@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-imports */
 import { DB_DB } from '@common/utils/env';
 import { Db, MongoClient } from 'mongodb';
 import { Service } from 'typedi';

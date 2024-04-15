@@ -26,7 +26,6 @@ export class GameSessionService {
             const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/check', {
                 method: 'POST',
                 headers: {
-                    // eslint-disable-next-line @typescript-eslint/naming-convention
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ answer, sessionPin, questionID }),
@@ -46,7 +45,6 @@ export class GameSessionService {
         const response = await this.fetchService.fetch(environment.serverUrl + 'gameSession/create/' + pin, {
             method: 'POST',
             headers: {
-                // eslint-disable-next-line @typescript-eslint/naming-convention
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify(game),
