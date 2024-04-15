@@ -1,6 +1,5 @@
 import { Application } from '@app/app';
 import { GamesService } from '@app/services/games.service';
-import { Feedback } from '@common/feedback';
 import { Game } from '@common/game';
 import { expect } from 'chai';
 import { StatusCodes } from 'http-status-codes';
@@ -258,68 +257,6 @@ describe('GameController', () => {
             .expect(StatusCodes.NOT_FOUND)
             .then(() => {
                 assert.calledWith(gamesService.deleteGameByID, fakeGameId);
-            });
-    });
-
-    it('Should get quetions without correct answer', async () => {
-        const gameId = '00000000-1111-2222-test-000000000000';
-        gamesService.getQuestionsWithoutCorrectShown.resolves(fakeGame);
-
-        return supertest(expressApp)
-            .get(`/api/game/questionswithoutcorrect/${gameId}`)
-            .expect(StatusCodes.OK)
-            .then(() => {
-                assert.calledWith(gamesService.getQuestionsWithoutCorrectShown, gameId);
-            });
-    });
-
-    it('Should correctly check wether an answer is correct', async () => {
-        gamesService.isCorrectAnswer.resolves(true);
-        return supertest(expressApp)
-            .post('/api/game/check')
-            .set('Content', 'application/json')
-            .send({ answer: ['answer'], gameID: fakeGame.id, questionID: fakeGame.questions[0].id })
-            .expect(StatusCodes.OK)
-            .then((response) => {
-                expect(response.body.isCorrect).to.equal(true);
-            });
-    });
-
-    it('Should correctly check wether an answer is incorrect', async () => {
-        gamesService.isCorrectAnswer.resolves(false);
-        return supertest(expressApp)
-            .post('/api/game/check')
-            .set('Content', 'application/json')
-            .send({ answer: ['answer'], gameID: fakeGame.id, questionID: fakeGame.questions[0].id })
-            .expect(StatusCodes.OK)
-            .then((response) => {
-                expect(response.body.isCorrect).to.equal(false);
-            });
-    });
-
-    it('Should produce OK for a correct feedback', async () => {
-        const data = { gameID: fakeGame.id, questionID: fakeGame.questions[0].id, submittedAnswers: ['answer'] };
-        gamesService.generateFeedback.resolves([{ choice: 'choice', status: 'correct' }] as Feedback[]);
-
-        return supertest(expressApp)
-            .post('/api/game/feedback')
-            .set('Content', 'application/json')
-            .send(data)
-            .expect(StatusCodes.OK)
-            .then((response) => {
-                expect(response.body).to.deep.equal([{ choice: 'choice', status: 'correct' }]);
-            });
-    });
-
-    it('Should produce 400 for incorrect feedback', async () => {
-        const data = { questionID: fakeGame.questions[0].id, submittedAnswers: ['answer'] };
-        return supertest(expressApp)
-            .post('/api/game/feedback')
-            .set('Content', 'application/json')
-            .send(data)
-            .expect(StatusCodes.BAD_REQUEST)
-            .then((response) => {
-                expect(response.body).to.deep.equal({ message: 'Question ID and submitted answers are required.' });
             });
     });
 

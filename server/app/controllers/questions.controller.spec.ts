@@ -111,20 +111,6 @@ describe('QuestionsController', () => {
             });
     });
 
-    it('Should return true if answer is correct', async () => {
-        const answer = 'Choice 1';
-        const id = '1';
-        questionService.isCorrectAnswer.resolves(true);
-        return supertest(expressApp)
-            .post('/api/questions/check')
-            .send({ answer, id })
-            .set('Content', 'application/json')
-            .expect(StatusCodes.OK)
-            .then((response) => {
-                expect(response.body).to.deep.equal({ isCorrect: true });
-            });
-    });
-
     it('Should random questions if possible', async () => {
         questionService.getRandomQuestions.resolves([{}, {}, {}, {}, {}] as Question[]);
         return supertest(expressApp)

@@ -1,5 +1,5 @@
 import { NUMBER_RANDOM_QUESTIONS } from '@common/consts';
-import { Choices, Question, Type } from '@common/game';
+import { Question, Type } from '@common/game';
 import { DB_COLLECTION_QUESTIONS } from '@common/utils/env';
 import { Collection } from 'mongodb';
 import { Service } from 'typedi';
@@ -50,36 +50,6 @@ export class QuestionsService {
             await this.collection.findOneAndDelete({ id });
         }
         return questionFound;
-    }
-
-    async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
-        const questions: Question[] = await this.getAllQuestions();
-        const questionsWithoutCorrect: Question[] = [];
-
-        for (const currentQuestion of questions) {
-            const choicesWithoutCorrect: Choices[] = [];
-            for (const currentChoice of currentQuestion.choices) {
-                const choiceWithoutCorrect: Choices = { ...currentChoice };
-                delete choiceWithoutCorrect.isCorrect;
-                choicesWithoutCorrect.push(choiceWithoutCorrect);
-            }
-            currentQuestion.choices = choicesWithoutCorrect;
-            questionsWithoutCorrect.push(currentQuestion);
-        }
-        return questionsWithoutCorrect;
-    }
-
-    async isCorrectAnswer(answer: string[], id: string): Promise<boolean> {
-        const questions: Question[] = await this.getAllQuestions();
-        const question: Question | undefined = questions.find((q) => q.id === id);
-        if (question?.choices) {
-            const correctChoices = question.choices.filter((choice) => choice.isCorrect).map((choice) => choice.text);
-            if (answer.length !== correctChoices.length || !answer.every((answr) => correctChoices.includes(answr))) {
-                return false;
-            }
-            return true;
-        }
-        return true;
     }
 
     async getRandomQuestions(): Promise<Question[]> {
