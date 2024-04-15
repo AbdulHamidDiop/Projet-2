@@ -93,13 +93,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     async ngOnInit() {
-        this.timerEndedSubscription = this.timeService.timerEnded.subscribe(async () => {
-            if (this.logic.movingToNextQuestion) {
-                this.timeService.stopTimer();
-                return;
-            }
-            await this.confirmAnswers(false);
-        });
         const gameID = this.route.snapshot.paramMap.get('id');
         if (this.logic.inTestMode && gameID) {
             await this.gameManager.initialize(gameID);
@@ -115,54 +108,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             this.timer = this.logic.question.type === Type.QCM ? (this.gameManager.game.duration as number) : QRL_TIMER;
             this.timeService.startTimer(this.timer);
         }
-        this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
-            await this.confirmAnswers(false);
-            if (this.logic.question.type === Type.QCM) {
-                this.logic.feedback = await this.gameManager.getFeedBack(this.logic.question.id, this.logic.answer);
-            }
-            await this.countPointsAndNextQuestion();
-        });
-
-        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
-            await this.confirmAnswers(false);
-            if (this.logic.question.type === Type.QCM) {
-                this.logic.feedback = await this.gameManager.getFeedBack(this.logic.question.id, this.logic.answer);
-            }
-            await this.countPointsAndNextQuestion();
-            this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
-            setTimeout(() => {
-                this.endGame();
-            }, SHOW_FEEDBACK_DELAY);
-        });
-
-        this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
-            this.sendQRLAnswer();
-        });
-        this.qrlGradeSubscription = this.socketService.listenForMessages(nsp.GAME, Events.QRL_GRADE).subscribe((grade: unknown) => {
-            const qrlGrade = grade as QRLGrade;
-            if (qrlGrade.author === this.playerService.player.name) {
-                this.logic.score += qrlGrade.grade;
-                this.playerService.player.score = this.logic.score;
-                this.logic.bonusGiven = false;
-                this.logic.gotBonus = false;
-            }
-            this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.playerService.player);
-        });
-        this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
-            this.logic.gotBonus = true;
-        });
-        this.bonusGivenSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
-            this.logic.bonusGiven = true;
-        });
-
-        this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
-            this.snackBar.open("L'organisateur a mis fin à la partie", 'Fermer', {
-                duration: START_GAME_DELAY,
-                verticalPosition: 'top',
-            });
-            this.router.navigate(['/']);
-            this.socketService.endGame();
-        });
+        this.setSubscriptions();
         window.addEventListener('hashchange', this.onLocationChange);
         window.addEventListener('popstate', this.onLocationChange);
     }
@@ -346,5 +292,64 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
     private setInTestMode(): void {
         this.logic.inTestMode = this.route.snapshot.queryParams.testMode === 'true';
+    }
+
+    private setSubscriptions(): void {
+        this.timerEndedSubscription = this.timeService.timerEnded.subscribe(async () => {
+            if (this.logic.movingToNextQuestion) {
+                this.timeService.stopTimer();
+                return;
+            }
+            await this.confirmAnswers(false);
+        });
+
+        this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
+            await this.confirmAnswers(false);
+            if (this.logic.question.type === Type.QCM) {
+                this.logic.feedback = await this.gameManager.getFeedBack(this.logic.question.id, this.logic.answer);
+            }
+            await this.countPointsAndNextQuestion();
+        });
+
+        this.endGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.END_GAME).subscribe(async () => {
+            await this.confirmAnswers(false);
+            if (this.logic.question.type === Type.QCM) {
+                this.logic.feedback = await this.gameManager.getFeedBack(this.logic.question.id, this.logic.answer);
+            }
+            await this.countPointsAndNextQuestion();
+            this.socketService.sendMessage(Events.STORE_PLAYER, nsp.GAME_STATS, this.playerService.player);
+            setTimeout(() => {
+                this.endGame();
+            }, SHOW_FEEDBACK_DELAY);
+        });
+
+        this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
+            this.sendQRLAnswer();
+        });
+        this.qrlGradeSubscription = this.socketService.listenForMessages(nsp.GAME, Events.QRL_GRADE).subscribe((grade: unknown) => {
+            const qrlGrade = grade as QRLGrade;
+            if (qrlGrade.author === this.playerService.player.name) {
+                this.logic.score += qrlGrade.grade;
+                this.playerService.player.score = this.logic.score;
+                this.logic.bonusGiven = false;
+                this.logic.gotBonus = false;
+            }
+            this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, this.playerService.player);
+        });
+        this.bonusSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS).subscribe(() => {
+            this.logic.gotBonus = true;
+        });
+        this.bonusGivenSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
+            this.logic.bonusGiven = true;
+        });
+
+        this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
+            this.snackBar.open("L'organisateur a mis fin à la partie", 'Fermer', {
+                duration: START_GAME_DELAY,
+                verticalPosition: 'top',
+            });
+            this.router.navigate(['/']);
+            this.socketService.endGame();
+        });
     }
 }
