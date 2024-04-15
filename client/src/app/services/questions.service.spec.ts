@@ -2,7 +2,6 @@
 /* eslint-disable prefer-arrow/prefer-arrow-functions */
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { MatSnackBar } from '@angular/material/snack-bar';
-// import { API_URL } from '@common/consts';
 import { Question } from '@common/game';
 import { VALID_QUESTION } from '@common/test-interfaces';
 import { environment } from 'src/environments/environment';
@@ -165,19 +164,6 @@ describe('QuestionsService', () => {
         expect(service.questions).not.toContain(VALID_QUESTION);
     }));
 
-    it('Check answer should return false if response does not have attribute isCorrect', async () => {
-        returnQuestion = true; // Le JSON mock va retourner un objet sans attribut isCorrect
-        const checkAnswer: boolean = await service.checkAnswer([''], '');
-        expect(checkAnswer).toBeFalsy();
-    });
-
-    it('Check answer should return true if answer is correct', async () => {
-        returnQuestion = false; // Le JSON mock va retourner l'objet { isCorrect: true }
-        const checkAnswer: boolean = await service.checkAnswer([''], '');
-        expect(checkAnswer).toBeTruthy();
-        returnQuestion = true;
-    });
-
     it('Getter for question attribute should work as intended', () => {
         service.questions = [];
         expect(service.question.id).toBeFalsy();
@@ -192,16 +178,6 @@ describe('QuestionsService', () => {
         expect(service.question.id).toEqual('4321');
         expect(service.currentQuestionIndex).toEqual(1);
     });
-
-    it('Should fetch questions on call to getQuestionsWithoutCorrectShow', fakeAsync(() => {
-        returnQuestion = true;
-        responseSetToOk = true;
-        service.questions = [];
-        service.getQuestionsWithoutCorrectShown();
-        tick();
-        expect(service.questions).toEqual([VALID_QUESTION]);
-        expect(fetchSpy).toHaveBeenCalled();
-    }));
 
     it('Should fetch random questions on call to getRandomQuestions', fakeAsync(() => {
         returnQuestion = true;
@@ -226,16 +202,12 @@ describe('QuestionsService', () => {
         service.deleteQuestion(VALID_QUESTION).catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
-        service.getQuestionsWithoutCorrectShown().catch((error) => {
-            expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
-        });
+
         service.getAllQuestions().catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
         service.getRandomQuestions().catch((error) => {
             expect(error).toEqual(new Error(`Error: ${errorResponse.status}`));
         });
-        const checkAnswer: boolean = await service.checkAnswer([''], '');
-        expect(checkAnswer).toBeFalsy();
     });
 });

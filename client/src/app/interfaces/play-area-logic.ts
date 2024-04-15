@@ -23,4 +23,11 @@ export class PlayAreaLogic {
     bonusGiven: boolean = false;
     gotBonus: boolean = false;
     movingToNextQuestion: boolean = false;
+
+    prepNextQuestion(): void {
+        this.answer = [];
+        this.feedback = [];
+        this.qrlAnswer = '';
+        this.movingToNextQuestion = false;
+    }
 }

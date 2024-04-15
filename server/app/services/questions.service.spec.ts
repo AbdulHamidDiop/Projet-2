@@ -53,8 +53,6 @@ const SECOND_QUESTION = {
     lastModification: '2022-01-31T16:39:55.649Z',
 };
 
-// let QUESTIONS = JSON.stringify([FIRST_QUESTION]);
-
 describe('Questions Service', () => {
     let questionService: QuestionsService;
     let databaseService: DatabaseService;
@@ -120,29 +118,6 @@ describe('Questions Service', () => {
         await questionService.deleteQuestionByID('Fake id');
         const questions = await questionService.getAllQuestions();
         expect(questions.length).to.deep.equal(1);
-    });
-
-    it('should get questions without correct shown', async () => {
-        await databaseService.db.collection(DB_COLLECTION_QUESTIONS).insertOne(FIRST_QUESTION);
-        const questions = await questionService.getQuestionsWithoutCorrectShown();
-        expect(questions).to.be.an('array').with.lengthOf(1);
-        expect(questions[0].choices[0]).to.not.have.property('isCorrect');
-        expect(questions[0].choices[1]).to.not.have.property('isCorrect');
-        expect(questions[0].choices[2]).to.not.have.property('isCorrect');
-    });
-
-    it('should return whether an answer is correct or not', async () => {
-        await databaseService.db.collection(DB_COLLECTION_QUESTIONS).insertOne(FIRST_QUESTION);
-        const isCorrect = await questionService.isCorrectAnswer(['Angular = back-end, NodeJS = front-end'], FIRST_QUESTION.id);
-        expect(isCorrect).to.equal(true);
-
-        const isNotCorrect = await questionService.isCorrectAnswer(['Angular = front-end, NodeJS = back-end'], FIRST_QUESTION.id);
-        expect(isNotCorrect).to.equal(false);
-
-        // test that it returns true if the question is a qrl
-        stub(questionService, 'getAllQuestions').resolves([{ type: 'QRL' } as unknown as Question]);
-        const isCorrectQRL = await questionService.isCorrectAnswer(['qrl answer'], 'qrl id');
-        expect(isCorrectQRL).to.equal(true);
     });
 
     it('should throw an error if there are not enough QCM questions', async () => {

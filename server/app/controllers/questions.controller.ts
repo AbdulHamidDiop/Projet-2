@@ -80,31 +80,6 @@ export class QuestionsController {
         /**
          * @swagger
          *
-         * /api/questions/check:
-         *   post:
-         *     summary: Check if an answer is correct
-         *     tags:
-         *       - Question
-         *     requestBody:
-         *         description: Choice
-         *         required: true
-         *         content:
-         *           application/json:
-         *             schema:
-         *               $ref: '#/components/schemas/Question'
-         *             example:
-         *
-         *
-         */
-        this.router.post('/check', async (req, res) => {
-            const { answer, id } = req.body;
-            const isCorrect = await this.questionsService.isCorrectAnswer(answer, id);
-            res.status(StatusCodes.OK).json({ isCorrect });
-        });
-
-        /**
-         * @swagger
-         *
          * /api/questions/edit:
          *   put:
          *     summary: Modify a question

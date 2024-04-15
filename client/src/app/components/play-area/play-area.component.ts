@@ -198,10 +198,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     }
 
     goNextQuestion() {
-        this.attributes.answer = [];
-        this.attributes.feedback = [];
-        this.attributes.qrlAnswer = '';
-        this.attributes.movingToNextQuestion = false;
+
         this.endGameTest();
         const newQuestion = this.gameManager.goNextQuestion();
         this.attributes.question = newQuestion;
