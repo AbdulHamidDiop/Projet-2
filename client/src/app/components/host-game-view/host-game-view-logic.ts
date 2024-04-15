@@ -61,5 +61,6 @@ export class HostGameViewLogic {
         this.disableControls = false;
         this.nConfirmations = 0;
         this.disableNextQuestion = true;
+        this.timerPaused = false;
     }
 }

@@ -100,7 +100,7 @@ describe('QuestionsController', () => {
             });
     });
     it('Should respond with 404 if question ID does not exist', async () => {
-        const nonExistentQuestionId = 'nonExistentId'; 
+        const nonExistentQuestionId = 'nonExistentId';
         questionService.deleteQuestionByID.resolves(false);
 
         return supertest(expressApp)
@@ -108,20 +108,6 @@ describe('QuestionsController', () => {
             .expect(StatusCodes.NOT_FOUND)
             .then(() => {
                 assert.calledWith(questionService.deleteQuestionByID, nonExistentQuestionId);
-            });
-    });
-
-    it('Should return true if answer is correct', async () => {
-        const answer = 'Choice 1';
-        const id = '1';
-        questionService.isCorrectAnswer.resolves(true);
-        return supertest(expressApp)
-            .post('/api/questions/check')
-            .send({ answer, id })
-            .set('Content', 'application/json')
-            .expect(StatusCodes.OK)
-            .then((response) => {
-                expect(response.body).to.deep.equal({ isCorrect: true });
             });
     });
 

@@ -1,14 +1,14 @@
 <div #main id="grid-container" class="main">
     <section id="question-container">
-        <mat-card class="glassy" *ngIf="shouldRender(this.attributes.question.text)">
+        <mat-card class="glassy" *ngIf="shouldRender(this.logic.question.text)">
             <mat-card-header>
                 <mat-card-title>
-                    <h2>{{ this.attributes.question.text }}</h2>
+                    <h2>{{ this.logic.question.text }}</h2>
                 </mat-card-title>
             </mat-card-header>
             <mat-card-actions align="end">
                 <button mat-button [disabled]="true">
-                    <h4>{{ this.attributes.question.points }} points.</h4>
+                    <h4>{{ this.logic.question.points }} points.</h4>
                 </button>
                 <br />
                 <button mat-button [disabled]="true">
@@ -21,14 +21,14 @@
             <mat-card-header>
                 <mat-card-title class="column-container">
                     <p>Votre score : {{ this.playerScore.toFixed(2) }}</p>
-                    <div *ngIf="attributes.showPoints" class="points-animation">
-                        <p class="points-text">+{{ attributes.pointsGained }}</p>
+                    <div *ngIf="logic.showPoints" class="points-animation">
+                        <p class="points-text">+{{ logic.pointsGained }}</p>
                     </div>
                 </mat-card-title>
             </mat-card-header>
             <mat-card-actions align="end">
                 <button mat-button class="abort-button" (click)="handleAbortGame()">Abandonner</button>
-                <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="attributes.choiceDisabled" class="confirm-button">
+                <button mat-button (click)="confirmAnswers(true); onFinalAnswer()" [disabled]="logic.choiceDisabled" class="confirm-button">
                     <h3 class="confirm-text">Confirmer</h3>
                 </button>
             </mat-card-actions>
@@ -36,15 +36,15 @@
     </section>
 
     <br />
-    <mat-selection-list *ngIf="attributes.question.type === 'QCM'" #choices [disabled]="attributes.choiceDisabled">
-        <div *ngFor="let choice of attributes.question.choices; let index = index; trackBy: trackByFunction">
+    <mat-selection-list *ngIf="logic.question.type === 'QCM'" #choices [disabled]="logic.choiceDisabled">
+        <div *ngFor="let choice of logic.question.choices; let index = index; trackBy: trackByFunction">
             <mat-list-item
-                (click)="!attributes.choiceDisabled && handleQCMChoice(choice.text)"
-                (keydown)="!attributes.choiceDisabled && $event.stopPropagation(); !attributes.choiceDisabled && detectButton($event)"
-                (keyup)="!attributes.choiceDisabled && $event.stopPropagation()"
+                (click)="!logic.choiceDisabled && handleQCMChoice(choice.text)"
+                (keydown)="!logic.choiceDisabled && $event.stopPropagation(); !logic.choiceDisabled && detectButton($event)"
+                (keyup)="!logic.choiceDisabled && $event.stopPropagation()"
                 *ngIf="shouldRender(choice.text)"
             >
-                <mat-list-option [ngClass]="getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
+                <mat-list-option [ngClass]="logic.getStyle(choice.text)" #option [selected]="isChoice(choice.text)">
                     <span>
                         Réponse #{{ index + 1 }} : <i> {{ choice.text }}</i>
                     </span>
@@ -52,12 +52,12 @@
             </mat-list-item>
         </div>
     </mat-selection-list>
-    <mat-form-field *ngIf="attributes.question.type === 'QRL'" class="qrl-question">
+    <mat-form-field *ngIf="logic.question.type === 'QRL'" class="qrl-question">
         <div class="chars-left">{{ charsLeft }} caractères restants</div>
         <textarea
             matInput
-            [disabled]="attributes.choiceDisabled"
-            [(ngModel)]="attributes.qrlAnswer"
+            [disabled]="logic.choiceDisabled"
+            [(ngModel)]="logic.qrlAnswer"
             [maxlength]="200"
             placeholder="Votre réponse"
             class="qrl-textarea"
@@ -66,7 +66,7 @@
     </mat-form-field>
 </div>
 <app-countdown-modal
-    [showModal]="attributes.showCountDown"
+    [showModal]="logic.showCountDown"
     [countdown]="3"
     [message]="'Prochaine question'"
     (modalClosed)="onCountDownModalClosed()"

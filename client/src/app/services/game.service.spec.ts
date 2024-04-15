@@ -258,57 +258,6 @@ describe('GameService', () => {
         expectAsync(service.deleteGameByID('1')).toBeRejectedWithError('Error: 404');
     }));
 
-    it('should fetch questions without correct shown for a game', async () => {
-        const result = await service.getQuestionsWithoutCorrectShown(mockGameId);
-        expect(result).toEqual(mockData);
-        expect(service.fetchService.fetch).toHaveBeenCalledWith(environment.serverUrl + 'game/questionswithoutcorrect/' + mockGameId);
-    });
-
-    it('should throw an error when getQuestionsWithoutCorrectShown response is not OK', fakeAsync(() => {
-        responseSetToOk = false;
-        expectAsync(service.getQuestionsWithoutCorrectShown(mockGameId)).toBeRejectedWithError('Error: 404');
-    }));
-
-    const answer = ['A', 'B', 'C'];
-    const gameID = '123';
-    const questionID = '456';
-    it('should check answer correctly for a correct response', fakeAsync(() => {
-        mockData = { isCorrect: true };
-        let result: boolean | undefined;
-        service.checkAnswer(answer, gameID, questionID).then((res) => (result = res));
-        tick();
-
-        expect(result).toEqual(true);
-        expect(service.fetchService.fetch).toHaveBeenCalledWith(
-            environment.serverUrl + 'game/check',
-            jasmine.objectContaining({
-                method: 'POST',
-                headers: jasmine.objectContaining({
-                    'Content-Type': 'application/json',
-                }),
-                body: JSON.stringify({ answer, gameID, questionID }),
-            }),
-        );
-    }));
-
-    it('should check answer correctly for a incorrect response', fakeAsync(() => {
-        mockData = { isCorrect: false };
-        let result: boolean | undefined;
-        service.checkAnswer(answer, gameID, questionID).then((res) => (result = res));
-        tick();
-
-        expect(result).toEqual(false);
-    }));
-
-    it('should return false if the response status to checkAnswer is not OK', fakeAsync(() => {
-        responseSetToOk = false;
-        let result: boolean | undefined;
-        service.checkAnswer(answer, gameID, questionID).then((res) => (result = res));
-        tick();
-
-        expect(result).toEqual(false);
-    }));
-
     it('should correctly check if a game is available when it is available', fakeAsync(() => {
         const game: Game = {
             id: '123',

@@ -89,18 +89,6 @@ export class QuestionsService {
         this.deleteRequest.emit(question);
     }
 
-    async getQuestionsWithoutCorrectShown(): Promise<Question[]> {
-        const response = await this.fetchService.fetch(environment.serverUrl + 'questions/test');
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        const questions: Question[] = await response.json();
-        if (this.questions.length < questions.length) {
-            this.questions = questions;
-        }
-        return questions;
-    }
-
     async getRandomQuestions(): Promise<Question[]> {
         const response = await this.fetchService.fetch(environment.serverUrl + 'questions/random');
         if (!response.ok) {
@@ -108,30 +96,5 @@ export class QuestionsService {
         }
         const questions: Question[] = await response.json();
         return questions;
-    }
-
-    async checkAnswer(answer: string[], id: string): Promise<boolean> {
-        try {
-            const response = await this.fetchService.fetch(environment.serverUrl + 'questions/check', {
-                method: 'POST',
-                headers: {
-                    [NamingConvention.CONTENT_TYPE]: 'application/json',
-                },
-                body: JSON.stringify({ answer, id }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Erreur de communication avec le serveur. Statut : ${response.status}`);
-            }
-            const result = await response.json();
-
-            if (result && result.isCorrect) {
-                return result.isCorrect;
-            } else {
-                throw new Error('Réponse du serveur malformée');
-            }
-        } catch (error) {
-            return false;
-        }
     }
 }
