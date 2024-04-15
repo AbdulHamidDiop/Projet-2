@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { COUNT_DOWN_MODAL_INTERVAL } from '@common/consts';
 
-const COUNT_DOWN_INTERVAL = 1000;
 @Component({
     selector: 'app-countdown-modal',
     templateUrl: './countdown-modal.component.html',
@@ -23,7 +23,7 @@ export class CountdownModalComponent implements OnChanges {
                     this.showModal = false;
                     this.modalClosed.emit();
                 }
-            }, COUNT_DOWN_INTERVAL);
+            }, COUNT_DOWN_MODAL_INTERVAL);
         }
     }
 }
