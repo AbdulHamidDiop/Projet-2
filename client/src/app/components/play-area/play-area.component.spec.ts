@@ -330,10 +330,10 @@ describe('PlayAreaComponent', () => {
         expect(component.goNextQuestion).toHaveBeenCalled();
     }));
 
-    it('handleAbort should reset score and navigate on confirmation', () => {
+    it('handleAbortGame should reset score and navigate on confirmation', () => {
         const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(true), close: null });
         spyOn(component.router, 'navigate');
-        component.handleAbort();
+        component.handleAbortGame();
         expect(component.abortDialog.open).toHaveBeenCalled();
         component.abortDialog.closeAll();
         dialogRefSpyObj.afterClosed().subscribe(() => {

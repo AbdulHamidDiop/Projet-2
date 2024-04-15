@@ -248,7 +248,6 @@ export class GameSessionService {
         );
     }
 
-    // should only be used to retrieve the stats for the results page in this current implementation
     async getStatisticsData(pin: string): Promise<BarChartQuestionStats[]> {
         const gameSession = await this.getSessionByPin(pin);
         if (gameSession) {

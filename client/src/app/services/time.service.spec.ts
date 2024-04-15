@@ -9,7 +9,6 @@ const INVALID_TIME = -1;
 describe('TimeService', () => {
     let service: TimeService;
     let socketService: SocketRoomService;
-    // let listenForMessagesSpy: jasmine.Spy;
 
     const TIMEOUT = 5;
     const MS_SECOND = 1000;

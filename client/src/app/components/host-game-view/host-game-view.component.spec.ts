@@ -67,7 +67,6 @@ describe('HostGameViewComponent', () => {
             timerEnded: new EventEmitter<void>(),
         });
 
-        // Mock data
         mockQuestion = {
             id: 'test-question-id',
             type: Type.QCM,

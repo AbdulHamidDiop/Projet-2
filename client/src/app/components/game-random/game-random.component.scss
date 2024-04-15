@@ -14,7 +14,7 @@ mat-expansion-panel {
 
     $border: 1.5px;
     color: #fff;
-    border: solid $border transparent; /* !importanté */
+    border: solid $border transparent;
     border-radius: 1em;
 }
 
@@ -29,10 +29,10 @@ mat-expansion-panel {
 
     $border: 1.5px;
     color: #fff;
-    border: solid $border transparent; /* !importanté */
+    border: solid $border transparent;
     border-radius: 1em;
 }
 
-.dice{
-    color: white
+.dice {
+    color: white;
 }

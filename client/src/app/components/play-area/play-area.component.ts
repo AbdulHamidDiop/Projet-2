@@ -42,7 +42,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     showPoints: boolean = false;
     pointsGained: number = 0;
     showCountDown: boolean = false;
-    countDownKey: number = Date.now(); // to force change dete/ctiosn
+    countDownKey: number = Date.now();
     choiceDisabled = false;
     feedback: Feedback[];
     qcmStat: QCMStats;
@@ -63,7 +63,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private qrlGradeSubscription: Subscription;
     private timerEndedSubscription: Subscription;
 
-    // À réecrire en décomposant ça en components.
     // eslint-disable-next-line max-params
     constructor(
         readonly timeService: TimeService,
@@ -371,9 +370,7 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.socketService.sendMessage(Events.UPDATE_PLAYER, nsp.GAME_STATS, { ...this.playerService.player });
     }
 
-    // Le chargé aime pas le nom donné à la fonction.
-    handleAbort(): void {
-        // Messages à mettre dans des constantes.
+    handleAbortGame(): void {
         const message = 'Êtes-vous sûr de vouloir abandonner la partie?';
 
         const dialogData = new ConfirmDialogModel('Abandon', message);

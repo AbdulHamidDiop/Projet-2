@@ -27,7 +27,6 @@ export class AdminCreateGamePageComponent implements OnInit, AfterViewInit {
     questions: Question[] = [];
     isAuthentificated: boolean;
 
-    // Pas utilisé dans le sprint 2.
     // eslint-disable-next-line max-params
     constructor(
         public dialog: MatDialog,

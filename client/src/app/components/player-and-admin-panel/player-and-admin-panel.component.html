@@ -10,7 +10,6 @@
         <h2 *ngIf="this.player.isHost">Votre Pin: {{ room }}</h2>
         <h2>Nom d'utilisateur : {{ player.name }}</h2>
         <h2>Jeu choisi : {{ game.title }}</h2>
-        <!-- <h2 *ngIf="this.player.isHost">Paramètres de la partie</h2> -->
         <mat-card-actions *ngIf="player.isHost" align="end">
             <button mat-button (click)="startGame()" class="start-button">
                 Commencer la partie
@@ -37,9 +36,6 @@
                 </button>
             </div>
         </mat-card-title>
-        <!-- <mat-card-actions align="end">
-            <button *ngIf="this.player.isHost" mat-button (click)="kickPlayer(play.name)">Exclure</button>
-        </mat-card-actions> -->
     </mat-card>
 </section>
 
