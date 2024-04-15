@@ -178,7 +178,6 @@ describe('PlayAreaComponent', () => {
     });
 
     it('goNextQuestion should call gameManager.goNextQuestion', fakeAsync(() => {
-        // Prepare the next question to be returned by the GameManagerService
         gameManager = TestBed.inject(GameManagerService);
         spyOn(component, 'countPointsAndNextQuestion').and.returnValue(Promise.resolve());
 
@@ -323,6 +322,17 @@ describe('PlayAreaComponent', () => {
         expect(component.goNextQuestion).toHaveBeenCalled();
     }));
 
+    it('confirmAnswers should update score and proceed after delay in random mode', fakeAsync(() => {
+        component.logic.inRandomMode = true;
+        spyOn(component, 'updateScore').and.returnValue({} as any);
+        spyOn(component, 'goNextQuestion').and.returnValue();
+        component.confirmAnswers(true);
+        tick(SHOW_FEEDBACK_DELAY * 2);
+        expect(component.updateScore).toHaveBeenCalled();
+        expect(component.logic.choiceDisabled).toBeFalse();
+        expect(component.goNextQuestion).toHaveBeenCalled();
+    }));
+
     it('handleAbort should reset score and navigate on confirmation', () => {
         const dialogRefSpyObj = jasmine.createSpyObj({ afterClosed: of(true), close: null });
         spyOn(component.router, 'navigate');
@@ -365,6 +375,12 @@ describe('PlayAreaComponent', () => {
         expect(component.endGame).toHaveBeenCalled();
         gameManager.onLastQuestion = () => false;
         flush();
+    }));
+
+    it('should navigate to results page when endGame', fakeAsync( () => {
+        spyOn(component.router, 'navigate');
+        component.endGame();
+        expect(component.router.navigate).toHaveBeenCalledWith(['results'], { relativeTo: component.route });
     }));
 
     it('should set inTestMode to true when queryparams testMode is true', () => {
@@ -414,8 +430,10 @@ describe('PlayAreaComponent', () => {
         const bonusSubject = new Subject<void>();
         const bonusGivenSubject = new Subject<void>();
         const abortGameSubject = new Subject<void>();
+        const qrlGradeSubject = new Subject<void>();
 
         beforeEach(async () => {
+            // eslint-disable-next-line complexity
             socketMock.listenForMessages.and.callFake((namespace: string, event: string) => {
                 if (namespace === Namespaces.GAME && event === Events.NEXT_QUESTION) {
                     return nextQuestionSubject.asObservable();
@@ -431,6 +449,8 @@ describe('PlayAreaComponent', () => {
                     return bonusGivenSubject.asObservable();
                 } else if (namespace === Namespaces.GAME && event === Events.ABORT_GAME) {
                     return abortGameSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.QRL_GRADE) {
+                    return qrlGradeSubject.asObservable();
                 }
                 return new Subject().asObservable();
             });
@@ -459,6 +479,8 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle START_TIMER event', fakeAsync(() => {
+            qrlGradeSubject.next({ author: component.playerService.player.name, grade: 0 } as any);
+
             component.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
                 component.timeService.startTimer(0);
             });
