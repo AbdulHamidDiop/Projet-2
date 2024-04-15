@@ -256,7 +256,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.router.navigate(['results'], { relativeTo: this.route });
         await this.gameSessionService.completeSession(this.gameManager.gamePin, this.playerService.findBestScore());
     }
-
     onLocationChange = () => {
         this.socketService.endGame();
     };
@@ -293,7 +292,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
     private setInTestMode(): void {
         this.logic.inTestMode = this.route.snapshot.queryParams.testMode === 'true';
     }
-
     private setSubscriptions(): void {
         this.timerEndedSubscription = this.timeService.timerEnded.subscribe(async () => {
             if (this.logic.movingToNextQuestion) {
@@ -302,7 +300,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
             }
             await this.confirmAnswers(false);
         });
-
         this.nextQuestionSubscription = this.socketService.listenForMessages(nsp.GAME, Events.NEXT_QUESTION).subscribe(async () => {
             await this.confirmAnswers(false);
             if (this.logic.question.type === Type.QCM) {
@@ -322,7 +319,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.endGame();
             }, SHOW_FEEDBACK_DELAY);
         });
-
         this.sendQRLAnswerSubscription = this.socketService.listenForMessages(nsp.GAME, Events.SEND_QRL_ANSWER).subscribe(() => {
             this.sendQRLAnswer();
         });
@@ -342,7 +338,6 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
         this.bonusGivenSubscription = this.socketService.listenForMessages(nsp.GAME, Events.BONUS_GIVEN).subscribe(() => {
             this.logic.bonusGiven = true;
         });
-
         this.abortGameSubscription = this.socketService.listenForMessages(nsp.GAME, Events.ABORT_GAME).subscribe(() => {
             this.snackBar.open("L'organisateur a mis fin à la partie", 'Fermer', {
                 duration: START_GAME_DELAY,

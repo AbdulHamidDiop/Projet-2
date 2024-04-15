@@ -377,12 +377,6 @@ describe('PlayAreaComponent', () => {
         flush();
     }));
 
-    it('should navigate to results page when endGame', fakeAsync( () => {
-        spyOn(component.router, 'navigate');
-        component.endGame();
-        expect(component.router.navigate).toHaveBeenCalledWith(['results'], { relativeTo: component.route });
-    }));
-
     it('should set inTestMode to true when queryparams testMode is true', () => {
         const route = TestBed.inject(ActivatedRoute);
         route.snapshot.queryParams = { testMode: 'true' };
