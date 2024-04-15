@@ -414,8 +414,10 @@ describe('PlayAreaComponent', () => {
         const bonusSubject = new Subject<void>();
         const bonusGivenSubject = new Subject<void>();
         const abortGameSubject = new Subject<void>();
+        const qrlGradeSubject = new Subject<void>();
 
         beforeEach(async () => {
+            // eslint-disable-next-line complexity
             socketMock.listenForMessages.and.callFake((namespace: string, event: string) => {
                 if (namespace === Namespaces.GAME && event === Events.NEXT_QUESTION) {
                     return nextQuestionSubject.asObservable();
@@ -431,6 +433,8 @@ describe('PlayAreaComponent', () => {
                     return bonusGivenSubject.asObservable();
                 } else if (namespace === Namespaces.GAME && event === Events.ABORT_GAME) {
                     return abortGameSubject.asObservable();
+                } else if (namespace === Namespaces.GAME && event === Events.QRL_GRADE) {
+                    return qrlGradeSubject.asObservable();
                 }
                 return new Subject().asObservable();
             });
@@ -459,6 +463,8 @@ describe('PlayAreaComponent', () => {
         }));
 
         it('should handle START_TIMER event', fakeAsync(() => {
+            qrlGradeSubject.next({ author: component.playerService.player.name, grade: 0 } as any);
+
             component.socketService.listenForMessages(Namespaces.GAME, Events.START_TIMER).subscribe(() => {
                 component.timeService.startTimer(0);
             });

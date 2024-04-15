@@ -2,7 +2,7 @@
 /* eslint-disable no-console */
 import { Application } from '@app/app';
 import { LAST_INDEX } from '@common/consts';
-import { Player } from '@common/game';
+import { GREEN, Player, RED, YELLOW } from '@common/game';
 import { ChatMessage } from '@common/message';
 import { Events, LOBBY, Namespaces } from '@common/sockets';
 import { DB_URL } from '@common/utils/env';
@@ -105,18 +105,15 @@ export class Server {
             this.setupDefaultJoinRoomEvent(socket);
             socket.on(Events.QCM_STATS, (data) => {
                 socket.to(data.room).emit(Events.QCM_STATS, data);
-                const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data.player, YELLOW);
                 this.gameSessionService.updateStatisticsData(data.room, data);
             });
             socket.on(Events.CONFIRM_ANSWERS, (data) => {
-                const GREEN = 0x00ff00;
                 this.setPlayerColor(data.room, data.player, GREEN);
                 gameNamespace.to(data.room).emit(Events.PLAYER_CONFIRMED);
             });
 
             socket.on(Events.NOTIFY_QRL_INPUT, (data) => {
-                const YELLOW = 0xffff00;
                 this.setPlayerColor(data.room, data, YELLOW);
             });
 
@@ -134,7 +131,6 @@ export class Server {
 
             socket.on(Events.UPDATE_PLAYER, (data) => {
                 gameStatsNamespace.to(data.room).emit(Events.UPDATE_PLAYER, data);
-                const RED = 0xff0000;
                 this.setPlayerColor(data.room, data, RED);
             });
 
