@@ -79,35 +79,6 @@ export class GameService {
         return true;
     }
 
-    async getQuestionsWithoutCorrectShown(id: string): Promise<Game> {
-        const response = await this.fetchService.fetch(environment.serverUrl + 'game/questionswithoutcorrect/' + id);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status}`);
-        }
-        const game: Game = await response.json();
-        return game;
-    }
-
-    async checkAnswer(answer: string[], gameID: string, questionID: string): Promise<boolean> {
-        try {
-            const response = await this.fetchService.fetch(environment.serverUrl + 'game/check', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ answer, gameID, questionID }),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error: ${response.status}`);
-            }
-            const result = await response.json();
-            return result.isCorrect;
-        } catch (error) {
-            return false;
-        }
-    }
-
     async checkHiddenOrDeleted(game: Game): Promise<boolean> {
         const response = await this.fetchService.fetch(environment.serverUrl + 'game/availability/' + game.id, {
             method: 'GET',
