@@ -56,4 +56,19 @@ export class PlayerService {
             }
         });
     }
+
+    reset() {
+        this.playersInGame = [];
+        this.player = {
+            name: '',
+            isHost: false,
+            isRandomGameHost: false,
+            id: '',
+            score: 0,
+            bonusCount: 0,
+            color: RED,
+            chatEnabled: true,
+            leftGame: false,
+        };
+    }
 }

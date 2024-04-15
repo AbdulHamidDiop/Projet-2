@@ -4,7 +4,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { PlayerService } from '@app/services/player.service';
 import { START_GAME_DELAY } from '@common/consts';
-import { Game, Player, Question, RED } from '@common/game';
+import { Game, Player, Question } from '@common/game';
 import { QCMStats } from '@common/game-stats';
 import { ChatMessage, SystemMessages } from '@common/message';
 import { Events, Namespaces } from '@common/sockets';
@@ -160,7 +160,6 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     disconnectSubscribe(): Observable<void> {
         return new Observable((observer) => {
             this.socket.on('disconnect', () => {
@@ -168,7 +167,6 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     getPlayers(): Observable<Player[]> {
         return new Observable((observer) => {
             this.socket.on(Events.GET_PLAYERS, (players) => {
@@ -176,11 +174,9 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     requestPlayers(): void {
         this.socket.emit(Events.GET_PLAYERS);
     }
-
     getProfile(): Observable<Player> {
         return new Observable((observer) => {
             this.socket.on(Events.GET_PLAYER_PROFILE, (player) => {
@@ -188,11 +184,9 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     leaveRoom(): void {
         this.socket.emit(Events.LEAVE_ROOM, this.room);
     }
-
     sendPlayerName(name: string): void {
         this.socket.emit(Events.SET_PLAYER_NAME, { name });
     }
@@ -202,11 +196,9 @@ export class SocketRoomService implements OnDestroy {
             this.socket.disconnect();
         }
     }
-
     sendChatMessage(message: ChatMessage) {
         this.sendMessage(Events.CHAT_MESSAGE, Namespaces.CHAT_MESSAGES, message);
     }
-
     getChatMessages(): Observable<ChatMessage> {
         return new Observable((observer) => {
             this.socket.on(Events.CHAT_MESSAGE, (message: ChatMessage) => {
@@ -214,15 +206,12 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     startGame(): void {
         this.socket.emit(Events.START_GAME);
     }
-
     startRandomGame(): void {
         this.socket.emit(Events.START_RANDOM_GAME);
     }
-
     gameStartSubscribe(): Observable<void> {
         return new Observable((observer) => {
             this.socket.on(Events.START_GAME, () => {
@@ -238,7 +227,6 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     notifyNextQuestion(): void {
         this.sendMessage(Events.NEXT_QUESTION, Namespaces.GAME);
     }
@@ -248,7 +236,6 @@ export class SocketRoomService implements OnDestroy {
             this.socket.on(Events.NEXT_QUESTION, () => observer.next());
         });
     }
-
     notifyEndGame(): void {
         this.socket.emit(Events.END_GAME);
     }
@@ -264,7 +251,6 @@ export class SocketRoomService implements OnDestroy {
             this.socket.on(Events.GAME_RESULTS, (results) => observer.next(results));
         });
     }
-
     async joinRoomInNamespace(namespace: string, room: string): Promise<void> {
         return new Promise((resolve, reject) => {
             const namespaceSocket = this.connectNamespace(namespace);
@@ -287,7 +273,6 @@ export class SocketRoomService implements OnDestroy {
         const promises = Object.values(Namespaces).map(async (namespace) => this.joinRoomInNamespace(namespace, room));
         return Promise.all(promises);
     }
-
     sendMessage(eventName: Events, namespace: Namespaces, payload?: object): void {
         if (namespace !== Namespaces.GLOBAL_NAMESPACE) {
             const namespaceSocket = this.connectNamespace(namespace);
@@ -297,7 +282,6 @@ export class SocketRoomService implements OnDestroy {
             }
         }
     }
-
     listenForMessages(namespace: string, eventName: string): Observable<unknown> {
         const namespaceSocket = this.connectNamespace(namespace);
         return new Observable((observer) => {
@@ -313,7 +297,6 @@ export class SocketRoomService implements OnDestroy {
             return;
         });
     }
-
     getStats(): Observable<QCMStats> {
         return new Observable((observer) => {
             this.socket.on(Events.QCM_STATS, (stat) => {
@@ -321,11 +304,9 @@ export class SocketRoomService implements OnDestroy {
             });
         });
     }
-
     ngOnDestroy() {
         window.removeEventListener('beforeunload', this.endGame.bind(this, 'La partie a été interrompue'));
     }
-
     endGame(snckMessage?: string): void {
         const snackMessage = snckMessage ? snckMessage : 'La partie a été interrompue';
 
@@ -339,7 +320,6 @@ export class SocketRoomService implements OnDestroy {
                 duration: START_GAME_DELAY,
                 verticalPosition: 'top',
             });
-
             this.router.navigate(['/createGame']);
 
             const message: ChatMessage = {
@@ -352,22 +332,10 @@ export class SocketRoomService implements OnDestroy {
         }
         this.resetGameState();
     }
-
     resetGameState(): void {
         this.room = '';
         this.showingResults = false;
-        this.playerService.playersInGame = [];
-        this.playerService.player = {
-            name: '',
-            isHost: false,
-            isRandomGameHost: false,
-            id: '',
-            score: 0,
-            bonusCount: 0,
-            color: RED,
-            chatEnabled: true,
-            leftGame: false,
-        };
+        this.playerService.reset();
     }
 
     connectNamespace(namespace: string): Socket | undefined {

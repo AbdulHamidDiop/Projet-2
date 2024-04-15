@@ -100,5 +100,6 @@ describe('PlayerService', () => {
         service.setGamePlayers([player1, player2, player3]);
         const activePlayers = service.activePlayers();
         expect(activePlayers).toEqual([player1, player3]);
+        service.reset();
     });
 });
