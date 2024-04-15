@@ -176,7 +176,7 @@ export class GameController {
 
         this.router.get('/:id', async (req: Request, res: Response) => {
             const game: Game = await this.gamesService.getGameByID(req.params.id);
-            if (game === null) {
+            if (!game) {
                 res.status(StatusCodes.NOT_FOUND);
             } else {
                 res.status(StatusCodes.OK);

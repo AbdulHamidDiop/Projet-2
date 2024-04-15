@@ -100,7 +100,7 @@ describe('QuestionsController', () => {
             });
     });
     it('Should respond with 404 if question ID does not exist', async () => {
-        const nonExistentQuestionId = 'nonExistentId'; 
+        const nonExistentQuestionId = 'nonExistentId';
         questionService.deleteQuestionByID.resolves(false);
 
         return supertest(expressApp)

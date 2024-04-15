@@ -96,7 +96,7 @@ describe('Socket Events Service', () => {
 
         let callCount = 0;
         socketEvents.makeRoomId = () => {
-            if (callCount === 0) {
+            if (!callCount) {
                 callCount++;
                 return initialRoomId;
             }
