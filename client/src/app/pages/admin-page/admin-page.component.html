@@ -2,8 +2,8 @@
     <h1 class="header-item"><strong>Page Administrateur</strong></h1>
     <div class="grid-container-admin-page">
         <div class="grid-area-game-list">
+            <h2>Liste de jeux</h2>
             <div class="scroll-box">
-                <h1 class="header-item"><strong>Liste de jeux :</strong></h1>
                 <app-game-card
                     *ngFor="let game of gameService.games"
                     [game]="game"
@@ -62,22 +62,20 @@
             </mat-card>
         </div>
         <div class="grid-area-history">
+            <h2>Historique</h2>
             <div class="scroll-box">
-                <h1 class="header-item">
-                    <strong><u>Historique :</u></strong>
-                </h1>
-                <p>
-                    <button mat-flat-button color="warn" (click)="handleDeleteHistory()">Effacer l'historique:<mat-icon>delete</mat-icon></button>
-                </p>
-                <mat-form-field>
-                    <mat-label>Trier par:</mat-label>
-                    <mat-select (selectionChange)="sortList($event)">
-                        <mat-option value="ascending-alphabetically">Ordre alphabétique croissant</mat-option>
-                        <mat-option value="descending-alphabetically">Ordre alphabétique décroissant</mat-option>
-                        <mat-option value="descending-date">Plus récent</mat-option>
-                        <mat-option value="ascending-date">Plus ancien</mat-option>
-                    </mat-select>
-                </mat-form-field>
+                <div class="history-selection">
+                    <mat-form-field>
+                        <mat-label>Trier par:</mat-label>
+                        <mat-select (selectionChange)="sortList($event)">
+                            <mat-option value="ascending-alphabetically">Ordre alphabétique croissant</mat-option>
+                            <mat-option value="descending-alphabetically">Ordre alphabétique décroissant</mat-option>
+                            <mat-option value="descending-date">Plus récent</mat-option>
+                            <mat-option value="ascending-date">Plus ancien</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                    <button class="delete-history" mat-flat-button color="warn" (click)="handleDeleteHistory()"><mat-icon>delete</mat-icon></button>
+                </div>   
                 <div *ngFor="let session of sessions">
                     <div *ngIf="session.isCompleted">
                         <app-session [session]="session"></app-session>

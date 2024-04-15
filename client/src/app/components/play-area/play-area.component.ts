@@ -17,7 +17,7 @@ import { RANDOM_INDICATOR, START_GAME_DELAY } from '@common/consts';
 import { Feedback } from '@common/feedback';
 import { Question, Type } from '@common/game';
 import { QCMStats, QRLAnswer, QRLGrade } from '@common/game-stats';
-import { ChatMessage, SystemMessages as sysmsg } from '@common/message';
+import { ChatMessage, SystemMessages as sysMsg } from '@common/message';
 import { Events, Namespaces as nsp } from '@common/sockets';
 import { Subscription } from 'rxjs';
 import { BONUS_MULTIPLIER, ERROR_INDEX, MAX_QRL_LENGTH, QRL_TIMER, SHOW_FEEDBACK_DELAY } from './const';
@@ -385,8 +385,8 @@ export class PlayAreaComponent implements OnInit, OnDestroy {
                 this.score = 0;
                 this.answer = [];
                 const chatMessage: ChatMessage = {
-                    author: sysmsg.AUTHOR,
-                    message: this.playerService.player.name + ' ' + sysmsg.PLAYER_LEFT,
+                    author: sysMsg.AUTHOR,
+                    message: this.playerService.player.name + ' ' + sysMsg.PLAYER_LEFT,
                     timeStamp: new Date().toLocaleTimeString(),
                 };
                 this.socketService.sendChatMessage(chatMessage);
