@@ -286,4 +286,4 @@ Le problème est souvent dû à un problème de cache. Réessayer de clear la ca
 
 ## J'ai tout fait, mais le pipeline ne marche toujours pas
 
-S'assurer d'avoir bien mis les noms de variables, vérifier les fins de lignes de chaque variable. Ne serait-ce qu'un espace en trop peut faire échouer tout le déploiement. Aussi pas de variables protégées dans les variables CI/CD. Si ça ne va toujours pas, reprendre toute la procédure de zéro.
+S'assurer d'avoir bien mis les noms de variables, vérifier les fins de lignes de chaque variable. Ne serait-ce qu'un espace en trop peut faire échouer tout le déploiement. Aussi pas de variables protégées dans les variables CI/CD. Si ça ne va toujours pas, reprendre toute la procédure de zéro..
